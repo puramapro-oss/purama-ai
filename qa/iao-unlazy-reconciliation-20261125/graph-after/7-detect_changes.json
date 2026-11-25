@@ -1,0 +1,1436 @@
+{
+  "summary": {
+    "changed_count": 132,
+    "affected_count": 30,
+    "changed_files": 82,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:karta/src/chef/codex-cli-driver.ts:CodexCliChefDriver",
+      "name": "CodexCliChefDriver",
+      "type": "Class",
+      "filePath": "karta/src/chef/codex-cli-driver.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/codex-cli-driver.ts:CodexCliChefDriver.run#2",
+      "name": "run",
+      "type": "Method",
+      "filePath": "karta/src/chef/codex-cli-driver.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "",
+      "name": null,
+      "type": "BasicBlock",
+      "filePath": "karta/src/chef/codex-cli-driver.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:karta/src/chef/control-plane.ts:SupabaseChefControlPlane",
+      "name": "SupabaseChefControlPlane",
+      "type": "Class",
+      "filePath": "karta/src/chef/control-plane.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.loadVerificationFeedback#1",
+      "name": "loadVerificationFeedback",
+      "type": "Method",
+      "filePath": "karta/src/chef/control-plane.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/src/chef/observations.ts:ChefObservationModality",
+      "name": "ChefObservationModality",
+      "type": "TypeAlias",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/observations.ts:ChefObservationProfile",
+      "name": "ChefObservationProfile",
+      "type": "Interface",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservationProfile.artifactPath",
+      "name": "artifactPath",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservationProfile.maxArtifactBytes",
+      "name": "maxArtifactBytes",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservationProfile.checks",
+      "name": "checks",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/observations.ts:ChefObservation",
+      "name": "ChefObservation",
+      "type": "Interface",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.id",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.modality",
+      "name": "modality",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.status",
+      "name": "status",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.coverage",
+      "name": "coverage",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.method",
+      "name": "method",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.summary",
+      "name": "summary",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefObservation.location",
+      "name": "location",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/observations.ts:ChefArtifactObservation",
+      "name": "ChefArtifactObservation",
+      "type": "Interface",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefArtifactObservation.artifactPath",
+      "name": "artifactPath",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefArtifactObservation.artifactSha256",
+      "name": "artifactSha256",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:ChefArtifactObservation.observations",
+      "name": "observations",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/observations.ts:MODALITIES",
+      "name": "MODALITIES",
+      "type": "Const",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/observations.ts:ID",
+      "name": "ID",
+      "type": "Const",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/observations.ts:MAX_REPORT_BYTES",
+      "name": "MAX_REPORT_BYTES",
+      "type": "Const",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:record",
+      "name": "record",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:text",
+      "name": "text",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:normalizeChefObservationProfile",
+      "name": "normalizeChefObservationProfile",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.fn@54:30.coverage@58:72",
+      "name": "coverage",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.fn@54:30.id@58:13",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.fn@54:30.modality@58:23",
+      "name": "modality",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.artifactPath@61:11",
+      "name": "artifactPath",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.checks@61:69",
+      "name": "checks",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:normalizeChefObservationProfile.maxArtifactBytes@61:25",
+      "name": "maxArtifactBytes",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:hashChefArtifact",
+      "name": "hashChefArtifact",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:hashChefArtifact.checkAbort@66:2",
+      "name": "checkAbort",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:parseChefObservationReport",
+      "name": "parseChefObservationReport",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.id@115:13",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.modality@115:30",
+      "name": "modality",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.coverage@116:53",
+      "name": "coverage",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.status@116:6",
+      "name": "status",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.method@117:6",
+      "name": "method",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.fn@108:47.summary@117:35",
+      "name": "summary",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.artifactPath@121:11",
+      "name": "artifactPath",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.artifactSha256@121:47",
+      "name": "artifactSha256",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/observations.ts:parseChefObservationReport.observations@121:63",
+      "name": "observations",
+      "type": "Property",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/observations.ts:chefObservationPassed",
+      "name": "chefObservationPassed",
+      "type": "Function",
+      "filePath": "karta/src/chef/observations.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/supervisor.ts:ChefControlPlane",
+      "name": "ChefControlPlane",
+      "type": "Interface",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/supervisor.ts:ChefControlPlane.loadVerificationFeedback#1",
+      "name": "loadVerificationFeedback",
+      "type": "Method",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+      "name": "runChefWorkerCycle",
+      "type": "Function",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.error@532:57",
+      "name": "error",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.state@532:19",
+      "name": "state",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.taskId@532:40",
+      "name": "taskId",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.error@534:70",
+      "name": "error",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.state@534:32",
+      "name": "state",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/supervisor.ts:runChefWorkerCycle.taskId@534:53",
+      "name": "taskId",
+      "type": "Property",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/verification-feedback.ts:CHEF_VERIFICATION_FEEDBACK_PROFILE",
+      "name": "CHEF_VERIFICATION_FEEDBACK_PROFILE",
+      "type": "Const",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/verification-feedback.ts:HASH",
+      "name": "HASH",
+      "type": "Const",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/verification-feedback.ts:SHA",
+      "name": "SHA",
+      "type": "Const",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/chef/verification-feedback.ts:KINDS",
+      "name": "KINDS",
+      "type": "Const",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile",
+      "name": "ChefFailedVerificationProfile",
+      "type": "Interface",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile.profile",
+      "name": "profile",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile.kind",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile.exitCode",
+      "name": "exitCode",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile.observation",
+      "name": "observation",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefFailedVerificationProfile.observationError",
+      "name": "observationError",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback",
+      "name": "ChefVerificationFeedback",
+      "type": "Interface",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.schemaVersion",
+      "name": "schemaVersion",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.taskId",
+      "name": "taskId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.missionId",
+      "name": "missionId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.briefHash",
+      "name": "briefHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.attempt",
+      "name": "attempt",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.fencingToken",
+      "name": "fencingToken",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.scopeHash",
+      "name": "scopeHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.outputSha",
+      "name": "outputSha",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:ChefVerificationFeedback.failedProfiles",
+      "name": "failedProfiles",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:hash",
+      "name": "hash",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:record",
+      "name": "record",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:text",
+      "name": "text",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:chefVerificationScopeHash",
+      "name": "chefVerificationScopeHash",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:copyObservation",
+      "name": "copyObservation",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:copyObservation.fn@56:31.coverage@58:47",
+      "name": "coverage",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:copyObservation.fn@56:31.id@58:15",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:copyObservation.fn@56:31.modality@58:25",
+      "name": "modality",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:failedProfile",
+      "name": "failedProfile",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:failedProfile.kind@70:20",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:failedProfile.profile@70:11",
+      "name": "profile",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback",
+      "name": "createChefVerificationFeedback",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.missionId@86:82",
+      "name": "missionId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.schemaVersion@86:47",
+      "name": "schemaVersion",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.taskId@86:65",
+      "name": "taskId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.attempt@87:31",
+      "name": "attempt",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.briefHash@87:4",
+      "name": "briefHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.fencingToken@87:54",
+      "name": "fencingToken",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.failedProfiles@88:59",
+      "name": "failedProfiles",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.outputSha@88:48",
+      "name": "outputSha",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:createChefVerificationFeedback.scopeHash@88:4",
+      "name": "scopeHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:chefVerificationFeedbackEvidence",
+      "name": "chefVerificationFeedbackEvidence",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:chefVerificationFeedbackEvidence.kind@94:11",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:chefVerificationFeedbackEvidence.sha256@94:26",
+      "name": "sha256",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:chefVerificationFeedbackEvidence.payload@95:4",
+      "name": "payload",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback",
+      "name": "validateChefVerificationFeedback",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.briefHash@110:73",
+      "name": "briefHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.missionId@110:46",
+      "name": "missionId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.schemaVersion@110:11",
+      "name": "schemaVersion",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.taskId@110:29",
+      "name": "taskId",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.attempt@111:4",
+      "name": "attempt",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.fencingToken@111:32",
+      "name": "fencingToken",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.scopeHash@111:70",
+      "name": "scopeHash",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.failedProfiles@112:28",
+      "name": "failedProfiles",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verification-feedback.ts:validateChefVerificationFeedback.outputSha@112:4",
+      "name": "outputSha",
+      "type": "Property",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:verificationFeedbackFromRow",
+      "name": "verificationFeedbackFromRow",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:appendChefVerificationFeedback",
+      "name": "appendChefVerificationFeedback",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:appendChefVerificationFeedback.data@127:2",
+      "name": "data",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:chefVerificationMadeNoProgress",
+      "name": "chefVerificationMadeNoProgress",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/verification-feedback.ts:chefVerificationMadeNoProgress.fingerprint@138:2",
+      "name": "fingerprint",
+      "type": "Function",
+      "filePath": "karta/src/chef/verification-feedback.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:karta/src/chef/verifier.ts:ChefVerificationProfile",
+      "name": "ChefVerificationProfile",
+      "type": "Interface",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:ChefVerificationProfile.observation",
+      "name": "observation",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:karta/src/chef/verifier.ts:CommandChefVerifier",
+      "name": "CommandChefVerifier",
+      "type": "Class",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.constructor#2",
+      "name": "constructor",
+      "type": "Method",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.verify#3",
+      "name": "verify",
+      "type": "Method",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile#3",
+      "name": "runProfile",
+      "type": "Method",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile.kind@137:17",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile.sha256@137:37",
+      "name": "sha256",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile.requirementKeys@138:10",
+      "name": "requirementKeys",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile.payload@139:10",
+      "name": "payload",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile.payload@172:6",
+      "name": "payload",
+      "type": "Property",
+      "filePath": "karta/src/chef/verifier.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/chef/workshop-config.ts:parseWorkshopProjects",
+      "name": "parseWorkshopProjects",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-config.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/claude/assistant-policy.ts:ASSISTANT_POLICY_VERSION",
+      "name": "ASSISTANT_POLICY_VERSION",
+      "type": "Const",
+      "filePath": "karta/src/claude/assistant-policy.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/claude/assistant-policy.ts:OBSERVED_VERIFICATION_POLICY",
+      "name": "OBSERVED_VERIFICATION_POLICY",
+      "type": "Const",
+      "filePath": "karta/src/claude/assistant-policy.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/claude/assistant-policy.ts:ASSISTANT_CORE_POLICY",
+      "name": "ASSISTANT_CORE_POLICY",
+      "type": "Const",
+      "filePath": "karta/src/claude/assistant-policy.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:buildMemoryPrompt",
+      "name": "buildMemoryPrompt",
+      "type": "Function",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_5_main",
+      "name": "Main → Text",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_10_createchefverificati",
+      "name": "CreateChefVerificationFeedback → Record",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "normalizeChefObservationProfile",
+          "step": 4
+        },
+        {
+          "symbol": "record",
+          "step": 5
+        },
+        {
+          "symbol": "createChefVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "failedProfile",
+          "step": 2
+        },
+        {
+          "symbol": "copyObservation",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_11_createchefverificati",
+      "name": "CreateChefVerificationFeedback → Text",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "normalizeChefObservationProfile",
+          "step": 4
+        },
+        {
+          "symbol": "text",
+          "step": 5
+        },
+        {
+          "symbol": "createChefVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "failedProfile",
+          "step": 2
+        },
+        {
+          "symbol": "copyObservation",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_12_main",
+      "name": "Main → Integer",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_13_main",
+      "name": "Main → Object",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_15_loadverificationfeed",
+      "name": "LoadVerificationFeedback → Hash",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "loadVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "verificationFeedbackFromRow",
+          "step": 2
+        },
+        {
+          "symbol": "validateChefVerificationFeedback",
+          "step": 3
+        },
+        {
+          "symbol": "chefVerificationScopeHash",
+          "step": 4
+        },
+        {
+          "symbol": "hash",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_17_runchefworkercycle",
+      "name": "RunChefWorkerCycle → AssertRpc",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runChefWorkerCycle",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_18_createchefverificati",
+      "name": "CreateChefVerificationFeedback → Record",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "createChefVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "failedProfile",
+          "step": 2
+        },
+        {
+          "symbol": "copyObservation",
+          "step": 3
+        },
+        {
+          "symbol": "record",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_23_verify",
+      "name": "Verify → CheckAbort",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runProfile",
+          "step": 2
+        },
+        {
+          "symbol": "verify",
+          "step": 1
+        },
+        {
+          "symbol": "checkAbort",
+          "step": 4
+        },
+        {
+          "symbol": "hashChefArtifact",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_25_complete",
+      "name": "Complete → MemoryRecord",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "buildMemoryPrompt",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_26_complete",
+      "name": "Complete → OwnData",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "buildMemoryPrompt",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_31_createchefverificati",
+      "name": "CreateChefVerificationFeedback → Text",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "createChefVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "failedProfile",
+          "step": 2
+        },
+        {
+          "symbol": "text",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_38_run",
+      "name": "Run → Cleanup",
+      "process_type": "cross_community",
+      "step_count": 9,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_39_run",
+      "name": "Run → GroupState",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_40_run",
+      "name": "Run → ChefProcessStopUnconfirmedError",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_41_run",
+      "name": "Run → SignalGroup",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_43_runworkshopruntime",
+      "name": "RunWorkshopRuntime → Text",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_48_constructor",
+      "name": "Constructor → Record",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "constructor",
+          "step": 1
+        },
+        {
+          "symbol": "normalizeChefObservationProfile",
+          "step": 2
+        },
+        {
+          "symbol": "record",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_49_constructor",
+      "name": "Constructor → Text",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "constructor",
+          "step": 1
+        },
+        {
+          "symbol": "normalizeChefObservationProfile",
+          "step": 2
+        },
+        {
+          "symbol": "text",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_50_runworkshopruntime",
+      "name": "RunWorkshopRuntime → Integer",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_51_runworkshopruntime",
+      "name": "RunWorkshopRuntime → Object",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "parseWorkshopProjects",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_52_run",
+      "name": "Run → ResolveTrustedGit",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_53_chefverificationmade",
+      "name": "ChefVerificationMadeNoProgress → Hash",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "fingerprint",
+          "step": 2
+        },
+        {
+          "symbol": "chefVerificationMadeNoProgress",
+          "step": 1
+        },
+        {
+          "symbol": "hash",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_56_loadverificationfeed",
+      "name": "LoadVerificationFeedback → Record",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "loadVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "verificationFeedbackFromRow",
+          "step": 2
+        },
+        {
+          "symbol": "validateChefVerificationFeedback",
+          "step": 3
+        },
+        {
+          "symbol": "record",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_71_createchefverificati",
+      "name": "CreateChefVerificationFeedback → Hash",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "createChefVerificationFeedback",
+          "step": 1
+        },
+        {
+          "symbol": "chefVerificationScopeHash",
+          "step": 2
+        },
+        {
+          "symbol": "hash",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_93_verify",
+      "name": "Verify → Cleanup",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "runProfile",
+          "step": 2
+        },
+        {
+          "symbol": "verify",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_94_verify",
+      "name": "Verify → GroupState",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "runProfile",
+          "step": 2
+        },
+        {
+          "symbol": "verify",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_95_verify",
+      "name": "Verify → ChefProcessStopUnconfirmedError",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "runProfile",
+          "step": 2
+        },
+        {
+          "symbol": "verify",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_96_verify",
+      "name": "Verify → SignalGroup",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "runProfile",
+          "step": 2
+        },
+        {
+          "symbol": "verify",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_102_runchefworkercycle",
+      "name": "RunChefWorkerCycle → ChefProcessStopUnconfirmedError",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runChefWorkerCycle",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { CodexCliChefDriver } from "../src/chef/codex-cli-driver.js";
 import type { ChefDriverRequest } from "../src/chef/driver.js";
+import { ASSISTANT_CORE_POLICY, OBSERVED_VERIFICATION_POLICY, WELLBEING_CONVERSATION_POLICY } from "../src/claude/assistant-policy.js";
 
 const directories: string[] = [];
 afterEach(async () => {
@@ -98,6 +99,11 @@ describe("direct Codex CLI CHEF adapter", () => {
     expect(trace.args.at(-1)).toBe("-");
     expect(trace.args.some(value => value.startsWith("--dangerously-") || value === "--ignore-rules")).toBe(false);
     expect(trace.prompt).toContain(f.request.instructions);
+    expect(trace.prompt.split(OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
+    expect(trace.prompt).not.toContain(ASSISTANT_CORE_POLICY);
+    expect(trace.prompt).not.toContain(WELLBEING_CONVERSATION_POLICY);
+    const taskData = JSON.parse(trace.prompt.trim().split("\n").at(-1)!);
+    expect(taskData).toMatchObject({ instructions: f.request.instructions, accessMode: "write", allowedPaths: ["src"] });
     expect(trace.prompt).toContain('"allowedPaths":["src"]');
     expect(trace.schema).toMatchObject({ required: ["status", "summary"], additionalProperties: false });
     expect(trace.secretPresent).toBe(false);
@@ -111,6 +117,7 @@ describe("direct Codex CLI CHEF adapter", () => {
     await f.driver.run({ ...f.request, accessMode: "read", allowedPaths: [] });
     const trace = await f.trace();
     expect(trace.args[trace.args.indexOf("--sandbox") + 1]).toBe("read-only");
+    expect(trace.prompt.split(OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
     expect(trace.prompt).toContain('"accessMode":"read"');
   });
 

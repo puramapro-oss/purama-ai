@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import { runChefProcess } from "./process.js";
 import { assertAllowedCwd } from "./driver.js";
+import { chefObservationPassed, hashChefArtifact, normalizeChefObservationProfile, parseChefObservationReport,
+  type ChefArtifactObservation, type ChefObservationProfile } from "./observations.js";
 
 export type ChefEvidenceKind = "test" | "build" | "typecheck" | "lint" | "security" | "review" | "receipt" | "runtime" | "other";
 
@@ -15,6 +17,8 @@ export interface ChefVerificationProfile {
   maxOutputBytes?: number;
   envAllowList?: string[];
   env?: Record<string, string>;
+  /** Opt-in independent observation of the final artifact; stdout must follow the versioned report contract. */
+  observation?: ChefObservationProfile;
 }
 
 export interface ChefVerificationEvidence {
@@ -77,6 +81,7 @@ export class CommandChefVerifier implements ChefVerifier {
       this.profiles.set(profile.name, {
         ...profile,
         requirementKeys: normalizeChefRequirementKeys(profile.requirementKeys),
+        ...(profile.observation === undefined ? {} : { observation: normalizeChefObservationProfile(profile.observation) }),
       });
     }
   }
@@ -88,22 +93,53 @@ export class CommandChefVerifier implements ChefVerifier {
     if (new Set(profileNames).size !== profileNames.length) return { ok: false, evidence: [], error: "Profil de vérification dupliqué" };
 
     const evidence: ChefVerificationEvidence[] = [];
+    let error: string | undefined;
     for (const name of profileNames) {
       const profile = this.profiles.get(name);
-      if (!profile) return { ok: false, evidence, error: `Profil inconnu: ${name}` };
+      if (!profile) { error = `Profil inconnu: ${name}`; break; }
       const result = await this.runProfile(cwd, profile, signal);
       if (signal?.aborted) throw new Error("Vérification CHEF annulée");
       evidence.push(result);
       if (!result.payload.ok) {
-        return { ok: false, evidence, error: `Vérification échouée: ${name}` };
+        error = `Vérification échouée: ${name}`;
+        break;
       }
     }
-    return { ok: true, evidence };
+    // A later build/check can rewrite an ignored export without changing Git.
+    // Invalidate every affected observation before persisting any positive proof.
+    for (const result of evidence) {
+      const profile = this.profiles.get(result.payload.profile)!;
+      if (!profile.observation || !result.payload.observation) continue;
+      const observation = result.payload.observation as ChefArtifactObservation;
+      try {
+        if (await hashChefArtifact(cwd, profile.observation, signal) !== observation.artifactSha256) {
+          throw new Error("artifact_changed");
+        }
+      } catch {
+        if (signal?.aborted) throw new Error("Vérification CHEF annulée");
+        result.payload.ok = false;
+        result.payload.observationError = "artifact_changed_after_observation";
+        error = `Artefact modifié après observation: ${profile.name}`;
+      }
+    }
+    if (signal?.aborted) throw new Error("Vérification CHEF annulée");
+    return error ? { ok: false, evidence, error } : { ok: true, evidence };
   }
 
   private async runProfile(cwd: string, profile: ChefVerificationProfile, signal?: AbortSignal): Promise<ChefVerificationEvidence> {
     const maxOutput = profile.maxOutputBytes ?? 2 * 1024 * 1024;
     const timeoutMs = profile.timeoutMs ?? 20 * 60 * 1000;
+
+    let artifactBefore: string | undefined;
+    if (profile.observation) {
+      try { artifactBefore = await hashChefArtifact(cwd, profile.observation, signal); }
+      catch {
+        if (signal?.aborted) throw new Error("Vérification CHEF annulée");
+        return { kind: profile.kind, sha256: createHash("sha256").update("artifact_unavailable").digest("hex"),
+          requirementKeys: [...(profile.requirementKeys ?? [])],
+          payload: { profile: profile.name, ok: false, exitCode: null, outputBytes: 0, observationError: "artifact_unavailable" } };
+      }
+    }
 
     const result = await runChefProcess({
       command: profile.command,
@@ -117,16 +153,31 @@ export class CommandChefVerifier implements ChefVerifier {
       abortMessage: `Vérification annulée: ${profile.name}`,
       timeoutMessage: `Vérification expirée: ${profile.name}`,
     });
+    let observation: ChefArtifactObservation | undefined;
+    let observationError: string | undefined;
+    if (profile.observation) {
+      try {
+        const artifactAfter = await hashChefArtifact(cwd, profile.observation, signal);
+        if (artifactAfter !== artifactBefore) throw new Error("artifact_changed");
+        observation = parseChefObservationReport(result.stdout, profile.observation, artifactAfter);
+      } catch {
+        if (signal?.aborted) throw new Error("Vérification CHEF annulée");
+        observationError = "observation_invalid_or_artifact_changed";
+      }
+    }
+    const observedOk = !profile.observation || (!!observation && chefObservationPassed(observation, profile.observation));
     return {
       kind: profile.kind,
       sha256: createHash("sha256").update(result.output).digest("hex"),
       requirementKeys: [...(profile.requirementKeys ?? [])],
       payload: {
         profile: profile.name,
-        ok: result.exitCode === 0,
+        ok: result.exitCode === 0 && observedOk && !observationError,
         exitCode: result.exitCode,
         signal: result.signal,
         outputBytes: result.output.length,
+        ...(observation ? { observation } : {}),
+        ...(observationError ? { observationError } : {}),
       },
     };
   }

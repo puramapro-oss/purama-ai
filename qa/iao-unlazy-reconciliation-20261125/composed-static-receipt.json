@@ -1,0 +1,29 @@
+{
+  "commands": [
+    {
+      "label": "typecheck",
+      "startedUtc": "2026-11-25T18:42:33.796312+00:00",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/workspace/scratch/c84d8dbc952f/iao-audit/karta",
+      "exitCode": 0,
+      "durationSeconds": 12.669
+    },
+    {
+      "label": "build",
+      "startedUtc": "2026-11-25T18:42:46.465818+00:00",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "/workspace/scratch/c84d8dbc952f/iao-audit/karta",
+      "exitCode": 0,
+      "durationSeconds": 6.399
+    }
+  ],
+  "sourceTree": "88c61e052c99cd85aa54159805f761417281bcb4"
+}

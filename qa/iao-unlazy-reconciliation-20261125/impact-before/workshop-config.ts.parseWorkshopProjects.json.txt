@@ -1,0 +1,316 @@
+{
+  "target": {
+    "id": "Function:karta/src/chef/workshop-config.ts:parseWorkshopProjects",
+    "name": "parseWorkshopProjects",
+    "type": "Function",
+    "filePath": "karta/src/chef/workshop-config.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 6,
+  "risk": "HIGH",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 3,
+    "processes_affected": 4,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 3,
+    "2": 3
+  },
+  "affected_processes": [
+    {
+      "name": "main",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-main.ts",
+      "affected_process_count": 6,
+      "total_hits": 16,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "runWorkshopRuntime",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-runtime.ts",
+      "affected_process_count": 7,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "checkWorkshopRuntime",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-runtime.ts",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "handleWorkshopRequest",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-service.ts",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 5,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/workshop-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/workshop-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_5_main",
+            "label": "Main → Text",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_17_main",
+            "label": "Main → Preflight",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_15_main",
+            "label": "Main → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_10_main",
+            "label": "Main → Integer",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_16_main",
+            "label": "Main → CreateWorker",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_11_main",
+            "label": "Main → Object",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:catalogue",
+        "name": "catalogue",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_5_main",
+            "label": "Main → Text",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_42_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Integer",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_72_runworkshopruntime",
+            "label": "RunWorkshopRuntime → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_15_main",
+            "label": "Main → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 3
+          },
+          {
+            "id": "proc_10_main",
+            "label": "Main → Integer",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_37_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Text",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_11_main",
+            "label": "Main → Object",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_43_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Object",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/workshop-service.ts:handleWorkshopRequest",
+        "name": "handleWorkshopRequest",
+        "filePath": "karta/src/chef/workshop-service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_18_handleworkshopreques",
+            "label": "HandleWorkshopRequest → WorkshopError",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/src/chef/workshop-main.ts",
+        "name": "workshop-main.ts",
+        "filePath": "karta/src/chef/workshop-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:checkWorkshopRuntime",
+        "name": "checkWorkshopRuntime",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_16_main",
+            "label": "Main → CreateWorker",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_11_main",
+            "label": "Main → Object",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_15_main",
+            "label": "Main → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_26_checkworkshopruntime",
+            "label": "CheckWorkshopRuntime → Within",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_10_main",
+            "label": "Main → Integer",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_5_main",
+            "label": "Main → Text",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_17_main",
+            "label": "Main → Preflight",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_62_checkworkshopruntime",
+            "label": "CheckWorkshopRuntime → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:runWorkshopRuntime",
+        "name": "runWorkshopRuntime",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_42_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Integer",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_72_runworkshopruntime",
+            "label": "RunWorkshopRuntime → WorkshopRuntimeError",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_48_runworkshopruntime",
+            "label": "RunWorkshopRuntime → CreateWorker",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_49_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Preflight",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_37_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Text",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_51_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Within",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_43_runworkshopruntime",
+            "label": "RunWorkshopRuntime → Object",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795631894699,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

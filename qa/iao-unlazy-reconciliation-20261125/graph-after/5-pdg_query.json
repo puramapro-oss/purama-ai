@@ -1,0 +1,294 @@
+{
+  "mode": "controls",
+  "anchor": {
+    "file": "karta/src/chef/observations.ts",
+    "symbol": "hashChefArtifact",
+    "startLine": 66,
+    "endLine": 98
+  },
+  "results": [
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 77
+      },
+      "dependent": {
+        "line": 80,
+        "text": ";"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 80
+      },
+      "dependent": {
+        "line": 81,
+        "text": "checkAbort();\nconst { bytesRead } = await handle.read(buffer, 0, buffer.length, count);\ncheckAbort();"
+      },
+      "label": "T"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 80
+      },
+      "dependent": {
+        "line": 88,
+        "text": ""
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 88
+      },
+      "dependent": {
+        "line": 89,
+        "text": "const after = await handle.stat({ bigint: true });\nconst current = await lstat(path, { bigint: true });"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 81
+      },
+      "dependent": {
+        "line": 84,
+        "text": "(!bytesRead)"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 84
+      },
+      "dependent": {
+        "line": 84,
+        "text": "break;"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 84
+      },
+      "dependent": {
+        "line": 85,
+        "text": "count += bytesRead;"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 84
+      },
+      "dependent": {
+        "line": 88,
+        "text": ""
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 85
+      },
+      "dependent": {
+        "line": 86,
+        "text": "(count > maximum)"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 86
+      },
+      "dependent": {
+        "line": 86,
+        "text": "throw new Error(\"Budget de lecture d'artefact dépassé\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 86
+      },
+      "dependent": {
+        "line": 87,
+        "text": "hash.update(buffer.subarray(0, bytesRead));"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 87
+      },
+      "dependent": {
+        "line": 80,
+        "text": ";"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 80
+      },
+      "dependent": {
+        "line": 80,
+        "text": ";"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 89
+      },
+      "dependent": {
+        "line": 91,
+        "text": "(!current.isFile() || await realpath(path) !== path || count !== Number(before.size)\n      || after.size !== before.size || after.mtimeNs !== before.mtimeNs || after.ctimeNs !== before.ctimeNs\n      || current.dev !== before.dev || current.ino !== before.ino || current.mtimeNs !== before.mtimeNs\n      || current.ctimeNs !== before.ctimeNs)"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 91
+      },
+      "dependent": {
+        "line": 94,
+        "text": "throw new Error(\"Artefact modifié pendant sa lecture\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 91
+      },
+      "dependent": {
+        "line": 95,
+        "text": "checkAbort();"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 95
+      },
+      "dependent": {
+        "line": 96,
+        "text": "return hash.digest(\"hex\");"
+      },
+      "label": "F",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 71
+      },
+      "dependent": {
+        "line": 71,
+        "text": "throw new Error(\"Artefact d'observation non régulier\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 71
+      },
+      "dependent": {
+        "line": 72,
+        "text": "const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 71
+      },
+      "dependent": {
+        "line": 74,
+        "text": "const before = await handle.stat({ bigint: true });\nconst maximum = profile.maxArtifactBytes ?? 64 * 1024 * 1024;"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 71
+      },
+      "dependent": {
+        "line": 97,
+        "text": "await handle.close();"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 74
+      },
+      "dependent": {
+        "line": 76,
+        "text": "(!before.isFile() || before.size > BigInt(maximum))"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 76
+      },
+      "dependent": {
+        "line": 76,
+        "text": "throw new Error(\"Budget de lecture d'artefact dépassé\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 66,
+      "controller": {
+        "line": 76
+      },
+      "dependent": {
+        "line": 77,
+        "text": "const hash = createHash(\"sha256\");\nconst buffer = Buffer.alloc(64 * 1024);\nlet count = 0;"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 67,
+      "controller": {
+        "line": 67
+      },
+      "dependent": {
+        "line": 67,
+        "text": "throw new Error(\"Vérification CHEF annulée\");"
+      },
+      "label": "T",
+      "guard": true
+    }
+  ],
+  "total": 25
+}

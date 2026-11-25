@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "scope": "Résultats natifs de vérification IAO ; résumé expurgé, sans données de compte ni chemins privés.",
+  "source_of_truth": "Deux campagnes distinctes sur le même commit. Le premier résultat provient du reçu déjà vérifié par le parent ; le second reçu et son log ont été lus directement pendant la réconciliation.",
+  "commit": "42b86982fe880539b41827fe0969fd6285ac759c",
+  "environment": {
+    "platform": "macOS",
+    "node_version": "26.0.0",
+    "vitest_version": "5.0.3"
+  },
+  "campaigns": [
+    {
+      "id": "native-four-suite-campaign",
+      "status": "PARTIEL",
+      "command_scope": {
+        "test_files": [
+          "chefEvidenceFreshness.test.ts",
+          "chefEvidenceGate.test.ts",
+          "chefBudgetAdmission.test.ts",
+          "localComputeFabricProvider.test.ts"
+        ],
+        "max_workers": 1,
+        "test_timeout_ms": 5000,
+        "hook_timeout_ms": 30000
+      },
+      "timestamps": {
+        "time_zone": "Europe/Paris",
+        "started_utc": "2026-11-24T23:23:31.667657+00:00",
+        "finished_utc": "2026-11-24T23:24:41.699734+00:00",
+        "started_paris": "2026-11-25T00:23:31.667657+01:00",
+        "finished_paris": "2026-11-25T00:24:41.699734+01:00",
+        "started_epoch_ms": 1795562611667,
+        "finished_epoch_ms": 1795562681699,
+        "epoch_precision": "milliseconds"
+      },
+      "process_duration_seconds": 70.021,
+      "exit_code": 1,
+      "counts": {
+        "total": 79,
+        "passed": 78,
+        "failed": 1,
+        "pending": 0,
+        "todo": 0
+      },
+      "suites": [
+        {
+          "file": "chefBudgetAdmission.test.ts",
+          "passed": 18,
+          "total": 18,
+          "status": "PASS"
+        },
+        {
+          "file": "chefEvidenceGate.test.ts",
+          "passed": 17,
+          "total": 17,
+          "status": "PASS"
+        },
+        {
+          "file": "localComputeFabricProvider.test.ts",
+          "passed": 13,
+          "total": 13,
+          "status": "PASS"
+        },
+        {
+          "file": "chefEvidenceFreshness.test.ts",
+          "passed": 30,
+          "failed": 1,
+          "total": 31,
+          "status": "PARTIEL"
+        }
+      ],
+      "failure": {
+        "test": "preserves pre-migration rows without certifying them as current evidence",
+        "message": "Test timed out in 5000ms.",
+        "stage": "test body",
+        "assertion_mismatch_observed": false,
+        "sql_error_observed": false,
+        "cause": "NON DÉMONTRÉE",
+        "explanation": "Le cas initialise une seconde base PGlite et applique les migrations antérieures avant de vérifier la migration des preuves historiques. Le délai a été dépassé ; la cause du ralentissement n'a pas été établie."
+      },
+      "file_sha256": {
+        "chefEvidenceFreshness.test.ts": "24303f929012f579d64a41f5a5210661793ca0ced441156d631cb1151f81c4f0",
+        "chefEvidenceGate.test.ts": "56d4333c826bdb5c5547e09afac6f1c01482da4227205e8ad8e2ebc77c6f5969",
+        "chefBudgetAdmission.test.ts": "61e2706c6c4c7cf57214dede3b34aee8bd06ecb2da3e6df021c945e950288568",
+        "localComputeFabricProvider.test.ts": "631352dc00a1add6b889ff982c48e5ba22e83d17a0d7be3b3e57103100de2e5e",
+        "package-lock.json": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564"
+      },
+      "evidence_sha256": {
+        "report": "227be3227277bb156e1e972fdadefef779e9910d196533c686b64965a91e9a57",
+        "log": "5266ed473ca93412290ceb90d36987b16a26563615efb2ed83337d246609f8b0"
+      },
+      "state_preserved": {
+        "head_before_after_identical": true,
+        "tracked_worktree_clean_after": true,
+        "test_source_and_lock_hashes_before_after_identical": true
+      }
+    },
+    {
+      "id": "native-selected-timeout-recheck",
+      "status": "BLOQUÉ",
+      "command_scope": {
+        "test_files": [
+          "chefEvidenceFreshness.test.ts"
+        ],
+        "test_name_filter": "preserves pre-migration rows without certifying them as current evidence",
+        "max_workers": 1,
+        "test_timeout_ms": 5000,
+        "hook_timeout_ms": 30000
+      },
+      "timestamps": {
+        "time_zone": "Europe/Paris",
+        "started_utc": "2026-11-24T23:24:58.487182+00:00",
+        "finished_utc": "2026-11-24T23:26:37.982398+00:00",
+        "started_paris": "2026-11-25T00:24:58.487182+01:00",
+        "finished_paris": "2026-11-25T00:26:37.982398+01:00",
+        "started_epoch_ms": 1795562698487,
+        "finished_epoch_ms": 1795562797982,
+        "epoch_precision": "milliseconds"
+      },
+      "process_duration_seconds": 99.49,
+      "vitest_duration_seconds": 95.26,
+      "exit_code": 1,
+      "counts": {
+        "total_discovered": 31,
+        "executed": 0,
+        "passed": 0,
+        "failed_test_assertions": 0,
+        "pending": 31,
+        "todo": 0,
+        "failed_suites": 1,
+        "success": false
+      },
+      "failure": {
+        "message": "Hook timed out in 30000ms.",
+        "stage": "beforeAll",
+        "source_line": 12,
+        "selected_test_executed": false,
+        "assertion_mismatch_observed": false,
+        "sql_error_observed": false,
+        "sigkill_observed": false,
+        "cause": "NON DÉMONTRÉE",
+        "explanation": "L'initialisation PGlite et l'application des migrations 008–017 ont dépassé le délai du hook. Aucun cas n'a été exécuté. Ce chemin utilise PGlite en mémoire et ne nécessite pas de serveur PostgreSQL externe. Une charge système observée plus tard ne démontre pas la cause de ce dépassement."
+      },
+      "file_sha256": {
+        "test_before": "24303f929012f579d64a41f5a5210661793ca0ced441156d631cb1151f81c4f0",
+        "test_after": "24303f929012f579d64a41f5a5210661793ca0ced441156d631cb1151f81c4f0"
+      },
+      "evidence_sha256": {
+        "original_campaign_report": "227be3227277bb156e1e972fdadefef779e9910d196533c686b64965a91e9a57",
+        "report": "0596915613489279a441b47a41fd3c55f758d7e5cbcd4f729f56f3d3c7f66a3c",
+        "log": "6466e28401eb435e8311096ac67e7d6bd61f1ea637b3ec014670f3b8ac30290b"
+      },
+      "state_preserved": {
+        "test_source_hash_before_after_identical": true,
+        "test_or_hook_timeout_raised": false,
+        "source_edits_performed": false
+      }
+    }
+  ],
+  "interpretation": {
+    "first_campaign_remains": "78/79 ; un test en échec de délai.",
+    "recheck_adds_passes": 0,
+    "counts_must_not_be_merged_as_all_green": true,
+    "product_sql_defect_demonstrated": false,
+    "full_native_qualification": "PARTIEL",
+    "pending_gate": "Exécuter le cas historique avec son initialisation complète dans un environnement disponible ; identifier le ralentissement avant toute modification du test."
+  },
+  "reconciliation_actions": {
+    "additional_test_runs": 0,
+    "npm_reinstall_performed": false,
+    "global_configuration_edits": false,
+    "existing_processes_stopped": false,
+    "public_publication_performed": false
+  }
+}

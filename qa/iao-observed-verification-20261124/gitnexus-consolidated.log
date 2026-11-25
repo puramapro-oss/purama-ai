@@ -1,0 +1,15 @@
+
+  GitNexus Analyzer (1.6.12)
+
+Index lock: OS socket lock unavailable here — using the file lock.
+
+Incremental: changed=0, added=0, deleted=0 (skipping wipe + 27 unchanged file rows preserved)
+
+FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+
+  Repository indexed successfully (2.7s)
+
+  1,166 nodes | 3,120 edges | 29 clusters | 83 flows
+  /workspace/scratch/a042d0274492/purama-ai
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

@@ -1,0 +1,69 @@
+{
+  "status": "ambiguous",
+  "message": "Found 2 symbols matching 'verify'. Blast radius differs per candidate (max 8 impacted at risk LOW). Disambiguate with target_uid (or file_path/kind) for a single authoritative result.",
+  "target": {
+    "name": "verify"
+  },
+  "direction": "upstream",
+  "totalCandidates": 2,
+  "impactedCount": null,
+  "risk": "UNKNOWN",
+  "maxImpactedCount": 8,
+  "maxRisk": "LOW",
+  "candidates": [
+    {
+      "uid": "Method:karta/src/chef/verifier.ts:ChefVerifier.verify#3",
+      "name": "verify",
+      "kind": "Method",
+      "filePath": "karta/src/chef/verifier.ts",
+      "line": 42,
+      "score": 0.94,
+      "impactedCount": 8,
+      "risk": "LOW",
+      "riskSharedAxes": "LOW",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 2
+    },
+    {
+      "uid": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.verify#3",
+      "name": "verify",
+      "kind": "Method",
+      "filePath": "karta/src/chef/verifier.ts",
+      "line": 84,
+      "score": 0.94,
+      "impactedCount": 7,
+      "risk": "LOW",
+      "riskSharedAxes": "LOW",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 1
+    }
+  ]
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795631887476,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

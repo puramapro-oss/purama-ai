@@ -1,0 +1,8 @@
+[
+  {
+    "file": "gitnexus-index-composed.txt",
+    "rawSha256": "3b5168f8cd5f7ac19fc26ef3644ccf348eeb2b59cc3db27f354838dadfb92c44",
+    "storedSha256": "b220da57f1b6565ca4fc7de8fc7f19679064a3fda4854c21aeb65a4bf3d8d02d",
+    "normalization": "Trim redundant blank lines at EOF only for repository whitespace gate; diagnostic content unchanged."
+  }
+]

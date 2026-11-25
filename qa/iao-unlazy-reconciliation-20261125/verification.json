@@ -1,0 +1,382 @@
+{
+  "atUtc": "2026-11-25T18:36:07.453628+00:00",
+  "base": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "integrationBranch": "audit/reliability-oauth-20261110",
+  "plannedLocalBranch": "audit/unlazy-reconciliation-20261125",
+  "source": "82d7e11299bab207688144807b35bd86451041ef",
+  "sourceMergeBase": "795d7db298416f98cf95103c096714f82c01c8cb",
+  "sourceExclusiveCommits": [
+    "383d54cc3b47415b2cc5fe3e2351a9212dc95ad3",
+    "42b86982fe880539b41827fe0969fd6285ac759c",
+    "82d7e11299bab207688144807b35bd86451041ef"
+  ],
+  "method": "Preserve existing history with a local merge; only mechanical or current-contract corrections if required. No remote push, main change or deployment.",
+  "scope": [
+    "AGENTS.md",
+    "docs/iao-observed-verification.md",
+    "karta/src/chef/codex-cli-driver.ts",
+    "karta/src/chef/control-plane.ts",
+    "karta/src/chef/observations.ts",
+    "karta/src/chef/supervisor.ts",
+    "karta/src/chef/verification-feedback.ts",
+    "karta/src/chef/verifier.ts",
+    "karta/src/chef/workshop-config.ts",
+    "karta/src/claude/assistant-policy.ts",
+    "karta/src/integrations/localComputeFabricProvider.ts",
+    "karta/test/assistantPolicy.test.ts",
+    "karta/test/chefCodexCliDriver.test.ts",
+    "karta/test/chefCorrectionLoop.test.ts",
+    "karta/test/chefObservedVerification.test.ts",
+    "karta/test/chefVerificationFeedback.test.ts",
+    "karta/test/chefWorkshopConfig.test.ts",
+    "karta/test/localComputeFabricProvider.test.ts",
+    "qa/iao-observed-verification-20261124/**"
+  ],
+  "ownership": "Exact lot terms absent in both Mac LOCKS files. Source worktree held read-only. New isolated Linux clone is the sole writable target delegated by root.",
+  "priorEvidence": "Source QA receipt and native Mac 79/79 refer to82d, separately qualified current d25 frontend855/offline69/browser5.",
+  "githubSearch": "observed-verification query yielded no PR; absence is search result, not exhaustive proof.",
+  "composition": {
+    "status": "LOCAL_COMPOSITION_COMPLETE_TESTS_PARTIAL_HOST_BLOCK",
+    "mergeBase": "795d7db298416f98cf95103c096714f82c01c8cb",
+    "qualifiedSourceTree": "88c61e052c99cd85aa54159805f761417281bcb4",
+    "conflicts": 0,
+    "productSourceEditedByReconciliation": false,
+    "productAndTestFiles": 18,
+    "inheritedQaFiles": 64,
+    "preservesSource82dAll18Paths": true,
+    "preservesD25OtherPaths": true
+  },
+  "verification": {
+    "composedLinux": {
+      "commandReceipt": "composed-tests-receipt.json",
+      "report": "composed-tests.json",
+      "exitCode": 1,
+      "testFiles": 23,
+      "assertions": {
+        "passed": 577,
+        "failed": 10
+      },
+      "blockingFailure": "10 Unix socket fixture setups fail with listen EPERM before the Fabric assertions. No skipped tests or modified timeout.",
+      "suiteResults": [
+        {
+          "name": "assistantPolicy.test.ts",
+          "assertions": {
+            "passed": 63
+          }
+        },
+        {
+          "name": "chefBudgetAccounting.test.ts",
+          "assertions": {
+            "passed": 12
+          }
+        },
+        {
+          "name": "chefBudgetAdmission.test.ts",
+          "assertions": {
+            "passed": 18
+          }
+        },
+        {
+          "name": "chefCapabilityRuntime.test.ts",
+          "assertions": {
+            "passed": 31
+          }
+        },
+        {
+          "name": "chefCodexCliDriver.test.ts",
+          "assertions": {
+            "passed": 35
+          }
+        },
+        {
+          "name": "chefCorrectionLoop.test.ts",
+          "assertions": {
+            "passed": 4
+          }
+        },
+        {
+          "name": "chefEvidenceAdapter.test.ts",
+          "assertions": {
+            "passed": 20
+          }
+        },
+        {
+          "name": "chefEvidenceFreshness.test.ts",
+          "assertions": {
+            "passed": 31
+          }
+        },
+        {
+          "name": "chefEvidenceGate.test.ts",
+          "assertions": {
+            "passed": 17
+          }
+        },
+        {
+          "name": "chefGitCancellation.test.ts",
+          "assertions": {
+            "passed": 5
+          }
+        },
+        {
+          "name": "chefObservedVerification.test.ts",
+          "assertions": {
+            "passed": 24
+          }
+        },
+        {
+          "name": "chefSupervisor.test.ts",
+          "assertions": {
+            "passed": 21
+          }
+        },
+        {
+          "name": "chefSupervisorCancellation.test.ts",
+          "assertions": {
+            "passed": 1
+          }
+        },
+        {
+          "name": "chefVerificationFeedback.test.ts",
+          "assertions": {
+            "passed": 67
+          }
+        },
+        {
+          "name": "chefVerificationGitIntegration.test.ts",
+          "assertions": {
+            "passed": 14
+          }
+        },
+        {
+          "name": "chefVerifier.test.ts",
+          "assertions": {
+            "passed": 4
+          }
+        },
+        {
+          "name": "chefWorkerShutdown.test.ts",
+          "assertions": {
+            "passed": 4
+          }
+        },
+        {
+          "name": "chefWorkshopConfig.test.ts",
+          "assertions": {
+            "passed": 43
+          }
+        },
+        {
+          "name": "chefWorkshopRuntime.test.ts",
+          "assertions": {
+            "passed": 31
+          }
+        },
+        {
+          "name": "chefWorkshopService.test.ts",
+          "assertions": {
+            "passed": 61
+          }
+        },
+        {
+          "name": "claudeDecisionCompleteness.test.ts",
+          "assertions": {
+            "passed": 43
+          }
+        },
+        {
+          "name": "claudeTransportCost.test.ts",
+          "assertions": {
+            "passed": 25
+          }
+        },
+        {
+          "name": "localComputeFabricProvider.test.ts",
+          "assertions": {
+            "passed": 3,
+            "failed": 10
+          }
+        }
+      ],
+      "reportSha256": "9b6a3fb0d7c64a9c43a6e25c6fda439dc630d4ce47f668a6df2f5cd370a1d414"
+    },
+    "nativeMacBeforeComposition": {
+      "source": "82d7e11299bab207688144807b35bd86451041ef",
+      "report": "native-requalification-79.json",
+      "exitCode": 0,
+      "testFiles": 4,
+      "passed": 79,
+      "failed": 0,
+      "pending": 0,
+      "scope": "Includes 13 Fabric cases. This is a distinct host/source campaign, not a new run of the composed checkout."
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "log": "composed-typecheck.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "composed-build.log"
+    },
+    "lint": {
+      "exitCode": 0,
+      "files": 16,
+      "errors": 0,
+      "warnings": 0
+    },
+    "priorD25Qualification": {
+      "frontend": {
+        "passed": 855,
+        "files": 46
+      },
+      "offline": {
+        "passed": 69
+      },
+      "chromiumLocalUi": {
+        "passed": 5,
+        "providerApi": "fixtures"
+      },
+      "scope": "These receipts qualify d25; affected frontend/offline source paths are unchanged by the composition. Counts are not added to the KARTA campaign."
+    }
+  },
+  "graph": {
+    "base": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+    "scopeFile": "gitnexus-scope.txt",
+    "indexOnly": true,
+    "fts": false,
+    "pdg": true,
+    "before": {
+      "nodes": 3694,
+      "edges": 10355,
+      "flows": 105
+    },
+    "after": {
+      "nodes": 4075,
+      "edges": 11422,
+      "flows": 116
+    },
+    "stagedProductAndHistoricalQa": {
+      "changedFiles": 82,
+      "changedSymbols": 132,
+      "affectedFlows": 30,
+      "risk": "CRITICAL"
+    },
+    "limits": [
+      "Scope covers CHEF, common policy/transport and local provider. It does not cover the whole repository.",
+      "Static graph and no taint findings do not prove runtime safety; closure/property/implicit flow gaps retained.",
+      "Risk HIGH/CRITICAL announced to root and user before composition."
+    ],
+    "finalQaAdded": {
+      "allChangedFilesExpected": 117,
+      "changedSymbols": 132,
+      "affectedFlows": 30,
+      "risk": "CRITICAL",
+      "receipt": "detect-final-staged.txt"
+    },
+    "defaultBranchComparison": {
+      "base": "ae84415be0b9516422805910be999a2c1e6350c0",
+      "scope": "Accumulated integration compared to default main, not the size of this lot",
+      "receipt": "detect-main.txt",
+      "symbolListCapped": true
+    }
+  },
+  "sourceManifest": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "3b7e3a49e31c26fa5ab87fedb8f91b8cd52fc1141253beb83921e0fc5492b949",
+      "equalsSource82d": true
+    },
+    {
+      "path": "docs/iao-observed-verification.md",
+      "sha256": "e6c71706c7fc1ea798e420bc50690cefa3334d8d30d930e59f56605982a70616",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/codex-cli-driver.ts",
+      "sha256": "b8d9d16adceded9889f3c041f408d2ad9685e16bbf1b8cc9dd7f91c769b82b44",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/control-plane.ts",
+      "sha256": "528a404dadb12917ddf8f4e56e44530d233c3a87919dc5aa80116a4fde30c353",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/observations.ts",
+      "sha256": "4350f03ae2091a9c8d8fadd7646c1b256b3da6957b078772ab46b68ef867c3c8",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/supervisor.ts",
+      "sha256": "54ac9ce09416a44f40f6b2fad2919d25e1802b9600d14ee9f664b9a0de27b97d",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/verification-feedback.ts",
+      "sha256": "0bb8672325f18c3ea617c131496117682e94adf13b009376b326a127a18cac72",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/verifier.ts",
+      "sha256": "142dbcfc33ec6b65a47a40b5303954818f3164ea8cec11c1f7b6f2b03971b672",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/chef/workshop-config.ts",
+      "sha256": "5c9c2a149c6d496afc663f8a066af7af3f2fe1b911d7e25b0f94821f05dd3346",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/claude/assistant-policy.ts",
+      "sha256": "96007c92a42467b963e9e2766fc0540dab5f1c8e2030c3e74eef504b2feaeecd",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/src/integrations/localComputeFabricProvider.ts",
+      "sha256": "7605222616540cfaacd477f3087b95e21a79fbcd6223c6a26fec3191e7d5f35e",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/assistantPolicy.test.ts",
+      "sha256": "71afbe1eef5e218a19e280d5de121310746a021dd44c00babc2c035be8d33bc6",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/chefCodexCliDriver.test.ts",
+      "sha256": "a2c08226f129908337f50272b59314a98359e725e916be61902598f8f3c698e2",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/chefCorrectionLoop.test.ts",
+      "sha256": "04c035c560d06d5881e537dd582a111c4d39fdf02ac1166dd2f0353dfd56985a",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/chefObservedVerification.test.ts",
+      "sha256": "6b592783755ebee938dc1b46cc40d751a8a0f43e4576745131b3360ba87e2697",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/chefVerificationFeedback.test.ts",
+      "sha256": "334742c03293407e606a95c66c32fb0d040399791545162a6820108b6380fce4",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/chefWorkshopConfig.test.ts",
+      "sha256": "1cae5412e9c37c41f2d47fbb0e2767d6c9080476a7de449b032ed366b3323c60",
+      "equalsSource82d": true
+    },
+    {
+      "path": "karta/test/localComputeFabricProvider.test.ts",
+      "sha256": "631352dc00a1add6b889ff982c48e5ba22e83d17a0d7be3b3e57103100de2e5e",
+      "equalsSource82d": true
+    }
+  ],
+  "limits": [
+    "No push, remote merge, deployment, database migration, model/provider request or observer installed.",
+    "No real audio/visual perception or production flow established by fixtures.",
+    "Observation is optional, requires host-trusted executable and explicit profiles.",
+    "Missing prior-generation checkpoint requires explicit reconciliation, not unsafe automatic retry.",
+    "Current composition has not run hosted CI; 8 successful workflows on d25 are baseline evidence only."
+  ]
+}

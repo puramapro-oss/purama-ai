@@ -1,0 +1,97 @@
+{
+  "target": {
+    "id": "Function:karta/src/claude/assistant-policy.ts:buildAssistantSystemPrompt",
+    "name": "buildAssistantSystemPrompt",
+    "type": "Function",
+    "filePath": "karta/src/claude/assistant-policy.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1
+  },
+  "affected_processes": [
+    {
+      "name": "decide",
+      "type": "Function",
+      "filePath": "karta/src/claude/real.ts",
+      "affected_process_count": 2,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Claude",
+      "hits": 2,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/claude/real.ts:createRealClaudeClient.decide@75:4.fn@90:48.send@97:8",
+        "name": "send",
+        "filePath": "karta/src/claude/real.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_19_decide",
+            "label": "Decide → EncodeData",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_29_decide",
+            "label": "Decide → ApplyPublicPromptCache",
+            "processType": "intra_community",
+            "step": 2
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Method:karta/src/claude/real.ts:createRealClaudeClient.decide@75:4#1",
+        "name": "decide",
+        "filePath": "karta/src/claude/real.ts",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": [
+          {
+            "id": "proc_29_decide",
+            "label": "Decide → ApplyPublicPromptCache",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_19_decide",
+            "label": "Decide → EncodeData",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795631897232,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

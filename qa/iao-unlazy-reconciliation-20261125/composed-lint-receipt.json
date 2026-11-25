@@ -1,0 +1,28 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "--format=json",
+    "karta/src/chef/codex-cli-driver.ts",
+    "karta/src/chef/control-plane.ts",
+    "karta/src/chef/observations.ts",
+    "karta/src/chef/supervisor.ts",
+    "karta/src/chef/verification-feedback.ts",
+    "karta/src/chef/verifier.ts",
+    "karta/src/chef/workshop-config.ts",
+    "karta/src/claude/assistant-policy.ts",
+    "karta/src/integrations/localComputeFabricProvider.ts",
+    "karta/test/assistantPolicy.test.ts",
+    "karta/test/chefCodexCliDriver.test.ts",
+    "karta/test/chefCorrectionLoop.test.ts",
+    "karta/test/chefObservedVerification.test.ts",
+    "karta/test/chefVerificationFeedback.test.ts",
+    "karta/test/chefWorkshopConfig.test.ts",
+    "karta/test/localComputeFabricProvider.test.ts"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 2.716,
+  "errorCount": 0,
+  "warningCount": 0,
+  "fileCount": 16
+}
