@@ -475,5 +475,137 @@
     "Canonicalize valid uppercase commit SHA",
     "Compare failed profiles and observation IDs independent of ordering"
   ],
-  "retainedSafetyBoundary": "Only immediately preceding generation may supply feedback; no historical checkpoint jump over interrupted attempts."
+  "retainedSafetyBoundary": "Only immediately preceding generation may supply feedback; no historical checkpoint jump over interrupted attempts.",
+  "postRebaseVerification": {
+    "testedCommit": "383d54cc3b47415b2cc5fe3e2351a9212dc95ad3",
+    "parentCommit": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+    "sourceManifestUnchanged": true,
+    "assertions": {
+      "passed": 468
+    },
+    "testFileCount": 16,
+    "testExitCode": 0,
+    "extraSuites": [
+      "claudeDecisionCompleteness.test.ts",
+      "claudeTransportCost.test.ts"
+    ],
+    "buildCommands": [
+      {
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 11.58
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 4.46
+      }
+    ],
+    "suites": [
+      {
+        "file": "assistantPolicy.test.ts",
+        "assertions": {
+          "passed": 63
+        }
+      },
+      {
+        "file": "chefBudgetAccounting.test.ts",
+        "assertions": {
+          "passed": 12
+        }
+      },
+      {
+        "file": "chefCapabilityRuntime.test.ts",
+        "assertions": {
+          "passed": 31
+        }
+      },
+      {
+        "file": "chefCodexCliDriver.test.ts",
+        "assertions": {
+          "passed": 35
+        }
+      },
+      {
+        "file": "chefCorrectionLoop.test.ts",
+        "assertions": {
+          "passed": 4
+        }
+      },
+      {
+        "file": "chefEvidenceAdapter.test.ts",
+        "assertions": {
+          "passed": 20
+        }
+      },
+      {
+        "file": "chefObservedVerification.test.ts",
+        "assertions": {
+          "passed": 24
+        }
+      },
+      {
+        "file": "chefSupervisor.test.ts",
+        "assertions": {
+          "passed": 21
+        }
+      },
+      {
+        "file": "chefSupervisorCancellation.test.ts",
+        "assertions": {
+          "passed": 1
+        }
+      },
+      {
+        "file": "chefVerificationFeedback.test.ts",
+        "assertions": {
+          "passed": 67
+        }
+      },
+      {
+        "file": "chefVerificationGitIntegration.test.ts",
+        "assertions": {
+          "passed": 14
+        }
+      },
+      {
+        "file": "chefVerifier.test.ts",
+        "assertions": {
+          "passed": 4
+        }
+      },
+      {
+        "file": "chefWorkshopConfig.test.ts",
+        "assertions": {
+          "passed": 43
+        }
+      },
+      {
+        "file": "chefWorkshopService.test.ts",
+        "assertions": {
+          "passed": 61
+        }
+      },
+      {
+        "file": "claudeDecisionCompleteness.test.ts",
+        "assertions": {
+          "passed": 43
+        }
+      },
+      {
+        "file": "claudeTransportCost.test.ts",
+        "assertions": {
+          "passed": 25
+        }
+      }
+    ]
+  }
 }

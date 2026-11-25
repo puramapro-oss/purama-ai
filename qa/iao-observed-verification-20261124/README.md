@@ -32,6 +32,16 @@ Les changements de qualification des partenaires arrivés entre ces deux états
 ont été conservés. Les nouvelles assertions de politique commune s'ajoutent à
 la fixture actualisée, sans la remplacer.
 
+La consolidation a ensuite reçu la PR #109. Le lot a été rebasé sans conflit sur
+`9ab7e16b9d1230185d52d216a406c90a3a4a486d`. Les 18 empreintes du manifeste sont
+restées identiques. Sur le commit produit
+`383d54cc3b47415b2cc5fe3e2351a9212dc95ad3`, la nouvelle campagne a exécuté
+**468 tests sur 16 fichiers, tous réussis**, ainsi que le typecheck et la
+compilation KARTA, tous deux avec code de sortie 0. Les deux suites supplémentaires
+contrôlent la complétude des décisions et les coûts du transport commun après
+les changements de gestion des outils. Le reçu `postRebaseVerification` conserve
+cette réception distincte ; les nombres des campagnes ne s'additionnent pas.
+
 ## Preuves locales
 
 `local-verification.json` conserve les commandes, les codes de sortie, les
