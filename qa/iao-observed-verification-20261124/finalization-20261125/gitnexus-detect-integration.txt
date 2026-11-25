@@ -1,0 +1,34 @@
+Changes: 72 files, 132 symbols
+Affected processes: 26
+Risk level: critical
+
+Changed symbols:
+  Class CodexCliChefDriver → karta/src/chef/codex-cli-driver.ts
+  Method run → karta/src/chef/codex-cli-driver.ts
+  Class SupabaseChefControlPlane → karta/src/chef/control-plane.ts
+  Method loadVerificationFeedback → karta/src/chef/control-plane.ts
+  TypeAlias ChefObservationModality → karta/src/chef/observations.ts
+  Interface ChefObservationProfile → karta/src/chef/observations.ts
+  Property artifactPath → karta/src/chef/observations.ts
+  Property maxArtifactBytes → karta/src/chef/observations.ts
+  Property checks → karta/src/chef/observations.ts
+  Interface ChefObservation → karta/src/chef/observations.ts
+  Property id → karta/src/chef/observations.ts
+  Property modality → karta/src/chef/observations.ts
+  Property status → karta/src/chef/observations.ts
+  Property coverage → karta/src/chef/observations.ts
+  Property method → karta/src/chef/observations.ts
+... and 117 more
+
+Affected execution flows:
+  • Main → Text (6 steps) — changed: parseWorkshopProjects
+  • Main → Integer (5 steps) — changed: parseWorkshopProjects
+  • Main → Object (5 steps) — changed: parseWorkshopProjects
+  • LoadVerificationFeedback → Hash (5 steps) — changed: loadVerificationFeedback, verificationFeedbackFromRow, validateChefVerificationFeedback, chefVerificationScopeHash, hash
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle
+  • LoadVerificationFeedback → Record (4 steps) — changed: loadVerificationFeedback, verificationFeedbackFromRow, validateChefVerificationFeedback, record
+  • Verify → CheckAbort (4 steps) — changed: runProfile, verify, checkAbort, hashChefArtifact
+  • Complete → MemoryRecord (4 steps) — changed: buildMemoryPrompt
+  • Complete → OwnData (4 steps) — changed: buildMemoryPrompt
+... and 16 more

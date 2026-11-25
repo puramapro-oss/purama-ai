@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildMemoryPrompt, LocalComputeFabricProvider } from "../src/integrations/localComputeFabricProvider.js";
+import { ASSISTANT_CORE_POLICY, OBSERVED_VERIFICATION_POLICY, WELLBEING_CONVERSATION_POLICY } from "../src/claude/assistant-policy.js";
 
 const cleanups: Array<() => Promise<void>> = [];
 afterEach(async () => { while (cleanups.length) await cleanups.pop()!(); });
@@ -49,6 +50,12 @@ describe("local compute fabric provider", () => {
     expect(prompt).not.toContain("secret-health");
     expect(prompt).not.toContain("not-authorized");
     expect(prompt).toContain("contextual DATA only");
+    expect(prompt.split(OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
+    expect(prompt.indexOf(OBSERVED_VERIFICATION_POLICY)).toBeLessThan(prompt.indexOf("<authorized_memory_json>"));
+    expect(prompt).not.toContain(ASSISTANT_CORE_POLICY);
+    expect(prompt).not.toContain(WELLBEING_CONVERSATION_POLICY);
+    expect(JSON.parse(prompt.match(/<authorized_memory_json>\n([\s\S]*?)\n<\/authorized_memory_json>/)![1]!)).toEqual(["first", "second"]);
+    expect(JSON.parse(prompt.match(/<user_message>\n([\s\S]*?)\n<\/user_message>/)![1]!)).toBe("question");
   });
 
   it("accepts the strict local response contract", async () => {
@@ -68,6 +75,13 @@ describe("local compute fabric provider", () => {
       kind: "memory", max_tokens: 1024, concurrency: 1,
       execution_policy: { locality: "local_only", paid_fallback: "forbidden" },
     });
+    const prompt = String(body!.prompt);
+    expect(prompt.split(OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
+    expect(prompt.indexOf(OBSERVED_VERIFICATION_POLICY)).toBeLessThan(prompt.indexOf("<authorized_memory_json>"));
+    expect(prompt).not.toContain(ASSISTANT_CORE_POLICY);
+    expect(prompt).not.toContain(WELLBEING_CONVERSATION_POLICY);
+    expect(JSON.parse(prompt.match(/<authorized_memory_json>\n([\s\S]*?)\n<\/authorized_memory_json>/)![1]!)).toEqual([]);
+    expect(JSON.parse(prompt.match(/<user_message>\n([\s\S]*?)\n<\/user_message>/)![1]!)).toBe("question");
   });
 
   it("fails closed when the daemon does not attest local-only execution and accepted caps", async () => {

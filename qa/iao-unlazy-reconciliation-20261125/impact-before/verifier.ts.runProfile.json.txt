@@ -1,0 +1,186 @@
+{
+  "target": {
+    "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile#3",
+    "name": "runProfile",
+    "type": "Method",
+    "filePath": "karta/src/chef/verifier.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 5,
+  "risk": "HIGH",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 3,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1,
+    "3": 3
+  },
+  "affected_processes": [
+    {
+      "name": "projectLoop",
+      "type": "Function",
+      "filePath": "karta/src/chef/workshop-runtime.ts",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "verify",
+      "type": "Function",
+      "filePath": "karta/src/chef/verifier.ts",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "runChefWorkerCycle",
+      "type": "Function",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 5,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.verify#3",
+        "name": "verify",
+        "filePath": "karta/src/chef/verifier.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_85_verify",
+            "label": "Verify → SignalGroup",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_84_verify",
+            "label": "Verify → ChefProcessStopUnconfirmedError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_82_verify",
+            "label": "Verify → Cleanup",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_83_verify",
+            "label": "Verify → GroupState",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+        "name": "runChefWorkerCycle",
+        "filePath": "karta/src/chef/supervisor.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_14_runchefworkercycle",
+            "label": "RunChefWorkerCycle → AssertRpc",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_91_runchefworkercycle",
+            "label": "RunChefWorkerCycle → ChefProcessStopUnconfirmedError",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:defaultDependencies",
+        "name": "defaultDependencies",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "USES",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:runWorkshopRuntime.projectLoop@307:2",
+        "name": "projectLoop",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.7,
+        "processes": [
+          {
+            "id": "proc_1_projectloop",
+            "label": "ProjectLoop → GroupState",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_0_projectloop",
+            "label": "ProjectLoop → Cleanup",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_2_projectloop",
+            "label": "ProjectLoop → ChefProcessStopUnconfirmedError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_12_projectloop",
+            "label": "ProjectLoop → ResolveTrustedGit",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_3_projectloop",
+            "label": "ProjectLoop → SignalGroup",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795631888489,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

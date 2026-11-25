@@ -1,3 +1,16 @@
+# Vérification du livrable final
+
+Pour toute tâche substantielle, appliquer la boucle de vérification d'IAO :
+
+1. Examiner le travail existant et fixer des critères d'acceptation observables, proportionnés à la demande.
+2. Produire le résultat, puis contrôler sa version finale avec les outils capables d'en vérifier le comportement et les modalités pertinentes.
+3. Corriger les défauts constatés et refaire les contrôles affectés. Une modification invalide les preuves qu'elle peut affecter ; rattacher chaque preuve au commit ou à l'empreinte de l'artefact contrôlé.
+4. Vérifier le résultat des actions avec leurs reçus réels. Un export, un code de sortie zéro ou l'affirmation d'un modèle ne suffisent pas à prouver la qualité. Une transcription ou un spectrogramme ne prouvent pas une écoute ; un échantillon ne prouve pas une couverture complète.
+5. Respecter le périmètre autorisé, les budgets et les arrêts. Avant toute reprise d'une action externe à issue inconnue, rapprocher son identifiant de l'état du service ; ne pas relancer aveuglément.
+6. Rapporter les preuves et les limites avec les statuts PASS, PARTIEL, BLOQUÉ ou NON TESTÉ. Ne pas prétendre à un test, un déploiement, une observation ou un accès non effectué.
+
+Réutiliser la politique canonique `karta/src/claude/assistant-policy.ts` et le vérificateur CHEF existant ; ne pas créer un orchestrateur concurrent ni une copie de la politique par fournisseur. Une connexion API n'ajoute pas les capacités absentes du modèle, de son adaptateur ou de ses outils. Le contrat d'observation et ses limites sont décrits dans `docs/iao-observed-verification.md`.
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

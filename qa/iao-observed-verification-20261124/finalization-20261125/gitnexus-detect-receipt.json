@@ -1,0 +1,78 @@
+[
+  {
+    "label": "staged",
+    "argv": [
+      "node",
+      ".gitnexus/run.cjs",
+      "detect-changes",
+      "--scope",
+      "staged",
+      "--repo",
+      "/workspace/scratch/a042d0274492/purama-ai"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 2.921,
+    "stdoutTail": "Changes: 301 files, 3 symbols\nAffected processes: 0\nRisk level: low\n\nChanged symbols:\n  Function runtime \u2192 karta/test/assistantPolicy.test.ts\n  Function load \u2192 karta/test/assistantPolicy.test.ts\n  Function fetch \u2192 karta/test/assistantPolicy.test.ts\n",
+    "outputFile": "gitnexus-detect-staged.txt",
+    "summaryLines": [
+      "Changes: 301 files, 3 symbols",
+      "Affected processes: 0",
+      "Risk level: low",
+      "",
+      "Changed symbols:"
+    ],
+    "risk": "low"
+  },
+  {
+    "label": "main",
+    "argv": [
+      "node",
+      ".gitnexus/run.cjs",
+      "detect-changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/main",
+      "--repo",
+      "/workspace/scratch/a042d0274492/purama-ai"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 3.966,
+    "stdoutTail": "Head, git, append, requestStop, checkStopped, fail, cleanup, runChefProcess\n  \u2022 ProjectLoop \u2192 GroupState (9 steps) \u2014 changed: projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, checkStopped, groupState, runChefProcess\n  \u2022 ProjectLoop \u2192 ChefProcessStopUnconfirmedError (8 steps) \u2014 changed: ChefProcessStopUnconfirmedError, projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, runChefProcess\n  \u2022 ProjectLoop \u2192 SignalGroup (8 steps) \u2014 changed: projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, signalGroup, runChefProcess\n  \u2022 CreateChefMission \u2192 Record (6 steps) \u2014 changed: createChefMission, normalizeChefCapabilitySelection, record, hashChefBrief, normalizeChefBrief, validateChefBrief\n  \u2022 Main \u2192 Text (6 steps) \u2014 changed: checkWorkshopRuntime, catalogue, main, parseWorkshopProjects, strings, text\n  \u2022 CreateChefMission \u2192 NonEmpty (5 steps) \u2014 changed: createChefMission, hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty\n  \u2022 CreateChefMission \u2192 UniqueStrings (5 steps) \u2014 changed: createChefMission, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings\n  \u2022 CreateChefMission \u2192 ExactKeys (5 steps) \u2014 changed: createChefMission, normalizeChefCapabilitySelection, exactKeys, normalizeChefBrief, validateChefBrief\n  \u2022 CreateChefMission \u2192 Identifiers (5 steps) \u2014 changed: createChefMission, normalizeChefCapabilitySelection, identifiers, normalizeChefBrief, validateChefBrief\n... and 85 more\n",
+    "outputFile": "gitnexus-detect-main.txt",
+    "summaryLines": [
+      "LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.",
+      "",
+      "Changes: 3328 files, 1134 symbols",
+      "Affected processes: 95",
+      "Risk level: critical"
+    ],
+    "risk": "critical"
+  },
+  {
+    "label": "integration",
+    "argv": [
+      "node",
+      ".gitnexus/run.cjs",
+      "detect-changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/audit/reliability-oauth-20261110",
+      "--repo",
+      "/workspace/scratch/a042d0274492/purama-ai"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 2.559,
+    "stdoutTail": "s.ts\n  Interface ChefObservationProfile \u2192 karta/src/chef/observations.ts\n  Property artifactPath \u2192 karta/src/chef/observations.ts\n  Property maxArtifactBytes \u2192 karta/src/chef/observations.ts\n  Property checks \u2192 karta/src/chef/observations.ts\n  Interface ChefObservation \u2192 karta/src/chef/observations.ts\n  Property id \u2192 karta/src/chef/observations.ts\n  Property modality \u2192 karta/src/chef/observations.ts\n  Property status \u2192 karta/src/chef/observations.ts\n  Property coverage \u2192 karta/src/chef/observations.ts\n  Property method \u2192 karta/src/chef/observations.ts\n... and 117 more\n\nAffected execution flows:\n  \u2022 Main \u2192 Text (6 steps) \u2014 changed: parseWorkshopProjects\n  \u2022 Main \u2192 Integer (5 steps) \u2014 changed: parseWorkshopProjects\n  \u2022 Main \u2192 Object (5 steps) \u2014 changed: parseWorkshopProjects\n  \u2022 LoadVerificationFeedback \u2192 Hash (5 steps) \u2014 changed: loadVerificationFeedback, verificationFeedbackFromRow, validateChefVerificationFeedback, chefVerificationScopeHash, hash\n  \u2022 RunChefWorkerCycle \u2192 AssertRpc (4 steps) \u2014 changed: runChefWorkerCycle\n  \u2022 RunChefWorkerCycle \u2192 Rpc (4 steps) \u2014 changed: runChefWorkerCycle\n  \u2022 LoadVerificationFeedback \u2192 Record (4 steps) \u2014 changed: loadVerificationFeedback, verificationFeedbackFromRow, validateChefVerificationFeedback, record\n  \u2022 Verify \u2192 CheckAbort (4 steps) \u2014 changed: runProfile, verify, checkAbort, hashChefArtifact\n  \u2022 Complete \u2192 MemoryRecord (4 steps) \u2014 changed: buildMemoryPrompt\n  \u2022 Complete \u2192 OwnData (4 steps) \u2014 changed: buildMemoryPrompt\n... and 16 more\n",
+    "outputFile": "gitnexus-detect-integration.txt",
+    "summaryLines": [
+      "Changes: 72 files, 132 symbols",
+      "Affected processes: 26",
+      "Risk level: critical",
+      "",
+      "Changed symbols:"
+    ],
+    "risk": "critical"
+  }
+]

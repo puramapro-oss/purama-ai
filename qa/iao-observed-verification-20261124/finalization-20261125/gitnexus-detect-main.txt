@@ -1,0 +1,36 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 3328 files, 1134 symbols
+Affected processes: 95
+Risk level: critical
+
+Changed symbols:
+  TypeAlias ChefProvider → karta/src/chef/brief.ts
+  TypeAlias ChefAccessMode → karta/src/chef/brief.ts
+  Interface ChefBriefRequirement → karta/src/chef/brief.ts
+  Property key → karta/src/chef/brief.ts
+  Property description → karta/src/chef/brief.ts
+  Property critical → karta/src/chef/brief.ts
+  Interface ChefBriefTask → karta/src/chef/brief.ts
+  Property key → karta/src/chef/brief.ts
+  Property title → karta/src/chef/brief.ts
+  Property instructions → karta/src/chef/brief.ts
+  Property dependsOn → karta/src/chef/brief.ts
+  Property requirementKeys → karta/src/chef/brief.ts
+  Property provider → karta/src/chef/brief.ts
+  Property accessMode → karta/src/chef/brief.ts
+  Property scopeKey → karta/src/chef/brief.ts
+... and 1119 more
+
+Affected execution flows:
+  • ProjectLoop → Cleanup (10 steps) — changed: projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, checkStopped, fail, cleanup, runChefProcess
+  • ProjectLoop → GroupState (9 steps) — changed: projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, checkStopped, groupState, runChefProcess
+  • ProjectLoop → ChefProcessStopUnconfirmedError (8 steps) — changed: ChefProcessStopUnconfirmedError, projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, runChefProcess
+  • ProjectLoop → SignalGroup (8 steps) — changed: projectLoop, assertCleanWorkshop, captureWorkshopHead, git, append, requestStop, signalGroup, runChefProcess
+  • CreateChefMission → Record (6 steps) — changed: createChefMission, normalizeChefCapabilitySelection, record, hashChefBrief, normalizeChefBrief, validateChefBrief
+  • Main → Text (6 steps) — changed: checkWorkshopRuntime, catalogue, main, parseWorkshopProjects, strings, text
+  • CreateChefMission → NonEmpty (5 steps) — changed: createChefMission, hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty
+  • CreateChefMission → UniqueStrings (5 steps) — changed: createChefMission, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings
+  • CreateChefMission → ExactKeys (5 steps) — changed: createChefMission, normalizeChefCapabilitySelection, exactKeys, normalizeChefBrief, validateChefBrief
+  • CreateChefMission → Identifiers (5 steps) — changed: createChefMission, normalizeChefCapabilitySelection, identifiers, normalizeChefBrief, validateChefBrief
+... and 85 more

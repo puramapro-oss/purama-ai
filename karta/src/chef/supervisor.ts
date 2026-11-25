@@ -4,6 +4,9 @@ import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js
 import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
 import type { ChefCapabilitySelection } from "./capability-selection.js";
+import { appendChefVerificationFeedback, chefVerificationFeedbackEvidence, chefVerificationMadeNoProgress,
+  createChefVerificationFeedback, validateChefVerificationFeedback, type ChefVerificationFeedback } from "./verification-feedback.js";
+export type { ChefVerificationFeedback } from "./verification-feedback.js";
 
 export interface ChefRuntimeTask {
   id: string;
@@ -52,6 +55,8 @@ export interface ChefControlPlane {
   transition(input: { taskId: string; workerId: string; fencingToken: number; target: "running" | "verifying" | "verified_done" | "retryable" | "blocked_human" | "blocked_external" | "failed"; error?: string; outputSha?: string }): Promise<boolean>;
   quarantineProcess?(taskId: string, claim: ChefEvidenceClaim, reason: string): Promise<boolean>;
   addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean>;
+  /** Read only the previous generation's independent negative verification, if available. */
+  loadVerificationFeedback?(task: ChefRuntimeTask): Promise<ChefVerificationFeedback | null>;
   /** False means a capped dimension is still unknown; its reservation remains held. */
   recordUsage(input: ChefClaimUsage): Promise<boolean>;
   tryFinishMission(missionId: string): Promise<boolean>;
@@ -172,12 +177,24 @@ export async function runChefWorkerCycle(
   }
 
   let executionBaseSha = task.baseSha;
+  let previousVerification: ChefVerificationFeedback | undefined;
+  let instructions = task.instructions;
   // Read tasks also need an independent revision: their verifier must not turn
   // a changed tree into a passing review, even when the driver reports no SHA.
   {
     try {
+      if (task.attempt > 1 && !task.capabilitySelection && control.loadVerificationFeedback) {
+        const loaded = await control.loadVerificationFeedback(task);
+        if (loaded) {
+          previousVerification = validateChefVerificationFeedback(loaded, task);
+          instructions = appendChefVerificationFeedback(task.instructions, previousVerification);
+        }
+      }
       const baseline = await captureCleanGitBaseline({ cwd: task.cwd, expectedBranch: task.branch });
-      if (task.baseSha && baseline.headSha.toLowerCase() !== task.baseSha.toLowerCase()) {
+      // A correction may resume only the exact prior output independently checked
+      // under this same task contract. Never absorb a concurrent or foreign commit.
+      const expectedBaseSha = previousVerification?.outputSha ?? task.baseSha;
+      if (expectedBaseSha && baseline.headSha.toLowerCase() !== expectedBaseSha.toLowerCase()) {
         const error = "Base Git assignée devenue obsolète : replanification requise";
         await settleBeforeExecution();
         const blocked = await control.transition({
@@ -313,7 +330,7 @@ export async function runChefWorkerCycle(
         fencingToken: task.fencingToken,
         attempt: task.attempt,
         briefHash: task.briefHash,
-        instructions: task.instructions,
+        instructions,
         cwd: task.cwd,
         branch: task.branch,
         baseSha: executionBaseSha,
@@ -510,6 +527,20 @@ export async function runChefWorkerCycle(
 
     if (!verification.ok) {
       stopRenewal();
+      const feedback = expectedOutputSha ? createChefVerificationFeedback(task, expectedOutputSha, verification) : null;
+      if (feedback) {
+        if (!await control.addEvidence(task.id, chefVerificationFeedbackEvidence(feedback), evidenceClaim)) {
+          return { state: "lost_lease", taskId: task.id, error: "Claim périmé lors du retour de vérification" };
+        }
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue après le retour de vérification" };
+        if (options.signal?.aborted) return await releaseForShutdown();
+        if (previousVerification && chefVerificationMadeNoProgress(previousVerification, feedback)) {
+          const error = "Correction sans progrès : même sortie et mêmes contrôles en échec";
+          const accepted = await control.transition({ taskId: task.id, workerId: options.workerId,
+            fencingToken: task.fencingToken, target: "blocked_human", error });
+          return accepted ? { state: "blocked_human", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+        }
+      }
       const error = verification.error ?? "Vérification échouée";
       return recoverTask(error);
     }

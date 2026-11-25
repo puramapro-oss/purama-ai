@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795556110206,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 47 files, 131 symbols
+Affected processes: 24
+Risk level: critical
+
+Changed symbols:
+  Class CodexCliChefDriver → karta/src/chef/codex-cli-driver.ts
+  Method run → karta/src/chef/codex-cli-driver.ts
+  Class SupabaseChefControlPlane → karta/src/chef/control-plane.ts
+  Method loadVerificationFeedback → karta/src/chef/control-plane.ts
+  TypeAlias ChefObservationModality → karta/src/chef/observations.ts
+  Interface ChefObservationProfile → karta/src/chef/observations.ts
+  Property artifactPath → karta/src/chef/observations.ts
+  Property maxArtifactBytes → karta/src/chef/observations.ts
+  Property checks → karta/src/chef/observations.ts
+  Interface ChefObservation → karta/src/chef/observations.ts
+  Property id → karta/src/chef/observations.ts
+  Property modality → karta/src/chef/observations.ts
+  Property status → karta/src/chef/observations.ts
+  Property coverage → karta/src/chef/observations.ts
+  Property method → karta/src/chef/observations.ts
+... and 116 more
+
+Affected execution flows:
+  • Main → Text (6 steps) — changed: parseWorkshopProjects
+  • Main → Integer (5 steps) — changed: parseWorkshopProjects
+  • Main → Object (5 steps) — changed: parseWorkshopProjects
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle
+  • VerificationFeedbackFromRow → Hash (4 steps) — changed: verificationFeedbackFromRow, validateChefVerificationFeedback, chefVerificationScopeHash, hash
+  • Verify → CheckAbort (4 steps) — changed: runProfile, verify, checkAbort, hashChefArtifact
+  • Complete → MemoryRecord (4 steps) — changed: buildMemoryPrompt
+  • Complete → OwnData (4 steps) — changed: buildMemoryPrompt
+  • VerificationFeedbackFromRow → Record (3 steps) — changed: verificationFeedbackFromRow, validateChefVerificationFeedback, record
+  • Constructor → Record (3 steps) — changed: constructor, normalizeChefObservationProfile, record
+... and 14 more

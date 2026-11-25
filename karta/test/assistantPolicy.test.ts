@@ -244,6 +244,8 @@ function request(body: unknown, signal?: AbortSignal) {
 function chatBody() { return { session_id: session, agent_id: agentId, agent_type: 'email', message: 'Continue avec une aide concrète.' }; }
 function policyIs(system: string, kind: 'conversation' | 'task') {
   expect(system.split(nodePolicy.ASSISTANT_CORE_POLICY).length - 1).toBe(1);
+  expect(system.split(nodePolicy.OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
+  expect(system.indexOf(nodePolicy.OBSERVED_VERIFICATION_POLICY)).toBeLessThan(system.indexOf('<role_json>'));
   expect(system.match(/CADRE COMMUN PURAMA/g)?.length).toBe(1);
   expect(system.split(nodePolicy.WELLBEING_CONVERSATION_POLICY).length - 1).toBe(kind === 'conversation' ? 1 : 0);
   expect(system).toContain('<role_json>');

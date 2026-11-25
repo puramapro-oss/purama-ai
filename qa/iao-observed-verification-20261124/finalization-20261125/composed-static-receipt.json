@@ -1,0 +1,29 @@
+{
+  "nodeOptions": "--max-old-space-size=640",
+  "commands": [
+    {
+      "argv": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "karta",
+      "startedAtUtc": "2026-11-25T00:09:00.224440+00:00",
+      "durationSeconds": 12.046,
+      "exitCode": 0,
+      "logSha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "karta",
+      "startedAtUtc": "2026-11-25T00:09:12.271910+00:00",
+      "durationSeconds": 3.975,
+      "exitCode": 0,
+      "logSha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "parents": [
+    "7a38c30dd7d0161366e0d15e38c506435950bc68",
+    "2557f304c9c59633b63de95bd298216574679966"
+  ],
+  "common_base": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "candidate_product_tree": "db4c848b28bd426977c570eef83afaa683984ea8",
+  "overlap": [
+    "vercel.json"
+  ],
+  "review_paths": 122,
+  "incoming_paths": 71,
+  "all_other_changed_blobs_preserved": true,
+  "left_rules": 58,
+  "right_rules": 58,
+  "union_rules": 59,
+  "publication_branch_disabled": true
+}

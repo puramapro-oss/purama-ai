@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795632534721,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 117 files, 132 symbols
+Affected processes: 30
+Risk level: critical
+
+Changed symbols:
+  Class CodexCliChefDriver → karta/src/chef/codex-cli-driver.ts
+  Method run → karta/src/chef/codex-cli-driver.ts
+  BasicBlock ? → karta/src/chef/codex-cli-driver.ts
+  Class SupabaseChefControlPlane → karta/src/chef/control-plane.ts
+  Method loadVerificationFeedback → karta/src/chef/control-plane.ts
+  TypeAlias ChefObservationModality → karta/src/chef/observations.ts
+  Interface ChefObservationProfile → karta/src/chef/observations.ts
+  Property artifactPath → karta/src/chef/observations.ts
+  Property maxArtifactBytes → karta/src/chef/observations.ts
+  Property checks → karta/src/chef/observations.ts
+  Interface ChefObservation → karta/src/chef/observations.ts
+  Property id → karta/src/chef/observations.ts
+  Property modality → karta/src/chef/observations.ts
+  Property status → karta/src/chef/observations.ts
+  Property coverage → karta/src/chef/observations.ts
+... and 117 more
+
+Affected execution flows:
+  • Main → Text (6 steps) — changed: parseWorkshopProjects
+  • CreateChefVerificationFeedback → Record (5 steps) — changed: normalizeChefObservationProfile, record, createChefVerificationFeedback, failedProfile, copyObservation
+  • CreateChefVerificationFeedback → Text (5 steps) — changed: normalizeChefObservationProfile, text, createChefVerificationFeedback, failedProfile, copyObservation
+  • Main → Integer (5 steps) — changed: parseWorkshopProjects
+  • Main → Object (5 steps) — changed: parseWorkshopProjects
+  • LoadVerificationFeedback → Hash (5 steps) — changed: loadVerificationFeedback, verificationFeedbackFromRow, validateChefVerificationFeedback, chefVerificationScopeHash, hash
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle
+  • CreateChefVerificationFeedback → Record (4 steps) — changed: createChefVerificationFeedback, failedProfile, copyObservation, record
+  • Verify → CheckAbort (4 steps) — changed: runProfile, verify, checkAbort, hashChefArtifact
+  • Complete → MemoryRecord (4 steps) — changed: buildMemoryPrompt
+... and 20 more

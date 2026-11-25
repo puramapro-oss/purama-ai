@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "BLOQUÉ",
+  "scope": "Diagnostic borné du démarrage PGlite, arrêté au contrôle préalable des ressources.",
+  "observed_utc": "2026-11-25T00:09:26.454727+00:00",
+  "observed_paris": "2026-11-25T01:09:26.454727+01:00",
+  "time_zone": "Europe/Paris",
+  "observed_epoch_ms": 1795565366454,
+  "commit": "42b86982fe880539b41827fe0969fd6285ac759c",
+  "load_gate": {
+    "logical_cores": 16,
+    "physical_cores": 16,
+    "load_average_1m": 51.16845703125,
+    "load_average_5m": 34.83251953125,
+    "load_average_15m": 32.69140625,
+    "maximum_load_1m": 32,
+    "threshold_rule": "Lancer seulement si charge moyenne 1 minute <= 2 × nombre de cœurs logiques.",
+    "passed": false
+  },
+  "preserved_state": {
+    "tracked_worktree_clean": true,
+    "diagnostic_claim_exists": false,
+    "source_changes": false,
+    "remote_files_written": false,
+    "existing_processes_stopped": false
+  },
+  "diagnostic": {
+    "launched": false,
+    "reason": "Charge moyenne court terme supérieure au seuil autorisé ; arrêt avant toute initialisation PGlite.",
+    "pglite_initializations": 0,
+    "additional_test_runs": 0
+  },
+  "interpretation": {
+    "current_resource_constraint_demonstrated": true,
+    "previous_timeout_cause_demonstrated": false,
+    "sql_behavior_verified": false
+  }
+}

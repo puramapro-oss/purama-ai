@@ -93,6 +93,62 @@ describe("server-registered workshop configuration", () => {
     changed.verificationProfiles[0].args = ["/trusted/different.mjs"];
     expect(workshopProjectHash(parse(changed))).not.toBe(hash);
   });
+  it("preserves the host observation contract and normalizes its artifact budget", () => {
+    const value = fixture();
+    const observation = { artifactPath: "src/result.txt", checks: [
+      { id: "required-content", modality: "content", coverage: "full" },
+    ] };
+    const project = parse({ ...value, verificationProfiles: [
+      { ...value.verificationProfiles[0], observation }, value.verificationProfiles[1],
+    ] });
+    expect(project.verificationProfiles[0]).toMatchObject({
+      command: "node", args: ["/trusted/acceptance.mjs"], requirementKeys: ["PRODUCT", "QUALITY"],
+      observation: { ...observation, maxArtifactBytes: 64 * 1024 * 1024 },
+    });
+    expect(project.verificationProfiles[1]).not.toHaveProperty("observation");
+    expect(project.implementationProfiles).toEqual(["acceptance"]);
+    expect(project.reviewProfiles).toEqual(["review"]);
+  });
+  it("binds the readiness fingerprint to artifact, observation checks and read budget", () => {
+    const value = fixture();
+    const observation = { artifactPath: "src/result.txt", checks: [
+      { id: "required-content", modality: "content", coverage: "full" },
+    ] };
+    const configuration = { ...value, verificationProfiles: [
+      { ...value.verificationProfiles[0], observation }, value.verificationProfiles[1],
+    ] };
+    const hash = workshopProjectHash(parse(configuration));
+    expect(hash).not.toBe(workshopProjectHash(parse(value)));
+    const explicitDefault = { ...configuration, verificationProfiles: [
+      { ...configuration.verificationProfiles[0], observation: { ...observation, maxArtifactBytes: 64 * 1024 * 1024 } },
+      value.verificationProfiles[1],
+    ] };
+    expect(workshopProjectHash(parse(explicitDefault))).toBe(hash);
+    for (const changedObservation of [
+      { ...observation, artifactPath: "src/other.txt" },
+      { ...observation, maxArtifactBytes: 1024 },
+      { ...observation, checks: [{ id: "required-content", modality: "content", coverage: "sample" }] },
+      { ...observation, checks: [{ id: "required-content", modality: "metadata", coverage: "full" }] },
+    ]) {
+      expect(workshopProjectHash(parse({ ...configuration, verificationProfiles: [
+        { ...configuration.verificationProfiles[0], observation: changedObservation }, value.verificationProfiles[1],
+      ] }))).not.toBe(hash);
+    }
+  });
+  it("rejects invalid observation requirements instead of silently dropping the gate", () => {
+    const value = fixture();
+    const check = { id: "required-content", modality: "content", coverage: "full" };
+    for (const observation of [
+      { artifactPath: "../outside.txt", checks: [check] },
+      { artifactPath: "src/result.txt", checks: [check, check] },
+      { artifactPath: "src/result.txt", maxArtifactBytes: 1024 * 1024 * 1024 + 1, checks: [check] },
+      { artifactPath: "src/result.txt", checks: [{ ...check, coverage: "none" }] },
+    ]) {
+      expect(() => parse({ ...value, verificationProfiles: [
+        { ...value.verificationProfiles[0], observation }, value.verificationProfiles[1],
+      ] })).toThrow(/observation/);
+    }
+  });
   it("restricts export and HTML preview to the server-owned write scope", () => {
     expect(parse({...fixture(),exportPaths:["src/public"],previewEntry:"src/public/index.html"}))
       .toMatchObject({exportPaths:["src/public"],previewEntry:"src/public/index.html"});

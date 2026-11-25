@@ -1,0 +1,61 @@
+{
+  "parents": [
+    "7a38c30dd7d0161366e0d15e38c506435950bc68",
+    "2557f304c9c59633b63de95bd298216574679966"
+  ],
+  "common_base": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "candidate_product_tree": "db4c848b28bd426977c570eef83afaa683984ea8",
+  "overlap": [
+    "vercel.json"
+  ],
+  "review_paths": 122,
+  "incoming_paths": 71,
+  "all_other_changed_blobs_preserved": true,
+  "left_rules": 58,
+  "right_rules": 58,
+  "union_rules": 59,
+  "publication_branch_disabled": true,
+  "tests": {
+    "pass": 389,
+    "fail": 0,
+    "files": 10,
+    "results": "targeted-tests.json",
+    "native_socket_tests": "Not rerun in restricted Linux container; require hosted CI of new composition"
+  },
+  "typecheck": "PASS",
+  "graph": {
+    "staged_changed_files": 71,
+    "changed_symbols": 170,
+    "affected_flows": 49,
+    "risk": "CRITICAL",
+    "scoped": true,
+    "missing_flows_reported": true
+  },
+  "previous_published_ci": {
+    "head": "7a38c30dd7d0161366e0d15e38c506435950bc68",
+    "identity_run": 45682238411,
+    "chef_run": 45682238515,
+    "both": "SUCCESS",
+    "karta_tests": 5474,
+    "karta_files": 226,
+    "applies_to_new_composition": false
+  },
+  "new_composition_ci": "PENDING publication",
+  "no_product_function_edited": true,
+  "configuration_resolution": "strict union of 59 unchanged deployment rules; no conflicting values",
+  "comparison_main": {
+    "ref": "refs/remotes/review/main",
+    "status": "PASS tool execution, cumulative historical scope",
+    "initial_attempt": "main ref absent locally; fetched actual remote main before successful comparison"
+  },
+  "proofs_sha256": {
+    "detect-main.txt": "bd5258178eb999604db815eb654f85b482c3d1137d1d52064700ae4e829efd9b",
+    "index.log": "cfda2881ef676e28980db1baffce8d7e75c8b2c5f6e358ca51c746909be8588b",
+    "targeted-tests.json": "b8dd92d56e2907b847088c5c2eeb3b0b0886edaaf814518b3489b57c3a6bf314",
+    "composition.json": "3b69b50cd6d748aa6c45cb45ef39a7c32ec53d167b336c73840a7d58748a670b",
+    "detect-final-staged.txt": "bf651faf4f0ea03933f525737d0bfa37d57753f505aa6082fe10f5c9457238cb",
+    "typecheck.log": "1ec69788b3cdadf508e02dfbc57a867f46cb26ef267d4d55cee0799fb6ce3ce8",
+    "README.md": "7e340de266efdab104b35a495895e8704eaa0a86dd2051bb34e64d6f11f3aeb3",
+    "detect-staged.txt": "3e0f0237597920acba383e5ab15cc136216f06a8e758ce32cc125fe442f447a0"
+  }
+}

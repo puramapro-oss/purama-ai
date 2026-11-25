@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-11-25T00:09:02.718468+00:00",
+  "status": "PASS",
+  "scope": "Static read-only review of observed-artifact verification and scoped correction feedback in the composed working tree",
+  "headAtReview": "42b86982fe880539b41827fe0969fd6285ac759c",
+  "mergeHeadAtReview": "795d7db298416f98cf95103c096714f82c01c8cb",
+  "sourceSha256": {
+    "docs/iao-observed-verification.md": "e6c71706c7fc1ea798e420bc50690cefa3334d8d30d930e59f56605982a70616",
+    "karta/src/chef/observations.ts": "4350f03ae2091a9c8d8fadd7646c1b256b3da6957b078772ab46b68ef867c3c8",
+    "karta/src/chef/verification-feedback.ts": "0bb8672325f18c3ea617c131496117682e94adf13b009376b326a127a18cac72",
+    "karta/src/chef/verifier.ts": "142dbcfc33ec6b65a47a40b5303954818f3164ea8cec11c1f7b6f2b03971b672",
+    "karta/src/chef/supervisor.ts": "54ac9ce09416a44f40f6b2fad2919d25e1802b9600d14ee9f664b9a0de27b97d",
+    "karta/src/chef/control-plane.ts": "528a404dadb12917ddf8f4e56e44530d233c3a87919dc5aa80116a4fde30c353",
+    "karta/src/chef/workshop-config.ts": "5c9c2a149c6d496afc663f8a066af7af3f2fe1b911d7e25b0f94821f05dd3346",
+    "karta/test/assistantPolicy.test.ts": "71afbe1eef5e218a19e280d5de121310746a021dd44c00babc2c035be8d33bc6",
+    "karta/test/chefObservedVerification.test.ts": "6b592783755ebee938dc1b46cc40d751a8a0f43e4576745131b3360ba87e2697",
+    "karta/test/chefVerificationFeedback.test.ts": "334742c03293407e606a95c66c32fb0d040399791545162a6820108b6380fce4",
+    "karta/test/chefCorrectionLoop.test.ts": "04c035c560d06d5881e537dd582a111c4d39fdf02ac1166dd2f0353dfd56985a"
+  },
+  "blockingFindings": [],
+  "reviewedClaims": [
+    {
+      "check": "Final artifact invalidation",
+      "result": "PASS",
+      "evidence": "Verifier rehashes every successfully parsed artifact observation after the last executed profile, including after a negative later result; mutation/deletion invalidates the prior payload before persistence."
+    },
+    {
+      "check": "Previous feedback identity and ambiguity",
+      "result": "PASS",
+      "evidence": "Adapter filters exactly the previous attempt, rejects more than one row, and validates task/mission/brief/scope/output SHA, previous fencing token, worker metadata, scopeVersion and canonical digest."
+    },
+    {
+      "check": "Diagnostic injection boundary",
+      "result": "PASS",
+      "evidence": "Diagnostic text is copied through a bounded schema and JSON-escaped for delimiters. Original task instructions and allowed paths stay unchanged. The JSON is explicitly untrusted and does not grant permissions."
+    },
+    {
+      "check": "Correction and external-effect boundary",
+      "result": "PASS",
+      "evidence": "Supervisor accepts only the exact previous output SHA in a clean expected branch, repeats Git and verifier checks, blocks unchanged output plus unchanged failure, and excludes capabilitySelection tasks from automatic correction feedback."
+    },
+    {
+      "check": "Policy assertions preserved after upstream composition",
+      "result": "PASS",
+      "evidence": "Both observation-policy uniqueness and before-role assertions remain, together with upstream Request normalization and discovery error envelope expectations."
+    }
+  ],
+  "testsExecutedByThisReview": false,
+  "limits": [
+    "This is static review, not an additional test campaign or proof of deployment.",
+    "Final hashing is not an immutable filesystem snapshot or continuous surveillance.",
+    "An observer report does not independently prove the perceptual accuracy of its trusted observer.",
+    "Prompt boundary checks do not guarantee that every model will obey the instructions.",
+    "A missing checkpoint in an intervening generation intentionally prevents automatic recovery of older output."
+  ]
+}

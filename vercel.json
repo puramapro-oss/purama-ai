@@ -8,7 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "feat/iao-programmatic-reads-20261124": false,
+      "audit/unlazy-reconciliation-20261125": false,
       "test/partner-discovery-postgres-20261124": false,
       "fix/iao-wealth-evidence-20261124": false,
       "feat/iao-runtime-composition-20261124": false,
@@ -65,7 +65,8 @@
       "codex/automation-reliability-20261122-529e": false,
       "codex/calendar-event-confirmation-20261122-529e": false,
       "feat/iao-tool-context-efficiency-20261124": false,
-      "fix/partner-completion-20261124": false
+      "fix/partner-completion-20261124": false,
+      "feat/iao-programmatic-reads-20261124": false
     }
   }
 }

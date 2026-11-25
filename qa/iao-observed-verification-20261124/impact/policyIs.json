@@ -1,0 +1,9 @@
+{
+  "error": "Target 'policyIs' not found",
+  "target": {
+    "name": "policyIs"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
