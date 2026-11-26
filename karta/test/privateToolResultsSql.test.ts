@@ -94,6 +94,9 @@ beforeAll(async () => {
   const resolution = await readFile(new URL("../migrations/036_resolution_private_results.sql", import.meta.url), "utf8");
   await db.exec(resolution);
   await db.exec(resolution);
+  const unicode = await readFile(new URL("../migrations/037_resolution_unicode_lengths.sql", import.meta.url), "utf8");
+  await db.exec(unicode);
+  await db.exec(unicode);
   expect((await db.query<{ definition: string }>("SELECT pg_get_functiondef('purama_ai.karta_store_tool_result(uuid,text,uuid,text,text,jsonb)'::regprocedure) AS definition")).rows[0].definition).toBe(previousRpc);
 });
 
@@ -412,6 +415,52 @@ describe("resolution qualification — complete existing private SQL delivery", 
     await role("authenticated", owner); expect((await rows()).rows).toHaveLength(1);
   });
 
+  it.each(["mixed", "astral"] as const)("round-trips schema-bound Unicode identities and references through SQL and the owner reader (%s)", async style => {
+    const bounded = (ascii: string, scalar: string, size: number) => style === "mixed" ? ascii.repeat(size - 1) + scalar : scalar.repeat(size);
+    const value = input(); value.caseId = bounded("c", "🌍", 160);
+    value.sources = [
+      { id: bounded("s", "🌿", 160), caseId: value.caseId, snapshotRevision: 3, subjectId: bounded("p", "🏠", 160), kind: "requirement", reference: bounded("d", "🌍", 500), observedAt: "2026-11-25T12:00:00Z" },
+      { id: bounded("r", "🧭", 160), caseId: bounded("o", "🌊", 160), snapshotRevision: 3, subjectId: bounded("q", "🏠", 160), kind: "requirement", reference: "e\u0301 and é remain distinct supplied text", observedAt: bounded("x", "🌍", 35) },
+    ];
+    const data = projectPrivateToolResult("qualify_resolution", qualifyResolution(value))!, runId = await run();
+    const id = await store(runId, { tool: "qualify_resolution", data });
+    const row = (await db.query<{ payload: unknown }>("SELECT id,run_id,creator_agent_id,user_id,tool_name,payload,created_at::text AS created_at FROM purama_ai.karta_tool_results WHERE id=$1", [id])).rows[0];
+    expect(row.payload).toEqual(data);
+    const result = parsePrivateToolResult(row, owner, agent)!.payload.resolution!;
+    expect(result.snapshot.caseId).toBe(value.caseId);
+    expect(result.supplied_references).toEqual(value.sources);
+    expect(result.rejected_source_ids).toEqual([value.sources[1].id]);
+    expect(await store(runId, { tool: "qualify_resolution", data })).toBe(id);
+    expect((await rows()).rows).toHaveLength(1);
+  });
+
+  it.each(["caseId", "id", "sourceCaseId", "subjectId", "reference", "observedAt", "observedAtMinimum"])(
+    "SQL and the reader reject the exact scalar boundary violation for %s", async field => {
+      const data = resolution(), snapshot = data.details.snapshot as Record<string, unknown>;
+      const refs = data.details.supplied_references as Record<string, unknown>[];
+      const length = field === "reference" ? 501 : field === "observedAt" ? 36 : field === "observedAtMinimum" ? 19 : 161;
+      const invalid = "🌍".repeat(length);
+      if (field === "caseId") {
+        snapshot.caseId = invalid; for (const ref of refs) ref.caseId = invalid;
+      } else {
+        refs[0][field === "sourceCaseId" ? "caseId" : field === "observedAtMinimum" ? "observedAt" : field] = invalid;
+        if (["sourceCaseId", "observedAt", "observedAtMinimum"].includes(field)) data.details.rejected_source_ids = [refs[0].id, refs[1].id];
+      }
+      const runId = await run();
+      expect(parsePrivateToolResult({ id: randomUUID(), run_id: runId, creator_agent_id: agent, user_id: owner, tool_name: "qualify_resolution", payload: data, created_at: stamp }, owner, agent)).toBeNull();
+      await expect(store(runId, { tool: "qualify_resolution", data })).rejects.toThrow("Private result unavailable");
+      expect((await rows()).rows).toHaveLength(0);
+    },
+  );
+
+  it.each(["\u0000", "\ud800", "\udc00", "\ud800A"])("JSONB still refuses malformed supplied Unicode without creating a row (%#)", async malformed => {
+    const data = resolution();
+    (data.details.supplied_references as Record<string, unknown>[])[0].reference = malformed;
+    // PostgreSQL rejects these encodings while converting to jsonb, before the RPC.
+    await expect(store(await run(), { tool: "qualify_resolution", data })).rejects.toThrow();
+    expect((await rows()).rows).toHaveLength(0);
+  });
+
   it("reconciles unchanged JSONB after closure and revocation, refuses divergence and never recreates owner deletion", async () => {
     const runId = await run(), data = resolution(), id = await store(runId, { tool: "qualify_resolution", data });
     await finish(runId); await db.query("UPDATE purama_ai.creator_agents SET is_active=false,tools_enabled='{}' WHERE id=$1", [agent]);
@@ -454,7 +503,7 @@ describe("resolution qualification — complete existing private SQL delivery", 
     (d: Record<string, unknown>) => { (d.sections as unknown[]).pop(); },
     (d: Record<string, unknown>) => { (d.sections as Record<string, unknown>[])[0].items = Array.from({ length: 2049 }, () => "x"); },
     (d: Record<string, unknown>) => { (d.sections as Record<string, unknown>[])[0].items = ["🌍".repeat(4097)]; },
-    (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).caseId = "🌍".repeat(81); },
+    (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).caseId = "🌍".repeat(161); },
     (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).asOf = "2026-02-30T12:00:00Z"; },
     (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).asOf = "2026-11-26T12:00:00+14:01"; },
     (d: Record<string, unknown>) => { (d.supplied_references as Record<string, unknown>[])[0].extra = "not allowed"; },

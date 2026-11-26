@@ -97,5 +97,36 @@
       "No production migration without identifying the current owning environment"
     ]
   },
-  "original_reception_note": "Top-level fields preserve the internal qualification receipt of25November; delivery_20261126 is the current follow-up scope."
+  "original_reception_note": "Top-level and delivery_20261126 fields retain historical reception scopes; continuity_20261126 records the current corrective follow-up.",
+  "continuity_20261126": {
+    "status": "PASS_LOCAL_PENDING_EXACT_CI",
+    "owner": "/root",
+    "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "branch": "fix/iao-resolution-continuity-20261126",
+    "authority": "User requested all simulations, tests, corrections and unblocking of the existing delivery, without duplicates or inconsistencies.",
+    "scope": "Correct the reproduced Unicode delivery mismatch and manual-trigger intent loss; requalify affected contracts and current deployment prerequisites.",
+    "acceptance": [
+      "Caller Unicode scalar limits consistent from qualifier through private SQL and reader, without normalizing identity or widening generated-text/byte budgets",
+      "Malformed Unicode rejected before a qualification success",
+      "Lost acknowledgements reuse the existing idempotency key through UI, Edge and KARTA",
+      "Concurrent tabs and late responses preserve owner/agent/conversation scope",
+      "Existing RPC, private types, authentication, RLS, queue and SQL durable identity retained",
+      "Exact candidate runs the existing native SQL, browser and engine CI gates",
+      "Current production blockers observed without selecting an unqualified source or restarting pending queues",
+      "Static Edge package closure verifies two canonical roots without duplicating business sources; real container loading remains a separate gate."
+    ],
+    "reservations": {
+      "/root/resolution_quality_recheck": "Unicode projector, shared reader, qualifier, additive037 and tests",
+      "/root/resolution_release_audit": "Existing manual-trigger hook, Edge handler, UI scope fence and targeted tests",
+      "/root/resolution_final_review": "Read-only independent reception",
+      "/root": "Existing QA receipts, roundtrip, CI routing, documentation, publication and canonical continuity"
+    },
+    "boundaries": [
+      "Historical036 and storage RPC remain unchanged",
+      "No new engine, business registry, database or scheduler",
+      "No deployment against an unresolved canonical data source",
+      "No retry of a historically denied database verification through another transport",
+      "No blanket consolidation merge into main"
+    ]
+  }
 }

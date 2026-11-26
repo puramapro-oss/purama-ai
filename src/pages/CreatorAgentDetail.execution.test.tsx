@@ -10,10 +10,22 @@ const { auth, api, voice, toast } = vi.hoisted(() => ({
   api: {
     getAgent: vi.fn(), updateAgent: vi.fn(), deleteAgent: vi.fn(), chatWithAgent: vi.fn(),
     listChatMessages: vi.fn(), listRuns: vi.fn(), newSessionId: vi.fn(),
+    trigger: vi.fn(), triggerScope: vi.fn(),
   },
   voice: { cancelRecording: vi.fn(), stopSpeaking: vi.fn() },
   toast: { error: vi.fn(), success: vi.fn() },
 }));
+const conversation = vi.hoisted(() => ({ change: undefined as ((id: string) => void) | undefined }));
+vi.mock('@/hooks/useRequestScope', async original => {
+  const actual = await original<typeof import('@/hooks/useRequestScope')>();
+  return { ...actual, useScopedState: (key: string, initial: unknown) => {
+    const result = actual.useScopedState(key, initial);
+    // Exercise the page's actual conversation state and its real request fence.
+    // There is currently no public "new chat" button on this page.
+    if (initial === '' && JSON.parse(key).length === 2) conversation.change = id => result[1](id);
+    return result;
+  } };
+});
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => auth }));
 vi.mock('@/hooks/useVoice', () => ({ useVoice: () => voice }));
 vi.mock('@/components/voice/MicButton', () => ({ MicButton: () => null }));
@@ -25,7 +37,10 @@ vi.mock('@/hooks/useCreatorAgentKarta', () => ({
   useCustomAgentKartaState: () => ({ data: null, isError: false }),
   useUpdateCustomAgentKartaState: () => ({ isPending: false }),
   useCustomAgentKartaRuns: () => ({ data: [] }),
-  useTriggerCustomAgent: () => ({ isPending: false }),
+  useTriggerCustomAgent: (agentId: string, sessionId: string) => {
+    api.triggerScope(agentId, sessionId);
+    return { isPending: false, mutateAsync: api.trigger };
+  },
   useCustomAgentPendingActions: () => ({ data: [] }),
 }));
 vi.mock('@/lib/creator-agent', () => ({
@@ -104,6 +119,8 @@ beforeEach(() => {
   api.listChatMessages.mockResolvedValue([]);
   api.listRuns.mockResolvedValue([]);
   api.newSessionId.mockReturnValue('85000000-0000-4000-8000-000000000001');
+  api.trigger.mockResolvedValue({ ok: true, queued: true });
+  conversation.change = undefined;
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   vi.stubGlobal('ResizeObserver', class { observe() {} unobserve() {} disconnect() {} });
   scrollDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView');
@@ -111,6 +128,39 @@ beforeEach(() => {
   scrollToDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollTo');
   Object.defineProperty(HTMLElement.prototype, 'scrollTo', { configurable: true, value: vi.fn() });
   host = document.createElement('div'); document.body.append(host); root = createRoot(host);
+});
+
+describe('CreatorAgentDetail — trigger conversation lifetime', () => {
+  async function clickTrigger() {
+    const button = [...host.querySelectorAll<HTMLButtonElement>('button')].find(element => element.textContent?.trim() === 'Tester maintenant');
+    if (!button) throw new Error('Déclenchement absent');
+    await act(async () => button.click());
+  }
+
+  it('passes its exact agent/conversation scope and confirms one settled admission', async () => {
+    await render(); await settings(); await clickTrigger();
+    expect(api.triggerScope).toHaveBeenLastCalledWith(AGENT, '85000000-0000-4000-8000-000000000001');
+    expect(api.trigger).toHaveBeenCalledExactlyOnceWith(AGENT);
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('Agent déclenché', expect.any(Object));
+  });
+
+  it.each(['success', 'failure'])('suppresses a late trigger %s after only the conversation changes', async outcome => {
+    let resolve!: (value: unknown) => void;
+    let reject!: (reason: unknown) => void;
+    api.trigger.mockReturnValueOnce(new Promise((yes, no) => { resolve = yes; reject = no; }));
+    await render(); await settings(); await clickTrigger();
+    expect(conversation.change).toBeTypeOf('function');
+    await act(async () => conversation.change!('85000000-0000-4000-8000-000000000002'));
+    await act(async () => {
+      if (outcome === 'success') resolve({ ok: true, queued: true });
+      else reject(new Error('Ancienne réponse synthétique'));
+    });
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(toast.error).not.toHaveBeenCalled();
+    await settings(); await clickTrigger();
+    expect(api.trigger).toHaveBeenCalledTimes(2);
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('Agent déclenché', expect.any(Object));
+  });
 });
 afterEach(async () => {
   await act(async () => { root.unmount(); });

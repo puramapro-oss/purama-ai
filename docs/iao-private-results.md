@@ -276,6 +276,56 @@ restent celles du circuit actuel. Un rejeu identique retrouve le même résultat
 un contenu divergent est refusé. Une opération close ne recrée pas une pièce
 supprimée.
 
+### Continuité Unicode
+
+La migration additive `037_resolution_unicode_lengths.sql` harmonise les
+chaînes fournies avec le schéma de l’outil : 160 points de code Unicode pour
+les identifiants, 500 pour une référence et 20 à 35 pour sa date d’observation.
+Le projecteur et le lecteur utilisent les mêmes bornes. Les NUL et les
+surrogates isolés sont refusés dès la qualification ; les identités fournies
+restent inchangées. Une date textuellement admissible mais invalide demeure
+visible parmi les références rejetées.
+
+Les textes générés conservent leurs bornes UTF-16 existantes : résumé 4 000,
+résumé de rubrique 1 000 et élément 8 192. Les budgets de 61 440/65 536 octets
+restent identiques. Une liste trop dense est refusée explicitement, sans
+troncature silencieuse. La migration 036, la RPC et les anciennes catégories
+de résultats ne sont pas réécrites par ce complément.
+
+### Reprise du déclenchement manuel
+
+Le bouton existant conserve un identifiant de demande avant l’envoi et le
+transmet à `karta-trigger-custom`, qui le relaie dans l’`Idempotency-Key` de
+l’API KARTA. La file et le journal d’exécution existants assurent la
+déduplication ; aucun second mécanisme métier n’est ajouté.
+
+Seul l’identifiant opaque est conservé dans le stockage du navigateur, par
+propriétaire et agent. Une perte de réponse, un délai dépassé ou une
+navigation conserve cette intention pour le réessai. Un reçu valide permet
+de préparer une nouvelle intention au prochain clic. Cette continuité dépend
+de la conservation du stockage du navigateur et des journaux SQL existants ;
+elle ne rapproche pas deux navigateurs indépendants.
+
+Un verrou natif Web Locks protège la réservation et le retrait entre onglets
+de la même origine. Un onglet concurrent reçoit un message d’attente sans
+envoyer une seconde requête. Si le verrou ou le stockage ne sont pas
+disponibles, l’envoi est refusé explicitement. Les changements de compte,
+d’agent et de conversation annulent le transport et empêchent les
+notifications périmées. Ils n’effacent pas une admission encore inconnue.
+
+Le handler authentifie le compte, revérifie la propriété et l’activation de
+l’agent, impose POST et refuse les redirections. Le corps est borné à 4 096
+octets, le reçu interne à 16 384 et l’attente Edge à dix secondes ; le client
+borne son attente à quinze secondes. Seules les métadonnées canoniques du
+reçu sont exposées. Les anciennes interfaces qui omettent `requestId` sont
+refusées avant transmission : interface, Edge et protocole KARTA v2 doivent
+donc être livrés ensemble.
+
+La bascule doit rendre le moteur et ses gardes SQL compatibles, puis remplacer
+entièrement l’Edge avant de servir la nouvelle interface. Une ancienne Edge
+ignore l’identifiant ajouté : aucune requête du nouveau client ne doit lui
+être routée pendant la transition.
+
 ### Questionner une analyse
 
 Le propriétaire peut choisir au plus trois résultats dans le panneau, puis
@@ -298,9 +348,22 @@ de dossier n’hérite jamais de la provenance d’une simulation quantique.
 Les preuves du complément sont rattachées au dossier existant
 `qa/resolution-qualification-20261125/`. Le reçu final distingue tests exécutés,
 transports substitués, contrôle SQL, essais navigateur, CI et service réel.
-Il faut livrer ensemble les migrations KARTA jusqu’à 036, le worker, les
-fonctions `creator-agent-generate` et `creator-agent-chat` avec leur lecteur
-partagé, et l’interface correspondante.
+Il faut livrer ensemble les migrations KARTA jusqu’à 037, le worker, les
+fonctions `creator-agent-generate`, `creator-agent-chat` et
+`karta-trigger-custom`, leurs dépendances partagées, et l’interface correspondante.
+
+Pour le conteneur Edge auto-hébergé, le montage de `supabase/functions` à
+`/home/deno/functions` ne suffit pas. Les imports partagés attendent les
+sources canoniques `karta/src/claude/assistant-policy.ts` et
+`karta/src/knowledge/private-result-view.ts` sous `/home/karta/src`. Le paquet
+doit fournir ces fichiers à partir du même commit qualifié, par un montage
+en lecture seule de son sous-arbre `karta/src` ou des deux fichiers exacts.
+Il ne faut pas prendre le dossier historique `/opt/karta` pour une preuve de
+version, ni remplacer aveuglément le volume commun aux autres applications.
+Le contrôle `edge-package-check.mjs` vérifie la fermeture des imports locaux
+avec ces deux racines et démontre le défaut si le montage canonique manque.
+Cette vérification statique ne prouve pas la résolution des imports distants
+ni le démarrage du conteneur réel.
 
 L’inspection en lecture seule du 26 novembre a trouvé les anciens conteneurs
 KARTA, Redis KARTA, Auth et Edge arrêtés sur Hostinger. Les instances actives
@@ -309,3 +372,8 @@ de production de ce lot. Les fichiers présents dans `/opt/karta` ne prouvent
 pas les migrations appliquées à une base. La remise en service demande de
 rapprocher l’environnement et son propriétaire actuel avant migration ou
 redémarrage. Le détail daté figure dans `deployment-observation-20261126.json`.
+Le suivi `deployment-readiness-followup-20261126.json` précise les vérifications
+ultérieures : déploiement public désactivé, authentification indisponible,
+sauvegardes sources anciennes malgré un reçu récent de copie chiffrée, et
+source de production non choisie dans le reçu de rapprochement consulté.
+Les instances de qualification ne valent pas adoption de cette source.

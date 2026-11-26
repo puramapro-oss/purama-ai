@@ -14,7 +14,9 @@ function row(value: unknown, keys: readonly string[]): Row {
 }
 function list(value: unknown, max = 32): unknown[] { return Array.isArray(value) && value.length <= max ? value : invalid(); }
 function text(value: unknown, max = 160): string {
-  return typeof value === "string" && value.length > 0 && value.length <= max
+  // Supplied strings use JSON Schema's code-point limits, including astral text.
+  // Generated summaries/items keep their separate UTF-16 and UTF-8 envelope bounds.
+  return typeof value === "string" && value.length > 0 && [...value].length <= max
     && !value.includes("\u0000") && !/[\uD800-\uDFFF]/u.test(value) ? value : invalid();
 }
 function integer(value: unknown, min = 1, max = 1_000_000): number {

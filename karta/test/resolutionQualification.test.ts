@@ -51,6 +51,13 @@ describe("resolution qualification boundary", () => {
     const input = base(); input.dependencies = Array.from({ length: 33 }, (_, i) => requirement(input, `r-${i}`));
     expect(() => qualifyResolution(input)).toThrow();
   });
+
+  it.each(["\u0000", "\ud800", "\udc00", "\ud800A"])("rejects malformed text inside optional nested input before returning a qualification (%#)", malformed => {
+    const input = base(); input.handoffs = [handoff()]; input.handoffs[0].role = malformed;
+    expect(() => qualifyResolution(input)).toThrow("Texte de qualification invalide");
+    input.handoffs[0].role = "🌍 aidant";
+    expect(qualifyResolution(input).handoffs).toHaveLength(1);
+  });
 });
 
 describe("business dependencies and alternatives", () => {

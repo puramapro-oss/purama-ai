@@ -1,12 +1,12 @@
 {
   "status": "PASS",
-  "startedAt": "2026-11-26T00:29:29.219Z",
+  "startedAt": "2026-11-26T04:21:13.404Z",
   "sourceSha256": {
-    "karta/src/lib/resolution-qualification.ts": "4174f928e01f459dd8522f2c953dad8c69915fd27392408d058c0c9116e7e3ef",
+    "karta/src/lib/resolution-qualification.ts": "4e1589a9ee041ca7577a793c9b91b7615e9df52f21fb0e55c406ec68bac2ac1f",
     "karta/src/tools/resolution-qualification.ts": "15fd9bb72f4c6d005441fce68093b54ec86555db0de36976ff1eb93ba0d27136",
     "karta/src/engine/private-tool-results.ts": "6bc9233d002539f68812dea76a8ca4a081e0e663b2207d56a153bc95ae5dd3c1",
-    "karta/src/engine/resolution-result-projection.ts": "30131c38b2775872d2061422577dda0a159f81926cd092c6ac27e1aaf8a6a59f",
-    "karta/src/knowledge/private-result-view.ts": "614cbbda3639bc51d8e449c4bea8a55f9bedf0e432d6c7b3bc90285b5dcfbe7c",
+    "karta/src/engine/resolution-result-projection.ts": "5c8b010dbca0c91513b2e6c1391646797f622234c6d8fe8fca70e4c55ffc8a63",
+    "karta/src/knowledge/private-result-view.ts": "b28d1610b341a19fc02be713812b9b60db97a7edaae1ac2949ff9447ed6e0848",
     "supabase/functions/_shared/private-tool-results.ts": "eb44aaa019b8efbb312e7db12f06fb78d1a9552bb5e1b245cfccd0df60e8a05a",
     "karta/migrations/001_karta_core.sql": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d",
     "karta/migrations/005_karta_pending_actions.sql": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e",
@@ -14,7 +14,8 @@
     "karta/migrations/029_model_usage_receipts.sql": "ae75060c2e30eca8bfacd478163683e70a8457ab59bb1c36021b504123057b01",
     "karta/migrations/033_programmatic_model_usage.sql": "18575b5d7c8c33871c0ae65fadf91e8fbf5fb820287a29aec024e9c7bf5f1e41",
     "karta/migrations/034_programmatic_private_reports.sql": "f8a5d9049ba340b9d0f1a10d1f9da49b5ee2e76aca266eaa4d202e0c47c6067c",
-    "karta/migrations/036_resolution_private_results.sql": "99edebad0f7ccfc34ef5c3318aea64d3874334f2fa64176aae125ca16d75b66c"
+    "karta/migrations/036_resolution_private_results.sql": "99edebad0f7ccfc34ef5c3318aea64d3874334f2fa64176aae125ca16d75b66c",
+    "karta/migrations/037_resolution_unicode_lengths.sql": "dc3e00ddb6e889b940949bd516849cfda15d9d0f256b8567facd49c1b3f30602"
   },
   "checks": [
     {
@@ -27,6 +28,10 @@
     },
     {
       "name": "real SQL stores once and the owner parser preserves the structured private result",
+      "status": "PASS"
+    },
+    {
+      "name": "Unicode scalar limits survive real qualification, SQL storage, private reading and chat context",
       "status": "PASS"
     },
     {
@@ -77,8 +82,8 @@
     "ownerId": "00000000-0000-4000-8000-000000000621",
     "agentId": "00000000-0000-4000-8000-000000000623",
     "storedRow": {
-      "id": "8f43e148-2920-4d4f-80fa-3a3c5cc8ff68",
-      "run_id": "bfba1a66-c171-4930-9dc2-65dbec88f3e9",
+      "id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+      "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
       "creator_agent_id": "00000000-0000-4000-8000-000000000623",
       "user_id": "00000000-0000-4000-8000-000000000621",
       "tool_name": "qualify_resolution",
@@ -269,15 +274,15 @@
         "tool_name": "qualify_resolution",
         "schema_version": 1
       },
-      "created_at": "2026-11-26 01:29:33.147+01"
+      "created_at": "2026-11-26 05:21:18.277+01"
     },
     "parsedResult": {
-      "id": "8f43e148-2920-4d4f-80fa-3a3c5cc8ff68",
-      "run_id": "bfba1a66-c171-4930-9dc2-65dbec88f3e9",
+      "id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+      "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
       "creator_agent_id": "00000000-0000-4000-8000-000000000623",
       "user_id": "00000000-0000-4000-8000-000000000621",
       "tool_name": "qualify_resolution",
-      "created_at": "2026-11-26 01:29:33.147+01",
+      "created_at": "2026-11-26 05:21:18.277+01",
       "payload": {
         "schema_version": 1,
         "tool_name": "qualify_resolution",
@@ -460,6 +465,36 @@
   },
   "variantCases": [
     {
+      "name": "Unicode scalar limits survive real qualification, SQL storage, private reading and chat context",
+      "status": "PASS",
+      "sections": [
+        {
+          "id": "dependencies",
+          "availability": "not_provided"
+        },
+        {
+          "id": "transitions",
+          "availability": "not_provided"
+        },
+        {
+          "id": "effort",
+          "availability": "not_provided"
+        },
+        {
+          "id": "corrections",
+          "availability": "not_provided"
+        },
+        {
+          "id": "occurrence",
+          "availability": "not_provided"
+        },
+        {
+          "id": "handoffs",
+          "availability": "not_provided"
+        }
+      ]
+    },
+    {
       "name": "all six absent facets remain unknown after qualification, SQL storage and owner reading",
       "status": "PASS",
       "sections": [
@@ -528,11 +563,11 @@
       "trust": "untrusted_data",
       "results": [
         {
-          "result_id": "8f43e148-2920-4d4f-80fa-3a3c5cc8ff68",
-          "run_id": "bfba1a66-c171-4930-9dc2-65dbec88f3e9",
+          "result_id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+          "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
           "tool_name": "qualify_resolution",
           "status": "complete",
-          "created_at": "2026-11-26 01:29:33.147+01",
+          "created_at": "2026-11-26 05:21:18.277+01",
           "summary": "Qualification terminée de l’instantané fourni ; la résolution du dossier n’est pas attestée. Faits externes non vérifiés, permissions accordées : 0, actions externes réalisées : 0.\nOrientations vers les produits existants ; disponibilité des services non qualifiée :\nA — Démarches et accès aux droits : NIDHI, Dossier sans oubli, Courrier en clair, Démarche à deux.\nB — Budget et aides : NIDHI, Ma semaine en chiffres, Coût complet, Abonnements au clair.\nC — Achats assurances et restitutions : NIDHI, marketplace, SAV, Facture expliquée.\nD — Logement et entretien : Maison documentée, Réparons, Notice retrouvée, Entretien au bon moment, Passage de vie.\nE — Soins et aidants : Relais entre aidants, Répit logistique, Accompagné au rendez-vous.\nF — F…",
           "summary_truncated": true,
           "evidence": {
@@ -735,5 +770,5 @@
       ]
     }
   },
-  "finishedAt": "2026-11-26T00:29:33.251Z"
+  "finishedAt": "2026-11-26T04:21:18.400Z"
 }

@@ -1,6 +1,86 @@
 # Qualification et restitution privée des dossiers PURAMA
 
-## Réception du 26 novembre 2026
+## Suivi correctif du 26 novembre 2026 — continuité et simulations
+
+**PASS local ; CI du candidat et intégration à lire sur la PR correspondante ;
+mise en production BLOQUÉE.** Le suivi prolonge la livraison intégrée par
+[PR123](https://github.com/puramapro-oss/purama-ai/pull/123), depuis la
+consolidation `271f40b666c11d90fe4a350a41432513a08fc72f`. Les preuves sont
+rassemblées dans `continuity-verification-20261126.json`, avec les empreintes
+des sources. Les reçus antérieurs ci-dessous restent historiques.
+
+### Défauts reproduits et corrigés
+
+1. **Unicode valide rejeté à la livraison.** Le schéma acceptait 160 points de
+   code pour un identifiant et 500 pour une référence, tandis que la projection,
+   le lecteur et le SQL comptaient des unités UTF-16. Les champs fournis ont
+   maintenant des bornes cohérentes ; NUL et surrogates isolés sont refusés dès
+   l’entrée. La migration additive 037 conserve 036, la RPC, les textes générés
+   et les budgets en octets. Aucun identifiant métier n’est normalisé.
+2. **Intention perdue lors du déclenchement.** Le bouton et l’Edge transmettent
+   désormais l’identifiant au protocole KARTA existant. Une issue inconnue le
+   conserve ; un reçu valide permet un nouvel ordre. Un verrou natif coordonne
+   les onglets, les changements de conversation empêchent les notifications
+   tardives et un reçu déjà acquis ne peut redevenir « non confirmé ».
+3. **Dépendances absentes du seul dossier Edge.** Le contrôle de paquet démontre
+   les deux sources canoniques nécessaires sous `/home/karta/src`. Il vérifie
+   la disposition proposée et son cas négatif sans copier la politique ou le
+   lecteur métier. La configuration du serveur reste à recevoir séparément.
+
+### Contrôles locaux exécutés
+
+| Vérification | Résultat | Portée |
+| --- | --- | --- |
+| Qualification, projection et lecteur | **141/141 PASS** | Trois fichiers hors SQL |
+| SQL privé final après correction de typage | **130/130 PASS** | PostgreSQL PGlite ; anciennes catégories et migration 037 |
+| Affichage et lecteur frontend | **55/55 PASS** | Régressions privées |
+| Hook de déclenchement et caller | **44/44 PASS** | 37 hook + 7 caller ; ports substitués |
+| Handlers chat et déclenchement | **115/115 PASS** | 59 chat + 56 déclenchement ; vrais handler/API/producteur, ports externes inertes |
+| Navigateur Chromium | **3/3 PASS** | Deux onglets avec Web Locks natif ; restitution ordinateur et viewport mobile |
+| Qualification → SQL → lecture → contexte chat | **12/12 PASS** | Zéro tentative réseau ; cas Unicode aux bornes |
+| Fermeture locale du paquet Edge | **5/5 PASS** | 13 modules, 14 empreintes ; preuve statique |
+| Types et builds frontend/KARTA | **PASS** | Plafond de tas Node de 1 024 Mio |
+| Lint et contrats de données | **PASS** | 0 erreur ; 22 avertissements dans les fichiers non modifiés |
+
+Ces groupes recouvrent les suites globales de CI : leurs nombres ne doivent
+pas être ajoutés aux totaux distants. Le fichier PostgreSQL natif contient
+14 tests ; seul le résultat effectivement retourné par son job CI prouve leur
+exécution. Les profils mobiles Chromium ne prouvent pas Safari natif.
+
+Les premiers processus SQL et un typecheck ont été interrompus sans résultat
+par SIGKILL. La libération des seuls caches reproductibles et des limites
+mémoire explicites ont permis les réceptions finales. Aucun test, assertion,
+budget produit ou garde n’a été assoupli. Un typage manquant dans un nouveau
+test SQL a été corrigé et contrôlé après une première correction mal ciblée,
+repérée par la relecture indépendante.
+
+### Livraison et limites actuelles
+
+L’ordre de bascule doit rendre le moteur et ses gardes SQL compatibles, puis
+mettre entièrement à jour l’Edge avant de servir la nouvelle interface. Une
+ancienne Edge ignore `requestId` ; elle ne doit recevoir aucun envoi du nouveau
+client. L’Edge corrigée refuse les anciens clients avant transmission.
+
+La protection durable réutilise les journaux `execution_key` et
+`execution_fingerprint`. Elle dépend de leur conservation et de workers
+compatibles. Le stockage local ne contient que l’UUID d’intention ; sa
+suppression ou l’utilisation d’un autre navigateur retire cette continuité.
+Un reçu d’admission en queue ne constitue pas une preuve d’exécution métier.
+
+Le suivi `deployment-readiness-followup-20261126.json` rapporte les observations
+actuelles : Auth 502, frontend 402 avec `DEPLOYMENT_DISABLED`, anciens services
+arrêtés, sauvegardes sources anciennes malgré un reçu récent de copie chiffrée,
+et absence de source de production adoptée dans le rapprochement consulté.
+Les instances P8 et ONE privées ne sont pas assimilées à la production.
+**Les 44 scénarios métier restent NON TESTÉS sur les services réels.**
+
+Le rafraîchissement complet du graphe de code a encore été interrompu avec
+code 137 malgré un seul worker et une mémoire native bornée. Les métadonnées
+restent sur l’ancien commit ; le contrôle du graphe demeure **PARTIEL**. Les
+comparaisons de portée n’autorisent donc pas une affirmation de couverture
+exhaustive. Les tests exécutés et la relecture des fichiers restent distincts.
+
+## Réception initiale du 26 novembre 2026
 
 **PASS local — mise en service BLOQUÉE sur l’environnement observé.** Ce complément termine le parcours logiciel de l’outil `qualify_resolution` dans le mécanisme privé existant. Il poursuit la même PR123 et conserve le premier module, les six spécialisations, les quatorze domaines, leurs identités et l’historique de réception ci-dessous.
 
