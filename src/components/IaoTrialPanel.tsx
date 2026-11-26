@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, CalendarDays, Link2, Scale, Video } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, ChartScatter, CalendarDays, Link2, Scale, Timer, Video } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { IaoBasketTrial } from './IaoBasketTrial';
+import { IaoScienceTrial, ScienceHandoffLink } from './IaoScienceTrial';
 import { IaoMediaTrial } from './IaoMediaTrial';
 import { IaoWorkshopTrial } from './IaoWorkshopTrial';
 import { sharedTrial, type TrialEntry, type TrialKind } from '@/lib/iao-trial-entry';
@@ -10,6 +11,8 @@ import { sharedTrial, type TrialEntry, type TrialKind } from '@/lib/iao-trial-en
 const methods = [
   { id: 'panier', label: 'Composer un panier', detail: 'Quantité exacte, prix et stock disponible.', icon: Scale },
   { id: 'media', label: 'Comparer des médias', detail: 'Poids, dimensions et aperçu sur vos fichiers.', icon: Video },
+  { id: 'correlation', label: 'Comparer deux séries numériques', detail: 'Association et test de permutation.', icon: ChartScatter },
+  { id: 'pendule', label: 'Simuler un pendule', detail: 'Période, incertitude et aperçu 3D.', icon: Timer },
   { id: 'atelier', label: 'Préparer un atelier', detail: 'Frais, places et seuil de rentabilité.', icon: CalendarDays },
 ] as const;
 
@@ -62,6 +65,8 @@ export default function IaoTrialPanel({ entry, onClose, standalone = false }: Tr
         <Description className="mt-1 text-sm text-muted-foreground">{selected?.detail ?? 'Choisissez ce que vous voulez vérifier.'}</Description>
       </header>
       <div ref={panels} className="min-h-0 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6">
+        {!kind && entry.scienceProblem && <p role="status" className="mb-3 text-sm">{entry.scienceProblem}</p>}
+        {!kind && entry.scienceHandoff && <ScienceHandoffLink target={entry.scienceHandoff} />}
         {!kind && <div className="grid gap-2">
           {methods.map(({ id, label, detail, icon: Icon }) => <button key={id} type="button" onClick={() => choose(id)}
             className="flex min-h-16 items-center gap-3 rounded-xl border border-border p-3 text-left hover:border-primary focus-visible:ring-2 focus-visible:ring-ring">
@@ -72,6 +77,8 @@ export default function IaoTrialPanel({ entry, onClose, standalone = false }: Tr
         </div>}
         {visited.map(id => <div key={id} hidden={id !== kind}>
           {id === 'panier' && <IaoBasketTrial initialUnits={entry.initialUnits} initialBudgetCents={entry.initialBudgetCents} />}
+          {id === 'correlation' && kind === id && <IaoScienceTrial kind="correlation" />}
+          {id === 'pendule' && kind === id && <IaoScienceTrial inputs={entry.scienceInputs} />}
           {id === 'media' && <IaoMediaTrial showCupExample={standalone &&
             /^\/pura-live\/essais(?:\/(?:index\.html)?)?$/.test(window.location.pathname)} />}
           {id === 'atelier' && <IaoWorkshopTrial />}
