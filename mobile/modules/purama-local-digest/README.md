@@ -22,8 +22,9 @@ donc pas de la conservation d'un import à seul effet de bord lors de l'optimisa
   contexte. Tout nouvel `update` ou `digestHex` est refusé.
 - `destroy()` ferme le contexte et peut être répété. `release()` est fourni par Expo ;
   après libération du `SharedObject`, aucune méthode native ne doit être appelée.
-- Le nettoyage explicite doit être réalisé dans `finally`. Le hook natif de libération
-  ferme aussi le contexte abandonné. L'état cryptographique est de taille constante.
+- Le nettoyage explicite doit toujours être exécuté en préservant la première erreur.
+  Le hook natif de libération ferme aussi le contexte abandonné. L'état cryptographique
+  est de taille constante.
 - Les méthodes restent synchrones et le thread JavaScript est occupé pendant un bloc.
   Le contrôleur existant conserve ses points d'annulation et ses interruptions UI.
 
