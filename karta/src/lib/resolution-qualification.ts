@@ -388,6 +388,9 @@ export function qualifyResolution(value: unknown) {
     ok: true, status: "preparation" as const, qualificationOnly: true, caseId: input.caseId, snapshotRevision: input.snapshotRevision, asOf: input.asOf,
     provenance: "caller_supplied_snapshot" as const, externalFactsVerified: false, permissionsGranted: false, externalActionsPerformed: 0,
     rejectedSourceIds,
+    // Traces keep metadata only: retain the bounded, unauthenticated references
+    // in the private product result, without sharing mutable caller objects.
+    suppliedReferences: input.sources.map(source => ({ ...source })),
     domains: input.domains.map(id => ({ id, label: RESOLUTION_DOMAINS[id].label, routes: [...RESOLUTION_DOMAINS[id].routes], serviceAvailability: "not_qualified",
       ...(id === "N" ? { ownership: "precise_business_owner_required" } : {}) })),
     dependencies: input.dependencies ? qualifyDependencies(input.dependencies, references) : null,

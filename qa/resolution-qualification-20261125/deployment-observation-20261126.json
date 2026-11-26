@@ -1,0 +1,50 @@
+{
+  "observed_at_utc": "2026-11-26T00:12:13.006039+00:00",
+  "status": "BLOCKED_FOR_PRODUCTION_DELIVERY",
+  "mode": "read_only",
+  "access": "Existing authorized Mac SSH alias to Hostinger; Desktop Commander fallback after two MacDevBridge internal errors",
+  "observed": {
+    "karta_engine_container": "Exited (0) 7 weeks ago",
+    "karta_redis_container": "Exited (0) 7 weeks ago",
+    "supabase_auth_container": "Exited (137) 7 weeks ago",
+    "supabase_edge_functions_container": "Exited (15) 7 weeks ago",
+    "karta_source_directory": "/opt/karta",
+    "karta_available_migration_numbers": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005"
+    ],
+    "karta_dist_present": false,
+    "karta_node_modules_present": false,
+    "karta_env_file_present": true,
+    "current_database_schema": "NOT_READ",
+    "production_ownership_and_release_mapping": "NOT_VERIFIED"
+  },
+  "interpretation": "The historical KARTA/Auth/Edge containers are stopped. Running P8 and private ONE instances are separate observed environments; they were not assumed to be the approved destination of this release. Source files alone do not prove applied migration versions.",
+  "unchanged": [
+    "No container restart",
+    "No database read of personal records",
+    "No production migration",
+    "No environment secret printed",
+    "No new duplicate worker",
+    "No OVH/MIDAS operation"
+  ],
+  "remaining": "Identify the current owner-approved Hostinger application/database/Edge release and restore its existing service path before a production rollout of this qualified lot.",
+  "public_http_observations": [
+    {
+      "url": "https://auth.purama.dev/health",
+      "checked_at_utc": "2026-11-26T00:23:12.289221+00:00",
+      "status": 502,
+      "final_url": "https://auth.purama.dev/health"
+    },
+    {
+      "url": "https://purama-ai.purama.dev/",
+      "checked_at_utc": "2026-11-26T00:23:12.785492+00:00",
+      "status": 402,
+      "final_url": "https://purama-ai.purama.dev/"
+    }
+  ],
+  "http_interpretation": "These two responses do not qualify an authenticated user path. HTTP402 alone does not establish a financial cause."
+}

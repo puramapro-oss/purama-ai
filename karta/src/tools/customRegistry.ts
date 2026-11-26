@@ -5,6 +5,7 @@ import { generatePdfTool } from "./pdf.js";
 import { webSearchTool } from "./websearch.js";
 import { knowledgeSearchTool } from "./knowledge-search.js";
 import { quantumSimulateTool } from "./quantum.js";
+import { resolutionQualificationTool } from "./resolution-qualification.js";
 import { sendNotificationTool } from "./notification-tool.js";
 import type { AnyToolDefinition } from "../engine/types.js";
 
@@ -26,6 +27,7 @@ export const CUSTOM_AGENT_TOOLS: Record<string, AnyToolDefinition> = {
   web_search: webSearchTool,
   knowledge_search: knowledgeSearchTool,
   quantum_simulate: quantumSimulateTool,
+  qualify_resolution: resolutionQualificationTool,
   send_notification: sendNotificationTool,
 };
 

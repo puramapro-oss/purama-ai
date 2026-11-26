@@ -16,7 +16,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  android-network:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+      - name: Test the preparation boundary and unchanged offline observer
+        run: node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs
+      - name: Enable the hosted runner emulator accelerator
+        run: |
+          test -c /dev/kvm
+          sudo chmod a+rw /dev/kvm
+      - name: Verify network preparation before compiling the application
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          ram-size: 4096M
+          disk-size: 6G
+          heap-size: 512M
+          cores: 2
+          emulator-boot-timeout: 300
+          disable-animations: true
+          disable-spellchecker: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          working-directory: mobile
+          script: bash scripts/qualify-android-network.sh
+      - name: Preserve the network-only receipt and Android state
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: android-network-preflight-${{ github.sha }}
+          path: mobile/qa/android-network-preflight/
+          if-no-files-found: error
+          retention-days: 14
+
   android:
+    needs: android-network
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     defaults:

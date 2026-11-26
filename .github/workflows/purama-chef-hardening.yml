@@ -85,6 +85,17 @@ jobs:
           path: ${{ runner.temp }}/purama-oauth-native-results
       - run: npm run typecheck
       - run: npm run build
+      - name: Resolution qualification through private SQL delivery and chat
+        id: resolution_roundtrip
+        run: node --import tsx ../qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs
+      - name: Preserve private resolution delivery evidence
+        if: ${{ always() && (steps.resolution_roundtrip.outcome == 'success' || steps.resolution_roundtrip.outcome == 'failure') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-resolution-private-delivery-${{ github.sha }}
+          path: qa/resolution-qualification-20261125/private-resolution-roundtrip.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Stripe reconciliation SQL invariants
         working-directory: .
         env:

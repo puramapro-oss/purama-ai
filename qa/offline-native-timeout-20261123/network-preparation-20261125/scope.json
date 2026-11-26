@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-25",
+  "project": "PURAMA IAO — existing native offline qualification",
+  "designState": "PRET_A_CODER",
+  "scope": "Correct and diagnose the existing Android offline preparation and run its network gate before expensive APK compilation. This is not a new user-facing feature or an additional AI comparator.",
+  "authorization": "Current user request to improve quality, safety, precision and speed without duplicates, applied to the existing approved qualification workflow and its unchanged acceptance criteria.",
+  "remoteBaseCommit": "e04369c79c6395347b66557c0566dc913dc5613d",
+  "localBaseCommit": "1b87843",
+  "identicalBaseTree": "fe3506e8682cd5cd0a4ad9784fe041438475013d",
+  "observedFailure": {
+    "run": 45699636288,
+    "job": 139506020010,
+    "artifact": 15066310692,
+    "phase": "before-restart",
+    "observations": 42,
+    "mobileDataFlag": "1",
+    "stableObservations": 0,
+    "causeOfFlag": "unknown; canonical Android subscription and effective data state were not captured"
+  },
+  "owners": {
+    "root": [".github/workflows/mobile-native-watch.yml", "mobile/scripts/qualify-android-network.sh", "mobile/scripts/qualify-offline-android.sh", "docs/iao-adaptive-intelligence-20261112.md", "qa/offline-native-timeout-20261123/"],
+    "ci_iao_reprise": ["mobile/scripts/prepare-android-offline.py", "mobile/tests/watch-native/offline-preparation.test.cjs"]
+  },
+  "criteria": [
+    "Reuse one preparation helper in the existing full qualification and the early network gate.",
+    "Only disposable emulators are admitted; no changes on physical devices.",
+    "Preserve the read-only offline observer, its three stable observations, empty live network set, and refusal of unknown states.",
+    "Capture exact emulator/image metadata, bounded command results and actual subscription/data states; never write mobile_data merely to satisfy the observer.",
+    "Keep native inference, encrypted persistence, restart, account isolation and integrity checks mandatory in the full job.",
+    "Do not treat a successful control command or network-only run as proof of native inference.",
+    "Use finite deadlines, synthetic fixtures, isolated evidence and the existing CI workflow; preserve concurrent work."
+  ],
+  "initialStatus": "NON TESTÉ — implementation and new native reception pending"
+}

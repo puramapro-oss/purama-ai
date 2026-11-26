@@ -664,3 +664,113 @@ for (const [name, change] of [
     assert.deepEqual(state.errors, []);
   });
 }
+
+function resolutionResultRow() {
+  return resultRow({ tool_name: 'qualify_resolution', payload: {
+    schema_version: 1, tool_name: 'qualify_resolution', status: 'complete',
+    summary: `Analyse de six rubriques sur un instantané fourni. ${PRIVATE_CANARY}`, sources: [],
+    details: {
+      ...resultView.RESOLUTION_REPORT_PROVENANCE,
+      snapshot: { caseId: 'dossier-fourni-ancien', snapshotRevision: 7, asOf: '2024-01-10T12:00:00Z' },
+      sections: resultView.RESOLUTION_REPORT_SECTIONS.map((section, index) => ({ ...section,
+        availability: index === 4 ? 'not_provided' : 'provided',
+        summary: index === 4 ? 'Aucune information fournie pour cette rubrique.' : `État fourni pour ${section.title} : à vérifier.`,
+        items: index === 4 ? [] : [`Détail déclaré pour ${section.title}, sans action extérieure ni droit accordé.`],
+      })),
+      supplied_references: [{ id: 'reference-declaree', caseId: 'dossier-fourni-ancien', snapshotRevision: 7,
+        subjectId: 'demande', kind: 'authorization', reference: 'FULL_REFERENCE_STAYS_IN_PRIVATE_PANEL',
+        observedAt: '2024-01-09T12:00:00Z' }],
+      rejected_source_ids: [],
+    },
+  } });
+}
+
+test('a selected resolution retains the supplied snapshot and six facets as unverified qualification data', async () => {
+  const original = resolutionResultRow();
+  const { state, invoke } = harness({ resultRows: [original] });
+  const response = await invoke({ body: { tool_result_ids: [RESULT_ID] } });
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
+  assert.equal(state.providerCalls.length, 1);
+  const call = state.providerCalls[0];
+  assert.match(call.system, /instantané fourni/);
+  assert.match(call.system, /ne prouvent ni objectif atteint/);
+  const encoded = call.messages.at(-1).content.split(RESULT_MARKER)[1];
+  const [report] = JSON.parse(encoded).results;
+  assert.equal(report.tool_name, 'qualify_resolution');
+  assert.deepEqual(report.evidence, { ...resultView.RESOLUTION_REPORT_PROVENANCE });
+  assert.doesNotMatch(encoded, /classical_statevector|physical_quantum_hardware|FULL_REFERENCE_STAYS_IN_PRIVATE_PANEL/);
+  assert.deepEqual(report.resolution.snapshot, original.payload.details.snapshot);
+  assert.deepEqual(report.resolution.sections.map(section => section.id), ['dependencies', 'transitions', 'effort', 'corrections', 'occurrence', 'handoffs']);
+  for (const [index, section] of report.resolution.sections.entries()) {
+    const source = original.payload.details.sections[index];
+    assert.equal(section.availability, source.availability);
+    assert.equal(section.summary, source.summary);
+    assert.equal(section.summary_truncated, false);
+    assert.deepEqual(section.items.map(item => item.text), source.items);
+    assert.equal(section.items_omitted, 0);
+  }
+  assert.equal(report.resolution.supplied_references_omitted, 1);
+  assert.equal(report.resolution.rejected_source_count, 0);
+  assert.deepEqual(report.sources, []);
+  assert.doesNotMatch(JSON.stringify(state.writes), /SELECTED_PRIVATE_RESULT_CANARY|dossier-fourni-ancien|selected_private_tool_results/);
+  assert.deepEqual(state.errors, []);
+});
+
+test('three large resolution snapshots keep every facet under the chat budget with balanced excerpts and explicit omissions', async () => {
+  const ids = [RESULT_ID, RESULT_ID_2, RESULT_ID_3];
+  const rows = ids.map(id => {
+    const row = resolutionResultRow();
+    row.id = id;
+    row.payload.summary = 'Synthèse <&> 🚀 '.repeat(200);
+    row.payload.details.snapshot.caseId = '<&>'.repeat(53) + '<';
+    row.payload.details.supplied_references = [];
+    row.payload.details.sections = row.payload.details.sections.map(section => ({ ...section,
+      availability: 'provided', summary: 'Long résumé <&> 🚀 '.repeat(45),
+      items: Array.from({ length: 20 }, (_, index) => `${index} Détail <&> 🚀 `.repeat(18)),
+    }));
+    assert.ok(Buffer.byteLength(JSON.stringify(row.payload)) < 61_440);
+    return row;
+  });
+  const { state, invoke } = harness({ resultRows: rows });
+  const response = await invoke({ body: { tool_result_ids: ids } });
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
+  assert.equal(state.providerCalls.length, 1);
+  const encoded = state.providerCalls[0].messages.at(-1).content.split(RESULT_MARKER)[1];
+  assert.ok(Buffer.byteLength(encoded) <= 16_000);
+  assert.doesNotMatch(encoded, /[<>&]/);
+  const context = JSON.parse(encoded);
+  assert.deepEqual(context.results.map(row => row.result_id), ids);
+  for (const [index, report] of context.results.entries()) {
+    assert.deepEqual(report.resolution.snapshot, rows[index].payload.details.snapshot);
+    assert.equal(report.summary_truncated, true);
+    assert.equal(report.resolution.sections.length, 6);
+    for (const section of report.resolution.sections) {
+      assert.equal(section.summary_truncated, true);
+      assert.ok(section.items.length > 0, `${report.result_id}: ${section.id} needs an excerpt`);
+      assert.ok(section.items_omitted > 0);
+      assert.equal(section.items.length + section.items_omitted, 20);
+      assert.ok(section.items.every(item => item.truncated && item.text.endsWith('…')));
+    }
+  }
+});
+
+for (const [name, change] of [
+  ['a purported authorization', { permissions_granted: true }],
+  ['purported external verification', { external_facts_verified: true }],
+  ['an external action claim', { external_actions_performed: 1 }],
+  ['a missing facet', { sections: resolutionResultRow().payload.details.sections.slice(1) }],
+  ['an unreported rejected reference', { supplied_references: [{
+    ...resolutionResultRow().payload.details.supplied_references[0], caseId: 'foreign-dossier',
+  }] }],
+]) {
+  test(`a selected resolution with ${name} is rejected before any paid call`, async () => {
+    const row = resolutionResultRow();
+    Object.assign(row.payload.details, change);
+    const { state, invoke } = harness({ resultResponseOverride: [row] });
+    const response = await invoke({ body: { tool_result_ids: [RESULT_ID] } });
+    assert.equal(response.status, 503);
+    assertNoEffects(state);
+    assert.doesNotMatch(await response.text(), /SELECTED_PRIVATE_RESULT_CANARY/);
+    assert.deepEqual(state.errors, []);
+  });
+}

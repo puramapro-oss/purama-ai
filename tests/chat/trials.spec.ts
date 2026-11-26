@@ -83,3 +83,107 @@ test('création locale d’une variante sur la largeur mobile et téléchargemen
   await page.getByRole('button',{name:'Réinitialiser l’essai'}).click();
   await expect(page.getByRole('link',{name:'Télécharger la variante'})).toBeHidden();
 });
+
+test('quitter un essai met les vidéos en pause et conserve les fichiers et la position au retour', async ({ page }, testInfo) => {
+  await page.goto(entry + '#essai/media');
+  const bytes = await page.evaluate(async () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 64;
+    const context = canvas.getContext('2d')!;
+    const stream = canvas.captureStream(12);
+    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8' });
+    const chunks: Blob[] = [];
+    let frame = 0;
+    const paint = () => {
+      context.fillStyle = frame++ % 2 ? '#6c4b9c' : '#f2ba6b';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    };
+    paint();
+    const interval = window.setInterval(paint, 70);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        recorder.ondataavailable = event => chunks.push(event.data);
+        recorder.onerror = () => reject(new Error('La vidéo de qualification ne peut pas être enregistrée.'));
+        recorder.onstop = () => resolve();
+        recorder.start();
+        window.setTimeout(() => recorder.stop(), 700);
+      });
+      return Array.from(new Uint8Array(await new Blob(chunks, { type: 'video/webm' }).arrayBuffer()));
+    } finally {
+      window.clearInterval(interval);
+      stream.getTracks().forEach(track => track.stop());
+    }
+  });
+  const buffer = Buffer.from(bytes);
+  await page.getByLabel('Original', { exact: true }).setInputFiles({ name: 'source.webm', mimeType: 'video/webm', buffer });
+  await page.getByLabel('Ajouter des variantes', { exact: true }).setInputFiles([
+    { name: 'variante-a.webm', mimeType: 'video/webm', buffer },
+    { name: 'variante-b.webm', mimeType: 'video/webm', buffer },
+  ]);
+
+  const original = page.getByLabel('Original sélectionné – source.webm', { exact: true });
+  const firstVariant = page.getByLabel('Variante sélectionnée – variante-a.webm', { exact: true });
+  await expect(original).toBeVisible();
+  await expect(firstVariant).toBeVisible();
+  await original.evaluate(async (element: HTMLVideoElement) => {
+    element.muted = true;
+    element.loop = true;
+    await element.play();
+  });
+  await firstVariant.evaluate(async (element: HTMLVideoElement) => {
+    element.muted = true;
+    element.loop = true;
+    await element.play();
+  });
+  await expect.poll(() => original.evaluate((element: HTMLVideoElement) => element.currentTime)).toBeGreaterThan(0);
+  await expect.poll(() => firstVariant.evaluate((element: HTMLVideoElement) => element.currentTime)).toBeGreaterThan(0);
+
+  const previousVariant = await firstVariant.elementHandle();
+  expect(previousVariant).not.toBeNull();
+  await page.getByLabel('Variante à comparer').selectOption('1');
+  await expect.poll(() => previousVariant!.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  // Comparing the original with the selected variant remains an intentional choice.
+  expect(await original.evaluate((element: HTMLVideoElement) => element.paused)).toBe(false);
+  const secondVariant = page.getByLabel('Variante sélectionnée – variante-b.webm', { exact: true });
+  await expect(secondVariant).toBeVisible();
+  await secondVariant.evaluate(async (element: HTMLVideoElement) => {
+    element.muted = true;
+    element.loop = true;
+    await element.play();
+  });
+
+  await page.getByRole('button', { name: 'Tous les essais', exact: true }).click();
+  await expect(original).toBeHidden();
+  await expect.poll(() => original.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  await expect.poll(() => secondVariant.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+  const positions = await Promise.all([original, secondVariant].map(video => video.evaluate((element: HTMLVideoElement) => element.currentTime)));
+  await page.getByRole('button', { name: /^Préparer un atelier/ }).click();
+  await page.getByLabel('Confirmations uniques déclarées', { exact: false }).fill('5');
+  await page.getByRole('button', { name: 'Tous les essais', exact: true }).click();
+  await page.getByRole('button', { name: /^Comparer des médias/ }).click();
+
+  await expect(original).toBeVisible();
+  await expect(secondVariant).toBeVisible();
+  await expect(page.getByLabel('Variante à comparer')).toHaveValue('1');
+  for (const [index, video] of [original, secondVariant].entries()) {
+    expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+    expect(await video.evaluate((element: HTMLVideoElement) => element.currentTime)).toBeCloseTo(positions[index], 3);
+  }
+  expect(await page.evaluate(() => window.__chatHarness.calls)).toHaveLength(0);
+  await testInfo.attach('video-return-state', {
+    body: Buffer.from(JSON.stringify({
+      localVideoBytes: buffer.length,
+      positionsOnLeaving: positions,
+      selectedVariant: await page.getByLabel('Variante à comparer').inputValue(),
+      videos: await Promise.all([original, secondVariant].map(video => video.evaluate((element: HTMLVideoElement) => ({
+        label: element.getAttribute('aria-label'), paused: element.paused, currentTime: element.currentTime,
+        width: element.videoWidth, height: element.videoHeight, duration: element.duration,
+      })))),
+    }, null, 2)),
+    contentType: 'application/json',
+  });
+  await page.screenshot({ path: testInfo.outputPath('media-return.png'), fullPage: true });
+  await original.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath('media-preview-return.png'), fullPage: true });
+  await previousVariant!.dispose();
+});

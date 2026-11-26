@@ -1,0 +1,62 @@
+{
+  "phase": "headless-version-probe",
+  "parentCommit": "a4153c6f2653f4ffeedbf254f06937d0ab7018e2",
+  "parentTree": "a2812ceb35c6c6e4dffcf244b2036aa5f9bbfa3a",
+  "localParent": "cce7bd098232c12ece35153a88655199efb8adc8",
+  "runId": 45713386695,
+  "jobId": 139553219625,
+  "failure": "Metadata command selected the graphical QEMU binary; libpulse.so.0 absent; exit127 before helper/observer.",
+  "change": "Use -no-window -version, matching the already booted emulator mode.",
+  "syntaxCheck": {
+    "command": [
+      "bash",
+      "-n",
+      "mobile/scripts/qualify-android-network.sh"
+    ],
+    "exitCode": 0
+  },
+  "sourceSha256": "e0f4b04fe7e37975804474937bcef6165a687ac197c727e59c6ac3f74e1e8ae6",
+  "evidenceZipSha256": "ff79125a211817de5e676149de713b7b76194cb68ff68d95a072d7500dfd0cbc",
+  "nativeReception": "NON TESTÉ on this corrected launcher; no phone or radio observation was collected by the failed version probe.",
+  "artifactMetadata": {
+    "repository": "puramapro-oss/purama-ai",
+    "headSha": "a4153c6f2653f4ffeedbf254f06937d0ab7018e2",
+    "checkoutMergeSha": "b10e0dc678c66dc23d94fbc54f6f3d7bdae6386b",
+    "checkoutTreeSha": "a2812ceb35c6c6e4dffcf244b2036aa5f9bbfa3a",
+    "mergeParents": [
+      "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+      "a4153c6f2653f4ffeedbf254f06937d0ab7018e2"
+    ],
+    "runId": 45713386695,
+    "jobId": 139553219625,
+    "artifactId": 15069190891,
+    "artifactName": "android-network-preflight-b10e0dc678c66dc23d94fbc54f6f3d7bdae6386b",
+    "artifactBytes": 469,
+    "artifactSha256": "d26ed236b3444069e1a4524ed3afe294fe36a8b63ecd5a17f8673d0c5a242dec",
+    "digestVerified": true,
+    "artifactUrl": "https://github.com/puramapro-oss/purama-ai/actions/runs/45713386695/artifacts/15069190891",
+    "selectedFiles": [
+      {
+        "path": "checkout.txt",
+        "bytes": 82,
+        "sha256": "bd8975cf0d3cc35fcd143cfa8128284a4605a8679146af9f7d5f73978585da32"
+      },
+      {
+        "path": "emulator-version.txt",
+        "bytes": 185,
+        "sha256": "3ff97565dc43f47ef8751d5e1f25224e7f12a6283ebd43cd574071a26064e6e1"
+      }
+    ],
+    "jobConclusion": "failure",
+    "failingStep": 6,
+    "failingCommand": "emulator -version",
+    "exitCode": 127,
+    "helperInvoked": false,
+    "offlineObserverInvoked": false,
+    "syntheticTests": {
+      "tests": 43,
+      "pass": 43,
+      "fail": 0
+    }
+  }
+}

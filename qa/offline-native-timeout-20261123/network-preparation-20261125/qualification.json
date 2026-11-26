@@ -1,0 +1,215 @@
+{
+  "recordedAt": "2026-11-25T22:26:43.712838+00:00",
+  "scope": "Existing Android offline qualification: shared preparation and early network gate; actual emulator reception still required.",
+  "localBaseCommit": "1b87843ff754dab7badaa23f70034b12b325e9e8",
+  "remoteBaseCommit": "e04369c79c6395347b66557c0566dc913dc5613d",
+  "identicalBaseTree": "fe3506e8682cd5cd0a4ad9784fe041438475013d",
+  "sourceSha256": {
+    ".github/workflows/mobile-native-watch.yml": "27cdbc89b406e5f502155e6e03cfa833b3b9c3d934d53e0c71b8a52ad52870f6",
+    "docs/iao-adaptive-intelligence-20261112.md": "8cd81d3cecf4de0f1c0b577d31f2a19225676f8bd4b6c386b9f19de8987e21ef",
+    "mobile/scripts/qualify-offline-android.sh": "d3664694518d64443e9f1ace584447ba3ed69534ab485cc5196088cc8ad38859",
+    "mobile/scripts/qualify-android-network.sh": "4971c7645d87168086054f055b286d54cdc61236c94b60a9a282233b9d361537",
+    "mobile/scripts/prepare-android-offline.py": "84bf18248489e982117b1c761f5552bf3c54708e22ba53a8f27dce7cad6cb285",
+    "mobile/scripts/wait-for-android-offline.py": "11b41f3f70601f16b6aa312e176a75407f6c9b3567d41c3a074c74ac837dafd2",
+    "mobile/tests/watch-native/offline-preparation.test.cjs": "e91d8eed350226eca69f711f2a8c8ac53ffb6c02e6e75893e825fbfcc53dc3f7",
+    "mobile/tests/watch-native/offline-network.test.cjs": "7fdce85aff3af047885efc46d67e120f2071c41ed91fa2b14a62eb43bb90d374"
+  },
+  "localTests": {
+    "status": "PASS",
+    "command": [
+      "node",
+      "--test",
+      "mobile/tests/watch-native/offline-preparation.test.cjs",
+      "mobile/tests/watch-native/offline-network.test.cjs"
+    ],
+    "cwd": "/workspace/scratch/0414f811f329/iao-continuity",
+    "exitCode": 0,
+    "tests": 43,
+    "passed": 43,
+    "failed": 0,
+    "newPreparationTests": 20,
+    "existingObserverTests": 23,
+    "durationSeconds": 8.174,
+    "executionOwner": "/root/ci_iao_reprise",
+    "provenance": "Executed tool result reported by the assigned test agent; no separate raw local log was exported.",
+    "boundary": "Synthetic ADB child processes; not an Android emulator or inference test."
+  },
+  "rootChecks": [
+    {
+      "name": "bash-syntax",
+      "command": [
+        "bash",
+        "-n",
+        "mobile/scripts/qualify-android-network.sh",
+        "mobile/scripts/qualify-offline-android.sh"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "yaml-and-job-contract",
+      "status": "PASS",
+      "checks": [
+        "YAML parses",
+        "android needs android-network",
+        "same emulator options",
+        "single Bash launcher passed to runner"
+      ]
+    },
+    {
+      "name": "diff-whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "independentReview": {
+    "owner": "/root/qualite_routage_iao",
+    "status": "PASS",
+    "scope": "Read-only review of the stable helper, tests, workflow and two launchers; no tests rerun.",
+    "findings": "No blocking defect identified in examined scope. Error propagation, bounds, physical-device refusal, evidence preservation and unchanged full-native criteria confirmed."
+  },
+  "gitnexus": {
+    "preEdit": {
+      "target": "qa_adb",
+      "risk": "UNKNOWN",
+      "reason": "Bash symbol not resolved; direct call sites inspected in source."
+    },
+    "finalDetect": "checks/quality-gitnexus-final-detect.txt",
+    "compareMain": "checks/quality-gitnexus-main-detect.txt",
+    "limitations": [
+      "FTS and vectors disabled",
+      "Graph traversal and displayed lists capped",
+      "Shell integration requires direct source review"
+    ]
+  },
+  "nativeReception": {
+    "status": "NON TESTÉ",
+    "reason": "New preflight and complete native qualification must be received on the published commit."
+  },
+  "artifacts": {
+    "README.md": {
+      "sha256": "73288e94d6c44cff025dc4d172bab0aeb9ed62c128e01787b72f15269b0e9bc2",
+      "bytes": 5076
+    },
+    "scope.json": {
+      "sha256": "762474fee1650cbd9379ec773344068caa3d80af6497e6a9adc59676fc074056",
+      "bytes": 2335
+    },
+    "evidence.zip": {
+      "sha256": "943fbc455617c8862c3227a6dc3fd9dbe8c3aed1f2ee7d50558ba163e28bd224",
+      "bytes": 27046
+    }
+  },
+  "archiveMembers": {
+    "checks/quality-android-impact.stderr": {
+      "sha256": "4bc596594371446776a729b5d969d4fd59b8eb97d217fd027b07444d9db2639f",
+      "bytes": 338
+    },
+    "checks/quality-android-impact.txt": {
+      "sha256": "939e8e218176eb0827e10e67d2e363020e1761dbd2f1b7d33ce99d277a726c3b",
+      "bytes": 156
+    },
+    "checks/quality-baseline-ci.json": {
+      "sha256": "d1d8705f200db01a8458084f065818d5c28476df1e08357d3200253e1f117a73",
+      "bytes": 1911
+    },
+    "checks/quality-gitnexus-final-detect.stderr": {
+      "sha256": "4a2c3ded6c7cec845f15895c21ec9cc781f22a7579dd93c4788f45f0c26364cb",
+      "bytes": 346
+    },
+    "checks/quality-gitnexus-final-detect.txt": {
+      "sha256": "5f11a9e0a61659d77adb70abc69bc0457ba35f30cc494720e01fc88bd4fd8a1a",
+      "bytes": 1393
+    },
+    "checks/quality-gitnexus-final-index.log": {
+      "sha256": "f925ae99c95bb69aa2b2d719af5b98fce21e787f3b770f781ab44caac552c1c8",
+      "bytes": 28570
+    },
+    "checks/quality-gitnexus-main-detect.stderr": {
+      "sha256": "874c94c82e83c6196acdae9ef48008c86d559f0d048d98da2acc74a9b279e1c7",
+      "bytes": 346
+    },
+    "checks/quality-gitnexus-main-detect.txt": {
+      "sha256": "72b588ccccd40cbe8c539a8400db7c7ac508f7954636f90ce1cfdfcdcb69f736",
+      "bytes": 3339
+    },
+    "red/artifact-metadata.json": {
+      "sha256": "ddff89345007cd019ba128d0ae6552002b3a77c19c3edf6ce4172315f29e225e",
+      "bytes": 4113
+    },
+    "red/network-before-restart/observation-001/airplane-mode.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-001/airplane-mode.txt": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "red/network-before-restart/observation-001/connectivity-offline.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-001/connectivity-offline.txt": {
+      "sha256": "0a36fd64187d9df4e81106a7c8bf47a03fc637b581463a2094ac998d4b9ad2fc",
+      "bytes": 59886
+    },
+    "red/network-before-restart/observation-001/mobile-data.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-001/mobile-data.txt": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "red/network-before-restart/observation-001/wifi-on.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-001/wifi-on.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "red/network-before-restart/observation-042/airplane-mode.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-042/airplane-mode.txt": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "red/network-before-restart/observation-042/connectivity-offline.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-042/connectivity-offline.txt": {
+      "sha256": "f09e2cdf12f6c8d282e93d34a879909204bd7e250760fa2dc7c03bcc7a7f7b4c",
+      "bytes": 45782
+    },
+    "red/network-before-restart/observation-042/mobile-data.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-042/mobile-data.txt": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "red/network-before-restart/observation-042/wifi-on.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "red/network-before-restart/observation-042/wifi-on.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "red/network-before-restart/receipt.json": {
+      "sha256": "c3fbfc3f9b94cd5b98b8843bc59154cbbc8df493dd23b2de5d2b16af94f44170",
+      "bytes": 108710
+    }
+  },
+  "qualifiedSourceCommit": "a4153c6f2653f4ffeedbf254f06937d0ab7018e2",
+  "qualifiedSourceTree": "a2812ceb35c6c6e4dffcf244b2036aa5f9bbfa3a",
+  "receiptScopeNote": "This first-phase receipt retains source and artifact hashes at the published commit above. The subsequent headless metadata fix is received separately in ci-version-failure.json; earlier tests are not relabeled as tests of that fix."
+}

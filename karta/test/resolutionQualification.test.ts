@@ -277,3 +277,16 @@ describe("handoff facts and authorization boundary", () => {
     expect(result.every(h => h.permissionGranted === false)).toBe(true);
   });
 });
+
+describe("bounded supplied-reference retention", () => {
+  it("preserves seven unauthenticated fields and rejected identities without aliasing the caller", () => {
+    const input = base(); source(input, "subject", "requirement"); source(input, "subject", "satisfaction", "2026-02-30T12:00:00Z");
+    const expected = structuredClone(input.sources), result = qualifyResolution(input);
+    expect(result.suppliedReferences).toEqual(expected);
+    expect(result.rejectedSourceIds).toEqual([expected[1].id]);
+    expect(result.suppliedReferences[0]).not.toBe(input.sources[0]);
+    input.sources[0].reference = "caller changed later";
+    expect(result.suppliedReferences).toEqual(expected);
+    expect(result.externalFactsVerified).toBe(false);
+  });
+});

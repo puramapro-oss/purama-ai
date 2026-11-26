@@ -22,6 +22,7 @@ export default function IaoTrialPanel({ entry, onClose, standalone = false }: Tr
   const [kind, setKind] = useState<TrialKind | null>(entry.kind);
   const [visited, setVisited] = useState<TrialKind[]>(entry.kind ? [entry.kind] : []);
   const heading = useRef<HTMLHeadingElement>(null);
+  const panels = useRef<HTMLDivElement>(null);
   const selected = methods.find(method => method.id === kind);
   const show = useCallback((next: TrialKind | null) => {
     if (next) setVisited(previous => previous.includes(next) ? previous : [...previous, next]);
@@ -29,6 +30,11 @@ export default function IaoTrialPanel({ entry, onClose, standalone = false }: Tr
   }, []);
 
   useEffect(() => { heading.current?.focus({ preventScroll: true }); }, [kind]);
+  useEffect(() => {
+    // Keep each trial's files and position while stopping playback outside the active panel.
+    panels.current?.querySelectorAll<HTMLMediaElement>('[hidden] audio, [hidden] video')
+      .forEach(media => media.pause());
+  }, [kind]);
   useEffect(() => {
     if (!standalone) return;
     const showFromLocation = () => show(sharedTrial(window.location.hash));
@@ -55,7 +61,7 @@ export default function IaoTrialPanel({ entry, onClose, standalone = false }: Tr
         <Title ref={heading} tabIndex={-1} className="text-xl focus:outline-none">{selected?.label ?? 'Essaie-le pour moi'}</Title>
         <Description className="mt-1 text-sm text-muted-foreground">{selected?.detail ?? 'Choisissez ce que vous voulez vérifier.'}</Description>
       </header>
-      <div className="min-h-0 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6">
+      <div ref={panels} className="min-h-0 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6">
         {!kind && <div className="grid gap-2">
           {methods.map(({ id, label, detail, icon: Icon }) => <button key={id} type="button" onClick={() => choose(id)}
             className="flex min-h-16 items-center gap-3 rounded-xl border border-border p-3 text-left hover:border-primary focus-visible:ring-2 focus-visible:ring-ring">

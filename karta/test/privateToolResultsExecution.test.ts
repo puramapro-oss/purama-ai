@@ -5,6 +5,7 @@ import type { AgentDecision, AgentDefinition, AgentRunResult, AgentState, AnyToo
 import type { PrivateToolResultPayload } from "../src/engine/private-tool-results.js";
 import { createKnowledgeSearchTool } from "../src/tools/knowledge-search.js";
 import { quantumSimulateTool } from "../src/tools/quantum.js";
+import { resolutionQualificationTool } from "../src/tools/resolution-qualification.js";
 
 const OWNER = "00000000-0000-4000-8000-000000000501";
 const AGENT = "custom:00000000-0000-4000-8000-000000000502";
@@ -295,6 +296,40 @@ describe.each(["cycle", "approval"] as const)("private tool result delivery thro
     if (!Array.isArray(probabilities)) throw new Error("Stored quantum probabilities must be an array");
     expect(probabilities[0]).toBeCloseTo(0.5, 10);
     expect(probabilities[3]).toBeCloseTo(0.5, 10);
+  });
+
+  it("delivers a real dossier qualification only in the private sink after direct or approved execution", async () => {
+    const dossierMarker = "PRIVATE_DOSSIER_INPUT_501";
+    installTool(resolutionQualificationTool, {
+      caseId: dossierMarker, snapshotRevision: 4, asOf: "2026-11-25T12:00:00Z", domains: ["A", "E", "G"], sources: [],
+      dependencies: [], transitions: [], corrections: [], handoffs: [],
+      effort: { chosenMinutes: 2, paused: false, steps: [{ id: "action-courte", state: "pending", estimatedMinutes: 2 }] },
+      occurrence: { requested: "new_episode", current: { episodeId: "episode", beneficiaryId: "person", objectId: "object", periodId: "period",
+        engagementId: "engagement", territory: "FR", operationId: "operation", payloadHash: "payload" }, attemptLimit: 3, revoked: false },
+    });
+    const result = await executePath(path);
+    expectSuccessful(path, result);
+    expect(h.execute).toHaveBeenCalledOnce(); expect(h.providerFetch).not.toHaveBeenCalled();
+    expect(stores()).toHaveLength(1);
+    expect(stores()[0]).toMatchObject({ p_user_id: OWNER, p_agent_type: AGENT, p_run_id: RUN,
+      p_operation_id: path === "cycle" ? `${RUN}:0` : PENDING, p_tool_name: "qualify_resolution",
+      p_payload: { status: "complete", sources: [], details: {
+        verification_status: "unverified", qualification_only: true, external_facts_verified: false,
+        permissions_granted: false, external_actions_performed: 0,
+        snapshot: { caseId: dossierMarker, snapshotRevision: 4, asOf: "2026-11-25T12:00:00Z" },
+      } },
+    });
+    expect(h.events.indexOf("execute")).toBeLessThan(h.events.indexOf("store"));
+    expect(h.events.indexOf("store")).toBeLessThan(h.events.lastIndexOf(path === "cycle" ? "finish" : "finalize"));
+    expectNoPrivateTrace(result);
+    // Pending actions retain their private execution inputs to resume after approval;
+    // the dossier must not spill into decision text, notifications or journal metadata.
+    if (path === "approval") expect(h.insert.mock.calls[0][0].tool_params.caseId).toBe(dossierMarker);
+    expect(JSON.stringify({ result, journal: h.finish.mock.calls, outcomes: h.record.mock.calls,
+      notifications: h.notify.mock.calls, logs: h.log.mock.calls,
+      pendingMetadata: h.insert.mock.calls.map(([{ tool_params: _params, ...metadata }]) => metadata),
+      otherRpc: h.rpc.mock.calls.filter(([name]) => name !== "karta_store_tool_result"),
+    })).not.toContain(dossierMarker);
   });
 
   it("does not publish a tool response that explicitly reports non-execution", async () => {

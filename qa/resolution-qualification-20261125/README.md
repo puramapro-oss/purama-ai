@@ -1,8 +1,77 @@
-# Qualification interne des dossiers PURAMA
+# Qualification et restitution privée des dossiers PURAMA
+
+## Réception du 26 novembre 2026
+
+**PASS local — mise en service BLOQUÉE sur l’environnement observé.** Ce complément termine le parcours logiciel de l’outil `qualify_resolution` dans le mécanisme privé existant. Il poursuit la même PR123 et conserve le premier module, les six spécialisations, les quatorze domaines, leurs identités et l’historique de réception ci-dessous.
+
+### Ce qui est utilisable dans le candidat reçu
+
+Le propriétaire peut sélectionner la capacité dans les catalogues existants, exécuter une mission avec son agent, retrouver une **Analyse de dossier** dans les résultats privés, ouvrir les six rubriques et leurs références, joindre explicitement le résultat au chat, puis le supprimer après clôture avec confirmation. Aucun agent existant ne reçoit automatiquement la nouvelle capacité.
+
+Le statut visible **Analyse disponible** distingue la livraison d’une analyse d’un problème réellement résolu. L’identifiant, la révision et la date de l’instantané fourni restent distincts de la date d’enregistrement. Les informations absentes, contradictions et références non retenues restent visibles. Le contexte des quatorze domaines reste intégralement accessible dans un volet dépliable, afin de conserver une vue mobile lisible.
+
+Le résultat est conservé par la RPC et dans la table privées existantes. La migration additive `karta/migrations/036_resolution_private_results.sql` étend seulement le validateur et la contrainte de type. Les migrations 028/034, le corps de persistance et la définition de la RPC de stockage sont inchangés. Aucun moteur, stockage de dossiers, planificateur, permission ou service parallèle n’est ajouté.
+
+### Réception exécutée
+
+| Vérification | Résultat local final |
+| --- | --- |
+| Qualification, projecteur, lecteur et SQL, 4 fichiers | **240/240 PASS** |
+| Cycle moteur et approbations, 2 fichiers | **30/30 PASS** |
+| Catalogues et intégration recherche/simulation, 2 fichiers | **18/18 PASS** |
+| Composant et lecteur frontend, 2 fichiers | **55/55 PASS** |
+| Handler de chat réel, transports substitués | **59/59 PASS** |
+| Route réelle dans Chromium, ordinateur 1440×1000 et mobile 390×844 | **2/2 PASS** |
+| Outil réel → projection → PGlite → RPC → lecture propriétaire → contexte chat | **11/11 contrôles PASS**, zéro tentative réseau |
+| Typage et construction frontend/KARTA | **PASS** |
+| Lint global | **PASS**, 0 erreur ; 22 avertissements hors fichiers modifiés |
+| Contrats de base de données | **PASS** |
+
+Les groupes du tableau portent sur des fichiers de tests distincts. Les totaux ultérieurs de CI recouvrent ces tests ; ils ne doivent pas être additionnés. Les 11 contrôles du banc sont une réception complémentaire, pas 11 services réels.
+
+La migration 036 a été appliquée deux fois dans PGlite ; `pg_get_functiondef` confirme que la RPC de stockage demeure identique. Les trois anciens types de résultats privés passent leurs régressions. Trois nouveaux cas natifs PostgreSQL 18 sont ajoutés au fichier déjà exécuté par la CI : livraison concurrente idempotente, révocation pendant l’attente du verrou d’agent, borne JSON/JSONB. Leur exécution distante reste un jalon séparé du présent reçu local.
+
+Le navigateur utilise le dossier synthétique réellement enregistré puis relu en SQL. Il vérifie les détails, références échappées, ouverture au clavier, sélection, envoi des seuls identifiants au handler, remise à zéro et suppression annulée/confirmée. Les transports Supabase et la réponse de chat sont substitués ; aucune session utilisateur ou base de production n’est qualifiée. Quatre captures finales ont été inspectées ; les vues d’ensemble ont aussi été relues par le coordinateur.
+
+### Défauts observés et corrigés
+
+La première projection de chat pouvait laisser des rubriques sans extrait quand trois grands dossiers étaient sélectionnés. Une réservation du coût JSON d’un premier extrait pour chaque rubrique non vide précède maintenant l’enrichissement ; la limite totale reste 16 000 octets. Les marqueurs de troncature et d’omission restent explicites. Les références intégrales restent dans le panneau.
+
+Deux incompatibilités TypeScript du lecteur partagé ont été corrigées sans changer la configuration globale. La vue mobile a été raccourcie par un volet de contexte, sans supprimer de contenu. Une installation incomplète après manque d’espace et un fichier de test interrompu ont été rétablis ; la réception finale est postérieure à leur correction. Une construction interrompue avec code 137 a été suivie de constructions séquentielles réussies avec un plafond de tas Node de 1536 Mio.
+
+### Portée du contrôle de code
+
+Les impacts précis avant édition étaient **HIGH** pour le projecteur commun et le lecteur partagé, et **LOW** pour les composants d’affichage et de contexte. Ces avertissements ont été conservés et les anciens types ont reçu leurs régressions. Le rafraîchissement final complet de GitNexus a échoué deux fois avec code 1, sans diagnostic exploitable. La recherche plein texte reste indisponible.
+
+Les appels finaux `detect-changes` ont terminé : 28 fichiers / 84 symboles / 1 flux signalés en risque MEDIUM pour le delta préparé, et 3 489 fichiers / 727 flux en CRITICAL face à `main`. **Analyse de graphe PARTIELLE :** ces chiffres reposent sur le graphe préédition conservé ; les décalages de lignes peuvent attribuer un changement à un symbole voisin et les nouveaux nœuds ne sont pas tous représentés. Ils ne mesurent pas complètement la portée finale. Le diff exact, les réservations, les invariants octet par octet, la revue indépendante et les réceptions exécutées restent les preuves principales de ce lot. La divergence historique entière n’est pas fusionnée dans `main` par cette livraison.
+
+### Limites de la livraison et exploitation
+
+Le rapport privé est entier ou refusé : 61 440 octets UTF-8 pour le JSON compact et 65 536 octets pour le JSONB, six rubriques, 2 048 éléments et 128 références au plus. La représentation du dossier principal reçu mesure 9 703 octets compact / 9 950 JSONB ; son contexte de chat mesure 8 151 octets. Ces nombres décrivent ce cas synthétique et ne remplacent pas les tests de bornes.
+
+Les références et autorisations fournies restent **non authentifiées**. L’outil ne crée aucun droit, paiement, courrier, rendez-vous ou intervention. Les 44 scénarios métier spécifiés demeurent **NON TESTÉS sur le terrain** ; la qualification logicielle n’établit aucune couverture mondiale ou prestation disponible.
+
+L’inspection Hostinger du 26 novembre est en lecture seule. Les anciens conteneurs KARTA, Redis KARTA, Auth et Edge sont arrêtés ; les instances actives P8/ONE privé sont distinctes. Les deux GET publics datés renvoient 502 pour Auth et 402 pour l’entrée PURAMA-AI. Un 402 ne suffit pas à diagnostiquer une cause financière. Aucun ancien conteneur n’a été redémarré et aucune migration de production n’a été appliquée. La destination actuelle et son propriétaire doivent être rapprochés avant mise en service.
+
+### Preuves et reproduction
+
+- `delivery-verification.json` : réception du complément, commandes, empreintes, corrections et limites.
+- `private-resolution-roundtrip.json` : sortie réellement conservée/rechargée et fixture navigateur synthétique.
+- `private-resolution-roundtrip.mjs` : banc reproductible depuis `karta/` avec `node --import tsx ../qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs`.
+- `deployment-observation-20261126.json` : état d’exploitation daté, sans secret ni donnée utilisateur.
+- `scope.json` : réservation additive des fichiers et conservation du périmètre historique.
+- `docs/iao-private-results.md` : contrat produit et ordre de livraison des migrations, worker, fonctions Edge et interface.
+
+La CI existante est configurée pour exécuter aussi le banc de chaîne réelle et archiver son reçu. La publication, son arbre exact, ses contrôles distants et une éventuelle fusion doivent être rapprochés de PR123 ; un résultat local n’est jamais présenté comme un déploiement.
+
+## Réception historique du 25 novembre 2026
+
+Le texte ci-dessous conserve la réception initiale de l’outil interne. Son différé d’exposition utilisateur est levé dans le candidat du 26 novembre décrit plus haut ; ses limites de prestations et de vérification externe restent applicables.
+
 
 **PASS local — PARTIEL produit.** Base `dd59dae670db7d3fca0d0b7173ad55aec5d10891`, branche isolée `feat/iao-resolution-qualification-20261125`. Le lot prolonge les six spécialisations et quatorze domaines approuvés le 25 novembre 2026. Il ne crée ni application, ni orchestrateur, ni mémoire, ni planificateur.
 
-## Ce qui fonctionne
+### Ce qui fonctionne
 
 L'outil interne `qualify_resolution` réutilise `ToolDefinition`, la validation stricte de paramètres KARTA et la politique de traces `metadata_only`. Il est exporté par `karta/src/tools/registry.ts`. L'appelant reçoit une qualification déterministe de son instantané, sans réseau ni modification du dossier.
 
@@ -15,7 +84,7 @@ L'outil interne `qualify_resolution` réutilise `ToolDefinition`, la validation 
 
 Les quatorze domaines A–N sont des rattachements aux produits existants. Ils n'annoncent aucune disponibilité de prestation. Le propriétaire métier précis des capacités N reste à qualifier.
 
-## Preuves
+### Preuves
 
 `verification.json` contient les commandes réellement exécutées, leurs sorties, les empreintes SHA-256 et les conclusions GitNexus. `internal-call.json` conserve un appel réel au JavaScript compilé, avec données synthétiques et six rubriques non vides.
 
@@ -25,11 +94,11 @@ Les quatorze domaines A–N sont des rattachements aux produits existants. Ils n
 - Appel interne via le registre et `runAgentCycle` : outil réel, ports modèle/état/journal substitués, zéro fournisseur. Gardes simulation/arrêt et confidentialité des traces vérifiées.
 - Six régressions de revue reproduites avant correction, reçues après correction ; revue indépendante finale sans défaut concret restant.
 
-## Impact avant commit
+### Impact avant commit
 
 GitNexus reçoit le lot staged et la comparaison à sa base de consolidation en **LOW** : neuf fichiers, 318 symboles/propriétés, zéro flux existant affecté. La comparaison à `main` reste **CRITICAL** pour toute la divergence de consolidation (3 464 fichiers, 727 flux) ; elle ne constitue pas une réception de fusion. Une incohérence d’index intermédiaire avait attribué des appelants Swift/frontend impossibles aux nouveaux symboles ; une reconstruction sans cache a rétabli leurs identifiants et le seul appelant produit attendu. Le code n’a pas été modifié pour changer cette évaluation. La recherche plein texte demeure indisponible ; les analyses exactes, imports et diff sont conservés.
 
-## Frontière de livraison
+### Frontière de livraison
 
 **PARTIEL :** exposition utilisateur différée. `CUSTOM_AGENT_TOOLS`, les options de création et le générateur conservent exactement leur état initial. La restitution privée existante accepte seulement ses noms d'outils qualifiés ; ce lot ne lui ajoute aucun stockage parallèle. Un appelant interne autorisé peut employer l'outil explicitement et recevoir son résultat.
 

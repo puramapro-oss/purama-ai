@@ -4,6 +4,7 @@ const client = vi.hoisted(() => ({ auth: { getSession: vi.fn() }, from: vi.fn() 
 vi.mock('@/integrations/supabase/client', () => ({ supabase: client }));
 
 import { deletePrivateToolResult, listPrivateToolResults, parsePrivateToolResult, privateToolSourceUrl } from './private-tool-results';
+import { RESOLUTION_REPORT_PROVENANCE, RESOLUTION_REPORT_SECTIONS } from '../../karta/src/knowledge/private-result-view';
 
 const OWNER = '81000000-0000-4000-8000-000000000001';
 const AGENT = '82000000-0000-4000-8000-000000000001';
@@ -20,6 +21,25 @@ const row = {
     summary: 'Une référence trouvée.', sources: [source], details: { private_data: 'not needed by the UI' },
   },
 };
+
+function resolutionRow() {
+  return {
+    ...row, tool_name: 'qualify_resolution', payload: {
+      schema_version: 1, tool_name: 'qualify_resolution', status: 'complete',
+      summary: 'Six rubriques sur un instantané fourni, avec des informations encore inconnues.', sources: [],
+      details: {
+        ...RESOLUTION_REPORT_PROVENANCE,
+        snapshot: { caseId: 'dossier-fourni', snapshotRevision: 4, asOf: '2024-01-12T12:00:00Z' },
+        sections: RESOLUTION_REPORT_SECTIONS.map(section => ({ ...section, availability: 'not_provided',
+          summary: 'Aucune information fournie pour cette rubrique.', items: [] as string[] })),
+        supplied_references: [{ id: 'reference-rejetee', caseId: 'autre-dossier', snapshotRevision: 2,
+          subjectId: 'demande', kind: 'authorization', reference: 'javascript:alert(1) <texte privé>',
+          observedAt: '2026-02-30T12:00:00Z' }],
+        rejected_source_ids: ['reference-rejetee'],
+      },
+    },
+  };
+}
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -115,6 +135,39 @@ describe('lecture et suppression privées des résultats de mission', () => {
     } }, OWNER, AGENT);
     expect(result?.payload.status).toBe('empty');
     expect(result?.payload.sources).toEqual([]);
+  });
+
+  it('relit l’analyse privée avec ses six rubriques, son instantané et ses références déclarées complètes', async () => {
+    const original = resolutionRow();
+    client.from.mockReturnValue(queryResult({ data: [original], error: null }));
+    const [parsed] = await listPrivateToolResults(OWNER, AGENT);
+    expect(parsed.tool_name).toBe('qualify_resolution');
+    expect(parsed.payload.resolution?.snapshot).toEqual(original.payload.details.snapshot);
+    expect(parsed.payload.resolution?.sections).toEqual(original.payload.details.sections);
+    expect(parsed.payload.resolution?.supplied_references).toEqual(original.payload.details.supplied_references);
+    expect(parsed.payload.resolution?.rejected_source_ids).toEqual(['reference-rejetee']);
+    expect(parsed.payload.sources).toEqual([]);
+    expect(parsed.payload).not.toHaveProperty('details');
+    original.payload.details.sections[0].summary = 'Mutation ultérieure de la réponse';
+    original.payload.details.supplied_references[0].reference = 'Mutation de référence';
+    expect(parsed.payload.resolution?.sections[0].summary).toBe('Aucune information fournie pour cette rubrique.');
+    expect(parsed.payload.resolution?.supplied_references[0].reference).toBe('javascript:alert(1) <texte privé>');
+  });
+
+  it('refuse une analyse d’un autre compte ou agent et toute fausse provenance ou rubrique manquante', async () => {
+    const original = resolutionRow();
+    const invalid = [
+      { ...original, user_id: OTHER }, { ...original, creator_agent_id: OTHER },
+      { ...original, payload: { ...original.payload, details: { ...original.payload.details, permissions_granted: true } } },
+      { ...original, payload: { ...original.payload, details: { ...original.payload.details, external_facts_verified: true } } },
+      { ...original, payload: { ...original.payload, details: { ...original.payload.details, sections: original.payload.details.sections.slice(1) } } },
+      { ...original, payload: { ...original.payload, details: { ...original.payload.details, rejected_source_ids: [] } } },
+    ];
+    for (const candidate of invalid) {
+      expect(parsePrivateToolResult(candidate, OWNER, AGENT)).toBeNull();
+      client.from.mockReturnValue(queryResult({ data: [candidate], error: null }));
+      await expect(listPrivateToolResults(OWNER, AGENT)).rejects.toThrow('temporairement indisponibles');
+    }
   });
 
   const reportRow = (summary = 'Synthèse complète. '.repeat(400)) => ({
