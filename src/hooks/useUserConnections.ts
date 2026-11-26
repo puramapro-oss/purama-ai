@@ -6,14 +6,8 @@ import { toast } from 'sonner';
 export type ServiceProvider = 'google_sheets' | 'gmail' | 'google_calendar' | 'google_drive';
 
 export interface UserConnection {
-  id: string;
-  user_id: string;
   provider: ServiceProvider;
-  access_token: string | null;
-  refresh_token: string | null;
   token_expires_at: string | null;
-  created_at: string;
-  updated_at: string;
 }
 
 export const SERVICE_CONFIG: Record<ServiceProvider, {
@@ -32,7 +26,7 @@ export const SERVICE_CONFIG: Record<ServiceProvider, {
   },
   gmail: {
     name: 'Gmail',
-    description: 'Envoyez et lisez vos emails',
+    description: 'Google vous demande un accès à votre boîte Gmail pour lire, organiser et envoyer des messages.',
     icon: '📧',
     scopes: ['https://www.googleapis.com/auth/gmail.modify'],
     requiredByAgents: ['email-marketing', 'support-client', 'prospection-auto'],
@@ -46,7 +40,7 @@ export const SERVICE_CONFIG: Record<ServiceProvider, {
   },
   google_drive: {
     name: 'Google Drive',
-    description: 'Accédez à vos fichiers et documents',
+    description: 'Accès aux fichiers Drive créés par l’application ou que vous choisissez de partager avec elle.',
     icon: '📁',
     scopes: ['https://www.googleapis.com/auth/drive.file'],
     requiredByAgents: ['document-analyzer', 'legal-assistant'],
@@ -64,7 +58,7 @@ export function useUserConnections() {
       
       const { data, error } = await supabase
         .from('user_connections')
-        .select('*')
+        .select('provider, token_expires_at')
         .eq('user_id', user.id);
       
       if (error) throw error;

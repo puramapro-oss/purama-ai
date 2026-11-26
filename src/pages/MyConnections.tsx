@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Loader2,
   RefreshCw,
+  FolderOpen,
   Unlink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,22 +54,26 @@ export default function MyConnections() {
           </div>
         </div>
 
-        {/* Info Card */}
         <Card className="mb-8 glass-effect border-primary/20 bg-primary/5">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <Link2 className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-foreground font-medium">Pourquoi connecter mes comptes ?</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  En connectant vos comptes Google, vous permettez à nos agents IA d'accéder à vos données 
-                  pour automatiser vos tâches. Vos tokens sont stockés de manière sécurisée et vous pouvez 
-                  révoquer l'accès à tout moment.
-                </p>
-              </div>
-            </div>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <FolderOpen className="h-5 w-5" aria-hidden="true" /> Mes justificatifs
+            </CardTitle>
+            <CardDescription>
+              Pour une facture ou un contrat, choisissez les fichiers à déposer dans le coffre YANTRA.
+              Cette démarche est indépendante de vos connexions Google.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {import.meta.env.VITE_YANTRA_VAULT_AVAILABLE === 'true' ? (
+              <Button asChild variant="outline">
+                <a href="https://yantra.purama.dev/dashboard/vault" rel="noreferrer">
+                  Ouvrir mon coffre YANTRA
+                </a>
+              </Button>
+            ) : (
+              <p className="text-sm text-muted-foreground">L’accès au coffre depuis cette version est indisponible.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -195,10 +200,11 @@ export default function MyConnections() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground space-y-2">
-            <p>• Vos tokens d'accès sont chiffrés et stockés de manière sécurisée</p>
-            <p>• Nous n'avons jamais accès à vos mots de passe Google</p>
-            <p>• Vous pouvez révoquer l'accès à tout moment depuis cette page ou depuis Google</p>
-            <p>• Les agents n'accèdent qu'aux données nécessaires à leur fonctionnement</p>
+            <p>Google affiche les autorisations demandées avant de vous laisser les accepter.</p>
+            <p>« Déconnecter » retire la connexion enregistrée dans cette application. Pour révoquer
+              l’autorisation auprès de Google, ouvrez les{' '}
+              <a className="underline" href="https://myaccount.google.com/connections" rel="noreferrer">connexions de votre compte Google</a>.
+            </p>
           </CardContent>
         </Card>
       </div>
