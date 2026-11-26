@@ -1,0 +1,286 @@
+TAP version 13
+# Subtest: explicit authorization is required: original failure preserved and zero ADB commands by default
+ok 1 - explicit authorization is required: original failure preserved and zero ADB commands by default
+  ---
+  duration_ms: 101.038976
+  type: 'test'
+  ...
+# Subtest: observed ON → OFF → ON uses two fresh UI states and preserves original FAIL with raw trace hashes
+ok 2 - observed ON → OFF → ON uses two fresh UI states and preserves original FAIL with raw trace hashes
+  ---
+  duration_ms: 1322.881643
+  type: 'test'
+  ...
+# Subtest: observed OFF → ON needs only one click on bounds from the actual dump
+ok 3 - observed OFF → ON needs only one click on bounds from the actual dump
+  ---
+  duration_ms: 958.733499
+  type: 'test'
+  ...
+# Subtest: a recreated row is re-read between OFF and ON; second click follows its new bounds
+ok 4 - a recreated row is re-read between OFF and ON; second click follows its new bounds
+  ---
+  duration_ms: 1247.88498
+  type: 'test'
+  ...
+# Subtest: two asynchronous UI transitions can each consume three observations within the shared bound
+ok 5 - two asynchronous UI transitions can each consume three observations within the shared bound
+  ---
+  duration_ms: 3290.731004
+  type: 'test'
+  ...
+# Subtest: invalid global timeout 0 is rejected before any diagnostic dispatch
+ok 6 - invalid global timeout 0 is rejected before any diagnostic dispatch
+  ---
+  duration_ms: 72.880417
+  type: 'test'
+  ...
+# Subtest: invalid global timeout -1 is rejected before any diagnostic dispatch
+ok 7 - invalid global timeout -1 is rejected before any diagnostic dispatch
+  ---
+  duration_ms: 61.366977
+  type: 'test'
+  ...
+# Subtest: invalid global timeout 61 is rejected before any diagnostic dispatch
+ok 8 - invalid global timeout 61 is rejected before any diagnostic dispatch
+  ---
+  duration_ms: 55.704913
+  type: 'test'
+  ...
+# Subtest: invalid global timeout NaN is rejected before any diagnostic dispatch
+ok 9 - invalid global timeout NaN is rejected before any diagnostic dispatch
+  ---
+  duration_ms: 53.195517
+  type: 'test'
+  ...
+# Subtest: wrong original cause refuses any data click and retains initial evidence
+ok 10 - wrong original cause refuses any data click and retains initial evidence
+  ---
+  duration_ms: 68.591527
+  type: 'test'
+  ...
+# Subtest: previously mutated preflight refuses any data click and retains initial evidence
+ok 11 - previously mutated preflight refuses any data click and retains initial evidence
+  ---
+  duration_ms: 105.436689
+  type: 'test'
+  ...
+# Subtest: stale original evidence refuses any data click and retains initial evidence
+ok 12 - stale original evidence refuses any data click and retains initial evidence
+  ---
+  duration_ms: 81.670954
+  type: 'test'
+  ...
+# Subtest: serial override refuses any data click and retains initial evidence
+ok 13 - serial override refuses any data click and retains initial evidence
+  ---
+  duration_ms: 64.519618
+  type: 'test'
+  ...
+# Subtest: unknown image revision refuses any data click and retains initial evidence
+ok 14 - unknown image revision refuses any data click and retains initial evidence
+  ---
+  duration_ms: 65.475986
+  type: 'test'
+  ...
+# Subtest: physical device refuses any data click and retains initial evidence
+ok 15 - physical device refuses any data click and retains initial evidence
+  ---
+  duration_ms: 121.120184
+  type: 'test'
+  ...
+# Subtest: different binary refuses any data click and retains initial evidence
+ok 16 - different binary refuses any data click and retains initial evidence
+  ---
+  duration_ms: 232.234778
+  type: 'test'
+  ...
+# Subtest: wrong API refuses any data click and retains initial evidence
+ok 17 - wrong API refuses any data click and retains initial evidence
+  ---
+  duration_ms: 166.639681
+  type: 'test'
+  ...
+# Subtest: secondary Android user refuses any data click and retains initial evidence
+ok 18 - secondary Android user refuses any data click and retains initial evidence
+  ---
+  duration_ms: 269.904024
+  type: 'test'
+  ...
+# Subtest: SIM not loaded refuses any data click and retains initial evidence
+ok 19 - SIM not loaded refuses any data click and retains initial evidence
+  ---
+  duration_ms: 327.885739
+  type: 'test'
+  ...
+# Subtest: subscriptions not loaded refuses any data click and retains initial evidence
+ok 20 - subscriptions not loaded refuses any data click and retains initial evidence
+  ---
+  duration_ms: 327.320857
+  type: 'test'
+  ...
+# Subtest: multiple modems refuses any data click and retains initial evidence
+ok 21 - multiple modems refuses any data click and retains initial evidence
+  ---
+  duration_ms: 294.318144
+  type: 'test'
+  ...
+# Subtest: ambiguous mapping refuses any data click and retains initial evidence
+ok 22 - ambiguous mapping refuses any data click and retains initial evidence
+  ---
+  duration_ms: 337.321093
+  type: 'test'
+  ...
+# Subtest: missing Settings activity refuses any data click and retains initial evidence
+ok 23 - missing Settings activity refuses any data click and retains initial evidence
+  ---
+  duration_ms: 382.442385
+  type: 'test'
+  ...
+# Subtest: failed launch refuses any data click and retains initial evidence
+ok 24 - failed launch refuses any data click and retains initial evidence
+  ---
+  duration_ms: 410.058978
+  type: 'test'
+  ...
+# Subtest: unexpected focus refuses any data click and retains initial evidence
+ok 25 - unexpected focus refuses any data click and retains initial evidence
+  ---
+  duration_ms: 518.531941
+  type: 'test'
+  ...
+# Subtest: unsupported locale refuses any data click and retains initial evidence
+ok 26 - unsupported locale refuses any data click and retains initial evidence
+  ---
+  duration_ms: 517.425621
+  type: 'test'
+  ...
+# Subtest: disabled row refuses any data click and retains initial evidence
+ok 27 - disabled row refuses any data click and retains initial evidence
+  ---
+  duration_ms: 526.591721
+  type: 'test'
+  ...
+# Subtest: unknown widget refuses any data click and retains initial evidence
+ok 28 - unknown widget refuses any data click and retains initial evidence
+  ---
+  duration_ms: 505.174943
+  type: 'test'
+  ...
+# Subtest: unknown checked state refuses any data click and retains initial evidence
+ok 29 - unknown checked state refuses any data click and retains initial evidence
+  ---
+  duration_ms: 517.859523
+  type: 'test'
+  ...
+# Subtest: out of screen geometry refuses any data click and retains initial evidence
+ok 30 - out of screen geometry refuses any data click and retains initial evidence
+  ---
+  duration_ms: 520.454473
+  type: 'test'
+  ...
+# Subtest: subscription drift refuses any data click and retains initial evidence
+ok 31 - subscription drift refuses any data click and retains initial evidence
+  ---
+  duration_ms: 594.663126
+  type: 'test'
+  ...
+# Subtest: data that becomes ready naturally is not attributed to a Settings transition
+ok 32 - data that becomes ready naturally is not attributed to a Settings transition
+  ---
+  duration_ms: 302.923743
+  type: 'test'
+  ...
+# Subtest: a tap return code does not prove a UI transition; no repeated click when state stays unchanged
+ok 33 - a tap return code does not prove a UI transition; no repeated click when state stays unchanged
+  ---
+  duration_ms: 1933.974906
+  type: 'test'
+  ...
+# Subtest: a popup after OFF aborts the attempt before any second click
+ok 34 - a popup after OFF aborts the attempt before any second click
+  ---
+  duration_ms: 745.68825
+  type: 'test'
+  ...
+# Subtest: checked=true and a general default of 1 never replace the actual default DATA guard
+ok 35 - checked=true and a general default of 1 never replace the actual default DATA guard
+  ---
+  duration_ms: 2462.414424
+  type: 'test'
+  ...
+# Subtest: bounded ADB timeout retains the receipt and cannot trigger a late UI click
+ok 36 - bounded ADB timeout retains the receipt and cannot trigger a late UI click
+  ---
+  duration_ms: 1175.3705
+  type: 'test'
+  ...
+# Subtest: stderr at the observation boundary fails before UI action
+ok 37 - stderr at the observation boundary fails before UI action
+  ---
+  duration_ms: 330.446907
+  type: 'test'
+  ...
+# Subtest: invalid UTF-8 at the observation boundary fails before UI action
+ok 38 - invalid UTF-8 at the observation boundary fails before UI action
+  ---
+  duration_ms: 299.049487
+  type: 'test'
+  ...
+# Subtest: bounded output overflow at the observation boundary fails before UI action
+ok 39 - bounded output overflow at the observation boundary fails before UI action
+  ---
+  duration_ms: 323.550735
+  type: 'test'
+  ...
+# Subtest: external original-evidence change is detected and never overwritten by the diagnostic
+ok 40 - external original-evidence change is detected and never overwritten by the diagnostic
+  ---
+  duration_ms: 374.458981
+  type: 'test'
+  ...
+# Subtest: malformed readiness is a complete FAIL receipt rather than an uncaught partial execution
+ok 41 - malformed readiness is a complete FAIL receipt rather than an uncaught partial execution
+  ---
+  duration_ms: 54.20271
+  type: 'test'
+  ...
+# Subtest: ambiguous Settings resolver output never launches an activity
+ok 42 - ambiguous Settings resolver output never launches an activity
+  ---
+  duration_ms: 336.342752
+  type: 'test'
+  ...
+# Subtest: multiple focused-window records are ambiguous even if one names the expected Settings component
+ok 43 - multiple focused-window records are ambiguous even if one names the expected Settings component
+  ---
+  duration_ms: 419.122624
+  type: 'test'
+  ...
+# Subtest: a row that moves during the last subscription read is dumped again before the first click
+ok 44 - a row that moves during the last subscription read is dumped again before the first click
+  ---
+  duration_ms: 926.191879
+  type: 'test'
+  ...
+# Subtest: a second invocation cannot overwrite evidence or repeat a previously uncertain action
+ok 45 - a second invocation cannot overwrite evidence or repeat a previously uncertain action
+  ---
+  duration_ms: 1420.943521
+  type: 'test'
+  ...
+# Subtest: real parser rejects ambiguous rows, overlays and unsafe XML and accepts only observed geometry
+ok 46 - real parser rejects ambiguous rows, overlays and unsafe XML and accepts only observed geometry
+  ---
+  duration_ms: 55.950904
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25462.662451

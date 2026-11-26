@@ -166,6 +166,7 @@ assert prepared['runId'] == completed['runId'], 'Receipts do not belong to one p
 assert prepared['fixtureAccountsOnly'] is True and completed['fixtureAccountsOnly'] is True
 assert prepared['backend'] == completed['backend'] == 'llama.rn'
 assert prepared['gpu'] is False and completed['gpu'] is False
+assert prepared['integrity'] == completed['integrity'] == {'implementation': 'native-sha256', 'offsetViewVectorVerified': True}
 assert prepared['model'] == completed['model']
 assert completed['model']['sha256'] == '9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031'
 assert completed['model']['bytes'] == 639446688

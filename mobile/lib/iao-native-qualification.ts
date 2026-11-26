@@ -142,6 +142,23 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       lastPackProgress = bucket;
       progress({ status: state.status, phase: state.phase, progressPercent });
     });
+    beginStage("integrity-backend", "Vérification du calcul d’intégrité natif.");
+    const { createIaoLocalDigest } = await import("./iao-local-digest");
+    const digest = await createIaoLocalDigest();
+    let digestFailed = false;
+    try {
+      requireCheck(digest.implementation === "native-sha256", "native-sha256-required");
+      // Exercise the actual Expo TypedArray bridge, including a nonzero view
+      // offset. The core tests separately cover large blocks and lifecycle.
+      const sentinel = new Uint8Array([0, 97, 98, 99, 255]);
+      digest.update(sentinel.subarray(1, 4));
+      requireCheck(digest.digestHex() === "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+        "native-sha256-self-test-failed");
+    } catch (error) { digestFailed = true; throw error; }
+    finally {
+      try { digest.destroy(); } catch (error) { if (!digestFailed) throw error; }
+    }
+    active();
     const common = {
       runId,
       fixtureAccountsOnly: true,
@@ -150,6 +167,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       requiredMemoryBytes: local.IAO_LOCAL_PACK_MANIFEST.minimumMemoryBytes,
       model: { repository: local.IAO_LOCAL_PACK_MANIFEST.repository, revision: local.IAO_LOCAL_PACK_MANIFEST.revision,
         bytes: local.IAO_LOCAL_PACK_MANIFEST.model.bytes, sha256: local.IAO_LOCAL_PACK_MANIFEST.model.sha256 },
+      integrity: { implementation: digest.implementation, offsetViewVectorVerified: true },
     };
     const checkNative = (completion: IaoLocalCompletion) => {
       requireCheck(completion.native.backend === "llama.rn" && completion.native.gpu === false &&

@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 24.22.1
       - name: Test the preparation boundary and unchanged offline observer
-        run: node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs
+        run: node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs mobile/tests/watch-native/data-settings-qualification.test.cjs
       - name: Enable the hosted runner emulator accelerator
         run: |
           test -c /dev/kvm
@@ -47,7 +47,13 @@ jobs:
           disable-spellchecker: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           working-directory: mobile
-          script: bash scripts/qualify-android-network.sh
+          script: >-
+            bash -c 'set +e; bash scripts/qualify-android-network.sh;
+            purama_network_result=$?;
+            if [ "$purama_network_result" -ne 0 ]; then
+            python3 -B scripts/qualify-android-data-settings.py --artifact-dir "$PWD/qa/android-network-preflight" --allow-settings-transition || true;
+            fi;
+            exit "$purama_network_result"'
       - name: Preserve the network-only receipt and Android state
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -91,6 +97,8 @@ jobs:
           mkdir -p qa/watch-native
           git rev-parse HEAD HEAD^{tree} > qa/watch-native/android-checkout.txt
           node --test tests/watch-native/*.test.cjs 2>&1 | tee qa/watch-native/android-js-tests.log
+          node --test tests/iao-local-pack.test.cjs tests/iao-local-digest.test.cjs modules/purama-local-digest/tests/module-contract.test.cjs 2>&1 | tee qa/watch-native/android-digest-js-tests.log
+          bash modules/purama-local-digest/tests/run-core-tests.sh --java 2>&1 | tee qa/watch-native/java-digest-tests.log
           npm run typecheck
       - name: Generate existing phone and companion projects
         run: |
@@ -287,6 +295,7 @@ jobs:
           xcodebuild -version | tee qa/watch-native/xcode-version.log
           xcrun swiftc modules/purama-accessibility-watch/apple/WatchWire.swift tests/watch-native/apple/main.swift -o "$RUNNER_TEMP/purama-watch-protocol-tests"
           "$RUNNER_TEMP/purama-watch-protocol-tests" | tee qa/watch-native/swift-protocol-tests.log
+          bash modules/purama-local-digest/tests/run-core-tests.sh --swift 2>&1 | tee qa/watch-native/swift-digest-tests.log
       - name: Install the existing mobile lock
         run: npm ci --no-audit --no-fund
       - name: Generate existing phone and companion projects

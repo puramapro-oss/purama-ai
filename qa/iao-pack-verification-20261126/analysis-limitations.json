@@ -1,0 +1,25 @@
+{
+  "full_index_rebuild": {
+    "status": "BLOQUE",
+    "exit_code": 137,
+    "configuration": "index-only, skip-fts,2 workers,Node heap2048MB; isolated index",
+    "source": "exact received tree ae5d147a47012799caa1822be4d327767a215b82"
+  },
+  "reused_index": {
+    "fts": "unavailable",
+    "staleness": "one commit behind the previous local head; mobile pack baseline source unchanged",
+    "risk": "UNKNOWN; no absent-edge claim"
+  },
+  "manual_review": {
+    "source_baseline": "e6a9ece6d66fec795957e7d941d9948ab904d408",
+    "corresponding_remote": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "main_changed_paths": 3489,
+    "interpretation": "Consolidation branch includes pre-existing work;3489 is not the size of this change. Review this lot against the received baseline.",
+    "preserved": [
+      "mobile/scripts/prepare-android-offline.py",
+      "mobile/scripts/wait-for-android-offline.py",
+      "mobile/tests/watch-native/offline-preparation.test.cjs",
+      "mobile/tests/watch-native/offline-network.test.cjs"
+    ]
+  }
+}

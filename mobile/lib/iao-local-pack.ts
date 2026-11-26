@@ -1,7 +1,8 @@
-import { sha256 } from "@noble/hashes/sha256";
-import { bytesToHex } from "@noble/hashes/utils";
+import { createIaoLocalDigest } from "./iao-local-digest";
+import type { IaoLocalDigest } from "./iao-local-digest";
 import { IAO_LOCAL_PACK_MANIFEST } from "./iao-local-manifest";
 import type { IaoLocalPackAsset, IaoLocalPackManifest } from "./iao-local-manifest";
+import { MAX_DIGEST_BLOCK_BYTES } from "../modules/purama-local-digest/contract";
 
 export type IaoLocalErrorCode = "aborted" | "busy" | "pack-absent" | "integrity" | "storage"
   | "download" | "unsupported" | "memory" | "native" | "timeout" | "context-limit"
@@ -83,6 +84,7 @@ export type IaoLocalPackDependencies = Readonly<{
     onBytes: (bytes: number) => void) => Promise<void>;
   manifest?: IaoLocalPackManifest;
   yieldToUI?: () => Promise<void>;
+  createDigest?: () => IaoLocalDigest | Promise<IaoLocalDigest>;
 }>;
 
 export interface IaoLocalPack {
@@ -95,7 +97,7 @@ export interface IaoLocalPack {
   requireReady(signal?: AbortSignal): Promise<IaoLocalPackReady>;
 }
 
-const BLOCK_BYTES = 256 * 1024;
+const BLOCK_BYTES = MAX_DIGEST_BLOCK_BYTES;
 const RECEIPT_NAME = "prepared.json";
 const RECEIPT_LIMIT = 8192;
 
@@ -138,16 +140,35 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
     return JSON.stringify([...assets.map(asset => fs.stat(`${folder}/${asset.name}`)), fs.stat(`${folder}/${RECEIPT_NAME}`)]);
   }
 
+  function hasModificationTime(stat: Stat): boolean {
+    return stat.modified !== null && Number.isFinite(stat.modified);
+  }
+
+  function sameStat(checked: Stat, current: Stat): boolean {
+    return checked.exists && current.exists && hasModificationTime(checked) && hasModificationTime(current) &&
+      checked.bytes === current.bytes && checked.modified === current.modified;
+  }
+
+  function assertVerifiedAssets(fs: IaoLocalPackStorage, directory: string, checked: readonly Stat[]): void {
+    if (checked.length !== assets.length || assets.some((asset, index) =>
+      !sameStat(checked[index], fs.stat(`${directory}/${asset.name}`)))) throw new IaoLocalError("integrity");
+  }
+
   async function verifyAsset(fs: IaoLocalPackStorage, directory: string, asset: IaoLocalPackAsset,
-    completedBefore: number, signal?: AbortSignal, observer?: IaoLocalProgress): Promise<void> {
+    completedBefore: number, signal?: AbortSignal, observer?: IaoLocalProgress): Promise<Stat> {
     assertIaoLocalActive(signal);
     const path = `${directory}/${asset.name}`;
     const before = fs.stat(path);
     if (!before.exists || before.bytes !== asset.bytes) throw new IaoLocalError("integrity");
-    const handle = fs.openRead(path);
-    const digest = sha256.create();
+    if (!hasModificationTime(before)) throw new IaoLocalError("storage");
+    let handle: ReadHandle | undefined;
+    let digest: IaoLocalDigest | undefined;
+    let failed = false;
     let read = 0;
     try {
+      digest = await (dependencies.createDigest ?? createIaoLocalDigest)();
+      assertIaoLocalActive(signal);
+      handle = fs.openRead(path);
       while (read < asset.bytes) {
         assertIaoLocalActive(signal);
         const count = Math.min(BLOCK_BYTES, asset.bytes - read);
@@ -166,25 +187,43 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
       }
       assertIaoLocalActive(signal);
       const after = fs.stat(path);
-      if (after.bytes !== before.bytes || after.modified !== before.modified ||
-          bytesToHex(digest.digest()) !== asset.sha256) throw new IaoLocalError("integrity");
+      if (!sameStat(before, after) ||
+          digest.digestHex() !== asset.sha256) throw new IaoLocalError("integrity");
+      return Object.freeze({ ...before });
+    } catch (error) {
+      failed = true;
+      throw error;
     } finally {
-      digest.destroy();
-      handle.close();
+      // Attempt both cleanups, including when creation/opening failed. An error
+      // during cleanup must not replace the original integrity/abort failure.
+      let cleanupError: unknown;
+      let cleanupFailed = false;
+      try { digest?.destroy(); } catch (error) { cleanupError = error; cleanupFailed = true; }
+      try { handle?.close(); } catch (error) { if (!cleanupFailed) cleanupError = error; cleanupFailed = true; }
+      if (!failed && cleanupFailed) throw cleanupError;
     }
   }
 
-  function readReceipt(fs: IaoLocalPackStorage): void {
-    const text = fs.readText(`${folder}/${RECEIPT_NAME}`, RECEIPT_LIMIT);
-    if (text !== receipt) throw new IaoLocalError("integrity");
+  function readReceipt(fs: IaoLocalPackStorage): Stat {
+    const path = `${folder}/${RECEIPT_NAME}`;
+    const before = fs.stat(path);
+    if (!before.exists || before.bytes > RECEIPT_LIMIT) throw new IaoLocalError("integrity");
+    if (!hasModificationTime(before)) throw new IaoLocalError("storage");
+    const text = fs.readText(path, RECEIPT_LIMIT);
+    if (text !== receipt || !sameStat(before, fs.stat(path))) throw new IaoLocalError("integrity");
+    return Object.freeze({ ...before });
   }
 
-  function markReady(fs: IaoLocalPackStorage, observer?: IaoLocalProgress): IaoLocalPackReady {
-    readReceipt(fs);
+  function markReady(fs: IaoLocalPackStorage, checked: readonly Stat[], observer?: IaoLocalProgress): IaoLocalPackReady {
+    const checkedReceipt = readReceipt(fs);
+    assertVerifiedAssets(fs, folder, checked);
     ready = Object.freeze({ packId: manifest.id, modelUri: fs.uri(`${folder}/${manifest.model.name}`),
       licenseUri: fs.uri(`${folder}/${manifest.licenseFile.name}`),
       modelVersion: `${manifest.repository}@${manifest.revision}:${manifest.model.sha256}` });
-    verifiedFingerprint = fingerprint(fs);
+    // Retain the metadata that accompanied the successful hashes, never adopt
+    // newly changed files after smoke or asynchronous directory promotion.
+    // Missing modification times have already refused verification/promotion.
+    verifiedFingerprint = JSON.stringify([...checked, checkedReceipt]);
     publish({ status: "ready", progress: 1, completedBytes: totalBytes }, observer);
     return ready;
   }
@@ -205,14 +244,16 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
     ready = undefined;
     verifiedFingerprint = undefined;
     let completed = 0;
+    const checked: Stat[] = [];
     for (const asset of assets) {
-      await verifyAsset(fs, folder, asset, completed, signal, observer);
+      checked.push(await verifyAsset(fs, folder, asset, completed, signal, observer));
       completed += asset.bytes;
     }
     publish({ status: "verifying", phase: "local-test", progress: 1, completedBytes: totalBytes }, observer);
+    assertVerifiedAssets(fs, folder, checked);
     await dependencies.smokeTest(fs.uri(`${folder}/${manifest.model.name}`), signal);
     assertIaoLocalActive(signal);
-    return markReady(fs, observer);
+    return markReady(fs, checked, observer);
   }
 
   async function operation<T>(action: () => Promise<T>, observer?: IaoLocalProgress): Promise<T> {
@@ -262,6 +303,7 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
         let promoted = false;
         try {
           let completed = 0;
+          const checked: Stat[] = [];
           for (const asset of assets) {
             assertIaoLocalActive(signal);
             publish({ status: "downloading", phase: "download", completedBytes: completed,
@@ -274,12 +316,14 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
                   progress: (completed + bytes) / totalBytes }, observer);
               });
             } finally { writer.close(); }
-            await verifyAsset(fs, staging, asset, completed, signal, observer);
+            checked.push(await verifyAsset(fs, staging, asset, completed, signal, observer));
             completed += asset.bytes;
           }
           publish({ status: "verifying", phase: "local-test", progress: 1, completedBytes: totalBytes }, observer);
+          assertVerifiedAssets(fs, staging, checked);
           await dependencies.smokeTest(fs.uri(`${staging}/${manifest.model.name}`), signal);
           assertIaoLocalActive(signal);
+          assertVerifiedAssets(fs, staging, checked);
           fs.writeText(`${staging}/${RECEIPT_NAME}`, receipt);
           // No reader trusts a staging directory. The prepared receipt and both
           // verified assets are promoted together by one same-parent native move.
@@ -287,7 +331,7 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
           await fs.moveDirectory(staging, folder);
           promoted = true;
           assertIaoLocalActive(signal);
-          return markReady(fs, observer);
+          return markReady(fs, checked, observer);
         } finally {
           if (!promoted) fs.removeDirectory(staging);
         }

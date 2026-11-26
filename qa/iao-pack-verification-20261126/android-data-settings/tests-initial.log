@@ -1,0 +1,45 @@
+✔ explicit authorization is required: original failure preserved and zero ADB commands by default (70.861846ms)
+✔ observed ON → OFF → ON uses two fresh UI states and preserves original FAIL with raw trace hashes (1183.942707ms)
+✔ observed OFF → ON needs only one click on bounds from the actual dump (811.018958ms)
+✔ a recreated row is re-read between OFF and ON; second click follows its new bounds (1100.033041ms)
+✔ wrong original cause refuses any data click and retains initial evidence (65.869536ms)
+✔ previously mutated preflight refuses any data click and retains initial evidence (54.561448ms)
+✔ stale original evidence refuses any data click and retains initial evidence (62.462581ms)
+✔ serial override refuses any data click and retains initial evidence (60.473202ms)
+✔ unknown image revision refuses any data click and retains initial evidence (57.181899ms)
+✔ physical device refuses any data click and retains initial evidence (114.177422ms)
+✔ different binary refuses any data click and retains initial evidence (196.623307ms)
+✔ wrong API refuses any data click and retains initial evidence (151.722149ms)
+✔ secondary Android user refuses any data click and retains initial evidence (242.084111ms)
+✔ SIM not loaded refuses any data click and retains initial evidence (350.204572ms)
+✔ subscriptions not loaded refuses any data click and retains initial evidence (370.021872ms)
+✔ multiple modems refuses any data click and retains initial evidence (365.543495ms)
+✔ ambiguous mapping refuses any data click and retains initial evidence (290.358872ms)
+✔ missing Settings activity refuses any data click and retains initial evidence (355.619113ms)
+✔ failed launch refuses any data click and retains initial evidence (436.193156ms)
+✔ unexpected focus refuses any data click and retains initial evidence (440.297715ms)
+✔ unsupported locale refuses any data click and retains initial evidence (700.176653ms)
+✔ disabled row refuses any data click and retains initial evidence (538.36363ms)
+✔ unknown widget refuses any data click and retains initial evidence (590.169265ms)
+✔ unknown checked state refuses any data click and retains initial evidence (715.812514ms)
+✔ out of screen geometry refuses any data click and retains initial evidence (586.521669ms)
+✔ subscription drift refuses any data click and retains initial evidence (611.868054ms)
+✔ data that becomes ready naturally is not attributed to a Settings transition (319.875657ms)
+✔ a tap return code does not prove a UI transition; no repeated click when state stays unchanged (1900.124489ms)
+✔ a popup after OFF aborts the attempt before any second click (829.881431ms)
+✔ checked=true and a general default of 1 never replace the actual default DATA guard (2484.598712ms)
+✔ bounded ADB timeout retains the receipt and cannot trigger a late UI click (1180.015249ms)
+✔ stderr at the observation boundary fails before UI action (338.760165ms)
+✔ invalid UTF-8 at the observation boundary fails before UI action (378.907742ms)
+✔ bounded output overflow at the observation boundary fails before UI action (319.089166ms)
+✔ external original-evidence change is detected and never overwritten by the diagnostic (1006.782417ms)
+✔ a second invocation cannot overwrite evidence or repeat a previously uncertain action (1204.251124ms)
+✔ real parser rejects ambiguous rows, overlays and unsafe XML and accepts only observed geometry (56.121586ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20672.859257

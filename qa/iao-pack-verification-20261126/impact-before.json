@@ -1,0 +1,56 @@
+[
+  {
+    "symbol": "createIaoLocalPack",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'createIaoLocalPack' not found\",\n  \"target\": {\n    \"name\": \"createIaoLocalPack\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667916264,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "verifyAsset",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'verifyAsset' not found\",\n  \"target\": {\n    \"name\": \"verifyAsset\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667917158,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "fingerprint",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'fingerprint' not found\",\n  \"target\": {\n    \"name\": \"fingerprint\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667917957,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "readReceipt",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'readReceipt' not found\",\n  \"target\": {\n    \"name\": \"readReceipt\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667918716,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "markReady",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'markReady' not found\",\n  \"target\": {\n    \"name\": \"markReady\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667919327,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "installed",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'installed' not found\",\n  \"target\": {\n    \"name\": \"installed\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667919883,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "prepare",
+    "rc": 0,
+    "stdout": "{\n  \"status\": \"ambiguous\",\n  \"message\": \"Found 2 symbols matching 'prepare'. Blast radius differs per candidate (max 0 impacted at risk UNKNOWN). Disambiguate with target_uid (or file_path/kind) for a single authoritative result.\",\n  \"target\": {\n    \"name\": \"prepare\"\n  },\n  \"direction\": \"upstream\",\n  \"totalCandidates\": 2,\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\",\n  \"maxImpactedCount\": 0,\n  \"maxRisk\": \"UNKNOWN\",\n  \"candidates\": [\n    {\n      \"uid\": \"Method:mobile/lib/iao-local-pack.ts:IaoLocalPack.prepare#2\",\n      \"name\": \"prepare\",\n      \"kind\": \"Method\",\n      \"filePath\": \"mobile/lib/iao-local-pack.ts\",\n      \"line\": 94,\n      \"score\": 0.94,\n      \"impactedCount\": 0,\n      \"risk\": \"UNKNOWN\",\n      \"riskSharedAxes\": \"UNKNOWN\",\n      \"riskScale\": {\n        \"comparableAcrossKinds\": false,\n        \"unusedAxes\": [\n          {\n            \"axis\": \"processes\",\n            \"reason\": \"enrichment-skipped\"\n          },\n          {\n            \"axis\": \"modules\",\n            \"reason\": \"enrichment-skipped\"\n          }\n        ]\n      },\n      \"direct\": 0,\n      \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.\"\n    },\n    {\n      \"uid\": \"Method:mobile/lib/iao-local-pack.ts:createIaoLocalPack.prepare@243:4#2\",\n      \"name\": \"prepare\",\n      \"kind\": \"Method\",\n      \"filePath\": \"mobile/lib/iao-local-pack.ts\",\n      \"line\": 244,\n      \"score\": 0.94,\n      \"impactedCount\": 0,\n      \"risk\": \"UNKNOWN\",\n      \"riskSharedAxes\": \"UNKNOWN\",\n      \"riskScale\": {\n        \"comparableAcrossKinds\": false,\n        \"unusedAxes\": [\n          {\n            \"axis\": \"processes\",\n            \"reason\": \"enrichment-skipped\"\n          },\n          {\n            \"axis\": \"modules\",\n            \"reason\": \"enrichment-skipped\"\n          }\n        ]\n      },\n      \"direct\": 0,\n      \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.\"\n    }\n  ],\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 1,\n    \"hint\": \"⚠️ Index is 1 commit behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667920471,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "fixture",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'fixture' not found\",\n  \"target\": {\n    \"name\": \"fixture\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667921155,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "modules",
+    "rc": 1,
+    "stdout": "{\n  \"error\": \"Target 'modules' not found\",\n  \"target\": {\n    \"name\": \"modules\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795667921729,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  }
+]

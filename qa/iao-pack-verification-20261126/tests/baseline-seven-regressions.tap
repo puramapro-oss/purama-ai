@@ -1,0 +1,170 @@
+TAP version 13
+# Subtest: prepare rejects model.gguf mutation during smoke instead of trusting a new fingerprint
+not ok 1 - prepare rejects model.gguf mutation during smoke instead of trusting a new fingerprint
+  ---
+  duration_ms: 210.250469
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:275:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:279:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: restart inspection rejects model.gguf mutation during smoke without downloading
+not ok 2 - restart inspection rejects model.gguf mutation during smoke without downloading
+  ---
+  duration_ms: 83.212775
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:285:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:291:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: prepare rejects LICENSE mutation during smoke instead of trusting a new fingerprint
+not ok 3 - prepare rejects LICENSE mutation during smoke instead of trusting a new fingerprint
+  ---
+  duration_ms: 51.82773
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:275:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:279:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: restart inspection rejects LICENSE mutation during smoke without downloading
+not ok 4 - restart inspection rejects LICENSE mutation during smoke without downloading
+  ---
+  duration_ms: 49.438189
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:285:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:291:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: prepare rejects an earlier asset changed while a later asset is hashed
+not ok 5 - prepare rejects an earlier asset changed while a later asset is hashed
+  ---
+  duration_ms: 1831.229865
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:298:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      Comparison {
+    +   code: 'storage'
+    -   code: 'integrity'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  actual:
+  error: 'L’espace disponible ou l’accès au stockage ne permet pas de préparer PURAMA.'
+  stack: |-
+    operation (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/lib/iao-local-pack.ts:200:67)
+    async waitForActual (node:assert:646:5)
+    async strict.rejects (node:assert:769:25)
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:307:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:307:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: inspection rejects an earlier asset changed while a later asset is hashed
+not ok 6 - inspection rejects an earlier asset changed while a later asset is hashed
+  ---
+  duration_ms: 1337.578013
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:298:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      Comparison {
+    +   code: 'storage'
+    -   code: 'integrity'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  actual:
+  error: 'L’espace disponible ou l’accès au stockage ne permet pas de préparer PURAMA.'
+  stack: |-
+    operation (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/lib/iao-local-pack.ts:200:67)
+    async waitForActual (node:assert:646:5)
+    async strict.rejects (node:assert:769:25)
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:307:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:307:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: a mutation during asynchronous promotion never becomes the trusted cache
+not ok 7 - a mutation during asynchronous promotion never becomes the trusted cache
+  ---
+  duration_ms: 40.077804
+  type: 'test'
+  location: '/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:313:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    code: 'integrity'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/red-regression-ufackbqm/mobile/tests/iao-local-pack.test.cjs:321:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 0
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4189.489306

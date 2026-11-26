@@ -1,0 +1,12 @@
+[Reading 5 new lines (total: 5 lines)]
+
+SWIFT_SDK /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+SWIFT_COMPILE_EXIT 0
+PASS Swift SHA-256 core: 22 assertions
+SWIFT_TEST_EXIT 0
+
+✅ Process completed with exit code 0 (runtime: 394.47s)
+
+
+[executed on device: mac.home (5b532c75-ad8a-421c-8e01-5b2e96c3cecf)]
+

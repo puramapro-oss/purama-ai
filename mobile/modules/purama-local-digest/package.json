@@ -1,0 +1,7 @@
+{
+  "name": "purama-local-digest",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "description": "Bounded incremental native SHA-256 for the existing PURAMA local pack verifier"
+}

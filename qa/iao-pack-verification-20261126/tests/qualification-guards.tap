@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: qualification harness refuses non-exact flag undefined without any native/storage import
+ok 1 - qualification harness refuses non-exact flag undefined without any native/storage import
+  ---
+  duration_ms: 139.591536
+  type: 'test'
+  ...
+# Subtest: qualification harness refuses non-exact flag  without any native/storage import
+ok 2 - qualification harness refuses non-exact flag  without any native/storage import
+  ---
+  duration_ms: 53.669261
+  type: 'test'
+  ...
+# Subtest: qualification harness refuses non-exact flag 0 without any native/storage import
+ok 3 - qualification harness refuses non-exact flag 0 without any native/storage import
+  ---
+  duration_ms: 54.360639
+  type: 'test'
+  ...
+# Subtest: qualification harness refuses non-exact flag true without any native/storage import
+ok 4 - qualification harness refuses non-exact flag true without any native/storage import
+  ---
+  duration_ms: 20.830215
+  type: 'test'
+  ...
+# Subtest: qualification harness refuses non-exact flag 01 without any native/storage import
+ok 5 - qualification harness refuses non-exact flag 01 without any native/storage import
+  ---
+  duration_ms: 36.985489
+  type: 'test'
+  ...
+# Subtest: a failed cold restart identifies the active verification stage and restores global networking
+ok 6 - a failed cold restart identifies the active verification stage and restores global networking
+  ---
+  duration_ms: 30.893788
+  type: 'test'
+  ...
+# Subtest: device qualification refuses native-sha256-required before model work
+ok 7 - device qualification refuses native-sha256-required before model work
+  ---
+  duration_ms: 38.636742
+  type: 'test'
+  ...
+# Subtest: device qualification refuses native-sha256-self-test-failed before model work
+ok 8 - device qualification refuses native-sha256-self-test-failed before model work
+  ---
+  duration_ms: 43.023159
+  type: 'test'
+  ...
+# Subtest: device qualification refuses native-sha256-required with cleanup failure before model work
+ok 9 - device qualification refuses native-sha256-required with cleanup failure before model work
+  ---
+  duration_ms: 17.017141
+  type: 'test'
+  ...
+# Subtest: device qualification refuses native-sha256-self-test-failed with cleanup failure before model work
+ok 10 - device qualification refuses native-sha256-self-test-failed with cleanup failure before model work
+  ---
+  duration_ms: 16.047645
+  type: 'test'
+  ...
+# Subtest: device qualification refuses native-qualification-failed with cleanup failure before model work
+ok 11 - device qualification refuses native-qualification-failed with cleanup failure before model work
+  ---
+  duration_ms: 19.030421
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 987.639264
