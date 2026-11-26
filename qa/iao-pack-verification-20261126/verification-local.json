@@ -1,0 +1,113 @@
+{
+  "status": "PARTIEL",
+  "source_remote_baseline": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "source_tree_baseline": "ae5d147a47012799caa1822be4d327767a215b82",
+  "test_boundaries": "Real pack/controller/filesystem and incremental Noble SHA-256; explicit fake network/native smoke/Expo boundaries. Native cores qualified separately; no device speed claim from unit tests.",
+  "integrity_regressions": {
+    "before": {
+      "pass": 17,
+      "fail": 7,
+      "total": 24
+    },
+    "after_initial_fix": {
+      "pass": 24,
+      "fail": 0,
+      "total": 24
+    }
+  },
+  "local_tests": {
+    "pack_digest_engine": {
+      "pass": 77,
+      "fail": 0,
+      "ignored": 0,
+      "log": "tests/pack-digest-engine.tap",
+      "command": "NODE_PATH=/tmp/purama-iao-journey-essq0a93/node_modules node --test --test-reporter=tap --test-concurrency=1 mobile/tests/iao-local-pack.test.cjs mobile/tests/iao-local-digest.test.cjs mobile/tests/iao-local-engine.test.cjs"
+    },
+    "qualification_guards": {
+      "pass": 11,
+      "fail": 0,
+      "log": "tests/qualification-guards.tap",
+      "selection": "qualification harness|a failed cold restart|device qualification",
+      "excluded": "Unchanged QA-route rendering test requires react-test-renderer19.1.0, not installed locally; all tests remain enabled in locked CI."
+    },
+    "module_contract": {
+      "pass": 9,
+      "fail": 0,
+      "receipt": "native-cores/receipt.json"
+    },
+    "workflow_diagnostic_gate": {
+      "pass": 3,
+      "fail": 0,
+      "receipt": "tests/workflow-diagnostic-gate.json",
+      "scope": "real folded workflow shell; synthetic preflight and diagnostic scripts; no ADB"
+    },
+    "baseline_regressions": {
+      "expected_fail": 7,
+      "unexpected_pass": 0,
+      "log": "tests/baseline-seven-regressions.tap"
+    },
+    "unknown_metadata_regression": {
+      "expected_fail": 1,
+      "unexpected_pass": 0,
+      "log": "tests/unknown-metadata-before.tap"
+    },
+    "android_settings_diagnostic": {
+      "pass": 46,
+      "fail": 0,
+      "receipt": "android-data-settings/receipt-final.json",
+      "scope": "real parser/process wrapper + synthetic ADB; actual API35r9UI not executed"
+    }
+  },
+  "gitnexus": {
+    "fresh_full_index": "exit137",
+    "fts": "unavailable",
+    "impact": "UNKNOWN, supplemented by direct source/caller review",
+    "before_commit_detect_attempt": "No indexed repository after failed rebuild; manual diff/tree verification retained."
+  },
+  "native_bindings": "NON_TESTE pending actual Expo builds and offset-view probe in qualification APK",
+  "sources": {
+    "mobile/lib/iao-local-pack.ts": "6c449b2b89a354dad146fb93b801f7623cabf9f0fd3bfec2fa9f5d28b024847a",
+    "mobile/lib/iao-local-digest.ts": "afd6d32463ebfaacca414d9977c2c50fa0204900a72dbcee2926b9e61772057c",
+    "mobile/lib/iao-native-qualification.ts": "55c44f1e7045c8f8f03af49179495936f5cba2e61c8f44c10796cf06d7ca5064",
+    "mobile/tests/iao-local-pack.test.cjs": "852d4b1b775cbdeb1804e0d8c2e04d2b90f5ad28eebf323806e1d38968ab4666",
+    "mobile/tests/iao-local-digest.test.cjs": "a9d59e4b4b2d4de0dc62afd16e37040f0739964dc66167e96bf4763ef82ff33f",
+    "mobile/tests/iao-native-qualification.test.cjs": "5f30b430ef87a4056ea0c6ea8fd0bb4207036d2f7024011032287bffd5604d99",
+    "mobile/scripts/qualify-offline-android.sh": "665b4816d3847c306bd7da08d30f8939ea84f5d17e69e46e93b17189778d109b",
+    ".github/workflows/mobile-native-watch.yml": "a707f1c20e0c8492ffec94c7007441cc946046ee52d8b173835d32c26ce50c98"
+  },
+  "previous_source_snapshot": {
+    "mobile/lib/iao-local-pack.ts": "b471977bee9e11e4958cc7c9cfb370e1339e2aceef46b31ca944e972ab908b8f",
+    "mobile/lib/iao-local-digest.ts": "afd6d32463ebfaacca414d9977c2c50fa0204900a72dbcee2926b9e61772057c",
+    "mobile/lib/iao-native-qualification.ts": "8574271550edfcdf8a6ed7e90b038ba279c44095809731ce0c128f8d0932c76e",
+    "mobile/tests/iao-local-pack.test.cjs": "d935f887b85311488de234d8733428ea9ed4b59549c5ba6bfa9bc2bb31e40b59",
+    "mobile/tests/iao-local-digest.test.cjs": "1c5b08540fcd3443ade54de6715a9560546e144008e1b9c9137f4ca7f0396fb8",
+    "mobile/tests/iao-native-qualification.test.cjs": "a2f07751cfbd8e4a9c664df3cdbb48cf29ff7f6c701bc700f9ce12408ff875d4"
+  },
+  "local_toolchain": {
+    "node": "v24.22.3",
+    "typescript_transpiler": "5.8.3 reused from existing root dependencies; not the locked mobile typecheck",
+    "noble": "1.8.0 exact mobile lock"
+  },
+  "review": {
+    "reviewer": "/root/iao_native_gaps_20261126",
+    "mode": "read-only independent source review, no new test count",
+    "findings_addressed": [
+      "Missing/non-finite modification timestamps now refuse validation; loss during an operation invalidates trust.",
+      "Probe cleanup preserves the original verification failure; standalone cleanup errors fail the qualification.",
+      "Native lookup uses public JSI registry and preserved SharedObject runtime import; lookup exceptions cannot turn into absence."
+    ],
+    "remaining_limitation": "same-size, deliberately same-mtime substitution is outside the exposed metadata contract"
+  },
+  "baseline_remote_ci": {
+    "head": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "workflow_pass": 7,
+    "workflow_fail": 1,
+    "native_failure": "data_subscription_not_ready before radio mutation and before full Android app job"
+  },
+  "received_before_publish": {
+    "head": "cbd97aa0bc2838d84d9af4e43480c38973c96098",
+    "tree": "d74f53b9ce500d73d39df962779c2669e7fb77cb",
+    "local": "bc3fda84b7cc1536bc05ec2a763520bee9c271cf",
+    "source_changes_in_tested_mobile_scope": false
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "name": "gitnexus-reception.json",
+      "sha256": "e883fd1f435669deb2744683b641e8d46f973f306bdb181cf6e48968cb108688",
+      "bytes": 12902,
+      "raw_sha256": "e883fd1f435669deb2744683b641e8d46f973f306bdb181cf6e48968cb108688",
+      "raw_bytes": 12902
+    },
+    {
+      "name": "gitnexus-all.json",
+      "sha256": "434f3f29d0332bbfc1fc25b4cf336b9ae46ce1a095dca5b5738d9194a31a9be3",
+      "bytes": 2670,
+      "raw_sha256": "434f3f29d0332bbfc1fc25b4cf336b9ae46ce1a095dca5b5738d9194a31a9be3",
+      "raw_bytes": 2670
+    },
+    {
+      "name": "gitnexus-compare-main.json",
+      "sha256": "c59786786eacd93f46a60757a7e889956724557e807250d8caf475446b5b9006",
+      "bytes": 3142,
+      "raw_sha256": "c59786786eacd93f46a60757a7e889956724557e807250d8caf475446b5b9006",
+      "raw_bytes": 3142
+    },
+    {
+      "name": "gitnexus-compare-upstream.json",
+      "sha256": "7ee631f267ca2c5d7ae030231aee113c52d6fcbe1cce9568c4ff93b323a6c4d7",
+      "bytes": 2140,
+      "raw_sha256": "7ee631f267ca2c5d7ae030231aee113c52d6fcbe1cce9568c4ff93b323a6c4d7",
+      "raw_bytes": 2140
+    },
+    {
+      "name": "gitnexus-run.py",
+      "sha256": "1df245a87cc602591ee37df4dcb1a6f4c909c5b48de7b60c1c3695f02684a01f",
+      "bytes": 3108,
+      "raw_sha256": "1df245a87cc602591ee37df4dcb1a6f4c909c5b48de7b60c1c3695f02684a01f",
+      "raw_bytes": 3108
+    },
+    {
+      "name": "gitnexus-index.log.gz",
+      "sha256": "af0f1ea60b3cc9d679ae4e96e1449ef460c983c5a920999ff729192efdabdf08",
+      "bytes": 2243,
+      "raw_sha256": "e783d5e94362958b1650ab777b59099470948b255941a86be91bdd07c4d7342e",
+      "raw_bytes": 27466
+    }
+  ]
+}

@@ -1,0 +1,805 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/operator_integration",
+  "review_date": "2026-11-26",
+  "method": "Lecture statique ciblée ; aucun test exécuté et aucune mutation du code produit.",
+  "reviewed_delta": {
+    "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "target": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+    "scope": [
+      "karta/src/engine/resolution-result-projection.ts",
+      "karta/src/knowledge/private-result-view.ts",
+      "karta/src/lib/resolution-qualification.ts",
+      "karta/migrations/037_resolution_unicode_lengths.sql",
+      "karta/test/resolutionPrivateResults.test.ts",
+      "karta/test/resolutionQualification.test.ts",
+      "karta/test/privateToolResultsSql.test.ts",
+      "karta/test/privateToolResults.native.mjs",
+      "Lien existant runAgentCycle -> persistPrivateToolResult -> projectPrivateToolResult -> projection et lecteur partagés"
+    ]
+  },
+  "attribution": {
+    "static_review": "PASS",
+    "runtime_of_combined_candidate": "NON TESTÉ",
+    "provider_network": "NON TESTÉ",
+    "native_devices": "NON TESTÉ",
+    "prior_5937_pass_receipt": "Attribué uniquement au candidat conservé avant rapprochement ; ne prouve pas le candidat combiné.",
+    "new_test_cases_are_source_inventory_not_execution_receipts": true
+  },
+  "concrete_anomalies": [],
+  "added_test_cases": {
+    "vitest_total": 31,
+    "by_file": {
+      "karta/test/resolutionPrivateResults.test.ts": 14,
+      "karta/test/resolutionQualification.test.ts": 4,
+      "karta/test/privateToolResultsSql.test.ts": 13
+    },
+    "native_postgresql_separate_cases": 2
+  },
+  "call_chain": [
+    "runAgentCycle",
+    "persistPrivateToolResult",
+    "projectPrivateToolResult",
+    "projectResolutionResult",
+    "parseResolutionPrivatePayload"
+  ],
+  "shared_read_entrypoint": "parsePrivateToolResult",
+  "sql_function": "purama_ai.karta_private_tool_result_valid(text,jsonb)",
+  "sql_function_body_diff": {
+    "changed_length_checks": 6,
+    "resolution_fields": [
+      "snapshot.caseId",
+      "supplied_reference.id",
+      "supplied_reference.caseId",
+      "supplied_reference.subjectId",
+      "supplied_reference.reference",
+      "supplied_reference.observedAt"
+    ],
+    "change": "Comptage UTF-16 simulé par regexp_replace des caractères astraux remplacé par char_length direct pour ces valeurs fournies.",
+    "other_tool_branches": "Corps identiques pour knowledge_search, programmatic_report et quantum_simulate.",
+    "storage_rpc": "Inchangé.",
+    "tables": "Inchangées."
+  },
+  "retained_bounds": {
+    "generated_item_max_utf16_units": 8192,
+    "application_envelope_max_utf8_bytes": 61440,
+    "jsonb_text_max_bytes": 65536
+  },
+  "composition_risks": [
+    "Une combinaison de nouvelles sources avec un ancien projecteur, lecteur ou validateur SQL peut encore refuser des identifiants astraux valides ; rapprocher les trois sources et appliquer la migration 037 après 036.",
+    "Les limites en points de code des entrées ne garantissent pas que le rapport complet respecte les limites distinctes de sortie en UTF-16 et UTF-8 ; les refus sans troncature doivent être conservés.",
+    "Le validateur SQL est partagé entre plusieurs outils, même si les six différences sont circonscrites à qualify_resolution.",
+    "Le reçu de 5937 cas avant rapprochement et les nouveaux tests lus statiquement ne constituent pas un reçu d'exécution du candidat combiné."
+  ],
+  "exact_review_markdown": "**Revue statique ciblée terminée : aucun défaut concret de composition identifié entre ce delta Unicode et le correctif d’annulation.** La validation du candidat rapproché reste **NON TESTÉE par cette revue** ; aucun fichier modifié, aucun test exécuté.\n\n### Points d’entrée existants concernés\n\n| Fichier | Points d’entrée et incidence |\n|---|---|\n| `karta/src/lib/resolution-qualification.ts` | **`qualifyResolution`**, ligne 371 : refuse désormais les caractères NUL et les substituts Unicode isolés dans les valeurs fournies, avant de retourner une qualification. |\n| `karta/src/engine/resolution-result-projection.ts` | **`projectResolutionResult`**, ligne 169 : le helper `text`, ligne 16, mesure les limites des valeurs fournies en points de code. Appelle toujours `parseResolutionPrivatePayload` avant de rendre le rapport. |\n| `karta/src/knowledge/private-result-view.ts` | **`parseResolutionPrivatePayload`**, ligne 86, utilise le nouveau helper `resolutionInputString`, ligne 74. **`parsePrivateToolResult`**, ligne 226, reste le lecteur partagé, avec délégation spécifique à `qualify_resolution` ligne 241. |\n| `karta/migrations/037_resolution_unicode_lengths.sql` | Remplace **`purama_ai.karta_private_tool_result_valid(text,jsonb)`**. Aucun changement du RPC de stockage ni des tables. |\n\nChaîne existante à inclure dans l’impact :\n\n`runAgentCycle` → `persistPrivateToolResult` → `projectPrivateToolResult` → `projectResolutionResult` → `parseResolutionPrivatePayload`.\n\nDans le candidat actuel, `loop.ts` appelle la persistance aux lignes **387** pour les résultats directs et **519** pour `programmatic_report`. Le branchement vers le projecteur de résolution reste limité à `toolName === \"qualify_resolution\"` dans `private-tool-results.ts`, ligne **281**. La lecture passe également par le parser partagé depuis `src/lib/private-tool-results.ts` et `supabase/functions/_shared/private-tool-results.ts`.\n\n### Risques concrets à contrôler lors du rapprochement\n\n1. **Versions mélangées entre production, lecture et SQL.** Un identifiant de 160 emoji est désormais valide à la limite de 160 points de code. L’ancien projecteur, l’ancien lecteur ou le validateur SQL 036 peuvent encore le refuser à cause de leur comptage UTF-16. La composition doit donc réunir les trois sources et la migration **037 après 036**, avec le lecteur partagé actualisé côté interface et Edge.\n\n2. **Enveloppes de sortie distinctes des limites d’entrée.** L’élargissement aux caractères astraux augmente la taille UTF-16 et UTF-8. Il ne supprime ni la limite de **8 192 unités UTF-16 par élément généré**, ni l’enveloppe applicative de **61 440 octets**, ni la limite JSONB de **65 536 octets**. Le nouveau test des listes d’identités denses vérifie précisément qu’un rapport trop grand est refusé sans tronquer les identités.\n\n3. **Validateur SQL commun à plusieurs outils.** J’ai comparé les corps des fonctions 036 et 037 : seules **six vérifications de longueur**, dans la branche `qualify_resolution`, passent au comptage direct par `char_length`. Les branches `knowledge_search`, `programmatic_report` et `quantum_simulate` sont identiques. Aucun changement de propagation de signal, de verrou public-search ou de nettoyage HTTP n’est introduit par ce delta.\n\n### Attribution des preuves\n\nLes ajouts représentent bien **31 cas Vitest** : **14** projection/lecture, **4** qualification et **13** SQL/lecture. Le harnais PostgreSQL natif ajoute également **deux tests**, distincts de ce total. La migration est appliquée deux fois dans les harnais, avec vérification que la définition du RPC de stockage reste identique.\n\nLe reçu **5 937/5 937** reste celui du candidat préservé avant rapprochement. Il ne prouve pas encore la combinaison avec `893fc5c`. Aucun résultat de contrôle de navigateur, d’aperçu direct, de fournisseur réel ou d’appareil supplémentaire ne découle de ce delta.",
+  "scope_audit": {
+    "method": "Revue statique en lecture seule du candidat combiné. Seul ce fichier QA est complété ; aucune implémentation et aucun test exécuté.",
+    "observed_checkout": {
+      "head": "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a",
+      "composition": "Rapprochement de 893fc5cb14e0039e40c060b51532ea0feefd1864 présent dans l'arbre/index au moment des lectures ; aucun reçu runtime attribué à cet état par cette revue."
+    },
+    "attribution": {
+      "source_inspection": "PASS",
+      "one_to_karta_operator_connection": "PARTIEL",
+      "runtime_execution": "NON TESTÉ",
+      "deployed_configuration": "NON TESTÉ",
+      "external_providers_and_host_adapters": "NON TESTÉ",
+      "device_control": "NON TESTÉ"
+    },
+    "existing_paths": [
+      {
+        "name": "Conversation générale ONE",
+        "entrypoint": "ChatbotWidget.sendMessage",
+        "chain": [
+          "ChatbotWidget.sendMessage",
+          "POST /functions/v1/chatbot",
+          "streamAnthropicChat"
+        ],
+        "finding": "Ce chemin produit du texte. Aucun appel à runAgentCycle ni à /iao/requests n'est effectué par sendMessage ou le handler chatbot audités.",
+        "sources": [
+          {
+            "path": "src/components/ChatbotWidget.tsx",
+            "line": 245,
+            "symbol": "sendMessage"
+          },
+          {
+            "path": "src/components/ChatbotWidget.tsx",
+            "line": 283,
+            "symbol": "fetch(CHATBOT_FUNCTION_URL)"
+          },
+          {
+            "path": "supabase/functions/chatbot/index.ts",
+            "line": 4,
+            "symbol": "streamAnthropicChat"
+          },
+          {
+            "path": "supabase/functions/chatbot/index.ts",
+            "line": 12,
+            "symbol": "SYSTEM_PROMPT"
+          }
+        ]
+      },
+      {
+        "name": "Analyse approfondie",
+        "entrypoint": "ConsultationPanel.consult",
+        "chain": [
+          "ChatbotWidget -> ConsultationPanel",
+          "createConsultationClient",
+          "POST /functions/v1/iao-consultation",
+          "createIaoConsultationHandler",
+          "POST /consultations/{userId}",
+          "handleConsultationRequest",
+          "createConsultationHost"
+        ],
+        "finding": "Raccordement présent pour consultation, recherche et lecture de pages, avec catalogue, suivi et annulation. La présence de ce chemin ne qualifie pas ses hôtes et fournisseurs réels.",
+        "sources": [
+          {
+            "path": "src/components/ChatbotWidget.tsx",
+            "line": 509,
+            "symbol": "ConsultationPanel"
+          },
+          {
+            "path": "src/components/ConsultationPanel.tsx",
+            "line": 166,
+            "symbol": "consult"
+          },
+          {
+            "path": "src/lib/consultation-client.ts",
+            "line": 204,
+            "symbol": "endpoint iao-consultation"
+          },
+          {
+            "path": "supabase/functions/iao-consultation/handler.ts",
+            "line": 140,
+            "symbol": "createIaoConsultationHandler"
+          },
+          {
+            "path": "supabase/functions/iao-consultation/handler.ts",
+            "line": 178,
+            "symbol": "target.pathname /consultations/{userId}"
+          },
+          {
+            "path": "karta/src/api/consultation.ts",
+            "line": 185,
+            "symbol": "handleConsultationRequest"
+          },
+          {
+            "path": "karta/src/api/server.ts",
+            "line": 77,
+            "symbol": "createConsultationHost"
+          }
+        ]
+      },
+      {
+        "name": "Exécution d'un agent créé",
+        "entrypoint": "CreatorAgentDetail.handleTriggerNow",
+        "chain": [
+          "CreatorAgentDetail.handleTriggerNow",
+          "useTriggerCustomAgent",
+          "karta-trigger-custom",
+          "POST /trigger-custom/{agentId}",
+          "enqueueAgentCycle",
+          "startAgentCycleWorker",
+          "runAgentCycle"
+        ],
+        "finding": "Parcours d'exécution présent séparément de la conversation générale. Le reçu HTTP 202 confirme la mise en file, pas la réussite de la mission.",
+        "sources": [
+          {
+            "path": "src/pages/CreatorAgentDetail.tsx",
+            "line": 251,
+            "symbol": "handleTriggerNow"
+          },
+          {
+            "path": "src/hooks/useCreatorAgentKarta.ts",
+            "line": 185,
+            "symbol": "useTriggerCustomAgent"
+          },
+          {
+            "path": "src/hooks/useCreatorAgentKarta.ts",
+            "line": 223,
+            "symbol": "invoke karta-trigger-custom"
+          },
+          {
+            "path": "supabase/functions/karta-trigger-custom/index.ts",
+            "line": 91,
+            "symbol": "target.pathname /trigger-custom/{agentId}"
+          },
+          {
+            "path": "supabase/functions/karta-trigger-custom/index.ts",
+            "line": 112,
+            "symbol": "queued receipt HTTP 202"
+          },
+          {
+            "path": "karta/src/api/server.ts",
+            "line": 254,
+            "symbol": "triggerCustomMatch"
+          },
+          {
+            "path": "karta/src/api/server.ts",
+            "line": 267,
+            "symbol": "enqueueAgentCycle"
+          },
+          {
+            "path": "karta/src/queue/worker.ts",
+            "line": 33,
+            "symbol": "runAgentCycle"
+          }
+        ]
+      },
+      {
+        "name": "Façade IAO native",
+        "entrypoint": "handleIaoRoute",
+        "chain": [
+          "POST /iao/requests ou /pura/requests",
+          "IaoRouteRuntime.authenticator",
+          "IaoRouteRuntime.facade.submit"
+        ],
+        "finding": "Le point de démarrage standard ne fournit pas iaoRuntime. Sans cette injection, les routes répondent 503 IAO runtime unavailable par contrat ; cela n'établit pas la configuration d'un autre déploiement.",
+        "sources": [
+          {
+            "path": "karta/src/index.ts",
+            "line": 16,
+            "symbol": "startApiServer(readiness, { lifetime })"
+          },
+          {
+            "path": "karta/src/api/server.ts",
+            "line": 68,
+            "symbol": "startApiServer"
+          },
+          {
+            "path": "karta/src/api/server.ts",
+            "line": 126,
+            "symbol": "iaoRuntime readiness gate"
+          },
+          {
+            "path": "karta/src/api/iaoRoutes.ts",
+            "line": 8,
+            "symbol": "IaoRouteRuntime"
+          },
+          {
+            "path": "karta/src/api/iaoRoutes.ts",
+            "line": 70,
+            "symbol": "IAO runtime unavailable"
+          }
+        ]
+      }
+    ],
+    "browser_and_live_preview": {
+      "assessment": "Aucune chaîne raccordée de pilotage de navigateur, captures d'écran et curseur animé identifiée dans les parcours audités. Ce constat n'établit pas une absence globale dans d'autres composants, worktrees ou hôtes.",
+      "findings": [
+        {
+          "component": "createWebAccessPlanTool / plan_web_access",
+          "finding": "Préparation seule à partir d'un résolveur hôte de confiance ; aucun navigateur ni acquisition de compte et aucune action externe installés par cette factory.",
+          "sources": [
+            {
+              "path": "karta/src/tools/web-access-plan.ts",
+              "line": 27,
+              "symbol": "createWebAccessPlanTool"
+            },
+            {
+              "path": "karta/src/tools/registry.ts",
+              "line": 20,
+              "symbol": "createWebAccessPlanTool export"
+            }
+          ]
+        },
+        {
+          "component": "CUSTOM_AGENT_TOOLS",
+          "finding": "Le registre lu contient les outils applicatifs autorisés, dont web_search et knowledge_search, sans outil de navigation/clic/capture de navigateur.",
+          "sources": [
+            {
+              "path": "karta/src/tools/customRegistry.ts",
+              "line": 20,
+              "symbol": "CUSTOM_AGENT_TOOLS"
+            }
+          ]
+        },
+        {
+          "component": "Atelier / CodexCliChefDriver",
+          "finding": "Le runtime Atelier construit CodexCliChefDriver ; sa méthode run refuse capabilitySelection avec capability_adapter_unavailable.",
+          "sources": [
+            {
+              "path": "karta/src/chef/workshop-runtime.ts",
+              "line": 235,
+              "symbol": "new CodexCliChefDriver"
+            },
+            {
+              "path": "karta/src/chef/codex-cli-driver.ts",
+              "line": 161,
+              "symbol": "capabilitySelection refusal"
+            }
+          ]
+        },
+        {
+          "component": "Worker CHEF / ProcessChefDriver",
+          "finding": "Le worker distinct construit ProcessChefDriver avec commande, environnement et capabilityRuntime fournis par l'hôte. Le protocole constitue un point d'intégration existant ; il ne prouve pas qu'un exécuteur navigateur qualifié y est effectivement raccordé.",
+          "sources": [
+            {
+              "path": "karta/src/chef/worker-main.ts",
+              "line": 87,
+              "symbol": "new ProcessChefDriver"
+            },
+            {
+              "path": "karta/src/chef/driver.ts",
+              "line": 139,
+              "symbol": "ProcessChefDriver"
+            }
+          ]
+        },
+        {
+          "component": "IaoTrialPanel et IaoResponse.preview",
+          "finding": "IaoTrialPanel propose les essais panier, médias et atelier ; l'aperçu nommé concerne notamment les fichiers médias. IaoResponse.preview est un champ textuel. Ces éléments ne prouvent pas un affichage des actions d'un navigateur distant.",
+          "sources": [
+            {
+              "path": "src/components/IaoTrialPanel.tsx",
+              "line": 10,
+              "symbol": "methods"
+            },
+            {
+              "path": "karta/src/iao/iaoFacade.ts",
+              "line": 65,
+              "symbol": "preview?: string"
+            }
+          ]
+        }
+      ]
+    },
+    "default_iao_runtime_composition": {
+      "exact_blocker": "L'option d'injection existe, mais aucun IaoRouteRuntime de production n'est assemblé par le démarrage standard. Les autorités session/tenant, le port SMARANA durable et le port de calcul qualifié ne sont pas composés dans ce chemin.",
+      "existing_components": [
+        {
+          "name": "IaoFacade",
+          "kind": "Constructeur existant",
+          "requirement": "Reçoit un KartaIaoPort ; fournit soumission, suivi, annulation et conservation bornée des reçus.",
+          "source": {
+            "path": "karta/src/iao/iaoFacade.ts",
+            "line": 108,
+            "symbol": "IaoFacade constructor"
+          }
+        },
+        {
+          "name": "KartaRuntimeIaoPort",
+          "kind": "Adaptateur existant",
+          "requirement": "Reçoit obligatoirement SmaranaIaoPort et IaoCompletionPort. Pour une conversation, obtient un contexte avec reçu durable puis une complétion. Ne compose pas lui-même ses dépendances et ne délègue pas cette conversation à runAgentCycle.",
+          "source": {
+            "path": "karta/src/iao/kartaRuntimePort.ts",
+            "line": 36,
+            "symbol": "KartaRuntimeIaoPort constructor"
+          }
+        },
+        {
+          "name": "LocalComputeFabricProvider",
+          "kind": "Implémentation existante de IaoCompletionPort",
+          "requirement": "Client d'un socket local, protocole strict RPC/2, exécution local_only et paid_fallback forbidden. Sa présence ne qualifie ni le daemon ni le rejeu durable après redémarrage.",
+          "source": {
+            "path": "karta/src/integrations/localComputeFabricProvider.ts",
+            "line": 16,
+            "symbol": "LocalComputeFabricProvider"
+          }
+        },
+        {
+          "name": "startApiServer / IaoRouteRuntime",
+          "kind": "Point d'injection existant",
+          "requirement": "Attend { facade, authenticator }. La factory createConsultationHost chargée par défaut concerne le parcours de consultation distinct ; elle ne fournit pas ces deux objets.",
+          "sources": [
+            {
+              "path": "karta/src/api/server.ts",
+              "line": 68,
+              "symbol": "startApiServer"
+            },
+            {
+              "path": "karta/src/api/server.ts",
+              "line": 77,
+              "symbol": "createConsultationHost"
+            },
+            {
+              "path": "karta/src/api/iaoRoutes.ts",
+              "line": 8,
+              "symbol": "IaoRouteRuntime"
+            }
+          ]
+        }
+      ],
+      "dependencies_not_composed": [
+        {
+          "name": "Autorité de session et relation tenant/acteur",
+          "contract": "IaoRouteAuthenticator.authenticate(req) doit valider les identifiants et la révocation actuelle, puis retourner tenantId, actorId et session IAO appSlug purama-ai avec UUID et durée maximale de quinze minutes. Le body n'est pas une source d'autorité. La soumission revalide la même identité avant admission.",
+          "source_observation": "Interface et contrôles présents ; aucune implémentation de production ni factory de composition trouvée dans les sources auditées. Le contrat ne désigne pas d'autorité ONE émettrice. Une session de compte Supabase ou une clé administrative KARTA n'établit pas automatiquement cette autorité.",
+          "sources": [
+            {
+              "path": "karta/src/api/iaoRoutes.ts",
+              "line": 7,
+              "symbol": "IaoRouteAuthenticator"
+            },
+            {
+              "path": "karta/src/api/iaoRoutes.ts",
+              "line": 137,
+              "symbol": "authenticateIdentity"
+            },
+            {
+              "path": "karta/src/api/iaoRoutes.ts",
+              "line": 154,
+              "symbol": "parseRequest"
+            },
+            {
+              "path": "docs/iao/IAO-INTERFACE-CONTRACT.md",
+              "line": 39,
+              "symbol": "absence d'autorité ONE désignée"
+            }
+          ]
+        },
+        {
+          "name": "Port SMARANA qualifié",
+          "contract": "SmaranaIaoPort.buildContext et control doivent porter l'autorité de mémoire, les permissions et consentements, un reçu UUID durable et la déduplication atomique par clé/digest à travers reprises et redémarrages. Les exports rejoués ne doivent pas redélivrer le contenu.",
+          "source_observation": "Le contrat SmaranaIaoPort existe ; aucun port concret courant ni assemblage de production retrouvé dans les sources auditées. Les types de réplication de conversations dans shared/smarana.ts ne constituent pas ce raccordement.",
+          "sources": [
+            {
+              "path": "karta/src/iao/kartaRuntimePort.ts",
+              "line": 14,
+              "symbol": "SmaranaIaoPort"
+            },
+            {
+              "path": "docs/iao/IAO-INTERFACE-CONTRACT.md",
+              "line": 9,
+              "symbol": "SMARANA durable receipt and idempotency contract"
+            }
+          ]
+        },
+        {
+          "name": "Calcul local qualifié",
+          "contract": "IaoCompletionPort / Fabric RPC/2 doit dédupliquer durablement la clé stable, restituer le résultat antérieur seulement pour le même digest et refuser les conflits, y compris après redémarrage.",
+          "source_observation": "LocalComputeFabricProvider existe mais n'est pas construit par le démarrage standard audité. La disponibilité du service, la compatibilité protocolaire et les garanties de rejeu de l'hôte réel sont NON TESTÉES par cette revue.",
+          "sources": [
+            {
+              "path": "karta/src/iao/kartaRuntimePort.ts",
+              "line": 25,
+              "symbol": "IaoCompletionPort"
+            },
+            {
+              "path": "karta/src/integrations/localComputeFabricProvider.ts",
+              "line": 25,
+              "symbol": "LocalComputeFabricProvider.complete"
+            },
+            {
+              "path": "docs/iao/IAO-INTERFACE-CONTRACT.md",
+              "line": 7,
+              "symbol": "durable Compute Fabric replay contract"
+            }
+          ]
+        }
+      ],
+      "wiring_assessment": "Le point de composition est simple à localiser et réversible, mais aucune composition complète déjà qualifiée n'est disponible à injecter dans le démarrage standard audité. Ajouter seulement iaoRuntime ou fabriquer une identité/reçu de substitution ne satisfait pas les dépendances. Il faut réutiliser et adapter les autorités existantes, puis qualifier leurs contrats. Même ce raccordement ne fournit pas en lui-même un opérateur navigateur.",
+      "source_search_scope": [
+        "karta/src",
+        "src",
+        "shared",
+        "supabase/functions"
+      ],
+      "source_search_result": "Aucune instanciation new IaoFacade, new KartaRuntimeIaoPort ou new LocalComputeFabricProvider trouvée dans karta/src. Les interfaces et classes existent, mais aucun constructeur n'y est composé au point de démarrage.",
+      "related_work_documentation": {
+        "status": "Lecture documentaire uniquement ; anciens worktrees et services non réinspectés dans cette revue.",
+        "finding": "La documentation existante identifie un ancien configuredMemoryRuntime.ts et un SmaranaAkashaMemoryPort dans T04, à réutiliser mais non directement conformes aux signatures, reçus et autorité de session IAO actuels. Elle mentionne aussi un gateway Fabric dont le rejeu était conservé en mémoire. Ces constats historiques ne sont pas réattribués à l'état actuel de production.",
+        "sources": [
+          {
+            "path": "docs/iao-adaptive-intelligence-20261112.md",
+            "line": 418,
+            "symbol": "Mémoire et session / ancien montage T04"
+          },
+          {
+            "path": "docs/iao-adaptive-intelligence-20261112.md",
+            "line": 413,
+            "symbol": "référence historique Fabric"
+          }
+        ]
+      }
+    },
+    "limits": [
+      "Aucun appel aux fournisseurs ni aux services natifs.",
+      "Aucune lecture des secrets ou de la configuration effective de production.",
+      "Aucun test ni déploiement exécuté dans cette revue.",
+      "Les constats ne signifient pas que tous les parcours ONE/KARTA sont absents.",
+      "Les dépendances externes et les travaux hors des chemins audités restent NON TESTÉS."
+    ],
+    "continuity_followup": {
+      "observed_at_utc": "2026-11-26 06:08:39 UTC",
+      "method": "Lecture ciblée du canon, des contrats et des emplacements Mac explicitement référencés ou résolus par les métadonnées Git et handoffs associés. Commandes Git sans verrous optionnels ; lecture de sources et de claims seulement.",
+      "attribution": {
+        "mac_paths_and_source_metadata": "PASS",
+        "static_contract_comparison": "PASS",
+        "current_runtime_or_database_qualification": "NON TESTÉ",
+        "deployed_authentication_and_revocation": "NON TESTÉ",
+        "provider_generation": "NON TESTÉ",
+        "global_inventory_or_other_agents_activity": "NON TESTÉ"
+      },
+      "reconciliation_note": "Ce complément confirme l'existence de travaux historiques hors du candidat combiné. Les mentions précédentes de dépendances non composées restent limitées au démarrage standard de ce candidat. Les lectures Mac ci-dessous complètent la lecture documentaire initiale, sans certifier un runtime prêt à injecter.",
+      "canonical_sources": [
+        {
+          "path": "/workspace/scratch/4f357a4ba348/continuity/refresh453/PURAMA_MASTER_CANON_OMEGA.md",
+          "sha256": "e0120693e07450ca24f970e476a3a229f8d69cee87f3a9796880227b05896318",
+          "references": [
+            {
+              "line": 2022,
+              "meaning": "Worktree claude7 et ports smaranaAdapters.ts / smaranaPort.ts"
+            },
+            {
+              "line": 2023,
+              "meaning": "Handoff FINAL16 T03, lignée 3941b7e"
+            },
+            {
+              "line": 2024,
+              "meaning": "Worktree T03 transport"
+            },
+            {
+              "line": 33275,
+              "meaning": "Composition historique configuredMemoryRuntime sur la branche Insomnia"
+            }
+          ]
+        },
+        {
+          "path": "docs/iao/IAO-INTERFACE-CONTRACT.md",
+          "sha256": "65d6125c764f86acc45b5b8249e56f933fb55158d24d3e800ea506dfb2367f66",
+          "references": [
+            {
+              "line": 7,
+              "meaning": "Contrat de rejeu Fabric durable après redémarrage"
+            },
+            {
+              "line": 9,
+              "meaning": "Reçus et déduplication SMARANA durables"
+            },
+            {
+              "line": 39,
+              "meaning": "Aucune autorité ONE émettrice désignée par ce contrat"
+            },
+            {
+              "line": 49,
+              "meaning": "Dépendances requises pour la composition"
+            }
+          ]
+        }
+      ],
+      "worktrees": [
+        {
+          "path": "/Users/matissdornier/purama-worktrees/claude7-karta-integration-20261005",
+          "exists": true,
+          "branch": "claude/karta-integration-20261005",
+          "head": "3941b7ef984d7f016034df68ade46d1e8130c6b2",
+          "tracked_dirty_count": 0,
+          "tracked_modified_paths": [],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014",
+          "exists": true,
+          "branch": "codex/t03-iao-local-transport-20261014",
+          "head": "347ed23154cf40e70adab2142c5a91997e883c15",
+          "tracked_dirty_count": 3,
+          "tracked_modified_paths": [
+            "BATON.md",
+            "docs/iao/t03-local-transport-20261014/HANDOFF-T01-T06-T08-PREPARATION-RUNTIME-20261027.md",
+            "task_plan.md"
+          ],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama-worktrees/iao-insomnia-20261119-2d868",
+          "exists": true,
+          "branch": "feat/iao-insomnia-20261119-2d868",
+          "head": "f52c8df8c336d71c6f33bc26e52c2b0b511cc2ab",
+          "tracked_dirty_count": 0,
+          "tracked_modified_paths": [],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.worktrees/t04-iao-memory-engine-20261025",
+          "exists": true,
+          "branch": "codex/t04-iao-memory-engine-20261025",
+          "head": "ab237aeb5d12c6b1c470a3dd69d047f0ea1b0b65",
+          "tracked_dirty_count": 3,
+          "tracked_modified_paths": [
+            "BATON.md",
+            "docs/memory/T04-IAO-QUALIFICATION-REAL-2026-10-25.md",
+            "task_plan.md"
+          ],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.worktrees/purama-ai-memory-runtime-integration",
+          "exists": true,
+          "branch": "codex/memory-karta-smarana-iao-runtime",
+          "head": "0751dcd397e9685663e5c52a7ce1da485b58c9c2",
+          "tracked_dirty_count": 1,
+          "tracked_modified_paths": [
+            "MEMORY-MISSION.md"
+          ],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.worktrees/t04-smarana-source-object-ids-20261027",
+          "exists": true,
+          "branch": "codex/t04-smarana-source-object-ids-20261027",
+          "head": "04b62c70a1abbe0f6dee9856a969dd39457180e6",
+          "tracked_dirty_count": 7,
+          "tracked_modified_paths": [
+            "BATON.md",
+            "ERRORS.md",
+            "src/akasha/postgres-active-erasure.integration.test.ts",
+            "src/akasha/postgres-governed-memory.integration.test.ts",
+            "src/akasha/postgres-lifecycle.integration.test.ts",
+            "src/akasha/postgres-lifecycle.ts",
+            "task_plan.md"
+          ],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        },
+        {
+          "path": "/Users/matissdornier/purama-worktrees/local-oss-router-20261003",
+          "exists": true,
+          "branch": "codex/local-swarm-zero-20261004",
+          "head": "e30fe0068005f482a5816c145a98307447f39ca8",
+          "tracked_dirty_count": 2,
+          "tracked_modified_paths": [
+            ".coord/local-oss/.gitignore",
+            ".coord/local-oss/README.md"
+          ],
+          "untracked_files": "Non inventoriés (--untracked-files=no)."
+        }
+      ],
+      "existing_components_and_compatibility": [
+        {
+          "component": "SmaranaContextAdapter / SmaranaCompletionAdapter",
+          "path": "/Users/matissdornier/purama-worktrees/claude7-karta-integration-20261005/karta/src/iao/smaranaAdapters.ts",
+          "sha256": "ce13b73a37e58337fb7b707754363fef1fb98ed8a8dec8fcc2e77d1db4a59357",
+          "entrypoints": [
+            {
+              "line": 33,
+              "name": "SmaranaContextAdapter"
+            },
+            {
+              "line": 42,
+              "name": "buildContext"
+            },
+            {
+              "line": 59,
+              "name": "control"
+            },
+            {
+              "line": 111,
+              "name": "SmaranaCompletionAdapter"
+            }
+          ],
+          "findings": [
+            "Adaptateurs réels présents ; ne pas recréer cette lignée sans rapprochement.",
+            "buildContext utilise actorId et idempotencyKey ; le miroir historique n'apporte pas les garanties de tenant/payloadDigest/reçu durable du contrat courant.",
+            "Le contrôle export indique explicitement aux lignes 65 à 68 que la remise unique ne survit pas au redémarrage faute de registre durable ; replayed est retourné false.",
+            "La complétion historique appelle smarana.ask ; le handoff T03 lu distingue cette ancienne architecture du calcul par LocalComputeFabricProvider retenu actuellement."
+          ],
+          "companion": {
+            "path": "/Users/matissdornier/purama-worktrees/claude7-karta-integration-20261005/karta/src/iao/smaranaPort.ts",
+            "sha256": "40f822d7b5eb759e979cd2a095b174e9193d5bf2dbc25190d7f33d2eab3c864f",
+            "entrypoint": "SmaranaRealClient",
+            "line": 68
+          }
+        },
+        {
+          "component": "createConfiguredMemoryRuntime",
+          "path": "/Users/matissdornier/purama/.worktrees/t04-iao-memory-engine-20261025/karta/src/iao/configuredMemoryRuntime.ts",
+          "sha256": "64ba394136aedae462ecde0d90c30928bd9b3ac6b8e5485b51f1b666f766393a",
+          "entrypoints": [
+            {
+              "line": 83,
+              "name": "createConfiguredMemoryRuntime"
+            },
+            {
+              "line": 176,
+              "name": "ConfiguredIaoAuthenticator"
+            }
+          ],
+          "findings": [
+            "Factory existante assemblant stores PostgreSQL, SmaranaAkashaMemoryPort, PuraShadowKernel, IaoFacade/DurableIaoFacade et, selon le manifeste, PermissionBroker/ActionRuntime.",
+            "Hors injection explicite de test, la factory exige des composants live et un manifeste avec identités/version/propriétaires ; ce n'est pas un runtime qui devient actif par sa seule importation.",
+            "La lignée possède un KartaRuntimeIaoPort(kernel), distinct du constructeur courant KartaRuntimeIaoPort(smarana, completion).",
+            "ConfiguredIaoAuthenticator compare un bearer configuré unique, dérive un identifiant stable de session et régénère issuedAt/expiresAt à dix minutes à chaque authentification ; aucune autorité externe de révocation n'est consultée dans la méthode lue. Ce code seul ne qualifie pas l'autorité de session ONE requise."
+          ],
+          "related_existing_copies": [
+            "/Users/matissdornier/purama/.worktrees/purama-ai-memory-runtime-integration/karta/src/iao/configuredMemoryRuntime.ts",
+            "/Users/matissdornier/purama-worktrees/iao-insomnia-20261119-2d868/karta/src/iao/configuredMemoryRuntime.ts"
+          ],
+          "related_kernel_port": {
+            "path": "/Users/matissdornier/purama/.worktrees/t04-iao-memory-engine-20261025/karta/src/iao/kartaRuntimePort.ts",
+            "sha256": "3f3180b20781beb003edc3c21077b80882c52c845f329510cabbfdd3b60b3fbf",
+            "line": 6
+          }
+        },
+        {
+          "component": "SmaranaAkashaMemoryPort",
+          "path": "/Users/matissdornier/purama/.worktrees/t04-iao-memory-engine-20261025/karta/src/integrations/smaranaAkashaMemoryPort.ts",
+          "sha256": "fecbc4583b644294616b2a6b3b32f66fd78ac47045e48f8c24e9d5e336c17891",
+          "entrypoints": [
+            {
+              "line": 22,
+              "name": "SmaranaAkashaMemoryPort implements AkashaMemoryPort"
+            },
+            {
+              "line": 30,
+              "name": "prepareContext"
+            },
+            {
+              "line": 66,
+              "name": "recordDelta"
+            }
+          ],
+          "finding": "Port historique présent, avec préparation retenue dans une Map et commitKartaResult. Il expose prepareContext/recordDelta ; il ne constitue pas tel quel l'interface courante buildContext/control assortie des garanties de reprise durable."
+        },
+        {
+          "component": "Fabric RPC/2",
+          "path": "/Users/matissdornier/purama-worktrees/local-oss-router-20261003/.coord/local-oss/fabric_gateway_v2.py",
+          "sha256": "e8e1f1f74708f4940450553a5e95fbfc18a242b534998763e3bf5e101af87f1b",
+          "entrypoints": [
+            {
+              "line": 40,
+              "name": "ReplayLedger"
+            }
+          ],
+          "finding": "Le fichier existe. Ses lignes 1 à 4 déclarent une protection de rejeu limitée au processus, sans garantie après redémarrage. Cette limite ne satisfait pas, à elle seule, l'exigence de durabilité du contrat IAO courant. Aucun daemon, socket ou modèle n'a été interrogé dans ce complément."
+        }
+      ],
+      "ownership_and_claims": [
+        {
+          "path": "/Users/matissdornier/purama/.coord/handoffs/FINAL16-20261012/T03/ETAT.json",
+          "finding": "Reçu historique daté du 12 octobre : réservation FINAL16 T03 livrée, propriétaire d'intégration T16 ; injection des ports réels indiquée comme travail restant. Son head_sha 2a5d9b9 n'est pas substitué au HEAD 3941b7e observé maintenant."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/docs/iao/t03-local-transport-20261014/HANDOFF-T01-T06-T08-PREPARATION-RUNTIME-20261027.md",
+          "lines": [
+            5,
+            612
+          ],
+          "finding": "Le handoff contient PREPARED_NOT_INTEGRATED / BLOCKED_T04_SHA_AND_T03_PATH_RESERVATION / READY=NO et T03_RESERVATION=RESERVED_CONDITIONAL_NO_WRITE. Ces états documentaires ne prouvent pas la présence actuelle d'un processus écrivain."
+        },
+        {
+          "path": "/Users/matissdornier/purama/.coord/T04-SMARANA-SOURCE-OBJECT-IDS-20261027.claim/CLAIM.md",
+          "owner": "Codex T04 sous coordination T01",
+          "base": "04b62c70a1abbe0f6dee9856a969dd39457180e6",
+          "referenced_in": [
+            {
+              "path": "/Users/matissdornier/purama/LOCKS.md",
+              "line": 12080
+            },
+            {
+              "path": "/Users/matissdornier/purama/.coord/LOCKS.md",
+              "line": 2740
+            }
+          ],
+          "finding": "Claim existant autorisant le correctif borné de provenance source_object_ids et ses tests. Le worktree correspondant conserve sept modifications suivies, dont postgres-lifecycle.ts. Travail propriétaire préservé ; aucune réception fraîche de ce correctif ni activité actuelle de son auteur vérifiée ici."
+        },
+        {
+          "id": "CHATGPT-AUDIT-20261125-B9BAF60C",
+          "status": "CLOSED_APPLIED_VERIFIED_LOCAL",
+          "at": "2026-11-25T19:06:32.764045+00:00",
+          "writer_active": false,
+          "ci_active": false,
+          "references": [
+            {
+              "path": "/Users/matissdornier/purama/LOCKS.md",
+              "line": 17968
+            },
+            {
+              "path": "/Users/matissdornier/purama/.coord/LOCKS.md",
+              "line": 8417
+            }
+          ],
+          "finding": "Le dernier reçu Fabric correspondant est fermé. Les résultats de tests qu'il rapporte restent historiques ; aucun n'a été rejoué ni réattribué à cette revue."
+        }
+      ],
+      "conclusion": "Des factories et adaptateurs existent dans plusieurs lignées et doivent être réutilisés. Aucun runtime complet conforme au contrat actuel n'a été identifié comme immédiatement recevable et injectable à l'issue de cette lecture ciblée : séparation des interfaces kernel/ports, autorité de session à rapprocher, reçus et reprise SMARANA à adapter, durabilité Fabric après redémarrage non établie. Le travail nécessaire est un rapprochement de ces composants et des réservations existantes, pas la création d'une seconde orchestration.",
+      "limits": [
+        "Seuls les chemins référencés et leurs métadonnées Git/claims associés ont été contrôlés ; aucun inventaire complet du Mac.",
+        "Aucun fichier .env ni magasin de secrets lu ; aucune valeur de credential récupérée.",
+        "Aucun fichier Mac modifié ; aucune installation, migration, indexation lourde, exécution de test ou démarrage de daemon.",
+        "Le statut Git est limité aux fichiers suivis ; zéro modification suivie ne signifie pas absence de fichiers non suivis.",
+        "Les anciens résultats de tests et les statuts de claims ne sont pas des preuves de fonctionnement actuel.",
+        "La disponibilité des services, le déploiement et l'activité actuelle d'autres agents restent NON TESTÉS."
+      ]
+    }
+  }
+}

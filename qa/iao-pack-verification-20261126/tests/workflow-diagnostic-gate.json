@@ -1,0 +1,30 @@
+{
+  "scope": "Actual folded workflow shell with synthetic preflight/diagnostic entry points, no ADB/device",
+  "command": "bash -c 'set +e; bash scripts/qualify-android-network.sh; purama_network_result=$?; if [ \"$purama_network_result\" -ne 0 ]; then python3 -B scripts/qualify-android-data-settings.py --artifact-dir \"$PWD/qa/android-network-preflight\" --allow-settings-transition || true; fi; exit \"$purama_network_result\"'",
+  "cases": [
+    {
+      "preflight_exit": 0,
+      "diagnostic_exit": 24,
+      "wrapper_exit": 0,
+      "diagnostic_called": false,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "preflight_exit": 22,
+      "diagnostic_exit": 0,
+      "wrapper_exit": 22,
+      "diagnostic_called": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "preflight_exit": 22,
+      "diagnostic_exit": 24,
+      "wrapper_exit": 22,
+      "diagnostic_called": true,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

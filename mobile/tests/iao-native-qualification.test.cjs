@@ -5,9 +5,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
-const React = require('react');
-const Renderer = require('react-test-renderer');
-global.IS_REACT_ACT_ENVIRONMENT = true;
 
 function load(relative, flag, external = {}) {
   const file = path.resolve(__dirname, '..', relative); const imports = [];
@@ -32,6 +29,9 @@ for (const flag of [undefined, '', '0', 'true', '01']) test(`qualification harne
 });
 
 test('the normal-build QA route mounts without importing the qualification module or opening fixtures', async () => {
+  const React = require('react');
+  const Renderer = require('react-test-renderer');
+  global.IS_REACT_ACT_ENVIRONMENT = true;
   const loaded = load('app/iao-qualification.tsx', undefined, {
     react: React, 'react/jsx-runtime': require('react/jsx-runtime'),
     'react-native': { ScrollView: 'ScrollView', Text: 'Text', View: 'View' },
@@ -50,7 +50,7 @@ test('a failed cold restart identifies the active verification stage and restore
   const firstAnswerHash = 'f'.repeat(64);
   const marker = `PURAMA_QA_PERSISTED_${runId}`;
   const checkpoint = { schema: 1, phase: 'prepared', runId, resourceId, pendingId, firstAnswerHash };
-  let observer; let unsubscribed = false; let closed = 0; let released = 0;
+  let observer; let unsubscribed = false; let closed = 0; let released = 0; let digestDestroyed = 0;
   const packState = { status: 'verifying', phase: 'integrity', progress: 0.63,
     completedBytes: 402851413, totalBytes: 639458232 };
   const engine = {
@@ -75,6 +75,12 @@ test('a failed cold restart identifies the active verification stage and restore
       IAO_LOCAL_PACK_MANIFEST: { minimumMemoryBytes: 3 * 1024 ** 3,
         repository: 'synthetic/model', revision: 'a'.repeat(40), model: { bytes: 639446688, sha256: 'b'.repeat(64) } },
     },
+    './iao-local-digest': { createIaoLocalDigest: async () => ({
+      implementation: 'native-sha256',
+      update(bytes) { assert.deepEqual([...bytes], [97, 98, 99]); assert.equal(bytes.byteOffset, 1); },
+      digestHex: () => 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
+      destroy() { digestDestroyed++; },
+    }) },
     './smarana-native': {
       closeSmaranaStore: async () => { closed += 1; },
       openSmaranaStore: async () => ({ read: async () => ({ resourceId, syncState: 'pending', payload: {
@@ -95,6 +101,43 @@ test('a failed cold restart identifies the active verification stage and restore
   assert.ok(Number.isFinite(receipt.elapsedMs)); assert.ok(Number.isFinite(receipt.stageElapsedMs));
   assert.ok(logs.some(line => line.startsWith('PURAMA_OFFLINE_QUALIFICATION_PROGRESS:') && line.includes('integrity')));
   assert.equal(unsubscribed, true); assert.equal(closed, 1); assert.equal(released, 1);
+  assert.equal(digestDestroyed, 1);
   for (const [name, descriptor] of originals) assert.deepEqual(Object.getOwnPropertyDescriptor(globalThis, name), descriptor);
   assert.ok(logs.every(line => !line.includes(marker) && !line.includes(firstAnswerHash)), 'progress receipts contain no message or digest fixture payload');
+});
+
+for (const scenario of [
+  { implementation: 'noble-sha256', code: 'native-sha256-required' },
+  { implementation: 'native-sha256', code: 'native-sha256-self-test-failed' },
+  { implementation: 'noble-sha256', code: 'native-sha256-required', cleanupFails: true },
+  { implementation: 'native-sha256', code: 'native-sha256-self-test-failed', cleanupFails: true },
+  { implementation: 'native-sha256', code: 'native-qualification-failed', cleanupFails: true, vectorPasses: true },
+]) test(`device qualification refuses ${scenario.code}${scenario.cleanupFails ? ' with cleanup failure' : ''} before model work`, async () => {
+  let destroyed = 0; let released = 0; let closed = 0;
+  const engine = {
+    subscribe: () => () => {}, getState: () => ({ status: 'absent', progress: 0 }),
+    release: async () => { released++; },
+    prepare: async () => assert.fail('unqualified integrity backend must not reach model preparation'),
+  };
+  const loaded = load('lib/iao-native-qualification.ts', '1', {
+    'expo-file-system': { Paths: { document: 'file:///fixtures' }, File: class { exists = false; } },
+    'expo-crypto': { randomUUID: () => '33333333-3333-4333-8333-333333333333' },
+    'expo-device': { totalMemory: 4 * 1024 ** 3 }, 'react-native': { Platform: { OS: 'android' } },
+    '../../shared/smarana': { isSmaranaUuid: () => true },
+    './iao-local-engine': { getIaoLocalEngine: () => engine,
+      IAO_LOCAL_ENGINE_BUDGETS: { verificationMs: 600_000, inferenceMs: 180_000 },
+      IAO_LOCAL_PACK_MANIFEST: {} },
+    './smarana-native': { closeSmaranaStore: async () => { closed++; },
+      openSmaranaStore: async () => assert.fail('unqualified integrity backend must not open the store') },
+    './iao-local-digest': { createIaoLocalDigest: async () => ({ implementation: scenario.implementation,
+      update() {},
+      digestHex: () => scenario.vectorPasses ? 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad' : '0'.repeat(64),
+      destroy() { destroyed++; if (scenario.cleanupFails) throw new Error('synthetic cleanup failure'); } }) },
+  });
+  const log = console.log; console.log = () => {};
+  let receipt;
+  try { receipt = await loaded.api.runIaoNativeQualification(); } finally { console.log = log; }
+  assert.equal(receipt.status, 'FAIL'); assert.equal(receipt.stage, 'integrity-backend');
+  assert.equal(receipt.code, scenario.code); assert.equal(destroyed, 1);
+  assert.equal(released, 1); assert.equal(closed, 1);
 });

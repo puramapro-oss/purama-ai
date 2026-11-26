@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "status": "BLOQUE",
+  "mode": "read_only",
+  "observed_utc": "2026-11-26T04:06:45Z",
+  "scope": "Current deployment prerequisites for the existing IAO private-resolution and manual-trigger delivery; no production mutation.",
+  "public_checks": [
+    {
+      "at": "2026-11-26T03:56:13Z",
+      "url": "https://auth.purama.dev/health",
+      "http_status": 502,
+      "dns_ipv4": [
+        "144.217.14.210"
+      ],
+      "meaning": "Authentication endpoint unavailable; DNS still points to the historical address outside the selected Hostinger destination."
+    },
+    {
+      "at": "2026-11-26T03:56:13Z",
+      "url": "https://purama-ai.purama.dev/",
+      "http_status": 402,
+      "server": "Vercel",
+      "vercel_error": "DEPLOYMENT_DISABLED",
+      "meaning": "Deployment disabled is explicitly observed; no financial cause inferred."
+    },
+    {
+      "at": "2026-11-26T03:56:13Z",
+      "url": "https://purama.dev/",
+      "http_status": 200,
+      "dns_ipv4": [
+        "72.62.191.111"
+      ],
+      "meaning": "Public landing page response only; does not prove an authenticated IAO flow."
+    }
+  ],
+  "hostinger": {
+    "reachable": true,
+    "observation_at": "2026-11-26T03:56:54Z",
+    "historical_stack_stopped_since": "2026-10-03",
+    "stopped_components": [
+      "KARTA engine",
+      "KARTA Redis",
+      "Supabase database",
+      "Supabase Auth",
+      "Supabase Edge"
+    ],
+    "other_running_instances": "P8 qualification and private ONE; not adopted as production",
+    "disk_available_bytes": 97992503296,
+    "disk_admission": "NOT_RECOMPUTED: current free space is observed, not proof of the reserve required by a full migration."
+  },
+  "backup": {
+    "health_at": "2026-11-26T04:05:00Z",
+    "health_status": "FAIL",
+    "staleness_seconds": {
+      "dump": 4676453,
+      "wal": 4608608,
+      "physical_base": 5194787
+    },
+    "offsite_receipt": {
+      "completed_at": "2026-11-25T04:45:21Z",
+      "ok": true,
+      "encrypted": true,
+      "source_freshness": "not_attested",
+      "integrity_check": "age-decrypt-and-tar-list-pass",
+      "copy": "encrypted-macos",
+      "includes": [
+        "dumps",
+        "basebackup",
+        "wal",
+        "storage-config"
+      ]
+    },
+    "interpretation": "A newer receipt reports an encrypted offsite copy and archive integrity. This is not source-freshness attestation or a successful PostgreSQL restoration."
+  },
+  "canonical_data": {
+    "source": "Existing migration reconciliation CLOSURE.json dated 2026-11-10T23:54:46Z",
+    "source_sha256": "027f2302e3ea36d9320d4fc0a05f0a80fe55c6b77b05f66fc483c7616cf353e1",
+    "state": "VERIFIED_READONLY_COMPARISON_SCOPE_COMPLETE_FULL_MIGRATION_BLOCKED",
+    "compared_relation_targets": 340,
+    "compared_row_versions": 4194408,
+    "counts": {
+      "MATCH_ALL_NORMALIZED_ROWS": 145,
+      "KEYED_DIFFERENCE": 107,
+      "UNQUALIFIED_TYPE_OR_ACCESS": 77,
+      "SCHEMA_DIFFERENT_PRESERVE_BOTH": 2,
+      "ONLY_HOSTINGER_PRESERVE_SOURCE": 5,
+      "MULTISET_DIFFERENCE_NO_KEY": 1,
+      "UNRESOLVED_CAPTURE": 3
+    },
+    "canonical_production_source_selected": false,
+    "production_database_merge": false,
+    "offsite_restore_qualified": false,
+    "application_deployment_qualified": false,
+    "historical_security_stop": "Further native-array verification was denied in the existing receipt. It was not retried through another transport.",
+    "freshness_limit": "This is a historical receipt read again today, not a new row-level comparison. The bounded coordination-file lookup did not establish a later adoption."
+  },
+  "recovery_frontend": {
+    "owner": "T3 IAO under T02 delegation",
+    "published_scope": "loopback-only",
+    "workers": false,
+    "backendQualified": false,
+    "artifact_source_commit": "49959aea13568b6c9ef44f968afc815275778e24",
+    "interpretation": "Historical static recovery artifact, not the current qualified candidate or an operational backend."
+  },
+  "remaining": [
+    {
+      "gate": "Canonical database reconciliation and source adoption",
+      "status": "BLOQUE",
+      "responsibility": "Existing data/migration owner; user decision only for unresolved business conflicts or necessary authorization."
+    },
+    {
+      "gate": "Fresh backups and verified restore of the admitted source",
+      "status": "BLOQUE",
+      "responsibility": "Infrastructure/data owner after source adoption."
+    },
+    {
+      "gate": "Coherent existing-stack release with migrations through037, Edge dependencies, worker and frontend",
+      "status": "NON TESTE",
+      "responsibility": "IAO release owner after preceding gates."
+    },
+    {
+      "gate": "Authenticated production reception and queue reconciliation before startup",
+      "status": "NON TESTE",
+      "responsibility": "IAO/infrastructure release owners."
+    }
+  ],
+  "unchanged": [
+    "No database source selected",
+    "No production SQL or migration",
+    "No historical queue replay or container restart",
+    "No change of DNS or Vercel deployment",
+    "No OVH/MIDAS connection",
+    "No secret or personal row printed",
+    "No duplicate runtime created"
+  ]
+}

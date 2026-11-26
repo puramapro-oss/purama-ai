@@ -1,0 +1,133 @@
+✖ external original-evidence change is detected and never overwritten by the diagnostic (1093.769159ms)
+✖ malformed readiness is a complete FAIL receipt rather than an uncaught partial execution (65.183994ms)
+✖ ambiguous Settings resolver output never launches an activity (1059.146569ms)
+✖ multiple focused-window records are ambiguous even if one names the expected Settings component (1077.605142ms)
+✖ a row that moves during the last subscription read is dumped again before the first click (1829.939073ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5238.616268
+
+✖ failing tests:
+
+test at mobile/tests/watch-native/data-settings-qualification.test.cjs:276:1
+✖ external original-evidence change is detected and never overwritten by the diagnostic (1093.769159ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:282:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at mobile/tests/watch-native/data-settings-qualification.test.cjs:286:1
+✖ malformed readiness is a complete FAIL receipt rather than an uncaught partial execution (65.183994ms)
+  AssertionError [ERR_ASSERTION]: Traceback (most recent call last):
+    File "/tmp/iao-quality-0414-p1it5pwv/repo/mobile/scripts/qualify-android-data-settings.py", line 430, in <module>
+      raise SystemExit(main())
+                       ^^^^^^
+    File "/tmp/iao-quality-0414-p1it5pwv/repo/mobile/scripts/qualify-android-data-settings.py", line 404, in main
+      qualification.execute()
+    File "/tmp/iao-quality-0414-p1it5pwv/repo/mobile/scripts/qualify-android-data-settings.py", line 339, in execute
+      self.origin()
+    File "/tmp/iao-quality-0414-p1it5pwv/repo/mobile/scripts/qualify-android-data-settings.py", line 256, in origin
+      observations = readiness.get("observations", [])
+                     ^^^^^^^^^^^^^
+  AttributeError: 'list' object has no attribute 'get'
+  
+  
+  1 !== 24
+  
+      at assertFailure (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:140:10)
+      at TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:288:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 24,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at mobile/tests/watch-native/data-settings-qualification.test.cjs:292:1
+✖ ambiguous Settings resolver output never launches an activity (1059.146569ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 24
+  
+      at assertFailure (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:140:10)
+      at TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:294:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 24,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at mobile/tests/watch-native/data-settings-qualification.test.cjs:298:1
+✖ multiple focused-window records are ambiguous even if one names the expected Settings component (1077.605142ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 24
+  
+      at assertFailure (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:140:10)
+      at TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:300:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 24,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at mobile/tests/watch-native/data-settings-qualification.test.cjs:304:1
+✖ a row that moves during the last subscription read is dumped again before the first click (1829.939073ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  24 !== 0
+  
+      at TestContext.<anonymous> (/tmp/iao-quality-0414-p1it5pwv/repo/mobile/tests/watch-native/data-settings-qualification.test.cjs:306:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 24,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

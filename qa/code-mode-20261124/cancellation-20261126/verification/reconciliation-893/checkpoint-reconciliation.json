@@ -1,0 +1,219 @@
+{
+  "started_at": "2026-11-26T05:49:48.220899+00:00",
+  "steps": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "271f40b666c11d90fe4a350a41432513a08fc72f\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit": 0,
+      "stdout": "karta/WEB_CAPABILITIES.md\nkarta/src/engine/loop.ts\nkarta/src/engine/types.ts\nkarta/src/knowledge/public-search.ts\nkarta/src/tools/knowledge-search.ts\nkarta/src/tools/websearch.ts\nkarta/test/knowledgeSearch.test.ts\nkarta/test/loopProgrammaticReads.test.ts\nkarta/test/readToolCancellationHttp.test.ts\nkarta/test/webSearchCleanup.test.ts\nkarta/test/webSearchTransportIntegrity.test.ts\nqa/code-mode-20261124/cancellation-20261126/android-diagnostic.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-after.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-after.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-before.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-before.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-manifest.json\nqa/code-mode-20261124/cancellation-20261126/gitnexus-before-cleanup.json\nqa/code-mode-20261124/cancellation-20261126/gitnexus-before.json\nqa/code-mode-20261124/cancellation-20261126/independent-review.json\nqa/code-mode-20261124/cancellation-20261126/scope.json\ntask_plan.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "bundle",
+        "verify",
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/checkpoint-9a2e.bundle"
+      ],
+      "exit": 0,
+      "stdout": "The bundle contains this ref:\n9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a refs/heads/fix/iao-tool-cancellation-20261126\nThe bundle requires this ref:\n271f40b666c11d90fe4a350a41432513a08fc72f \nThe bundle uses this hash algorithm: sha1\n",
+      "stderr": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/checkpoint-9a2e.bundle is okay\n"
+    },
+    {
+      "command": [
+        "git",
+        "fetch",
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/checkpoint-9a2e.bundle",
+        "refs/heads/fix/iao-tool-cancellation-20261126:refs/heads/fix/iao-tool-cancellation-20261126"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "From /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/checkpoint-9a2e.bundle\n * [new branch]      fix/iao-tool-cancellation-20261126 -> fix/iao-tool-cancellation-20261126\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff-tree",
+        "--no-commit-id",
+        "--name-only",
+        "-r",
+        "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a"
+      ],
+      "exit": 0,
+      "stdout": "karta/WEB_CAPABILITIES.md\nkarta/src/engine/loop.ts\nkarta/src/engine/types.ts\nkarta/src/knowledge/public-search.ts\nkarta/src/tools/knowledge-search.ts\nkarta/src/tools/websearch.ts\nkarta/test/knowledgeSearch.test.ts\nkarta/test/loopProgrammaticReads.test.ts\nkarta/test/readToolCancellationHttp.test.ts\nkarta/test/webSearchCleanup.test.ts\nkarta/test/webSearchTransportIntegrity.test.ts\nqa/code-mode-20261124/cancellation-20261126/README.md\nqa/code-mode-20261124/cancellation-20261126/android-diagnostic.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-after.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-after.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-before.json\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-before.log\nqa/code-mode-20261124/cancellation-20261126/cancellation-final-manifest.json\nqa/code-mode-20261124/cancellation-20261126/gitnexus-before-cleanup.json\nqa/code-mode-20261124/cancellation-20261126/gitnexus-before.json\nqa/code-mode-20261124/cancellation-20261126/independent-review.json\nqa/code-mode-20261124/cancellation-20261126/scope.json\nqa/code-mode-20261124/cancellation-20261126/verification/checkout-completion.json\nqa/code-mode-20261124/cancellation-20261126/verification/final-artifacts.json\nqa/code-mode-20261124/cancellation-20261126/verification/final-gate.json\nqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/final-gate.json\nqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-gate-first-attempt-diagnostic.json\nqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-karta.log.gz\nqa/code-mode-20261124/cancellation-20261126/verification/full-karta.json.gz\nqa/code-mode-20261124/cancellation-20261126/verification/full-karta.log.gz\nqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-all.json\nqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-compare-main.json\nqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index-exit.json\nqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index.log.gz\nqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-main-fetch.json\nqa/code-mode-20261124/cancellation-20261126/verification/node22-download-metadata.json\nqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/final-gate.json\nqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.json.gz\nqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.log.gz\nqa/code-mode-20261124/cancellation-20261126/verification/parallel-and-cohort-artifacts.json\nqa/code-mode-20261124/cancellation-20261126/verification/preparation-notes.json\nqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck-metadata.json\nqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.json\nqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.log.gz\ntask_plan.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "reset",
+        "--mixed",
+        "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a"
+      ],
+      "exit": 0,
+      "stdout": "Unstaged changes after reset:\nD\tqa/code-mode-20261124/cancellation-20261126/README.md\nM\tqa/code-mode-20261124/cancellation-20261126/independent-review.json\nM\tqa/code-mode-20261124/cancellation-20261126/scope.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/checkout-completion.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/final-artifacts.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/final-gate.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/final-gate.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-gate-first-attempt-diagnostic.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-karta.log.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/full-karta.json.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/full-karta.log.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-all.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-compare-main.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index-exit.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index.log.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/gitnexus-main-fetch.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/node22-download-metadata.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/final-gate.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.json.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.log.gz\nD\tqa/code-mode-20261124/cancellation-20261126/verification/parallel-and-cohort-artifacts.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/preparation-notes.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck-metadata.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.json\nD\tqa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.log.gz\nM\ttask_plan.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "restore",
+        "--source=9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a",
+        "--worktree",
+        "--",
+        "karta/WEB_CAPABILITIES.md",
+        "karta/src/engine/loop.ts",
+        "karta/src/engine/types.ts",
+        "karta/src/knowledge/public-search.ts",
+        "karta/src/tools/knowledge-search.ts",
+        "karta/src/tools/websearch.ts",
+        "karta/test/knowledgeSearch.test.ts",
+        "karta/test/loopProgrammaticReads.test.ts",
+        "karta/test/readToolCancellationHttp.test.ts",
+        "karta/test/webSearchCleanup.test.ts",
+        "karta/test/webSearchTransportIntegrity.test.ts",
+        "qa/code-mode-20261124/cancellation-20261126/README.md",
+        "qa/code-mode-20261124/cancellation-20261126/android-diagnostic.json",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.json",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-cleanup-before.log",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-final-after.json",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-final-after.log",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-final-before.json",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-final-before.log",
+        "qa/code-mode-20261124/cancellation-20261126/cancellation-final-manifest.json",
+        "qa/code-mode-20261124/cancellation-20261126/gitnexus-before-cleanup.json",
+        "qa/code-mode-20261124/cancellation-20261126/gitnexus-before.json",
+        "qa/code-mode-20261124/cancellation-20261126/independent-review.json",
+        "qa/code-mode-20261124/cancellation-20261126/scope.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/checkout-completion.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/final-artifacts.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/final-gate.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/final-gate.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-gate-first-attempt-diagnostic.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/first-incomplete-checkout/full-karta.log.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/full-karta.json.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/full-karta.log.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-all.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-compare-main.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index-exit.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/gitnexus-final-index.log.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/gitnexus-main-fetch.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/node22-download-metadata.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/final-gate.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.json.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/parallel-2-reception/full-karta.log.gz",
+        "qa/code-mode-20261124/cancellation-20261126/verification/parallel-and-cohort-artifacts.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/preparation-notes.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck-metadata.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.json",
+        "qa/code-mode-20261124/cancellation-20261126/verification/sql-cohort-recheck.log.gz",
+        "task_plan.md"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "switch",
+        "fix/iao-tool-cancellation-20261126"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Switched to branch 'fix/iao-tool-cancellation-20261126'\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "audit/reliability-oauth-20261110"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "From https://github.com/puramapro-oss/purama-ai\n * branch            audit/reliability-oauth-20261110 -> FETCH_HEAD\n   271f40b..893fc5c  audit/reliability-oauth-20261110 -> origin/audit/reliability-oauth-20261110\n"
+    },
+    {
+      "command": [
+        "git",
+        "merge",
+        "--no-commit",
+        "--no-ff",
+        "893fc5cb14e0039e40c060b51532ea0feefd1864"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Automatic merge went well; stopped before committing as requested\n"
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "-u"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "write-tree"
+      ],
+      "exit": 0,
+      "stdout": "2ba3f2f56240595aee6a0e54a7dd700bd96217d3\n",
+      "stderr": ""
+    }
+  ],
+  "previous_staged_backup_sha256": "a26115e35f2a7247c4bf244a02e0adbd2a51dadd43203525b6a5242e43d4fec0",
+  "merge_tree": "2ba3f2f56240595aee6a0e54a7dd700bd96217d3",
+  "status": "RECONCILED",
+  "finished_at": "2026-11-26T05:49:52.396893+00:00"
+}

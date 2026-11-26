@@ -1,0 +1,614 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "proofKind": "STATIC_PACKAGE_LAYOUT",
+  "startedAt": "2026-11-26T04:28:04.845Z",
+  "proposedMounts": [
+    {
+      "source": "supabase/functions",
+      "target": "/home/deno/functions",
+      "mode": "read_only"
+    },
+    {
+      "source": "karta/src",
+      "target": "/home/karta/src",
+      "mode": "read_only"
+    }
+  ],
+  "entries": [
+    "supabase/functions/creator-agent-chat/index.ts",
+    "supabase/functions/creator-agent-generate/index.ts",
+    "supabase/functions/karta-trigger-custom/index.ts"
+  ],
+  "checks": [
+    {
+      "name": "Every local dependency exists and stays inside the two canonical source roots",
+      "status": "PASS"
+    },
+    {
+      "name": "Only the two expected canonical modules leave functions, and both are import-free leaves",
+      "status": "PASS"
+    },
+    {
+      "name": "Every local import resolves to its exact source under the two proposed virtual mounts",
+      "status": "PASS"
+    },
+    {
+      "name": "Functions-only mounting rejects chat and generation for the exact missing sources; custom trigger remains closed",
+      "status": "PASS"
+    },
+    {
+      "name": "All module and checker SHA-256 fingerprints remain unchanged across the inspection",
+      "status": "PASS"
+    }
+  ],
+  "sourceSha256": {
+    "qa/resolution-qualification-20261125/edge-package-check.mjs": "76b27acfb45b3116c7457239f90132301b87e453d6cf1fb039b776499c2b5f52",
+    "supabase/functions/creator-agent-chat/index.ts": "557f2538ea3cbdbba81e8ac9410e6bc38a46d365f55c2f12844fe2a71a5d3dfa",
+    "supabase/functions/_shared/response.ts": "c9858646a6e6fc9ac037175229c49977ebc8a9c53aa89ba625c8bb734c71ff0a",
+    "supabase/functions/_shared/rate-limit.ts": "493a6740b995811637ca0a4e9bc497c575cafd91d0374bb34387c03c0118d757",
+    "supabase/functions/_shared/validation.ts": "e796b7853b6dd2bb9fcc6b6b3234014744b8b604739033464cd797d203ab41fe",
+    "supabase/functions/_shared/private-tool-results.ts": "eb44aaa019b8efbb312e7db12f06fb78d1a9552bb5e1b245cfccd0df60e8a05a",
+    "karta/src/knowledge/private-result-view.ts": "b28d1610b341a19fc02be713812b9b60db97a7edaae1ac2949ff9447ed6e0848",
+    "supabase/functions/_shared/assistant-policy.ts": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb",
+    "karta/src/claude/assistant-policy.ts": "96007c92a42467b963e9e2766fc0540dab5f1c8e2030c3e74eef504b2feaeecd",
+    "supabase/functions/_shared/assistant-response.ts": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714",
+    "supabase/functions/creator-agent-generate/index.ts": "026dc88c03bec83d7f778938af70c8a1a097b624392bd90c5a529c80b89a7bc8",
+    "supabase/functions/karta-trigger-custom/index.ts": "c45e020c1fbd0f671ff28debb77f5b0abb20c466a7d363bdc88067af6137561e",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  "limits": [
+    "The virtual mounts are a proposed package contract, not observed container mounts.",
+    "No Deno typecheck, module execution, remote import resolution or network request.",
+    "No package copy, generated business bundle, Hostinger configuration change or deployment.",
+    "Working-tree SHA-256 values identify the inspected bytes; git HEAD alone does not identify uncommitted content."
+  ],
+  "graphs": [
+    {
+      "entry": "supabase/functions/creator-agent-chat/index.ts",
+      "modules": [
+        "karta/src/claude/assistant-policy.ts",
+        "karta/src/knowledge/private-result-view.ts",
+        "supabase/functions/_shared/assistant-policy.ts",
+        "supabase/functions/_shared/assistant-response.ts",
+        "supabase/functions/_shared/private-tool-results.ts",
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/_shared/response.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/creator-agent-chat/index.ts"
+      ],
+      "localImports": [
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/assistant-response.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "supabase/functions/_shared/assistant-response.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 2,
+          "to": "supabase/functions/_shared/assistant-policy.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/private-tool-results.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "supabase/functions/_shared/private-tool-results.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/validation.ts",
+          "typeOnly": false,
+          "line": 7,
+          "to": "supabase/functions/_shared/validation.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 8,
+          "to": "supabase/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/response.ts",
+          "typeOnly": false,
+          "line": 9,
+          "to": "supabase/functions/_shared/response.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/private-tool-results.ts",
+          "specifier": "../../../karta/src/knowledge/private-result-view.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "karta/src/knowledge/private-result-view.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/assistant-policy.ts",
+          "specifier": "../../../karta/src/claude/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "karta/src/claude/assistant-policy.ts"
+        }
+      ],
+      "externalImports": [
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "npm:@supabase/supabase-js@2.119.2",
+          "typeOnly": false,
+          "line": 6
+        },
+        {
+          "from": "supabase/functions/_shared/validation.ts",
+          "specifier": "npm:zod@4.6.7",
+          "typeOnly": false,
+          "line": 1
+        }
+      ]
+    },
+    {
+      "entry": "supabase/functions/creator-agent-generate/index.ts",
+      "modules": [
+        "karta/src/claude/assistant-policy.ts",
+        "supabase/functions/_shared/assistant-policy.ts",
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/creator-agent-generate/index.ts"
+      ],
+      "localImports": [
+        {
+          "from": "supabase/functions/creator-agent-generate/index.ts",
+          "specifier": "../_shared/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "supabase/functions/_shared/assistant-policy.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-generate/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 5,
+          "to": "supabase/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/assistant-policy.ts",
+          "specifier": "../../../karta/src/claude/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "karta/src/claude/assistant-policy.ts"
+        }
+      ],
+      "externalImports": [
+        {
+          "from": "supabase/functions/creator-agent-generate/index.ts",
+          "specifier": "https://esm.sh/@supabase/supabase-js@2",
+          "typeOnly": false,
+          "line": 4
+        }
+      ]
+    },
+    {
+      "entry": "supabase/functions/karta-trigger-custom/index.ts",
+      "modules": [
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/_shared/request-body.ts",
+        "supabase/functions/_shared/request-deadline.ts",
+        "supabase/functions/karta-trigger-custom/index.ts"
+      ],
+      "localImports": [
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 2,
+          "to": "supabase/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/request-body.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "supabase/functions/_shared/request-body.ts"
+        },
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/request-deadline.ts",
+          "typeOnly": false,
+          "line": 4,
+          "to": "supabase/functions/_shared/request-deadline.ts"
+        }
+      ],
+      "externalImports": [
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "npm:@supabase/supabase-js@2.119.2",
+          "typeOnly": false,
+          "line": 1
+        }
+      ]
+    }
+  ],
+  "canonicalLeaves": [
+    "karta/src/claude/assistant-policy.ts",
+    "karta/src/knowledge/private-result-view.ts"
+  ],
+  "proposedLayout": [
+    {
+      "entry": "supabase/functions/creator-agent-chat/index.ts",
+      "status": "PASS",
+      "errors": [],
+      "resolutions": [
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/assistant-response.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "supabase/functions/_shared/assistant-response.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/assistant-response.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/assistant-response.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 2,
+          "to": "supabase/functions/_shared/assistant-policy.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/assistant-policy.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/private-tool-results.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "supabase/functions/_shared/private-tool-results.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/private-tool-results.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/private-tool-results.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/validation.ts",
+          "typeOnly": false,
+          "line": 7,
+          "to": "supabase/functions/_shared/validation.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/validation.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/validation.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 8,
+          "to": "supabase/functions/_shared/rate-limit.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-chat/index.ts",
+          "specifier": "../_shared/response.ts",
+          "typeOnly": false,
+          "line": 9,
+          "to": "supabase/functions/_shared/response.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/response.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/response.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/private-tool-results.ts",
+          "specifier": "../../../karta/src/knowledge/private-result-view.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "karta/src/knowledge/private-result-view.ts",
+          "fromVirtual": "/home/deno/functions/_shared/private-tool-results.ts",
+          "resolvedVirtual": "/home/karta/src/knowledge/private-result-view.ts",
+          "expectedVirtual": "/home/karta/src/knowledge/private-result-view.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/assistant-policy.ts",
+          "specifier": "../../../karta/src/claude/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "karta/src/claude/assistant-policy.ts",
+          "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+          "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+          "expectedVirtual": "/home/karta/src/claude/assistant-policy.ts"
+        }
+      ]
+    },
+    {
+      "entry": "supabase/functions/creator-agent-generate/index.ts",
+      "status": "PASS",
+      "errors": [],
+      "resolutions": [
+        {
+          "from": "supabase/functions/creator-agent-generate/index.ts",
+          "specifier": "../_shared/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 1,
+          "to": "supabase/functions/_shared/assistant-policy.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-generate/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/assistant-policy.ts"
+        },
+        {
+          "from": "supabase/functions/creator-agent-generate/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 5,
+          "to": "supabase/functions/_shared/rate-limit.ts",
+          "fromVirtual": "/home/deno/functions/creator-agent-generate/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/_shared/assistant-policy.ts",
+          "specifier": "../../../karta/src/claude/assistant-policy.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "karta/src/claude/assistant-policy.ts",
+          "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+          "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+          "expectedVirtual": "/home/karta/src/claude/assistant-policy.ts"
+        }
+      ]
+    },
+    {
+      "entry": "supabase/functions/karta-trigger-custom/index.ts",
+      "status": "PASS",
+      "errors": [],
+      "resolutions": [
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/rate-limit.ts",
+          "typeOnly": false,
+          "line": 2,
+          "to": "supabase/functions/_shared/rate-limit.ts",
+          "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+        },
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/request-body.ts",
+          "typeOnly": false,
+          "line": 3,
+          "to": "supabase/functions/_shared/request-body.ts",
+          "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/request-body.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/request-body.ts"
+        },
+        {
+          "from": "supabase/functions/karta-trigger-custom/index.ts",
+          "specifier": "../_shared/request-deadline.ts",
+          "typeOnly": false,
+          "line": 4,
+          "to": "supabase/functions/_shared/request-deadline.ts",
+          "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+          "resolvedVirtual": "/home/deno/functions/_shared/request-deadline.ts",
+          "expectedVirtual": "/home/deno/functions/_shared/request-deadline.ts"
+        }
+      ]
+    }
+  ],
+  "negativeFunctionsOnly": {
+    "status": "PASS_EXPECTED_REJECTION",
+    "results": [
+      {
+        "entry": "supabase/functions/creator-agent-chat/index.ts",
+        "status": "FAIL",
+        "errors": [
+          {
+            "code": "DEPENDENCY_NOT_MOUNTED",
+            "from": "supabase/functions/_shared/private-tool-results.ts",
+            "specifier": "../../../karta/src/knowledge/private-result-view.ts",
+            "typeOnly": false,
+            "line": 1,
+            "to": "karta/src/knowledge/private-result-view.ts",
+            "fromVirtual": "/home/deno/functions/_shared/private-tool-results.ts",
+            "resolvedVirtual": "/home/karta/src/knowledge/private-result-view.ts",
+            "expectedVirtual": null
+          },
+          {
+            "code": "DEPENDENCY_NOT_MOUNTED",
+            "from": "supabase/functions/_shared/assistant-policy.ts",
+            "specifier": "../../../karta/src/claude/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "karta/src/claude/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+            "expectedVirtual": null
+          }
+        ],
+        "resolutions": [
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/assistant-response.ts",
+            "typeOnly": false,
+            "line": 1,
+            "to": "supabase/functions/_shared/assistant-response.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/assistant-response.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/assistant-response.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 2,
+            "to": "supabase/functions/_shared/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/assistant-policy.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/private-tool-results.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "supabase/functions/_shared/private-tool-results.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/private-tool-results.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/private-tool-results.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/validation.ts",
+            "typeOnly": false,
+            "line": 7,
+            "to": "supabase/functions/_shared/validation.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/validation.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/validation.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/rate-limit.ts",
+            "typeOnly": false,
+            "line": 8,
+            "to": "supabase/functions/_shared/rate-limit.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-chat/index.ts",
+            "specifier": "../_shared/response.ts",
+            "typeOnly": false,
+            "line": 9,
+            "to": "supabase/functions/_shared/response.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-chat/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/response.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/response.ts"
+          },
+          {
+            "from": "supabase/functions/_shared/private-tool-results.ts",
+            "specifier": "../../../karta/src/knowledge/private-result-view.ts",
+            "typeOnly": false,
+            "line": 1,
+            "to": "karta/src/knowledge/private-result-view.ts",
+            "fromVirtual": "/home/deno/functions/_shared/private-tool-results.ts",
+            "resolvedVirtual": "/home/karta/src/knowledge/private-result-view.ts",
+            "expectedVirtual": null
+          },
+          {
+            "from": "supabase/functions/_shared/assistant-policy.ts",
+            "specifier": "../../../karta/src/claude/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "karta/src/claude/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+            "expectedVirtual": null
+          }
+        ]
+      },
+      {
+        "entry": "supabase/functions/creator-agent-generate/index.ts",
+        "status": "FAIL",
+        "errors": [
+          {
+            "code": "DEPENDENCY_NOT_MOUNTED",
+            "from": "supabase/functions/_shared/assistant-policy.ts",
+            "specifier": "../../../karta/src/claude/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "karta/src/claude/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+            "expectedVirtual": null
+          }
+        ],
+        "resolutions": [
+          {
+            "from": "supabase/functions/creator-agent-generate/index.ts",
+            "specifier": "../_shared/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 1,
+            "to": "supabase/functions/_shared/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-generate/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/assistant-policy.ts"
+          },
+          {
+            "from": "supabase/functions/creator-agent-generate/index.ts",
+            "specifier": "../_shared/rate-limit.ts",
+            "typeOnly": false,
+            "line": 5,
+            "to": "supabase/functions/_shared/rate-limit.ts",
+            "fromVirtual": "/home/deno/functions/creator-agent-generate/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+          },
+          {
+            "from": "supabase/functions/_shared/assistant-policy.ts",
+            "specifier": "../../../karta/src/claude/assistant-policy.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "karta/src/claude/assistant-policy.ts",
+            "fromVirtual": "/home/deno/functions/_shared/assistant-policy.ts",
+            "resolvedVirtual": "/home/karta/src/claude/assistant-policy.ts",
+            "expectedVirtual": null
+          }
+        ]
+      },
+      {
+        "entry": "supabase/functions/karta-trigger-custom/index.ts",
+        "status": "PASS",
+        "errors": [],
+        "resolutions": [
+          {
+            "from": "supabase/functions/karta-trigger-custom/index.ts",
+            "specifier": "../_shared/rate-limit.ts",
+            "typeOnly": false,
+            "line": 2,
+            "to": "supabase/functions/_shared/rate-limit.ts",
+            "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/rate-limit.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/rate-limit.ts"
+          },
+          {
+            "from": "supabase/functions/karta-trigger-custom/index.ts",
+            "specifier": "../_shared/request-body.ts",
+            "typeOnly": false,
+            "line": 3,
+            "to": "supabase/functions/_shared/request-body.ts",
+            "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/request-body.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/request-body.ts"
+          },
+          {
+            "from": "supabase/functions/karta-trigger-custom/index.ts",
+            "specifier": "../_shared/request-deadline.ts",
+            "typeOnly": false,
+            "line": 4,
+            "to": "supabase/functions/_shared/request-deadline.ts",
+            "fromVirtual": "/home/deno/functions/karta-trigger-custom/index.ts",
+            "resolvedVirtual": "/home/deno/functions/_shared/request-deadline.ts",
+            "expectedVirtual": "/home/deno/functions/_shared/request-deadline.ts"
+          }
+        ]
+      }
+    ]
+  },
+  "repository": {
+    "head": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "inspectedSourceStatus": [
+      " M karta/src/knowledge/private-result-view.ts",
+      " M supabase/functions/karta-trigger-custom/index.ts",
+      "?? qa/resolution-qualification-20261125/edge-package-check.mjs"
+    ]
+  },
+  "localModuleCount": 13,
+  "fingerprintCount": 14,
+  "finishedAt": "2026-11-26T04:28:04.972Z"
+}

@@ -70,6 +70,14 @@ function resolutionString(value: unknown, maximum: number, minimum = 1): value i
   return typeof value === 'string' && value.length >= minimum && value.length <= maximum
     && !value.includes('\u0000') && !/[\uD800-\uDFFF]/u.test(value);
 }
+/** Input-schema lengths count Unicode code points; generated report text keeps UTF-16 bounds. */
+function resolutionInputString(value: unknown, maximum: number, minimum = 1): value is string {
+  // A valid scalar occupies at most two UTF-16 units. Reuse the well-formedness
+  // check before counting; never admit an isolated surrogate or a PostgreSQL NUL.
+  if (!resolutionString(value, maximum * 2, minimum)) return false;
+  const length = [...value].length;
+  return length >= minimum && length <= maximum;
+}
 function resolutionRevision(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 1_000_000;
 }
@@ -85,8 +93,8 @@ export function parseResolutionPrivatePayload(payload: unknown): ResolutionPriva
     || Object.entries(RESOLUTION_REPORT_PROVENANCE).some(([key, value]) => details[key] !== value)) return null;
   const snapshot = details.snapshot;
   if (!resolutionObject(snapshot, ['caseId', 'snapshotRevision', 'asOf'])
-    || !resolutionString(snapshot.caseId, 160) || !resolutionRevision(snapshot.snapshotRevision)
-    || !resolutionString(snapshot.asOf, 35, 20)) return null;
+    || !resolutionInputString(snapshot.caseId, 160) || !resolutionRevision(snapshot.snapshotRevision)
+    || !resolutionInputString(snapshot.asOf, 35, 20)) return null;
   const asOf = resolutionInstant(snapshot.asOf);
   if (asOf === undefined || !Array.isArray(details.sections) || details.sections.length !== 6) return null;
   const sections: ResolutionReportSection[] = [];
@@ -105,7 +113,7 @@ export function parseResolutionPrivatePayload(payload: unknown): ResolutionPriva
   }
   if (!Array.isArray(details.supplied_references) || details.supplied_references.length > 128
     || !Array.isArray(details.rejected_source_ids) || details.rejected_source_ids.length > 128
-    || details.rejected_source_ids.some(id => !resolutionString(id, 160))) return null;
+    || details.rejected_source_ids.some(id => !resolutionInputString(id, 160))) return null;
   const providedRejectedIds = details.rejected_source_ids;
   const supplied_references: ResolutionSuppliedReference[] = [];
   const rejected_source_ids: string[] = [];
@@ -114,10 +122,10 @@ export function parseResolutionPrivatePayload(payload: unknown): ResolutionPriva
     'correction', 'transmission', 'responsibility', 'performance', 'authorization'];
   for (const source of details.supplied_references) {
     if (!resolutionObject(source, ['id', 'caseId', 'snapshotRevision', 'subjectId', 'kind', 'reference', 'observedAt'])
-      || !resolutionString(source.id, 160) || referenceIds.has(source.id)
-      || !resolutionString(source.caseId, 160) || !resolutionRevision(source.snapshotRevision)
-      || !resolutionString(source.subjectId, 160) || typeof source.kind !== 'string' || !kinds.includes(source.kind)
-      || !resolutionString(source.reference, 500) || !resolutionString(source.observedAt, 35, 20)) return null;
+      || !resolutionInputString(source.id, 160) || referenceIds.has(source.id)
+      || !resolutionInputString(source.caseId, 160) || !resolutionRevision(source.snapshotRevision)
+      || !resolutionInputString(source.subjectId, 160) || typeof source.kind !== 'string' || !kinds.includes(source.kind)
+      || !resolutionInputString(source.reference, 500) || !resolutionInputString(source.observedAt, 35, 20)) return null;
     referenceIds.add(source.id);
     const observedAt = resolutionInstant(source.observedAt);
     if (source.caseId !== snapshot.caseId || source.snapshotRevision !== snapshot.snapshotRevision

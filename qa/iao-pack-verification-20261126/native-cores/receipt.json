@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "recorded_at_utc": "2026-11-26 05:02:38 UTC",
+  "module_path": "mobile/modules/purama-local-digest",
+  "source_inventory": "module-source-sha256.json",
+  "status": "PARTIEL",
+  "status_reason": "Cœurs natifs Java/Swift et contrat JavaScript vérifiés ; bindings Expo et exécution Hermes non exécutés localement.",
+  "source_baseline": {
+    "commit": "e6a9ece6d66fec795957e7d941d9948ab904d408",
+    "tree": "ae5d147a47012799caa1822be4d327767a215b82"
+  },
+  "environment": {
+    "device": "qualification Mac",
+    "os": "macOS 26.7 (25G229)",
+    "java": "OpenJDK 17.0.20 Homebrew",
+    "java_home_used": "/opt/homebrew/opt/openjdk@17",
+    "swift": "Apple Swift 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+    "swift_language_mode": "5",
+    "swift_sdk": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+    "native_test_source_copy": "/tmp/purama-digest-core-20261126.fa5_jvuz"
+  },
+  "native_results": [
+    {
+      "id": "java-initial-combined-run",
+      "status": "PASS",
+      "assertions": 26,
+      "process_id": 80490,
+      "log": "java-swift-initial.log",
+      "combined_process_exit_code": 1,
+      "combined_process_status": "PARTIEL",
+      "explanation": "Le script set -e a exécuté Java avec succès (26 assertions), puis a échoué sur la compilation Swift sans SDK explicite : unable to load standard library for target arm64-apple-macosx26.0. Le code de sortie global 1 n'est pas un échec Java. Aucun code de sortie Java séparé n'était imprimé ; le succès de la commande Java est attesté par le PASS et la poursuite du script vers Swift.",
+      "source_sha256": {
+        "android/src/main/java/expo/modules/puramalocaldigest/Sha256Core.java": "fe9e96ba7df11eed26cf99697abf0b9ee153ac7e12b2d41ee5d800737c74f36b",
+        "tests/Sha256CoreTest.java": "63de35adf324286326e6a954bc2b337a44fc76a61ad2a2527f1323f17c4aad13"
+      },
+      "runner_sha256_at_execution": "ae2dbba47470c2faa386f7efadf97ee6a62532db99ff82bee283c723631afa84"
+    },
+    {
+      "id": "swift-explicit-sdk-intermediate",
+      "status": "PASS",
+      "assertions": 22,
+      "process_id": 81376,
+      "log": "swift-sdk-explicit.log",
+      "compile_exit_code": 0,
+      "test_exit_code": 0,
+      "elapsed_seconds": 394.47,
+      "final_source": false,
+      "explanation": "Première compilation avec SDK explicite ; reconstruction de la bibliothèque standard incluse. Ce reçu intermédiaire est remplacé par swift-final pour la version actuelle du cœur.",
+      "source_sha256": {
+        "apple/Sha256Core.swift": "7e98f3e5ab5e94d377193d214372b39b08b23c15016b1491cd2943f95535c136",
+        "tests/Sha256CoreTests.swift": "5fa350e63036d6943a50a2a47f405e2bfc70b78a4e2a756a6dcd3884dc02432b"
+      }
+    },
+    {
+      "id": "swift-final",
+      "status": "PASS",
+      "assertions": 22,
+      "process_id": 89615,
+      "log": "swift-final.log",
+      "script_exit_code": 0,
+      "elapsed_seconds": 14.42,
+      "final_source": true,
+      "command": "bash tests/run-core-tests.sh --swift",
+      "explanation": "Le script final résout le SDK via xcrun, compile puis exécute le test avec set -e. Le code de sortie final 0 couvre ces étapes. La durée inclut compilation et tests ; elle ne mesure pas le hachage du modèle.",
+      "source_sha256": {
+        "apple/Sha256Core.swift": "341bf4b9ba5a4f99c97c7c6da065023174c10a4477a932550508a188f11cead8",
+        "tests/Sha256CoreTests.swift": "5fa350e63036d6943a50a2a47f405e2bfc70b78a4e2a756a6dcd3884dc02432b",
+        "tests/run-core-tests.sh": "3c2099ef93ba6dea720cbc2b3cf410c401a05a1035c80bead318961268caab39"
+      }
+    }
+  ],
+  "javascript_result": {
+    "status": "PASS",
+    "tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "module-contract-final.log",
+    "command": "node --test mobile/modules/purama-local-digest/tests/module-contract.test.cjs",
+    "scope": "Véritables points d'entrée et getters JavaScript ; initialisation Expo et SharedObject explicitement simulés dans une VM isolée.",
+    "source_sha256": {
+      "index.ts": "74c7ab796cc400efda5dafa07ee78f0765bfd8951ab06d67b10d030b84919b81",
+      "index.web.ts": "377c64d2d0e16a3f49f411f30bb2eb8750eccd1afb3ede3454e8fdf1b97caa07",
+      "contract.ts": "6d8279ae013eb413f747dc737e8dd9dc850e844843ed542266a9670b7d20c163",
+      "tests/module-contract.test.cjs": "c8cdc6ae60f5385ddd08b485a4cae2f47853e918fbe9cf082a0d0d242320c8e7"
+    }
+  },
+  "native_cores_rerun_for_sharedobject_import_change": false,
+  "not_tested": [
+    "Compilation et liaison des bindings Expo dans l'application Android/iOS",
+    "Exécution des SharedObject dans Hermes",
+    "Hachage natif du modèle complet épinglé",
+    "Gain de débit, latence ou mémoire dans l'application"
+  ],
+  "evidence_transport": "Sorties originales de Remote Desktop Commander pour les processus natifs ; sortie exec_command pour les tests JavaScript. Les logs sont conservés tels que retournés, y compris les résumés du transport.",
+  "dependencies_installed": false
+}

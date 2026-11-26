@@ -121,6 +121,11 @@ before(async () => {
   await admin.query(readFileSync(new URL('../migrations/033_programmatic_model_usage.sql', import.meta.url), 'utf8'));
   await admin.query(readFileSync(new URL('../migrations/034_programmatic_private_reports.sql', import.meta.url), 'utf8'));
   await admin.query(readFileSync(new URL('../migrations/036_resolution_private_results.sql', import.meta.url), 'utf8'));
+  const previousRpc = (await admin.query("SELECT pg_get_functiondef('purama_ai.karta_store_tool_result(uuid,text,uuid,text,text,jsonb)'::regprocedure) AS definition")).rows[0].definition;
+  const unicodeMigration = readFileSync(new URL('../migrations/037_resolution_unicode_lengths.sql', import.meta.url), 'utf8');
+  await admin.query(unicodeMigration);
+  await admin.query(unicodeMigration);
+  assert.equal((await admin.query("SELECT pg_get_functiondef('purama_ai.karta_store_tool_result(uuid,text,uuid,text,text,jsonb)'::regprocedure) AS definition")).rows[0].definition, previousRpc);
 });
 
 after(async () => {
@@ -466,5 +471,50 @@ test('native resolution JSONB preserves internal spaces and exact UTF-8 size bou
     assert((await admin.query('SELECT octet_length(payload::text) AS bytes FROM purama_ai.karta_tool_results')).rows[0].bytes <= 65_536);
     section.items[0] = 'é' + section.items[0].slice(1);
     refused(await settle(resolutionRpc(caller, runId, payload, `${runId}:1`)));
+  } finally { await close(caller); }
+});
+
+test('native resolution retains exact Unicode scalar limits and rejects scalar overflows', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]);
+  const caller = await service('resolution_unicode'), runId = await run();
+  const payload = structuredClone(resolutionPayload);
+  payload.details.snapshot.caseId = 'c'.repeat(159) + '🌍';
+  payload.details.supplied_references = [
+    { id: '🌿'.repeat(160), caseId: payload.details.snapshot.caseId, snapshotRevision: 3, subjectId: '🏠'.repeat(160), kind: 'requirement', reference: 'd'.repeat(499) + '🌍', observedAt: '2026-11-25T12:00:00Z' },
+    { id: '🧭'.repeat(160), caseId: '🌊'.repeat(160), snapshotRevision: 3, subjectId: 'p'.repeat(159) + '🌍', kind: 'requirement', reference: '🌍'.repeat(500), observedAt: '🌍'.repeat(35) },
+  ];
+  payload.details.rejected_source_ids = [payload.details.supplied_references[1].id];
+  try {
+    const id = await resolutionRpc(caller, runId, payload);
+    assert.deepEqual(await rows(), [{ id, payload }]);
+    assert.equal(await resolutionRpc(caller, runId, payload), id);
+    for (const [index, field] of ['caseId', 'id', 'sourceCaseId', 'subjectId', 'reference', 'observedAt', 'observedAtMinimum'].entries()) {
+      const invalid = structuredClone(payload);
+      const length = field === 'reference' ? 501 : field === 'observedAt' ? 36 : field === 'observedAtMinimum' ? 19 : 161;
+      const value = '🌍'.repeat(length);
+      if (field === 'caseId') {
+        invalid.details.snapshot.caseId = value;
+        invalid.details.supplied_references[0].caseId = value;
+      } else {
+        invalid.details.supplied_references[0][field === 'sourceCaseId' ? 'caseId' : field === 'observedAtMinimum' ? 'observedAt' : field] = value;
+        if (['sourceCaseId', 'observedAt', 'observedAtMinimum'].includes(field)) invalid.details.rejected_source_ids.unshift(invalid.details.supplied_references[0].id);
+      }
+      refused(await settle(resolutionRpc(caller, runId, invalid, `${runId}:${index + 1}`)));
+    }
+    assert.deepEqual(await rows(), [{ id, payload }]);
+  } finally { await close(caller); }
+});
+
+test('native resolution rejects NUL and isolated surrogates before any JSONB row is created', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]);
+  const caller = await service('resolution_invalid_unicode'), runId = await run();
+  try {
+    for (const [index, malformed] of ['\u0000', '\ud800', '\udc00', '\ud800A'].entries()) {
+      const payload = structuredClone(resolutionPayload); payload.details.snapshot.caseId = malformed;
+      const outcome = await settle(resolutionRpc(caller, runId, payload, `${runId}:${index}`));
+      assert.equal(outcome.ok, false);
+      assert(['22P02', '22P05'].includes(outcome.code), 'Malformed JSON Unicode must fail before the storage RPC');
+    }
+    assert.deepEqual(await rows(), []);
   } finally { await close(caller); }
 });

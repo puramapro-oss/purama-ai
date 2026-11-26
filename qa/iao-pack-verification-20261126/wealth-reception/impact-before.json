@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-11-26T05:23:28.820844+00:00",
+  "records": [
+    {
+      "target": "main",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "main",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "scripts/ci/test-wealth-diff.py",
+        "--depth",
+        "2",
+        "--limit",
+        "15",
+        "--include-tests"
+      ],
+      "workingDirectory": "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'main' not found\",\n  \"target\": {\n    \"name\": \"main\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795670607975,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "target": "ARCHIVED_QA",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "ARCHIVED_QA",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "scripts/ci/check-wealth-diff.sh",
+        "--depth",
+        "2",
+        "--limit",
+        "15",
+        "--include-tests"
+      ],
+      "workingDirectory": "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'ARCHIVED_QA' not found\",\n  \"target\": {\n    \"name\": \"ARCHIVED_QA\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795670608731,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    }
+  ],
+  "manualDirectCallReview": {
+    "callers": [
+      ".github/workflows/wealth-engine-continuity.yml",
+      "scripts/ci/test-wealth-diff.py"
+    ],
+    "affectedRuntime": "CI whitespace gate and isolated gate fixtures only",
+    "limitations": [
+      "Existing index predates the candidate; no new index or installation attempted."
+    ]
+  }
+}

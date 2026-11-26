@@ -2,7 +2,8 @@
 # Keep the unfiltered diagnostic in the caller's log. Exempt only the first
 # appearance of these byte-identical, already archived QA records. Changed
 # records, previously present paths, unlisted files and application code stay strict.
-# Entries cover 57d3d6b, IAO qualification b4a18ef, PR104 cccaadf and PR108 4c54eb0.
+# Entries cover 57d3d6b, IAO qualification b4a18ef, PR104 cccaadf, PR108 4c54eb0
+# and the raw IAO pack qualification records published in 185c619.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 base=$1
@@ -77,6 +78,12 @@ e6f6e8c304e81997c5f5e90feca41e0fa40d90d6 qa/iao-integration-20261124/runtime/bef
 61bad687fa432d2244e692dca302b693373e61fa qa/iao-integration-20261124/runtime/regressions.log
 82ac622e1bf22f17b5160b11f21de59ab29f8401 qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log
 307635738311c75bbf1181d9ca648073aa7d3d64 qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log
+05a46d2c95cdc2ea950b1d889d4732d91a76ef5e qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log
+8be06458826ba34bf88ddc96274668ef9c0f3518 qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log
+e31a8cee91635f8b89e705679a090abebc1229b3 qa/iao-pack-verification-20261126/native-cores/module-contract-final.log
+81550a5050a86dc57ee97ad95c900c32e86e356d qa/iao-pack-verification-20261126/native-cores/swift-final.log
+954bc38b3769fedfc4927c2e0201a5f05e595e55 qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log
+01b66a545645e3dc2d76d8982d8a3a0cd932b3d4 qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap
 ARCHIVED_QA
 printf 'Rechecking all changes except %d byte-identical archived QA blobs.\n' "$((${#paths[@]} - 1))"
 git diff --check "$base" "$head" -- "${paths[@]}"

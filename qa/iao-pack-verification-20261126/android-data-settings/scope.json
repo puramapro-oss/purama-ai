@@ -1,0 +1,40 @@
+{
+  "id": "IAO-ANDROID-DATA-SETTINGS-QUALIFICATION-20261126-0414",
+  "state": "PRET_A_CODER",
+  "owner": "/root/iao_ci_reconcile_20261126",
+  "parent": "IAO-PACK-VERIFICATION-20261126-0414",
+  "authorization": "Parent GO for isolated diagnostic qualification after current real API35 default DATA failure; no preparation correction, workflow edit, CI dispatch or publication. Existing user instruction to qualify missing paths and preserve evidence.",
+  "baseRemote": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "files": [
+    "mobile/scripts/qualify-android-data-settings.py",
+    "mobile/tests/watch-native/data-settings-qualification.test.cjs",
+    "qa/iao-pack-verification-20261126/android-data-settings/"
+  ],
+  "acceptance": [
+    "No UI action without explicit --allow-settings-transition.",
+    "Bind to original data_subscription_not_ready FAIL receipt, canonical run UUID and original emulator serial; original receipt immutable.",
+    "Require qemu, exact known API35/google_apis/x86_64 r9 image, fresh unique loaded active subscription.",
+    "Allow one bounded Settings selection attempt through observed unambiguous UI controls only; no direct settings writes, Binder or radio CLI.",
+    "Reuse existing bounded_command and subscription parser without modifying the preparer; separate diagnostic receipt never certifies network isolation.",
+    "Preserve global 60-second ceiling and bounded output; fail on ambiguity, drift, unknown state or ineffective selection.",
+    "Dedicated parser and synthetic ADB tests; no rerun of 56 unchanged tests.",
+    "Root owns conditional workflow integration and retention of original preflight exit code."
+  ],
+  "preservedSha256": {
+    "mobile/scripts/prepare-android-offline.py": "4f69fbed87c5ace67d9f5106a61c432b0776807d112fcfb20e21fcac8c11cb05",
+    "mobile/scripts/wait-for-android-offline.py": "11b41f3f70601f16b6aa312e176a75407f6c9b3567d41c3a074c74ac837dafd2",
+    "mobile/tests/watch-native/offline-preparation.test.cjs": "fcabb5b83edcd17be056fe6f823facd6b6f611472a2ee836de6f1688e35b4793",
+    "mobile/tests/watch-native/offline-network.test.cjs": "7fdce85aff3af047885efc46d67e120f2071c41ed91fa2b14a62eb43bb90d374"
+  },
+  "gitnexus": "Attempted before code using existing index; FTS unavailable and index one commit behind; unresolved edges remain UNKNOWN. Manual direct dependency review supplements it.",
+  "limits": [
+    "Real image UI/runtime remains NON TESTE until exact CI qualification.",
+    "The source-supported Settings route may refuse when actual UI differs; this is expected evidence, not an assumed success."
+  ],
+  "verification": {
+    "status": "PASS_LOCAL_FIXTURES_REAL_IMAGE_NOT_TESTED",
+    "receipt": "receipt-final.json",
+    "testsPassed": 46,
+    "realImage": "NON TESTE"
+  }
+}

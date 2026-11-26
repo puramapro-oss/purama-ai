@@ -96,7 +96,7 @@ export default function CreatorAgentDetail() {
   const { data: kartaState, isError: kartaStateError } = useCustomAgentKartaState(id);
   const updateKartaState = useUpdateCustomAgentKartaState(id);
   const { data: kartaRuns = [] } = useCustomAgentKartaRuns(id, 20);
-  const triggerKarta = useTriggerCustomAgent();
+  const triggerKarta = useTriggerCustomAgent(id, sessionId);
   const { data: pendingActions = [] } = useCustomAgentPendingActions(id);
 
   useLayoutEffect(() => {
@@ -249,16 +249,16 @@ export default function CreatorAgentDetail() {
   };
 
   const handleTriggerNow = async () => {
-    const isCurrent = captureResource();
+    const isCurrent = captureConversation();
     if (!id || agent?.id !== id || agent.user_id !== userId || !isCurrent()) return;
     const request = requests.begin('trigger');
     if (!request) return;
     try {
       await triggerKarta.mutateAsync(id);
-      if (!request.current()) return;
+      if (!request.current() || !isCurrent()) return;
       toast.success('Agent déclenché', { description: 'Regarde son activité ci-dessous dans quelques secondes.' });
     } catch (e) {
-      if (request.current()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (request.current() && isCurrent()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
     } finally { request.finish(); }
   };
 

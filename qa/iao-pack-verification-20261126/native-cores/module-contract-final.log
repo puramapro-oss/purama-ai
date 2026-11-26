@@ -1,0 +1,18 @@
+✔ public initialization is retained but digest lookup stays deferred and uses one identity (82.904399ms)
+✔ only an absent entry in a valid registry returns null (21.894871ms)
+✔ a missing SharedObject runtime is refused before accessing the native registry (54.630982ms)
+✔ an unavailable or malformed native registry is an error (58.485134ms)
+✔ registry and constructor getter failures propagate without an absence fallback (15.146272ms)
+✔ a present native module without a constructor cannot masquerade as absence (56.913039ms)
+✔ a failed native lookup does not poison a later lookup (10.660699ms)
+✔ public Expo initialization errors are not converted into native absence (8.588133ms)
+✔ web declares native absence without importing Expo or inspecting a native registry (17.053757ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 824.29885
+

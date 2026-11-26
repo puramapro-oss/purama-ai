@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-11-26T05:26:18.084737+00:00",
+  "records": [
+    {
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "detect-changes",
+        "--repo",
+        "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+        "--scope",
+        "all",
+        "--limit",
+        "20"
+      ],
+      "workingDirectory": "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "\n  GitNexus Detect Changes (1.6.12)\nfile:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/tmp/iao-quality-0414-p1it5pwv/repo-received\" not found. Available: iao-continuity-20261125\n    at LocalBackend.selectToolRepository (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.3\n"
+    },
+    {
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "detect-changes",
+        "--repo",
+        "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+        "--scope",
+        "compare",
+        "--base-ref",
+        "main",
+        "--limit",
+        "20"
+      ],
+      "workingDirectory": "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "\n  GitNexus Detect Changes (1.6.12)\nfile:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/tmp/iao-quality-0414-p1it5pwv/repo-received\" not found. Available: iao-continuity-20261125\n    at LocalBackend.selectToolRepository (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.3\n"
+    }
+  ]
+}

@@ -1,9 +1,21 @@
 # IAO — interruption effective des lectures publiques
 
-Réception du 26 novembre 2026. Base : `271f40b666c11d90fe4a350a41432513a08fc72f`.
+Réception initiale du 26 novembre 2026. Base : `271f40b666c11d90fe4a350a41432513a08fc72f`.
 Branche candidate : `fix/iao-tool-cancellation-20261126`.
 
-## Résultat
+## Rapprochement avec la consolidation `893fc5c`
+
+**PASS logiciel : 5 968/5 968 tests dans 238 fichiers, zéro échec et zéro ignoré ; typage complet et compilation PASS.** Le correctif déjà qualifié est conservé dans le commit local `9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a`. La consolidation `893fc5cb14e0039e40c060b51532ea0feefd1864` est rapprochée sans conflit : 95 fichiers amont, aucune intersection avec les dix fichiers produit/tests de ce correctif. L’arbre de rapprochement, avant nouveaux reçus documentaires, est `2ba3f2f56240595aee6a0e54a7dd700bd96217d3`, identique dans les deux environnements.
+
+Le delta amont ajoute 31 tests KARTA et modifie trois sources de validation/projection des résultats privés ainsi que la migration 037. Cette chaîne partage la persistance utilisée par le moteur ; l’absence de conflit Git ne suffit donc pas à qualifier la combinaison. Les impacts préalables contiennent des points HIGH et CRITICAL. La revue statique indépendante n’identifie aucun défaut concret de composition ; elle vérifie notamment les six changements SQL de longueur limités à `qualify_resolution`, la conservation des autres branches et des limites d’enveloppe. Le reçu est `verification/reconciliation-893-static-review.json`.
+
+La CI amont reçoit 5 948/5 948 tests dans 237 fichiers ; elle ne constitue pas la preuve du candidat combiné. La réception locale complète est terminée sur les sources combinées, en un passage séquentiel avec un worker et les délais inchangés. Le collecteur s’exécute du 26 novembre 2026 à 05:54:08 UTC jusqu’à 06:05:59 UTC (07:05:59 Europe/Paris). Typage : 22,530 s ; build : 11,418 s ; Vitest : 675,021 s mesurées par le collecteur, 673,95 s rapportées par Vitest. La gate entière dure 710,706 s. Les 1 070 empreintes de sources/tests/configurations/migrations, l’état Git et les neuf anciens reçus suivis sont inchangés. Les fichiers d’environnement, QA et documentation sont exclus dès l’inventaire des sources.
+
+Le nouveau reçu est `verification/reconciliation-893/final-gate.json` ; son SHA-256 est `e3f1e2c3f57c248ec22e94d3eb01742d3beb553073011b664778913ceffc5d42`. Le rapport Vitest complet est conservé en gzip sans altération des octets : SHA-256 après décompression `60d1bb1740864413e43b856e6d727c6f65895a60db83b9f8986cb06ee76a7283`. Les preuves du checkpoint ci-dessous restent intactes. La revue finale du graphe est terminée avant commit de rapprochement ; les commandes, leurs sorties et leurs limites sont conservées dans le même dossier.
+
+Les avertissements de blancs du diff de fusion portent sur des journaux bruts déjà présents dans les commits amont. Ces octets de preuve sont conservés. Le diff propre au correctif, comparé à `893fc5c`, passe le contrôle de blancs ; aucune normalisation silencieuse des traces amont n’est effectuée.
+
+## Résultat du checkpoint initial
 
 **PASS local : 5 937 tests réussis dans 238 fichiers, zéro échec, zéro test ignoré. Typage complet, compilation et revue indépendante : PASS.**
 
@@ -48,7 +60,7 @@ La revue indépendante a observé une deuxième requête alors que la première 
 
 La contre-vérification indépendante reçoit maintenant la séquence : une seule requête et `busy` pendant le nettoyage, `rate_limited` après son règlement, puis deuxième requête après le délai. Les empreintes examinées et les limites de cette preuve figurent dans `independent-review.json`.
 
-## Réception complète du candidat
+## Réception complète du checkpoint initial
 
 La suite définie par `npm test` dans KARTA, le typage incluant les tests et la compilation produit sont exécutés dans un clone Mac isolé, avec Node 22.23.5, version également observée dans la CI de la base. L'identité des 455 fichiers KARTA est rapprochée entre environnements ; les fichiers de code et de tests restent inchangés pendant la réception. Les dépendances proviennent d'un cache existant rapproché du lockfile, sans modification de ce cache : 178 paquets applicables concordent, avec 54 exclusions de plateformes non applicables et aucun écart.
 
@@ -79,14 +91,37 @@ Les **166 tests ciblés** et les **120 tests de reprise SQL** recouvrent des cas
 
 L'index final a été construit sur KARTA et les fichiers racine visibles avant l'ajout des autres fixtures ; les sources KARTA indexées sont identiques à celles de la réception complète. L'index annonce explicitement des limites d'exploration des flux et des dispatchs non résolus. La lecture des usages et la revue manuelle du diff complètent l'analyse ; aucun résultat d'indexation n'est présenté comme une couverture exhaustive du dépôt.
 
-## Android : diagnostic séparé
+### Analyse du rapprochement final
 
-Le run [45733255220](https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220), sur la tête de consolidation, échoue dans la préparation réseau de l'émulateur : une SIM est chargée, mais `defaultDataSubId` reste `-1`. Les 56 tests de préparation JavaScript passent ; le job Apple réussit ; la qualification Android de l'application est sautée.
+L’index est ensuite reconstruit sur le dépôt complètement matérialisé, avec les filtres standards inchangés, en mode index seul : **37 842 nœuds, 108 344 relations, 954 groupes et 748 flux**. L’indexation termine avec code 0 et l’état Git reste inchangé. Le contrôle `all` couvre les 95 fichiers amont encore staged : 590 symboles, 16 flux, CRITICAL. Le contrôle comparé à `893fc5c` couvre les 47 fichiers du checkpoint propre au correctif : 63 symboles, 6 flux visibles, HIGH. La comparaison avec `origin/main` reçoit 3 595 fichiers, 27 883 symboles et 731 flux, CRITICAL, pour l’écart historique global. Ces périmètres et ces comptes ne sont pas additionnés.
+
+Les nombres de flux diffèrent de l’index KARTA précédent parce que le périmètre et la sélection des points d’entrée ont changé. Cela ne démontre pas une diminution du risque. L’analyse finale annonce 2 423 candidats d’entrée non sélectionnés, 6 062 appels écartés par sa limite de branchement, 62 parcours arrêtés par budget et quatre anciens reçus QA supérieurs au seuil standard de 512 Ko. Le détail affiché par la CLI est également tronqué. Aucune absence de chemin ou exhaustivité de contrôle n’en est déduite.
+
+La documentation et les reçus ajoutés après la constitution de l’arbre testé sont revus séparément. Les dix fichiers produit/tests du correctif sont inchangés ; les **1 070 empreintes de la copie locale concordent toutes avec la copie Mac reçue**, sans fichier manquant ni écart. Le manifeste de réception est `verification/reconciliation-893/gate-artifacts.json`. La comparaison du diff propre au lot ne contient que les cinq sources, leurs cinq tests, la documentation et les preuves ; aucun autre changement produit n’est introduit par cette finalisation.
+
+## Android : diagnostic historique et réception amont séparée
+
+Le run historique [45733255220](https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220), sur la tête de consolidation, échoue dans la préparation réseau de l'émulateur : une SIM est chargée, mais `defaultDataSubId` reste `-1`. Les 56 tests de préparation JavaScript passent ; le job Apple réussit ; la qualification Android de l'application est sautée.
 
 L'artefact exact, son empreinte, les 28 observations, les sources Android examinées et l'inventaire local figurent dans `android-diagnostic.json`. La garde est cohérente avec l'état observé. Le parcours Settings susceptible d'initialiser la DATA doit être qualifié sur l'image API 35 exacte du CI ; l'image locale disponible est différente. Aucun résultat natif positif n'est attribué à ce diagnostic.
 
+La nouvelle tête `893fc5c` reçoit ensuite un contrôle réseau Android PASS sur la même image API 35 : DATA devient disponible à la septième observation, après 6,752819 secondes, puis l’observateur reçoit trois observations hors ligne stables. Le parcours Settings n’a pas été exécuté, car la préparation initiale réussit. À la réception du 26 novembre à 05:47:49 UTC, sept workflows amont sont PASS. L’observation complémentaire de 06:05:11 UTC confirme la compilation téléphone/Wear et les tests Kotlin PASS ; l’APK de qualification hors ligne est en préparation et Apple compile encore. L’inférence réelle et la mémoire chiffrée après redémarrage restent en attente de preuve. Les deux exécutions et leurs artefacts restent distincts dans `verification/upstream-893-reception.json`. Ce succès réseau ne qualifie pas à lui seul l’application Android ni une correction permanente de l’initialisation.
+
 ## Limites du résultat utilisateur
 
-Le lot corrige l'interruption des deux outils de lecture existants. Le navigateur opérateur, son worker isolé, l'admission depuis la conversation principale ONE, le flux d'écran et les événements de pointeur restent des raccordements distincts. La qualification de tous les appareils, des fournisseurs externes et de la production reste NON TESTÉE dans cette réception.
+Le lot corrige l’interruption des deux outils de lecture existants. La revue du candidat combiné distingue les parcours déjà raccordés et les raccordements encore manquants :
+
+| Parcours audité | Constat de code et limite de preuve |
+| --- | --- |
+| Conversation générale ONE | `ChatbotWidget.sendMessage` appelle la fonction Edge `chatbot`, qui diffuse du texte via `streamAnthropicChat`. Ce chemin ne déclenche pas `runAgentCycle`. |
+| Analyse approfondie | `ConsultationPanel` appelle `iao-consultation`, puis la route KARTA `/consultations/{userId}` et l’hôte de consultation. Le raccordement pour consultation/recherche/lecture existe, avec suivi et annulation. |
+| Agent créé | `CreatorAgentDetail` → `useTriggerCustomAgent` → `karta-trigger-custom` → `/trigger-custom/{agentId}` → file → worker → `runAgentCycle`. Le reçu 202 confirme l’admission en file ; la réussite de la mission exige son reçu final. |
+| Façade générale IAO | Le démarrage `karta/src/index.ts` appelle `startApiServer(readiness, { lifetime })` sans injecter `iaoRuntime`. Dans ce démarrage audité, `/iao/requests` répond `503 IAO runtime unavailable`. La présence d’une clé fournisseur ne complète pas cette composition. |
+| Navigateur opérateur et aperçu | `plan_web_access` prépare une route ; aucun pilote navigateur avec captures et événements de pointeur raccordé aux parcours lus n’a été identifié. Le protocole de capacités du worker CHEF reste un point d’intégration ; sa présence ne prouve pas qu’un exécuteur navigateur y soit installé. |
+
+La composition générale requiert un `IaoRouteRuntime` contenant une façade et un authentificateur. `IaoFacade`, `KartaRuntimeIaoPort` et `LocalComputeFabricProvider` existent, mais le démarrage standard ne les assemble pas. Le port mémoire attendu doit porter des permissions, des reçus UUID et une déduplication durable ; l’authentificateur doit établir la relation révocable tenant/acteur ; le port de calcul doit satisfaire le protocole et le rejeu durable. La revue ne remplace pas ces autorités par des valeurs synthétiques. Le raccordement de la conversation textuelle ne livrerait pas à lui seul le pilote navigateur. Les anciens travaux mémoire/calcul ont été retrouvés dans sept lignées canoniques et comparés en lecture seule : les adaptateurs T03, les factories T04 et le gateway Fabric existent, avec des contrats ou une durabilité de reprise différents. Leurs modifications suivies et réservations sont préservées. La continuité détaillée figure dans `scope_audit.continuity_followup` du reçu de revue.
+
+Ces constats sont statiques et circonscrits aux chemins lus. Ils ne prouvent pas l’absence de capacités dans d’autres hôtes ou branches. La configuration déployée, les fournisseurs externes, les appareils physiques et l’aperçu direct réel restent NON TESTÉS. Le détail des points d’entrée figure dans `verification/reconciliation-893-static-review.json`.
+
 
 Le candidat local est préparé pour revue. La publication distante et le déploiement ont leur propre autorisation et leur propre réception ; aucun succès local n'est assimilé à une mise en production.

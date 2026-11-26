@@ -12,6 +12,7 @@ const ts = require('typescript');
 
 const project = path.resolve(__dirname, '..');
 function modules(overrides = {}) {
+  overrides = { '../modules/purama-local-digest/index': { getPuramaLocalDigestModule: () => null }, ...overrides };
   const cache = new Map();
   function load(relative) {
     const file = path.resolve(project, relative);
@@ -257,4 +258,220 @@ test('ready waits for the asynchronous native rename acknowledgement', async t =
   assert.equal(env.storage.directoryExists(env.manifest.id), false);
   promote(); await preparation;
   assert.equal(env.pack.getState().status, 'ready');
+});
+
+function mutateVerifiedAsset(env, directory, name) {
+  const file = path.join(env.root, directory, name);
+  const before = fs.statSync(file);
+  const bytes = fs.readFileSync(file);
+  bytes[bytes.length - 1] ^= 1;
+  fs.writeFileSync(file, bytes);
+  // Keep the byte count unchanged and make the metadata change deterministic
+  // on filesystems whose timestamp resolution differs from the test host.
+  fs.utimesSync(file, before.atime, new Date(before.mtimeMs + 2000));
+}
+
+for (const name of ['model.gguf', 'LICENSE']) {
+  test(`prepare rejects ${name} mutation during smoke instead of trusting a new fingerprint`, async t => {
+    const env = fixture(t, { smokeTest: async (_uri, _signal, current) => {
+      mutateVerifiedAsset(current, current.manifest.id + '.partial', name);
+    } });
+    await assert.rejects(env.pack.prepare(), { code: 'integrity' });
+    assert.equal(env.pack.getState().status, 'error');
+    assert.equal(env.moves.length, 0); assert.equal(env.handles, 0);
+    assert.equal(env.storage.directoryExists(env.manifest.id + '.partial'), false);
+  });
+
+  test(`restart inspection rejects ${name} mutation during smoke without downloading`, async t => {
+    const env = fixture(t, { smokeTest: async (_uri, _signal, current) => {
+      if (current.smoke.length === 2) mutateVerifiedAsset(current, current.manifest.id, name);
+    } });
+    await env.pack.prepare();
+    const restarted = env.create();
+    await assert.rejects(restarted.inspect(), { code: 'integrity' });
+    assert.equal(restarted.getState().status, 'error');
+    assert.equal(env.downloads.length, 2); assert.equal(env.handles, 0);
+  });
+}
+
+for (const restart of [false, true]) {
+  test(`${restart ? 'inspection' : 'prepare'} rejects an earlier asset changed while a later asset is hashed`, async t => {
+    const env = fixture(t);
+    if (restart) await env.pack.prepare();
+    const openRead = env.storage.openRead;
+    env.storage.openRead = name => {
+      if (name.endsWith('/LICENSE')) mutateVerifiedAsset(env, path.dirname(name), 'model.gguf');
+      return openRead(name);
+    };
+    const pack = restart ? env.create() : env.pack;
+    await assert.rejects(restart ? pack.inspect() : pack.prepare(), { code: 'integrity' });
+    assert.equal(env.smoke.length, restart ? 1 : 0, 'changed assets must not reach the native smoke boundary');
+    assert.equal(env.handles, 0); assert.equal(env.downloads.length, 2);
+  });
+}
+
+test('a mutation during asynchronous promotion never becomes the trusted cache', async t => {
+  const env = fixture(t);
+  const move = env.storage.moveDirectory;
+  env.storage.moveDirectory = async (from, to) => {
+    move(from, to);
+    await Promise.resolve();
+    mutateVerifiedAsset(env, to, 'LICENSE');
+  };
+  await assert.rejects(env.pack.prepare(), { code: 'integrity' });
+  assert.equal(env.pack.getState().status, 'error');
+  await assert.rejects(env.pack.requireReady(), { code: 'integrity' });
+  assert.equal(env.downloads.length, 2); assert.equal(env.handles, 0);
+});
+
+function digestFixture(hooks = {}) {
+  const counts = { updates: 0, destroyed: 0 };
+  const hash = createHash('sha256');
+  return { counts, digest: {
+    implementation: 'noble-sha256',
+    update(bytes) { counts.updates++; hooks.update?.(); hash.update(bytes); },
+    digestHex() { hooks.digest?.(); return hash.digest('hex'); },
+    destroy() { counts.destroyed++; hooks.destroy?.(); },
+  } };
+}
+
+test('native lookup remains lazy until verification actually has a file to hash', async t => {
+  let lookups = 0;
+  const env = fixture(t, { modules: { '../modules/purama-local-digest/index': {
+    getPuramaLocalDigestModule() { lookups++; return null; },
+  } } });
+  await env.pack.inspect();
+  assert.equal(lookups, 0);
+  await env.pack.prepare();
+  assert.equal(lookups, 2, 'one fresh digest per verified asset');
+});
+
+test('the default verifier uses the available native boundary for both pinned assets', async t => {
+  let constructed = 0; let destroyed = 0; let released = 0;
+  class Sha256Digest {
+    constructor() { constructed++; this.hash = createHash('sha256'); }
+    update(bytes) { assert.ok(bytes.length <= 256 * 1024); this.hash.update(bytes); }
+    digestHex() { return this.hash.digest('hex'); }
+    destroy() { destroyed++; }
+    release() { released++; }
+  }
+  const env = fixture(t, { modules: {
+    '../modules/purama-local-digest/index': { getPuramaLocalDigestModule: () => ({ Sha256Digest }) },
+    '@noble/hashes/sha256': { sha256: { create() { assert.fail('A present native digest must not fall back.'); } } },
+  } });
+  await env.pack.prepare();
+  assert.equal(env.pack.getState().status, 'ready');
+  assert.equal(constructed, 2); assert.equal(destroyed, 2); assert.equal(released, 2);
+  assert.equal(env.handles, 0); assert.equal(env.moves.length, 1);
+});
+
+test('digest initialization failure never leaks an opened file', async t => {
+  const env = fixture(t);
+  const pack = env.create({ createDigest() { throw new Error('synthetic creation failure'); } });
+  await assert.rejects(pack.prepare(), { code: 'storage' });
+  assert.equal(env.reads.length, 0); assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0);
+  assert.equal(env.storage.directoryExists(env.manifest.id + '.partial'), false);
+});
+
+test('failure opening the file still destroys the newly created digest', async t => {
+  const env = fixture(t); const digest = digestFixture();
+  env.storage.openRead = () => { throw new Error('synthetic open failure'); };
+  await assert.rejects(env.create({ createDigest: () => digest.digest }).prepare(), { code: 'storage' });
+  assert.equal(digest.counts.destroyed, 1); assert.equal(env.handles, 0);
+});
+
+test('cancellation while the digest initializes is observed before opening or reading the file', async t => {
+  const env = fixture(t); const controller = new AbortController(); const digest = digestFixture();
+  const pack = env.create({ createDigest: async () => { controller.abort(); return digest.digest; } });
+  await assert.rejects(pack.prepare(controller.signal), { code: 'aborted' });
+  assert.equal(digest.counts.destroyed, 1); assert.equal(digest.counts.updates, 0);
+  assert.equal(env.reads.length, 0); assert.equal(env.handles, 0);
+});
+
+for (const phase of ['update', 'digest']) {
+  test(`hash ${phase} error keeps its code even if both cleanups throw`, async t => {
+    const env = fixture(t);
+    const digest = digestFixture({ [phase]() { throw new env.api.IaoLocalError('native'); },
+      destroy() { throw new Error('secondary destruction failure'); } });
+    const openRead = env.storage.openRead; let closeAttempts = 0;
+    env.storage.openRead = name => {
+      const handle = openRead(name);
+      return { readBytes: handle.readBytes, close() {
+        closeAttempts++; handle.close(); throw new Error('secondary close failure');
+      } };
+    };
+    await assert.rejects(env.create({ createDigest: () => digest.digest }).prepare(), { code: 'native' });
+    assert.equal(digest.counts.destroyed, 1); assert.equal(closeAttempts, 1);
+    assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0); assert.equal(env.moves.length, 0);
+  });
+}
+
+test('a cleanup failure after a valid digest still prevents trust and closes the file', async t => {
+  const env = fixture(t); const digest = digestFixture({ destroy() { throw undefined; } });
+  await assert.rejects(env.create({ createDigest: () => digest.digest }).prepare(), { code: 'storage' });
+  assert.equal(digest.counts.destroyed, 1); assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0);
+});
+
+for (const mode of ['short', 'throw']) {
+  test(`${mode} file read fails closed and cleans up both resources`, async t => {
+    const env = fixture(t); const digest = digestFixture(); const openRead = env.storage.openRead;
+    env.storage.openRead = name => {
+      const handle = openRead(name);
+      return { close: handle.close, readBytes(length) {
+        if (mode === 'throw') throw new Error('synthetic read failure');
+        return handle.readBytes(length).subarray(1);
+      } };
+    };
+    await assert.rejects(env.create({ createDigest: () => digest.digest }).prepare(), { code: mode === 'short' ? 'integrity' : 'storage' });
+    assert.equal(digest.counts.destroyed, 1); assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0);
+  });
+}
+
+test('a file changed between bounded hash reads is rejected and never promoted', async t => {
+  const env = fixture(t, { afterYield(current) {
+    if (current.yields === 1) mutateVerifiedAsset(current, current.manifest.id + '.partial', 'model.gguf');
+  } });
+  await assert.rejects(env.pack.prepare(), { code: 'integrity' });
+  assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0); assert.equal(env.moves.length, 0);
+});
+
+test('receipt mutation while being read invalidates a previously ready process cache', async t => {
+  const env = fixture(t); await env.pack.prepare();
+  const readText = env.storage.readText;
+  env.storage.readText = (name, limit) => {
+    const text = readText(name, limit);
+    if (name.endsWith('/prepared.json')) fs.appendFileSync(path.join(env.root, name), 'changed');
+    return text;
+  };
+  await assert.rejects(env.pack.requireReady(), { code: 'integrity' });
+  assert.equal(env.downloads.length, 2); assert.equal(env.handles, 0);
+});
+
+test('unknown modification times cannot validate a same-size mutation during smoke', async t => {
+  const env = fixture(t, { smokeTest: async (_uri, _signal, current) => {
+    mutateVerifiedAsset(current, current.manifest.id + '.partial', 'model.gguf');
+  } });
+  const stat = env.storage.stat;
+  env.storage.stat = name => ({ ...stat(name), modified: null });
+  await assert.rejects(env.pack.prepare(), { code: 'storage' });
+  assert.equal(env.pack.getState().status, 'error'); assert.equal(env.moves.length, 0);
+  assert.equal(env.handles, 0); assert.equal(env.smoke.length, 0); assert.equal(env.reads.length, 0);
+});
+
+for (const value of [NaN, Infinity]) {
+  test(`non-finite modification time ${String(value)} refuses verification before hashing`, async t => {
+    const env = fixture(t); const stat = env.storage.stat;
+    env.storage.stat = name => ({ ...stat(name), modified: value });
+    await assert.rejects(env.pack.prepare(), { code: 'storage' });
+    assert.equal(env.reads.length, 0); assert.equal(env.smoke.length, 0); assert.equal(env.handles, 0);
+  });
+}
+
+test('lost receipt metadata refuses offline use without attempting a download repair', async t => {
+  const env = fixture(t); await env.pack.prepare(); const stat = env.storage.stat;
+  env.storage.stat = name => ({ ...stat(name), ...(name.endsWith('/prepared.json') ? { modified: null } : {}) });
+  const restarted = env.create();
+  await assert.rejects(restarted.inspect(), { code: 'storage' });
+  await assert.rejects(restarted.prepare(), { code: 'storage' });
+  assert.equal(env.downloads.length, 2); assert.equal(env.smoke.length, 1);
 });

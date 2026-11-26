@@ -1,0 +1,11 @@
+[Reading 4 new lines (total: 4 lines)]
+
+FINAL_SOURCE_SHA256 {"README.md": "ce7aa9f3b1fd11136ca52a2d13b3de8f45c5a9a75b0df6f89127effc89c66cf6", "android/src/main/java/expo/modules/puramalocaldigest/PuramaLocalDigestModule.kt": "57afe3ea484393dc1ad714148335f8e9ad15fecaec8c9019c333852687402f19", "apple/PuramaLocalDigestModule.swift": "eedc620fc8ce5223e93645debac204f3f4a89823102d604f18f80dc173cccb20", "apple/Sha256Core.swift": "341bf4b9ba5a4f99c97c7c6da065023174c10a4477a932550508a188f11cead8", "tests/run-core-tests.sh": "3c2099ef93ba6dea720cbc2b3cf410c401a05a1035c80bead318961268caab39"}
+PASS Swift SHA-256 core: 22 assertions
+FINAL_SWIFT_SCRIPT_EXIT 0
+
+✅ Process completed with exit code 0 (runtime: 14.42s)
+
+
+[executed on device: mac.home (5b532c75-ad8a-421c-8e01-5b2e96c3cecf)]
+

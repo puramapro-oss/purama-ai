@@ -81,11 +81,11 @@
   "remaining_user_outcomes": [
     "Browser operator, host authority, isolated worker and end-to-end principal IAO chat admission remain an integration task, not implemented by this cancellation fix.",
     "Live session frames, pointer events and manual takeover remain unimplemented/unqualified in the audited path.",
-    "Android native CI at 271f40b is blocked before application qualification by an uninitialized DATA subscription; a separate diagnostic is retained without weakening the guard.",
+    "Historical Android DATA failure at 271f40b is preserved. At 893fc5c the network gate, phone/Wear builds and Kotlin protocol tests pass; Apple build and complete Android offline qualification are pending at the 06:05:11 UTC receipt. Settings UI was not executed.",
     "No universal device/app coverage or production deployment is asserted."
   ],
   "publication": "Local commits and reviewable candidate only; global Mac AGENTS.md requires explicit permission before push or deployment.",
-  "reception": {
+  "checkpoint_reception": {
     "status": "PASS",
     "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
     "full_karta": {
@@ -107,5 +107,39 @@
     "prior_attempts": "Preserved: incomplete checkout interruption, complete two-worker run with 5 timeouts and 72 skipped cases, successful 120-case SQL cohort. No count accumulation and no asserted host root cause.",
     "external_provider_or_device_qualification": "NON_TESTE",
     "publication": "LOCAL_CANDIDATE_ONLY"
+  },
+  "reception": {
+    "status": "PASS",
+    "checkpoint_commit": "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a",
+    "upstream": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+    "merged_tree_before_documentary_receipts": "2ba3f2f56240595aee6a0e54a7dd700bd96217d3",
+    "static_review": "PASS",
+    "source": "verification/reconciliation-893-static-review.json",
+    "full_karta": {
+      "tests": 5968,
+      "passed": 5968,
+      "failed": 0,
+      "pending": 0,
+      "files": 238,
+      "node": "22.23.5",
+      "maxWorkers": 1,
+      "report": "verification/reconciliation-893/final-gate.json",
+      "raw_report_sha256": "60d1bb1740864413e43b856e6d727c6f65895a60db83b9f8986cb06ee76a7283"
+    },
+    "upstream_tests_not_combined_proof": 5948,
+    "publication": "LOCAL_CANDIDATE_ONLY",
+    "runtime_gate": "PASS",
+    "final_impact_review": "PASS_WITH_RECORDED_INDEX_LIMITS",
+    "typecheck": "PASS",
+    "build": "PASS",
+    "source_hashes_unchanged": true,
+    "source_file_count": 1070,
+    "git_status_unchanged": true,
+    "old_receipts_unchanged": true,
+    "finished_at_utc": "2026-11-26T06:05:59.129Z",
+    "overall_user_goal": "PARTIEL",
+    "local_source_comparison": "1070/1070 SHA-256 match",
+    "final_graph_report": "verification/reconciliation-893/gitnexus-reception.json",
+    "documentation_and_receipts_reviewed_separately": true
   }
 }

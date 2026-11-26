@@ -1,0 +1,81 @@
+{
+  "observed_at_utc": "2026-11-26T05:56:15.531484+00:00",
+  "status": "COMBINED_RUNTIME_PASS",
+  "checkpoint_commit": "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a",
+  "initial_base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "upstream_commit": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+  "merge_tree_before_documentary_updates": "2ba3f2f56240595aee6a0e54a7dd700bd96217d3",
+  "merge_conflicts": [],
+  "upstream_file_count": 95,
+  "upstream_overlap_with_our_code_and_tests": [],
+  "upstream_karta_paths": [
+    "karta/migrations/037_resolution_unicode_lengths.sql",
+    "karta/src/engine/resolution-result-projection.ts",
+    "karta/src/knowledge/private-result-view.ts",
+    "karta/src/lib/resolution-qualification.ts",
+    "karta/test/privateToolResults.native.mjs",
+    "karta/test/privateToolResultsSql.test.ts",
+    "karta/test/resolutionPrivateResults.test.ts",
+    "karta/test/resolutionQualification.test.ts"
+  ],
+  "own_final_sha256": {
+    "karta/src/engine/types.ts": "9a350e2ae48b7bb83c8fa1c79b2238ddbc963a44578171f47e63a0623ae906a6",
+    "karta/src/engine/loop.ts": "e4ed21d3501b1c327f1654a85825d215d7c9438acb10022475e0ccd438ef4733",
+    "karta/src/tools/websearch.ts": "cf11bf16d09199e2f5743f3cb633b659e43c11457fbce3a1a027a391252f5978",
+    "karta/src/tools/knowledge-search.ts": "5dd714bc8be17d53872af22f57359fc27193ec2ac91a4ccdf8497e71edfd209a",
+    "karta/src/knowledge/public-search.ts": "004c3047e352cfb0a9d938fac1baec452d374b3b505f37dfb71e577165b98883",
+    "karta/test/loopProgrammaticReads.test.ts": "6c91508be0fbb6b0e0b7945d3b4bc26fa1547957cc6e3c4c1131ca59480d69f5",
+    "karta/test/webSearchTransportIntegrity.test.ts": "ad97db3f9b72bd37f94e5bf8d2d42b55339ea99873e2304e317229b85cb7a4f1",
+    "karta/test/webSearchCleanup.test.ts": "79e082d85e4b97e2322ea107e653e44129e7f25ae2a32f95d9dc2a350081ea01",
+    "karta/test/knowledgeSearch.test.ts": "0226837b7925bfc7b286cca2f98642f21d542b6ac5ebb248721ebf90278d4c60",
+    "karta/test/readToolCancellationHttp.test.ts": "d3f6ee161cb53e65f944e742970f82d782d72157abedf0f0fdaf48b4b05eba51"
+  },
+  "dependencies_unchanged": true,
+  "upstream_ci_only": {
+    "tests": 5948,
+    "files": 237,
+    "report": "../upstream-893-reception.json"
+  },
+  "static_review": "../reconciliation-893-static-review.json",
+  "prior_checkpoint_gate": "../final-gate.json",
+  "historical_reports_preserved": true,
+  "whitespace_check": {
+    "own_diff_vs_upstream": "PASS",
+    "raw_merge_diff": "Existing whitespace in six unchanged upstream QA evidence files; do not rewrite source evidence. Upstream gate contains exact blob allowlist. No new exception added."
+  },
+  "publication": "LOCAL_ONLY",
+  "qualification_scope": "Full local KARTA software suite, typecheck and build; does not certify providers, devices, production or an unwired live browser operator.",
+  "combined_gate": "final-gate.json",
+  "combined_gate_sha256": "e3f1e2c3f57c248ec22e94d3eb01742d3beb553073011b664778913ceffc5d42",
+  "full_tests": {
+    "passed": 5968,
+    "failed": 0,
+    "pending": 0,
+    "files": 238
+  },
+  "final_graph": {
+    "status": "PASS_WITH_LIMITS",
+    "report": "gitnexus-reception.json",
+    "index_scope": "Full materialized checkout, default filters, index-only; no runtime changes",
+    "own_checkpoint_comparison": {
+      "files": 47,
+      "symbols": 63,
+      "flows": 6,
+      "risk": "HIGH"
+    },
+    "upstream_staged_delta": {
+      "files": 95,
+      "symbols": 590,
+      "flows": 16,
+      "risk": "CRITICAL"
+    },
+    "main_historical_delta": {
+      "files": 3595,
+      "symbols": 27883,
+      "flows": 731,
+      "risk": "CRITICAL"
+    },
+    "limits": "2423 unselected entry candidates, 6062 callees skipped, 62 budget-cut walks, four historical QA files above 512KB; CLI listing truncated. No exhaustive flow coverage claimed.",
+    "final_documentary_receipts": "Manually reviewed after graph; no source or test changes."
+  }
+}

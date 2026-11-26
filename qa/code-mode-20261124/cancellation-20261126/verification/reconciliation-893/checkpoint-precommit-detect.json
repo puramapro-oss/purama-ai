@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "detect_changes",
+    "--scope",
+    "all",
+    "--repo",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--limit",
+    "500"
+  ],
+  "exit_code": 0,
+  "stdout": "Changes: 24 files, 54 symbols\nAffected processes: 30\nRisk level: critical\n\nChanged symbols:\n  Section IAO \u2014 acc\u00e8s aux services et aux sites \u2192 karta/WEB_CAPABILITIES.md\n  Section Recherche personnalis\u00e9e et sources \u2014 lot du 10 novembre 2026 \u2192 karta/WEB_CAPABILITIES.md\n  Section Raccordement \u00e0 Mon quotidien \u2192 karta/WEB_CAPABILITIES.md\n  Function runAgentCycle \u2192 karta/src/engine/loop.ts\n  Function executeCall \u2192 karta/src/engine/loop.ts\n  Function execute \u2192 karta/src/engine/loop.ts\n  Interface ToolExecutionContext \u2192 karta/src/engine/types.ts\n  Property signal \u2192 karta/src/engine/types.ts\n  Function cancelBody \u2192 karta/src/knowledge/public-search.ts\n  Function boundedJson \u2192 karta/src/knowledge/public-search.ts\n  Function cancel \u2192 karta/src/knowledge/public-search.ts\n  Function createPublicKnowledgeSearch \u2192 karta/src/knowledge/public-search.ts\n  Function retrieve \u2192 karta/src/knowledge/public-search.ts\n  Function trackCleanup \u2192 karta/src/knowledge/public-search.ts\n  Function work \u2192 karta/src/knowledge/public-search.ts\n... and 39 more\n\nAffected execution flows:\n  \u2022 CreatePublicKnowledgeSearch \u2192 Cancel (5 steps) \u2014 changed: createPublicKnowledgeSearch\n  \u2022 CreatePublicKnowledgeSearch \u2192 SourceFailure (4 steps) \u2014 changed: retrieve, createPublicKnowledgeSearch\n  \u2022 Execute \u2192 AssertSearchActive (4 steps) \u2014 changed: execute\n  \u2022 Execute \u2192 Record (4 steps) \u2014 changed: execute\n  \u2022 Execute \u2192 Fail (3 steps) \u2014 changed: execute\n  \u2022 ExecuteCall \u2192 CustomAgentAuthorizationError (3 steps) \u2014 changed: executeCall\n  \u2022 CreatePublicKnowledgeSearch \u2192 Unavailable (3 steps) \u2014 changed: retrieve, createPublicKnowledgeSearch\n  \u2022 Execute \u2192 SchemaForTool (4 steps) \u2014 changed: execute\n  \u2022 Work \u2192 SourceFailure (3 steps) \u2014 changed: work\n  \u2022 Execute \u2192 SchemaForTool (3 steps) \u2014 changed: execute\n... and 20 more\n",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\n",
+  "checked_at_utc": "2026-11-26T05:40:32.402514+00:00",
+  "qualification": "Runtime/test files match the complete 5937-case PASS; final archival documentation is reviewed separately"
+}
