@@ -146,6 +146,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     const { createIaoLocalDigest } = await import("./iao-local-digest");
     const digest = await createIaoLocalDigest();
     let digestFailed = false;
+    let digestFailure: unknown;
     try {
       requireCheck(digest.implementation === "native-sha256", "native-sha256-required");
       // Exercise the actual Expo TypedArray bridge, including a nonzero view
@@ -154,10 +155,10 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       digest.update(sentinel.subarray(1, 4));
       requireCheck(digest.digestHex() === "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
         "native-sha256-self-test-failed");
-    } catch (error) { digestFailed = true; throw error; }
-    finally {
-      try { digest.destroy(); } catch (error) { if (!digestFailed) throw error; }
-    }
+    } catch (error) { digestFailed = true; digestFailure = error; }
+    try { digest.destroy(); }
+    catch (error) { if (!digestFailed) { digestFailed = true; digestFailure = error; } }
+    if (digestFailed) throw digestFailure;
     active();
     const common = {
       runId,

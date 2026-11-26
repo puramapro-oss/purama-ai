@@ -164,6 +164,7 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
     let handle: ReadHandle | undefined;
     let digest: IaoLocalDigest | undefined;
     let failed = false;
+    let failure: unknown;
     let read = 0;
     try {
       digest = await (dependencies.createDigest ?? createIaoLocalDigest)();
@@ -189,19 +190,18 @@ export function createIaoLocalPack(dependencies: IaoLocalPackDependencies): IaoL
       const after = fs.stat(path);
       if (!sameStat(before, after) ||
           digest.digestHex() !== asset.sha256) throw new IaoLocalError("integrity");
-      return Object.freeze({ ...before });
     } catch (error) {
       failed = true;
-      throw error;
-    } finally {
-      // Attempt both cleanups, including when creation/opening failed. An error
-      // during cleanup must not replace the original integrity/abort failure.
-      let cleanupError: unknown;
-      let cleanupFailed = false;
-      try { digest?.destroy(); } catch (error) { cleanupError = error; cleanupFailed = true; }
-      try { handle?.close(); } catch (error) { if (!cleanupFailed) cleanupError = error; cleanupFailed = true; }
-      if (!failed && cleanupFailed) throw cleanupError;
+      failure = error;
     }
+    // Attempt both cleanups, including when creation/opening failed. Preserve
+    // the first failure, even when its thrown value is undefined.
+    try { digest?.destroy(); }
+    catch (error) { if (!failed) { failed = true; failure = error; } }
+    try { handle?.close(); }
+    catch (error) { if (!failed) { failed = true; failure = error; } }
+    if (failed) throw failure;
+    return Object.freeze({ ...before });
   }
 
   function readReceipt(fs: IaoLocalPackStorage): Stat {

@@ -109,8 +109,8 @@ for (const phase of ['update', 'digest']) {
   });
 }
 
-test('release is attempted even if native destruction fails, preserving the first failure', async () => {
-  const primary = new Error('synthetic destroy failure');
+for (const primary of [new Error('synthetic destroy failure'), undefined]) test(
+  `release preserves the first native destruction failure, including ${String(primary)}`, async () => {
   const secondary = new Error('synthetic release failure');
   const boundary = nativeBoundary({ destroy() { throw primary; }, release() { throw secondary; } });
   const digest = await loadDigest(() => boundary.module, noNoble).createIaoLocalDigest();

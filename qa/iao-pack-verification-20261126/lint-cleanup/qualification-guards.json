@@ -1,0 +1,13 @@
+{
+  "recordedAt": "2026-11-26T05:30:26.345413+00:00",
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern",
+    "qualification harness|failed cold restart|device qualification refuses",
+    "mobile/tests/iao-native-qualification.test.cjs"
+  ],
+  "exitCode": 0,
+  "stdout": "✔ qualification harness refuses non-exact flag undefined without any native/storage import (143.201682ms)\n✔ qualification harness refuses non-exact flag  without any native/storage import (74.354577ms)\n✔ qualification harness refuses non-exact flag 0 without any native/storage import (39.79862ms)\n✔ qualification harness refuses non-exact flag true without any native/storage import (27.712008ms)\n✔ qualification harness refuses non-exact flag 01 without any native/storage import (54.203314ms)\n✔ a failed cold restart identifies the active verification stage and restores global networking (43.119443ms)\n✔ device qualification refuses native-sha256-required before model work (47.861461ms)\n✔ device qualification refuses native-sha256-self-test-failed before model work (53.470313ms)\n✔ device qualification refuses native-sha256-required with cleanup failure before model work (19.820386ms)\n✔ device qualification refuses native-sha256-self-test-failed with cleanup failure before model work (22.401908ms)\n✔ device qualification refuses native-qualification-failed with cleanup failure before model work (25.089708ms)\nℹ tests 11\nℹ suites 0\nℹ pass 11\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1011.726639\n",
+  "stderr": ""
+}

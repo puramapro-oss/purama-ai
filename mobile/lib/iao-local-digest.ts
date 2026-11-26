@@ -42,12 +42,12 @@ export async function createIaoLocalDigest(): Promise<IaoLocalDigest> {
       if (released) return;
       released = true;
       let failed = false;
+      let failure: unknown;
       try { digest.destroy(); }
-      catch (error) { failed = true; throw error; }
-      finally {
-        try { digest.release(); }
-        catch (error) { if (!failed) throw error; }
-      }
+      catch (error) { failed = true; failure = error; }
+      try { digest.release(); }
+      catch (error) { if (!failed) { failed = true; failure = error; } }
+      if (failed) throw failure;
     },
   };
 }

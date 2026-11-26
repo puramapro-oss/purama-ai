@@ -1,0 +1,590 @@
+{
+  "recordedAt": "2026-11-26T05:24:55.962243+00:00",
+  "command": [
+    "python3",
+    "scripts/ci/test-wealth-diff.py"
+  ],
+  "workingDirectory": "/tmp/iao-quality-0414-p1it5pwv/repo-received",
+  "elapsedSeconds": 13.216,
+  "expectedExitCode": 0,
+  "exitCode": 0,
+  "stdout": null,
+  "stderr": "",
+  "result": {
+    "fixture": "qa/iao-release-qualification-20261123/root-typecheck.log",
+    "fixture_blob": "19d6618bdd08c543b5a101755910791a584b5885",
+    "fixture_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+    "total": 71,
+    "passed": 71,
+    "cases": [
+      {
+        "name": "unchanged clean tree",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "name": "first exact archived blob",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-proof.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-proof.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "unlisted new QA stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \n",
+        "stderr": ""
+      },
+      {
+        "name": "application source stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "src/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 0 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "one exemption cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 1 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting path stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable archived file stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "invalid revision is not accepted",
+        "expected_exit": 128,
+        "actual_exit": 128,
+        "pass": true,
+        "stdout": "",
+        "stderr": "fatal: ambiguous argument 'missing-iao-test-revision': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n"
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/immutability-before-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/immutability-before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-build-serial.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-typecheck-1024.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-typecheck-serial.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/gitnexus/root-index.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-after.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-before-in-process.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/after.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/before-complete.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/regressions-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/regressions.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR104 archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:212: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-integration-20261124/assembly/immutability-before-final.log:212: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "PR104 exemptions cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 15 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR108 archived blob: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:13: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:13: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting PR108 path stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR108 archived blob: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:45: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:45: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/renamed-device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/renamed-device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting PR108 path stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "executable PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:134: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:134: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-tests-characterization.log:20: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:22: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:50: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:51: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:53: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:73: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:75: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:95: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:97: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:117: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:119: trailing whitespace.\n+  \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-tests-characterization.log:20: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:22: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:50: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:51: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:53: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:73: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:75: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:95: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:97: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:117: trailing whitespace.\n+  \nqa/renamed-tests-characterization.log:119: trailing whitespace.\n+  \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:14: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:14: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-java-swift-initial.log:13: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-java-swift-initial.log:13: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/module-contract-final.log:19: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/module-contract-final.log:19: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-module-contract-final.log:18: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-module-contract-final.log:18: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-final.log:12: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-final.log:12: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-swift-final.log:11: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-swift-final.log:11: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:13: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:13: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-swift-sdk-explicit.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-swift-sdk-explicit.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact 185c619 archived blob: qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified 185c619 archive stays strict: qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:171: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:171: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed 185c619 archive stays strict: qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/renamed-baseline-seven-regressions.tap:124: trailing whitespace.\n+    \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting 185c619 path stays strict: qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \n",
+        "stderr": ""
+      },
+      {
+        "name": "executable 185c619 archive stays strict: qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \n",
+        "stderr": ""
+      },
+      {
+        "name": "exact PR104 and PR108 archives compose",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nRechecking all changes except 17 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "PR108 exemptions cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 2 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "exact 185c619 archives compose with previous archives",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 24 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "185c619 exemptions cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:20: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:22: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:50: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:51: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:53: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:73: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:75: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:95: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:97: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:117: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log:119: trailing whitespace.\n+  \nqa/iao-pack-verification-20261126/native-cores/java-swift-initial.log:13: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/module-contract-final.log:18: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/swift-final.log:11: new blank line at EOF.\nqa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log:12: new blank line at EOF.\nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:84: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:89: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:119: trailing whitespace.\n+    \nqa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap:124: trailing whitespace.\n+    \nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 6 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      }
+    ]
+  }
+}

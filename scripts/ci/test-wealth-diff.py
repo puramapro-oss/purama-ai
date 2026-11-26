@@ -37,6 +37,14 @@ PR108_ARCHIVES = (
     ("qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log", "82ac622e1bf22f17b5160b11f21de59ab29f8401"),
     ("qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log", "307635738311c75bbf1181d9ca648073aa7d3d64"),
 )
+PACK185_ARCHIVES = (
+    ("qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log", "05a46d2c95cdc2ea950b1d889d4732d91a76ef5e"),
+    ("qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log", "8be06458826ba34bf88ddc96274668ef9c0f3518"),
+    ("qa/iao-pack-verification-20261126/native-cores/module-contract-final.log", "e31a8cee91635f8b89e705679a090abebc1229b3"),
+    ("qa/iao-pack-verification-20261126/native-cores/swift-final.log", "81550a5050a86dc57ee97ad95c900c32e86e356d"),
+    ("qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log", "954bc38b3769fedfc4927c2e0201a5f05e595e55"),
+    ("qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap", "01b66a545645e3dc2d76d8982d8a3a0cd932b3d4"),
+)
 
 
 def git(directory, *args):
@@ -165,11 +173,39 @@ def main():
             ("executable PR108 archive stays strict: " + path, dict(additions=[
                 (path, data, 0o755)])),
         ])
+    pack185_originals = []
+    for path, expected_blob in PACK185_ARCHIVES:
+        data = (REPO / path).read_bytes()
+        actual_blob = hashlib.sha1(
+            b"blob " + str(len(data)).encode() + b"\0" + data
+        ).hexdigest()
+        if actual_blob != expected_blob:
+            raise SystemExit("The immutable 185c619 fixture changed: " + path)
+        fixture = (path, data, 0o644)
+        pack185_originals.append(fixture)
+        cases.extend([
+            ("first exact 185c619 archived blob: " + path,
+             dict(additions=[fixture], expected=0)),
+            ("modified 185c619 archive stays strict: " + path, dict(additions=[
+                (path, data + b"modified evidence \n", 0o644)])),
+            ("renamed 185c619 archive stays strict: " + path, dict(additions=[
+                ("qa/renamed-" + Path(path).name, data, 0o644)])),
+            ("preexisting 185c619 path stays strict: " + path, dict(
+                initial=[(path, b"previous clean evidence\n", 0o644)],
+                additions=[fixture])),
+            ("executable 185c619 archive stays strict: " + path, dict(additions=[
+                (path, data, 0o755)])),
+        ])
     cases.extend([
         ("exact PR104 and PR108 archives compose", dict(
             additions=[*pr104_originals, *pr108_originals], expected=0)),
         ("PR108 exemptions cannot hide a bad source", dict(additions=[
             *pr108_originals,
+            ("src/gate-fixture.ts", b"export const guard = 1; \n", 0o644)])),
+        ("exact 185c619 archives compose with previous archives", dict(
+            additions=[original, *pr104_originals, *pr108_originals, *pack185_originals], expected=0)),
+        ("185c619 exemptions cannot hide a bad source", dict(additions=[
+            *pack185_originals,
             ("src/gate-fixture.ts", b"export const guard = 1; \n", 0o644)])),
     ])
     results = [run_case(name, **settings) for name, settings in cases]
