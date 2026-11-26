@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-26T04:36:27.215417+00:00",
+  "status": "PASS_LOCAL_PENDING_EXACT_CI",
+  "base_commit": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "branch": "fix/iao-resolution-continuity-20261126",
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "7474266334088268d75ede7718754702c5b76f160df14675d5b8d1e48c62d380",
+    "karta/migrations/037_resolution_unicode_lengths.sql": "dc3e00ddb6e889b940949bd516849cfda15d9d0f256b8567facd49c1b3f30602",
+    "karta/src/engine/resolution-result-projection.ts": "5c8b010dbca0c91513b2e6c1391646797f622234c6d8fe8fca70e4c55ffc8a63",
+    "karta/src/knowledge/private-result-view.ts": "b28d1610b341a19fc02be713812b9b60db97a7edaae1ac2949ff9447ed6e0848",
+    "karta/src/lib/resolution-qualification.ts": "4e1589a9ee041ca7577a793c9b91b7615e9df52f21fb0e55c406ec68bac2ac1f",
+    "karta/test/privateToolResults.native.mjs": "6fe4ae55acf752f4e23818c9d1ba918b63e3dc0cc6cdad0dbd76d9d8f4f733c2",
+    "karta/test/privateToolResultsSql.test.ts": "425694da270cc0cc0b1bceed36035bb793b3cd68fdd730cad259773484aba807",
+    "karta/test/resolutionPrivateResults.test.ts": "7912b6ef9f742bef904250929ce11b7605c7d9304a32352cd0ad15585b10e37b",
+    "karta/test/resolutionQualification.test.ts": "e8e8ec9c134cc7852d654012c735170982e25149875931df05ffcbf5461a49bb",
+    "package.json": "3a1335faac55019afc1a1db473c8ea703ef830933693e559f3e534b6a895709d",
+    "src/hooks/useCreatorAgentKarta.trigger.test.tsx": "fda3c3564fc421c2fcf61e1ed193f4692c0154d3743036d59037e36835ce28ce",
+    "src/hooks/useCreatorAgentKarta.ts": "6a7064905e26f7e952e5b15fe11fa3a3772a47573c619a752be1bcbecf34ba91",
+    "src/pages/CreatorAgentDetail.execution.test.tsx": "586da73f4ee6e607cb3440967658f3ecf734061c5165b78885a5adf80e889445",
+    "src/pages/CreatorAgentDetail.tsx": "395438a90de32f34b472c029bf5351194253394dfe86cbd2cee49063458c4076",
+    "supabase/functions/karta-trigger-custom/index.ts": "c45e020c1fbd0f671ff28debb77f5b0abb20c466a7d363bdc88067af6137561e",
+    "tests/helpers/custom-trigger-harness.mjs": "dc98c18e64ce4d798aa078463ed5dfb6508813b5d011f1cf0c54642634b8e146",
+    "tests/karta-trigger-custom.test.mjs": "ace3a793e452098578f9b8b9e23e4fd0ced658e3c3ddebe16e8d99d46a0d15ca",
+    "tests/quality/creator-agent-trigger.spec.ts": "92a7ce703dc07dd0e1dd4402f9a226478a4e61c6a1adadd2e8ff828b20268abd"
+  },
+  "checks": [
+    {
+      "name": "Unicode qualifier/projector/reader unit regressions",
+      "status": "PASS",
+      "passed": 141,
+      "files": 3,
+      "evidence": "Author log resolution-unicode-targeted.log; the SQL worker in that first command failed before assertions and is received separately below."
+    },
+    {
+      "name": "Final private-result PostgreSQL PGlite suite",
+      "status": "PASS",
+      "passed": 130,
+      "files": 1,
+      "evidence_sha256": "95624bafedde651b23a12024ffbfff783ea670f92d8c3fb769b1997cc1616a34"
+    },
+    {
+      "name": "Private-result frontend regressions",
+      "status": "PASS",
+      "passed": 55,
+      "files": 2,
+      "evidence_sha256": "0bd0ff444e32f1f1a35f9daec889ee2151c18eef1c0b6adf6c3be344e90dea1f"
+    },
+    {
+      "name": "Trigger hook and existing caller",
+      "status": "PASS",
+      "passed": 44,
+      "breakdown": {
+        "hook": 37,
+        "caller": 7
+      },
+      "evidence_sha256": "1fe6e3d278ce6d1f8d6931709f7f4c14c976770758020b16ecd3f24eed7f1d8d",
+      "note": "The hook then received whitespace-only alignment; current hook bytes are exercised by the native two-tab browser test and will be rechecked by CI."
+    },
+    {
+      "name": "Real chat and custom-trigger Edge handlers",
+      "status": "PASS",
+      "passed": 115,
+      "breakdown": {
+        "chat": 59,
+        "trigger": 56
+      },
+      "evidence_sha256": "d0ca6c2fe0c40cd0f67c794617ecf74a1c22a24e9d631ec7feee1cd34eeae4a5",
+      "limits": "Real handlers/API/queue identity; external Auth/database/HTTP/Redis ports are synthetic."
+    },
+    {
+      "name": "Chromium private-result desktop/mobile and native two-tab trigger",
+      "status": "PASS",
+      "passed": 3,
+      "evidence_sha256": "f0c52e9a216a2a904c6a21978c8b139bdb783d498a8204552bc741a3fdb06115",
+      "limits": "Actual Chromium/Web Locks/page/hook/SDK; synthetic service responses. Mobile viewport is not native Safari."
+    },
+    {
+      "name": "Real qualification to SQL/owner reader/chat roundtrip",
+      "status": "PASS",
+      "passed": 12,
+      "network_attempts": 0,
+      "receipt": "private-resolution-roundtrip.json"
+    },
+    {
+      "name": "Edge local import closure and negative missing-mount case",
+      "status": "PASS",
+      "passed": 5,
+      "modules": 13,
+      "fingerprints": 14,
+      "receipt": "edge-package-check.json",
+      "limits": "Static proposed filesystem mapping; no Deno/remote module/container execution."
+    },
+    {
+      "name": "Frontend and KARTA typecheck/build",
+      "status": "PASS",
+      "executions": 4,
+      "memory_limit_mib": 1024
+    },
+    {
+      "name": "Lint",
+      "status": "PASS",
+      "errors": 0,
+      "existing_warnings_outside_changed_files": 22,
+      "evidence_sha256": "fc130f9780b8287df364646a8efba46f54817003b3952d53508537ed3381d483"
+    },
+    {
+      "name": "Database contracts",
+      "status": "PASS",
+      "evidence_sha256": "329cc71802607ee3144894c22b2ff93fc397fd69ed83095098c4ab526b5c55b9"
+    },
+    {
+      "name": "Native PostgreSQL",
+      "status": "NON_TESTE_LOCAL",
+      "defined_tests": 14,
+      "gate": "Existing native-postgres job in purama-chef-hardening.yml"
+    },
+    {
+      "name": "Exact commit CI and merge",
+      "status": "PENDING_EXTERNAL_RECEIPT",
+      "gate": "Existing PR workflows; their linked logs and final PR state remain authoritative."
+    }
+  ],
+  "counting_rule": "Nested and aggregate suite counts overlap. Do not add local counts to full CI counts; the same KARTA suite in two workflows is counted once.",
+  "resolved_incidents": [
+    "Local SQL/Vitest and standalone SQL received SIGKILL before assertions while memory was constrained; failed temporary index staging and the npm download cache were removed without changing installed modules or product gates. A standalone roundtrip and the final130 SQL tests then passed.",
+    "Frontend typecheck initially received SIGKILL with a1536MiB heap; the same check passed with an explicit1024MiB limit.",
+    "The new Unicode SQL test exposed TS18046. The first attempted annotation targeted the wrong repeated query; independent review caught it. The unrelated line was restored and the correct query typed payload as unknown. Final KARTA typecheck/build and130 SQL tests passed afterward.",
+    "The hook fixture required preserving the real storage spy and aligning the VM/jsdom byte-array realm. Product assertions were retained."
+  ],
+  "preserved_invariants": [
+    "Historical migrations028/034/036 and storage RPC unchanged",
+    "Generated-text UTF16 and61440/65536byte limits unchanged",
+    "No normalized supplied business identity",
+    "Existing auth/ownership, request scopes, queue producer and durable execution identity reused",
+    "No new engine, scheduler, business database, policy copy or duplicate product"
+  ],
+  "deployment": {
+    "status": "BLOQUE",
+    "receipt": "deployment-readiness-followup-20261126.json",
+    "external_business_scenarios": "44 scenarios remain NON_TESTE on real field services."
+  },
+  "review": {
+    "status": "PASS_READ_ONLY",
+    "reviewer": "Independent agent coordinated by root",
+    "scope": "Unicode/SQL delta, concurrent tabs, late caller effects, accepted receipt monotonicity, native browser test and package checker",
+    "limits": "Code review does not replace executed tests or production reception."
+  },
+  "code_graph": {
+    "status": "PARTIEL",
+    "index_reported_commit": "2115e796fb91589324c3d6dbf1fcabf150d59fb7",
+    "refresh_exit_code": 137,
+    "settings": {
+      "workers": 1,
+      "node_heap_mib": 1024,
+      "native_buffer_pool_bytes": 268435456,
+      "mode": "index-only; no repository instruction injection"
+    },
+    "note": "Refresh progressed through parsing and graph rebuild but did not complete. Retained metadata still names the older commit. No fresh-index or exhaustive-flow claim. Scoped detections and comparison to main must be read with that limitation.",
+    "log_sha256": "43f5bac646cc8b573666db811d14f7377c91c5c8b7d086e8213b81507752cd35",
+    "detections": [
+      {
+        "scope": "staged",
+        "exit_code": 0,
+        "files": 27,
+        "symbols": 30,
+        "affected_processes": 7,
+        "risk": "HIGH",
+        "coverage": "retained stale index; not exhaustive"
+      },
+      {
+        "scope": "compare main",
+        "exit_code": 0,
+        "files": 3499,
+        "symbols": 26990,
+        "affected_processes": 727,
+        "risk": "CRITICAL",
+        "coverage": "listing capped; includes the whole pre-existing consolidation, not just this27-file corrective delta"
+      }
+    ],
+    "full_text_search": "UNAVAILABLE; load-only policy retained, no extension install attempted"
+  }
+}

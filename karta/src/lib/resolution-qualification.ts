@@ -370,6 +370,19 @@ function qualifyHandoff(handoff: Handoff, input: ResolutionInput, references: Re
 /** Pure, bounded qualification of a caller-provided snapshot. No storage, network or authority lookup. */
 export function qualifyResolution(value: unknown) {
   validateProgrammaticToolParams(validationDescriptor, value);
+  // Validation above established bounded, inert, acyclic plain data. Reject text
+  // that cannot survive private JSONB delivery before reporting qualification success.
+  // Keep the generic validator and every supplied identity unchanged.
+  const wellFormedText = (item: unknown): void => {
+    if (typeof item === "string") {
+      if (item.includes("\u0000") || /[\uD800-\uDFFF]/u.test(item)) {
+        throw new Error("Texte de qualification invalide : Unicode valide sans caractère nul requis.");
+      }
+    } else if (item !== null && typeof item === "object") {
+      for (const child of Object.values(item)) wellFormedText(child);
+    }
+  };
+  wellFormedText(value);
   const input = value as unknown as ResolutionInput;
   const asOf = instant(input.asOf);
   if (asOf === undefined) throw new Error("Date de qualification invalide : date et décalage horaire requis.");

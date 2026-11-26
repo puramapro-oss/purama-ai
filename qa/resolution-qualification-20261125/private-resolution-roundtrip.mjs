@@ -16,9 +16,10 @@ const { PGlite } = kartaRequire('@electric-sql/pglite');
 const migrations = ['001_karta_core.sql', '005_karta_pending_actions.sql', '028_private_tool_results.sql',
   '029_model_usage_receipts.sql', '033_programmatic_model_usage.sql', '034_programmatic_private_reports.sql'];
 const resolutionMigrations = (await readdir(resolve(root, 'karta/migrations')))
-  .filter(name => /^036_.*resolution.*\.sql$/.test(name));
-assert.equal(resolutionMigrations.length, 1, 'Exactly one additive resolution-results migration must be present');
-migrations.push(resolutionMigrations[0]);
+  .filter(name => /^03[67]_.*resolution.*\.sql$/.test(name)).sort();
+assert.deepEqual(resolutionMigrations, ['036_resolution_private_results.sql', '037_resolution_unicode_lengths.sql'],
+  'Exercise both additive resolution migrations in order');
+migrations.push(...resolutionMigrations);
 const sourceFiles = ['karta/src/lib/resolution-qualification.ts', 'karta/src/tools/resolution-qualification.ts',
   'karta/src/engine/private-tool-results.ts', 'karta/src/engine/resolution-result-projection.ts', 'karta/src/knowledge/private-result-view.ts',
   'supabase/functions/_shared/private-tool-results.ts', ...migrations.map(name => `karta/migrations/${name}`)];
@@ -161,8 +162,8 @@ try {
       await db.exec('GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA purama_ai TO service_role; GRANT SELECT ON ALL TABLES IN SCHEMA purama_ai TO authenticated;');
     }
   }
-  // Reapplying the additive migration must retain existing data and policies.
-  await db.exec(await readFile(resolve(root, 'karta/migrations', resolutionMigrations[0]), 'utf8'));
+  // Reapplying the final additive migration must retain existing data and policies.
+  await db.exec(await readFile(resolve(root, 'karta/migrations', resolutionMigrations.at(-1)), 'utf8'));
   await db.query('INSERT INTO auth.users(id) VALUES($1),($2)', [OWNER, OTHER]);
   await db.query("INSERT INTO purama_ai.creator_agents(id,user_id,tools_enabled) VALUES($1,$2,ARRAY['qualify_resolution']),($3,$2,ARRAY['qualify_resolution'])", [AGENT, OWNER, SECOND_AGENT]);
   const role = async (name, user = OWNER) => {
@@ -218,6 +219,21 @@ try {
   unresolved.handoffs[0].recipientState = 'unknown';
   unresolved.handoffs[0].conflicting = true;
   const variants = [
+    { name: 'Unicode scalar limits survive real qualification, SQL storage, private reading and chat context',
+      input: { caseId: 'c'.repeat(159) + '🌍', snapshotRevision: 4, asOf, domains: ['A'],
+        sources: [{ id: '🌍'.repeat(160), caseId: 'c'.repeat(159) + '🌍', snapshotRevision: 4,
+          subjectId: 's'.repeat(159) + '🌍', kind: 'requirement', reference: 'r'.repeat(499) + '🌍',
+          observedAt: '🌍'.repeat(35) }] },
+      verify(raw, view) {
+        assert.equal(view.snapshot.caseId, 'c'.repeat(159) + '🌍');
+        assert.equal(view.supplied_references[0].id, '🌍'.repeat(160));
+        assert.equal(view.supplied_references[0].subjectId, 's'.repeat(159) + '🌍');
+        assert.equal(view.supplied_references[0].reference, 'r'.repeat(499) + '🌍');
+        assert.equal(view.supplied_references[0].observedAt, '🌍'.repeat(35));
+        assert.deepEqual(raw.rejectedSourceIds, ['🌍'.repeat(160)]);
+        assert.deepEqual(view.rejected_source_ids, ['🌍'.repeat(160)]);
+        assert.equal(raw.externalFactsVerified, false);
+      } },
     { name: 'all six absent facets remain unknown after qualification, SQL storage and owner reading',
       input: { caseId, snapshotRevision: 4, asOf, domains: ['A'], sources: [] },
       verify(raw, view) {

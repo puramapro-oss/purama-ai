@@ -95,3 +95,88 @@ describe("resolution private projection and shared reader", () => {
     expect(() => projectPrivateToolResult("qualify_resolution", qualified)).toThrow("Résultat privé indisponible");
   });
 });
+
+describe("resolution Unicode input lengths through the private boundary", () => {
+  it.each(["mixed", "astral"] as const)("delivers schema-bound identifiers and references exactly (%s)", style => {
+    const bounded = (ascii: string, scalar: string, size: number) => style === "mixed" ? ascii.repeat(size - 1) + scalar : scalar.repeat(size);
+    const input = base();
+    input.caseId = bounded("c", "🌍", 160);
+    const subjectId = bounded("p", "🏠", 160), validId = bounded("s", "🌿", 160), rejectedId = bounded("r", "🧭", 160);
+    input.sources = [
+      { id: validId, caseId: input.caseId, snapshotRevision: 3, subjectId, kind: "requirement", reference: bounded("d", "🌍", 500), observedAt: "2026-11-25T12:00:00Z" },
+      { id: rejectedId, caseId: bounded("o", "🌊", 160), snapshotRevision: 3, subjectId, kind: "requirement", reference: "e\u0301 and é remain distinct supplied text", observedAt: bounded("x", "🌍", 35) },
+    ];
+    input.dependencies = [{ id: subjectId, state: "unknown", basis: "interlocutor_request", requires: [], sourceIds: [validId], satisfactionSourceIds: [], alternatives: [] }];
+    const data = payload(input), result = parsePrivateToolResult(stored(data), owner, agent)!.payload.resolution!;
+    expect(result.snapshot.caseId).toBe(input.caseId);
+    expect(result.supplied_references).toEqual(input.sources);
+    expect(result.rejected_source_ids).toEqual([rejectedId]);
+    expect(result.sections[0].items.join("\n")).toContain(JSON.stringify(subjectId));
+    expect(result.supplied_references[1].reference).not.toBe(input.sources[1].reference.normalize("NFC"));
+    expect(Buffer.byteLength(JSON.stringify(data))).toBeLessThan(RESOLUTION_REPORT_MAX_BYTES);
+  });
+
+  it.each(["caseId", "id", "sourceCaseId", "subjectId", "reference", "observedAt"])(
+    "refuses a supplied %s above its code-point bound in both input and stored payload", field => {
+      const input = completeInput();
+      const maximum = field === "reference" ? 500 : field === "observedAt" ? 35 : 160;
+      const tooLong = "🌍".repeat(maximum + 1);
+      if (field === "caseId") input.caseId = tooLong;
+      else input.sources[0][field === "sourceCaseId" ? "caseId" : field as "id" | "subjectId" | "reference" | "observedAt"] = tooLong;
+      expect(() => qualifyResolution(input)).toThrow("Paramètres programmatiques non conformes");
+
+      const data = payload(completeInput());
+      const snapshot = data.details.snapshot as Record<string, unknown>;
+      const refs = data.details.supplied_references as Record<string, unknown>[];
+      if (field === "caseId") {
+        snapshot.caseId = tooLong;
+        for (const ref of refs) ref.caseId = tooLong;
+      } else {
+        refs[0][field === "sourceCaseId" ? "caseId" : field] = tooLong;
+        if (field === "sourceCaseId" || field === "observedAt") data.details.rejected_source_ids = [refs[0].id, refs[1].id];
+      }
+      expect(parseResolutionPrivatePayload(data)).toBeNull();
+    },
+  );
+
+  it("uses the input date minimum in code points while retaining malformed dates as rejected data", () => {
+    const input = completeInput(); input.sources[0].observedAt = "🌍".repeat(20);
+    expect(parseResolutionPrivatePayload(payload(input))?.rejected_source_ids).toEqual(["provided", "rejected-date"]);
+    input.sources[0].observedAt = "🌍".repeat(19);
+    expect(() => qualifyResolution(input)).toThrow("Paramètres programmatiques non conformes");
+    const data = payload(completeInput());
+    (data.details.supplied_references as Record<string, unknown>[])[0].observedAt = input.sources[0].observedAt;
+    data.details.rejected_source_ids = ["provided", "rejected-date"];
+    expect(parseResolutionPrivatePayload(data)).toBeNull();
+  });
+
+  it.each(["\u0000", "\ud800", "\udc00", "\ud800A"])("refuses malformed scalar text before qualification and when reading a tampered row (%#)", malformed => {
+    for (const target of ["caseId", "reference"] as const) {
+      const input = completeInput();
+      if (target === "caseId") input.caseId = malformed; else input.sources[0].reference = malformed;
+      expect(() => qualifyResolution(input)).toThrow("Texte de qualification invalide");
+      const data = payload(completeInput());
+      if (target === "caseId") (data.details.snapshot as Record<string, unknown>).caseId = malformed;
+      else (data.details.supplied_references as Record<string, unknown>[])[0].reference = malformed;
+      expect(parseResolutionPrivatePayload(data)).toBeNull();
+    }
+  });
+
+  it("keeps dense Unicode identity lists complete or refuses the generated-item bound without clipping", () => {
+    const input = base();
+    const ids = Array.from({ length: 32 }, (_, index) => String(index).padStart(2, "0") + "🌍".repeat(158));
+    input.dependencies = [{ id: "root", state: "unknown", basis: "hypothesis", requires: ids.slice(0, 24), sourceIds: [], satisfactionSourceIds: [], alternatives: [] }];
+    let raw = qualifyResolution(input);
+    expect(raw.dependencies?.requirements[0].unknownPrerequisites).toEqual(ids.slice(0, 24));
+    const items = parseResolutionPrivatePayload(projectPrivateToolResult("qualify_resolution", raw)!)!.sections[0].items;
+    for (const id of ids.slice(0, 24)) expect(items.join("\n")).toContain(JSON.stringify(id));
+    expect(items.every(item => item.length <= 8_192)).toBe(true);
+
+    input.dependencies[0].requires = ids; raw = qualifyResolution(input);
+    expect(raw.dependencies?.requirements[0].unknownPrerequisites).toEqual(ids);
+    expect(Buffer.byteLength(JSON.stringify(input))).toBeLessThan(65_536);
+    expect(Buffer.byteLength(JSON.stringify(raw))).toBeLessThan(RESOLUTION_REPORT_MAX_BYTES);
+    expect(ids.map(id => JSON.stringify(id)).join(", ").length).toBeGreaterThan(8_192);
+    expect(() => projectPrivateToolResult("qualify_resolution", raw)).toThrow("Résultat privé indisponible");
+  });
+});
