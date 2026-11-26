@@ -11,6 +11,7 @@ export default defineConfig({
     { find: '@', replacement: resolve('src') },
   ] },
   define: {
+    'import.meta.env.VITE_PURAMA_ONE_ORIGIN': JSON.stringify('https://one.example.invalid'),
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify('https://supabase.example.invalid'),
     'import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY': JSON.stringify('test-only-public-key'),
   },

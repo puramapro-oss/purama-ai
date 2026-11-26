@@ -24,6 +24,8 @@ import { createRequestScope, type RequestLease } from '@/lib/request-scope';
 import { prepareChatMessages, CHAT_MAX_MESSAGE_LENGTH } from '../../supabase/functions/_shared/chat-input';
 import { ConsultationPanel } from '@/components/ConsultationPanel';
 import { sharedTrial, trialFromPrompt, type TrialEntry } from '@/lib/iao-trial-entry';
+import { scienceFromPrompt, type PendulumInputs, type PendulumReceipt, type ScienceHandoff } from '@/lib/iao-science-entry';
+import { IaoScienceTrial, ScienceReceipt, ScienceHandoffLink } from '@/components/IaoScienceTrial';
 import { isSuperAdmin } from '@/lib/constants';
 import { buildWorkshopConversationBrief, saveWorkshopDraft } from '@/lib/workshop';
 
@@ -35,6 +37,9 @@ interface Message {
   content: string;
   createdAt: Date;
   kind?: 'notice';
+  scienceInputs?: PendulumInputs;
+  scienceReceipt?: PendulumReceipt;
+  scienceHandoff?: ScienceHandoff;
 }
 
 interface Conversation {
@@ -67,6 +72,7 @@ export function ChatbotWidget() {
   const [requests] = useState(createRequestScope);
   const [isOpen, setIsOpen] = useState(false);
   const [consultationOpen, setConsultationOpen] = useState(false);
+  const [activeScience, setActiveScience] = useState<string | null>(null);
   const [trialEntry, setTrialEntry] = useState<TrialEntry | null>(null);
   const trialTrigger = useRef<HTMLButtonElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
@@ -97,6 +103,7 @@ export function ChatbotWidget() {
     requests.invalidate();
     activeReply.current = null;
     retryableTurn.current = null;
+    setActiveScience(null);
     setMessages([]);
     setConversations([]);
     setConversationId(null);
@@ -280,22 +287,32 @@ export function ChatbotWidget() {
       if (!turn.confirmed) await saveMessage(convId, userMessageId, 'user', userMessage, lease);
       if (!lease.current()) return;
       retryableTurn.current = { ...turn, confirmed: true };
-      const response = await fetch(CHATBOT_FUNCTION_URL, {
-        method: 'POST', signal: lease.signal,
-        headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
-        body: JSON.stringify({ messages: prepared.messages, pageContext: location.pathname }),
-      });
-      if (!lease.current()) { await response.body?.cancel(); return; }
-      if (!response.ok) throw new Error(String(response.status));
       assistantId = crypto.randomUUID();
-      activeReply.current = { prompt: userMessage, assistantId };
-      setMessages(prev => [...prev, { id: assistantId!, role: 'assistant', content: '', createdAt: new Date() }]);
-      const content = await parseSSEStream(response, full => {
-        if (lease.current()) setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: full } : m));
-      });
-      if (!lease.current()) return;
-      if (!content.trim()) throw new Error('EMPTY_RESPONSE');
+      const science = scienceFromPrompt(userMessage);
+      let content: string;
+      if (science) {
+        content = science.answer;
+        const scienceInputs = science.kind === 'pendule' ? science.inputs : undefined;
+        const scienceHandoff: ScienceHandoff | undefined = science.kind === 'unsupported' ? 'projet' : science.kind === 'correlation' ? 'correlation' : undefined;
+        setMessages(prev => [...prev, { id: assistantId!, role: 'assistant', content, scienceInputs, scienceHandoff, createdAt: new Date() }]);
+        if (science.kind !== 'unsupported') setActiveScience(assistantId);
+      } else {
+        const response = await fetch(CHATBOT_FUNCTION_URL, {
+          method: 'POST', signal: lease.signal,
+          headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+          body: JSON.stringify({ messages: prepared.messages, pageContext: location.pathname }),
+        });
+        if (!lease.current()) { await response.body?.cancel(); return; }
+        if (!response.ok) throw new Error(String(response.status));
+        activeReply.current = { prompt: userMessage, assistantId };
+        setMessages(prev => [...prev, { id: assistantId!, role: 'assistant', content: '', createdAt: new Date() }]);
+        content = await parseSSEStream(response, full => {
+          if (lease.current()) setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: full } : m));
+        });
+        if (!lease.current()) return;
+        if (!content.trim()) throw new Error('EMPTY_RESPONSE');
+      }
       // A received answer ends this turn even if its later storage fails.
       retryableTurn.current = null;
       responseComplete = true;
@@ -364,6 +381,7 @@ export function ChatbotWidget() {
     setBusyKind(null);
     setIsEscalating(false);
     setConversationId(null);
+    setActiveScience(null);
     setMessages([]);
     setInputValue('');
     setShowHistory(false);
@@ -379,6 +397,7 @@ export function ChatbotWidget() {
     if (!lease) return;
     setBusyKind('history');
     setIsEscalating(false);
+    setActiveScience(null);
     setMessages([]);
     setInputValue('');
     setConversationId(null);
@@ -390,8 +409,15 @@ export function ChatbotWidget() {
         .order('created_at', { ascending: true }).abortSignal(lease.signal);
       if (!lease.current()) return;
       if (error) throw error;
-      setMessages((data ?? []).filter(m => m.role === 'user' || m.role === 'assistant')
-        .map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content, createdAt: new Date(m.created_at) })));
+      const rows = (data ?? []).filter(m => m.role === 'user' || m.role === 'assistant');
+      setMessages(rows.map((m, index) => {
+        const prior = rows[index - 1];
+        const science = m.role === 'assistant' && prior?.role === 'user' ? scienceFromPrompt(prior.content) : null;
+        const scienceInputs = science?.kind === 'pendule' && science.answer === m.content ? science.inputs : undefined;
+        const scienceHandoff: ScienceHandoff | undefined = !science || science.answer !== m.content ? undefined :
+          science.kind === 'unsupported' ? 'projet' : science.kind === 'correlation' ? 'correlation' : undefined;
+        return { id: m.id, role: m.role as 'user' | 'assistant', content: m.content, createdAt: new Date(m.created_at), scienceInputs, scienceHandoff };
+      }));
       setConversationId(convId);
     } catch {
       if (lease.current()) addNotice("Cette conversation n'a pas pu être chargée.");
@@ -564,13 +590,19 @@ export function ChatbotWidget() {
                       )}
                     </div>
                     <div
-                      className={`max-w-[75%] p-3 rounded-2xl text-sm ${
+                      className={`${message.scienceInputs || message.scienceHandoff === 'correlation' ? 'min-w-0 flex-1' : 'max-w-[75%]'} p-3 rounded-2xl text-sm ${
                         message.role === 'user'
                           ? 'bg-primary text-primary-foreground rounded-tr-none'
                           : 'bg-muted rounded-tl-none'
                       }`}
                     >
                       <p className="whitespace-pre-wrap">{message.content}</p>
+                      {message.scienceHandoff === 'projet' && <ScienceHandoffLink target="projet" />}
+                      {message.scienceReceipt && <ScienceReceipt receipt={message.scienceReceipt} />}
+                      {(message.scienceInputs || message.scienceHandoff === 'correlation') && (activeScience === message.id
+                        ? <IaoScienceTrial kind={message.scienceHandoff === 'correlation' ? 'correlation' : 'pendule'} inputs={message.scienceInputs} onReceipt={receipt =>
+                          setMessages(current => current.map(item => item.id === message.id ? { ...item, scienceReceipt: receipt ?? undefined } : item))} />
+                        : <button type="button" className="mt-2 underline" onClick={() => setActiveScience(message.id)}>{message.scienceHandoff === 'correlation' ? 'Reprendre cette comparaison' : 'Reprendre cette simulation'}</button>)}
                     </div>
                   </motion.div>
                 ))}

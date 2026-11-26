@@ -1,19 +1,29 @@
-export type TrialKind = 'panier' | 'media' | 'atelier';
+import { scienceFromPrompt, type PendulumInputs, type ScienceHandoff } from './iao-science-entry';
+
+export type TrialKind = 'panier' | 'media' | 'atelier' | 'pendule' | 'correlation';
 
 export interface TrialEntry {
   kind: TrialKind | null;
+  scienceInputs?: PendulumInputs;
+  scienceProblem?: string;
+  scienceHandoff?: ScienceHandoff;
   initialUnits?: number;
   initialBudgetCents?: number;
 }
 
 export function sharedTrial(hash: string): TrialKind | null {
-  const match = /^#essai\/(panier|media|atelier)$/.exec(hash);
+  const match = /^#essai\/(panier|media|atelier|pendule|correlation)$/.exec(hash);
   return match ? match[1] as TrialKind : null;
 }
 
 // Use only unambiguous, explicitly named fields. The user can edit every input.
 export function trialFromPrompt(prompt: string): TrialEntry {
   const text = prompt.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const science = scienceFromPrompt(prompt) ??
+    (/^(?:(?:un|le|mon)\s+)?pendule\b/.test(text) ? scienceFromPrompt('Simule ' + prompt) : null);
+  if (science?.kind === 'pendule') return { kind: 'pendule', scienceInputs: science.inputs };
+  if (science?.kind === 'correlation') return { kind: 'correlation' };
+  if (science) return { kind: null, scienceProblem: science.answer, scienceHandoff: 'projet' };
   const basket = /\b(?:panier|lots?|pieces?)\b/.test(text);
   const media = /\b(?:videos?|photos?|images?|compression)\b/.test(text);
   const workshop = /\b(?:ateliers?|inscriptions?|participants?|billetterie)\b/.test(text);

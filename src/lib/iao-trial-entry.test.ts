@@ -15,7 +15,13 @@ describe('entrée locale des essais', () => {
     expect(trialFromPrompt('Un panier et une vidéo')).toEqual({kind: null});
     expect(trialFromPrompt('Bonjour')).toEqual({kind: null});
   });
-  it('les liens de méthode sont limités à trois identifiants sans données', () => {
+  it('les liens de méthode sont limités aux identifiants acceptés sans données', () => {
+    expect(sharedTrial('#essai/pendule')).toBe('pendule');
+    expect(sharedTrial('#essai/correlation')).toBe('correlation');
+    expect(trialFromPrompt('Calcule la corrélation')).toEqual({ kind: 'correlation' });
+    expect(sharedTrial('#essai/pendule?seed=1')).toBeNull();
+    expect(trialFromPrompt('un pendule de 50 cm')).toMatchObject({ kind: 'pendule', scienceInputs: { lengthMeters: 0.5 } });
+    expect(trialFromPrompt('Simule un pendule double')).toMatchObject({ kind: null, scienceProblem: expect.any(String) });
     expect(sharedTrial('#essai/panier')).toBe('panier');
     for (const hash of ['#essai/panier?nom=Alice', '#essai/__proto__', '#essai/panier/4', '']) expect(sharedTrial(hash)).toBeNull();
   });
