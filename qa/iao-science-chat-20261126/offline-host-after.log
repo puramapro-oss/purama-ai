@@ -1,0 +1,11 @@
+[WebServer] (node:20) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:39) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/chat/science.spec.ts:3:1 › la conversation garde la demande, valide la provenance du reçu et propose les expériences qualifiées (4.3s)
+  ✓  2 tests/chat/science.spec.ts:68:1 › hors connexion et historique authentifié préservent la demande sans charger un ancien modèle (1.7s)
+
+  2 passed (8.1s)

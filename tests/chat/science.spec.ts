@@ -1,6 +1,8 @@
 import { test, expect } from './fixtures';
 
 test('la conversation garde la demande, valide la provenance du reçu et propose les expériences qualifiées', async ({ page }) => {
+  // CI has no external network. Connectivity is a scenario input; ONE stays mocked below.
+  await page.addInitScript(() => Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true }));
   await page.route('https://one.example.invalid/atelier-spatial/pendule**', route => route.fulfill({
     contentType: 'text/html', body: `<!doctype html><button id="report">Calculer</button><button id="clear">Effacer</button><script>
       let chatOrigin;
