@@ -1,0 +1,251 @@
+{
+  "status": "PASS",
+  "entry": "compiled ToolDefinition.execute",
+  "networkCalls": 0,
+  "input": {
+    "caseId": "synthetic-review",
+    "snapshotRevision": 1,
+    "asOf": "2026-11-25T12:00:00Z",
+    "domains": [
+      "A",
+      "E",
+      "G"
+    ],
+    "sources": [],
+    "dependencies": [
+      {
+        "id": "independent",
+        "state": "unknown",
+        "basis": "hypothesis",
+        "requires": [],
+        "sourceIds": [],
+        "satisfactionSourceIds": [],
+        "alternatives": []
+      }
+    ],
+    "transitions": [
+      {
+        "id": "transition",
+        "timeZone": "Europe/Paris",
+        "periods": []
+      }
+    ],
+    "effort": {
+      "chosenMinutes": 2,
+      "paused": false,
+      "steps": [
+        {
+          "id": "short-local-step",
+          "state": "pending",
+          "estimatedMinutes": 2
+        }
+      ]
+    },
+    "corrections": [
+      {
+        "id": "correction",
+        "factId": "date",
+        "fromVersion": 1,
+        "toVersion": 2,
+        "expectedVersion": 1,
+        "currentVersion": 1,
+        "assertion": "suspected",
+        "sourceIds": [],
+        "consequences": [
+          {
+            "id": "draft",
+            "version": 1,
+            "dependsOn": [
+              "date"
+            ],
+            "stage": "draft"
+          }
+        ]
+      }
+    ],
+    "occurrence": {
+      "requested": "new_episode",
+      "current": {
+        "episodeId": "new-episode",
+        "beneficiaryId": "person",
+        "objectId": "object",
+        "periodId": "period",
+        "engagementId": "engagement",
+        "territory": "FR",
+        "operationId": "new-operation",
+        "payloadHash": "payload"
+      },
+      "attemptLimit": 3,
+      "revoked": false
+    },
+    "handoffs": [
+      {
+        "id": "handoff",
+        "recipientId": "person",
+        "recipientState": "unknown",
+        "role": "parent",
+        "channel": "unqualified-existing-channel",
+        "actionId": "receive-document",
+        "dataIds": [
+          "document"
+        ],
+        "requestedStage": "performed",
+        "conflicting": false,
+        "transmissionSourceIds": [],
+        "acceptanceSourceIds": [],
+        "performanceSourceIds": []
+      }
+    ]
+  },
+  "result": {
+    "ok": true,
+    "status": "preparation",
+    "qualificationOnly": true,
+    "caseId": "synthetic-review",
+    "snapshotRevision": 1,
+    "asOf": "2026-11-25T12:00:00Z",
+    "provenance": "caller_supplied_snapshot",
+    "externalFactsVerified": false,
+    "permissionsGranted": false,
+    "externalActionsPerformed": 0,
+    "rejectedSourceIds": [],
+    "domains": [
+      {
+        "id": "A",
+        "label": "Démarches et accès aux droits",
+        "routes": [
+          "NIDHI",
+          "Dossier sans oubli",
+          "Courrier en clair",
+          "Démarche à deux"
+        ],
+        "serviceAvailability": "not_qualified"
+      },
+      {
+        "id": "E",
+        "label": "Soins et aidants",
+        "routes": [
+          "Relais entre aidants",
+          "Répit logistique",
+          "Accompagné au rendez-vous"
+        ],
+        "serviceAvailability": "not_qualified"
+      },
+      {
+        "id": "G",
+        "label": "Effort et accessibilité",
+        "routes": [
+          "Journée souple",
+          "Mon profil de confort",
+          "Parler avec des cartes",
+          "Mode téléphone partagé",
+          "Participer sans smartphone"
+        ],
+        "serviceAvailability": "not_qualified"
+      }
+    ],
+    "dependencies": {
+      "originalCycles": [],
+      "remainingCycles": [],
+      "requirements": [
+        {
+          "id": "independent",
+          "reportedBasis": "hypothesis",
+          "sourceReferenced": false,
+          "state": "unknown",
+          "unknownPrerequisites": []
+        }
+      ],
+      "alternatives": [],
+      "nextCandidateIds": [],
+      "executionPlanCreated": false
+    },
+    "transitions": [
+      {
+        "id": "transition",
+        "assessment": "unknown_window",
+        "timeZone": "Europe/Paris",
+        "gaps": null,
+        "overlaps": null,
+        "unknownPeriodIds": [],
+        "excludedPeriodIds": [],
+        "actualCoverageVerified": false,
+        "previousServiceClosureAuthorized": false
+      }
+    ],
+    "effort": {
+      "source": "user_declared",
+      "chosenMinutes": 2,
+      "paused": false,
+      "nextStepId": "short-local-step",
+      "assessments": [
+        {
+          "id": "short-local-step",
+          "reasons": []
+        }
+      ],
+      "completedStepIds": [],
+      "authorizationChanged": false,
+      "healthInferencePerformed": false,
+      "remindersCreated": false
+    },
+    "corrections": [
+      {
+        "id": "correction",
+        "assessment": "correction_unestablished",
+        "fromVersion": 1,
+        "proposedVersion": 2,
+        "consequences": [
+          {
+            "id": "draft",
+            "version": 1,
+            "stage": "draft",
+            "next": "establish_correction"
+          }
+        ],
+        "notLinkedBySuppliedGraphIds": [],
+        "unresolvedDependencies": [],
+        "impactUnknownIds": [],
+        "impactAssessmentComplete": false,
+        "modificationsPerformed": 0,
+        "externalRectificationsSent": 0,
+        "repaired": false
+      }
+    ],
+    "occurrence": {
+      "assessment": "new_episode_candidate",
+      "differences": [],
+      "episodeId": "new-episode",
+      "operationId": "new-operation",
+      "previousEffect": null,
+      "reconciliationRequired": false,
+      "executionAuthorized": false,
+      "recordsMerged": false,
+      "attemptsCreated": 0,
+      "scheduleCreated": false
+    },
+    "handoffs": [
+      {
+        "id": "handoff",
+        "requestedStage": "performed",
+        "referencedStage": "prepared",
+        "stageReferenceIds": {
+          "transmitted": [],
+          "accepted": [],
+          "performed": []
+        },
+        "stageOrderVerified": false,
+        "externalStageVerified": false,
+        "futureSharing": "blocked_pending_qualification",
+        "reasons": [
+          "missing_transmitted_reference",
+          "recipient_unresolved",
+          "authorization_missing"
+        ],
+        "roleGrantsAuthority": false,
+        "permissionGranted": false,
+        "transmittedByThisTool": false
+      }
+    ]
+  }
+}

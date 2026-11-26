@@ -156,6 +156,7 @@ export const TOOL_OPTIONS = [
   { value: 'web_search', label: 'Recherche web en temps réel' },
   { value: 'knowledge_search', label: 'Rechercher des références publiques (Crossref et Wikidata)' },
   { value: 'quantum_simulate', label: 'Simuler un circuit quantique localement (sans matériel quantique)' },
+  { value: 'qualify_resolution', label: 'Analyser un dossier : blocages, transitions, effort, corrections et passation' },
   { value: 'send_notification', label: "Notifier l'utilisateur (app/email) quand une décision est nécessaire" },
 ] as const;
 

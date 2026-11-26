@@ -1,4 +1,4 @@
-# Résultats privés de recherche, de synthèse et de simulation
+# Résultats privés de recherche, de synthèse, de dossier et de simulation
 
 ## Ce que ce changement rend utilisable
 
@@ -213,3 +213,99 @@ les autorisations SQL, les accusés de réception identiques et une révocation
 de lecteur pendant l’attente d’un verrou sur PostgreSQL natif. Leur résultat
 effectif doit être consulté dans les reçus de validation du lot Code Mode ;
 l’ajout de cette section ne constitue pas une preuve de déploiement.
+
+## Extension du 26 novembre 2026 : analyse privée d’un dossier
+
+`qualify_resolution` rejoint les trois catalogues existants : outils exécutables
+des agents personnalisés, options de leur fiche et propositions du générateur.
+L’ajout au catalogue ne modifie aucun agent existant. Son propriétaire doit
+sélectionner la capacité ; KARTA conserve ses contrôles d’exécution, de
+simulation, d’arrêt et d’approbation. La qualification elle-même est déterministe
+et locale. Le modèle éventuellement utilisé pour préparer la mission reste
+celui du parcours existant.
+
+Le résultat parcourt la même chaîne que les autres résultats privés : outil,
+projection contrôlée, RPC `karta_store_tool_result`, table `karta_tool_results`,
+lecture autorisée et panneau de la fiche de l’agent. Aucun nouveau moteur,
+registre de dossiers, planificateur ou stockage de résultats n’est créé.
+
+### Contenu restitué
+
+Le panneau présente **Analyse de dossier — Analyse disponible**. Ce statut
+confirme la présence d’une analyse ; il ne confirme pas qu’un problème réel
+est résolu. L’identifiant, la révision et la date de l’instantané fourni restent
+distincts de la date d’enregistrement du résultat.
+
+| Rubrique | Ce qui est restitué |
+| --- | --- |
+| Prérequis | Groupes interdépendants, exigences, alternatives, inconnues et prochaines candidates. Un groupe de dépendances n’est pas un ordre d’exécution. |
+| Transitions | Fenêtres temporelles, lacunes, chevauchements et périodes non retenues. Couverture réelle non vérifiée ; fermeture de l’ancien service non autorisée. |
+| Effort choisi | Durée déclarée, pause, étape candidate, dépassements et données inconnues. Aucun diagnostic ou droit supplémentaire. |
+| Conséquences d’une correction | Versions, conflits, conséquences connues et dépendances manquantes. Aucun document ou effet externe modifié. |
+| Récurrence et reprises | Nouvel épisode, réouverture, même opération et effet incertain. Aucune tentative ni programmation créée. |
+| Passation | Préparation, transmission, acceptation et réalisation déclarées, avec références séparées. Destinataire et habilitation restent à vérifier. |
+
+Une rubrique absente porte « Informations non fournies ». Les listes de détails
+restent consultables par rubrique. Les références originales bornées sont
+conservées, avec leur dossier, révision, élément concerné, type et date
+d’observation. Une référence rejetée par la qualification reste visible avec
+son statut. La date d’observation n’est jamais assimilée à celle d’un événement.
+Tous ces contenus sont affichés comme du texte ; une URL fournie ne déclenche
+aucune consultation de site.
+
+La provenance fixe indique `caller_supplied_snapshot`, `unverified` et
+`untrusted_data`. La sortie atteste uniquement `qualification_only: true`,
+`external_facts_verified: false`, `permissions_granted: false` et
+`external_actions_performed: 0`. Les quatorze domaines conservent les identités
+des produits existants ; ils ne prouvent ni disponibilité territoriale ni
+prestataire mobilisable.
+
+### Contrat de conservation et reprise
+
+L’enveloppe version 1 est conservée entière ou refusée : six rubriques dans un
+ordre fixe, au plus 2 048 éléments, 128 références, et **61 440 octets UTF-8**
+pour le JSON compact. Le plafond SQL existant de **65 536 octets** pour sa
+représentation JSONB reste applicable. Aucun dépassement ne produit un rapport
+tronqué présenté comme complet. Le lecteur partagé Node/Vite/Edge vérifie la
+structure et la provenance avant d’exposer la projection à l’interface.
+
+La migration additive `036_resolution_private_results.sql` étend le validateur
+et la contrainte de nom d’outil existants. La RPC, ses verrous, la séparation
+des comptes et des agents, l’identité d’opération et les règles de suppression
+restent celles du circuit actuel. Un rejeu identique retrouve le même résultat ;
+un contenu divergent est refusé. Une opération close ne recrée pas une pièce
+supprimée.
+
+### Questionner une analyse
+
+Le propriétaire peut choisir au plus trois résultats dans le panneau, puis
+ouvrir le chat avec cette sélection. Le simple affichage ou la sélection
+n’effectuent aucun appel de modèle. Le serveur recharge chaque pièce selon
+le propriétaire et l’agent courants ; les identifiants fournis par le client
+ne constituent pas une autorisation.
+
+Pour l’analyse de dossier, le contexte conserve la provenance, l’instantané,
+les six résumés et des extraits de détails dans la limite commune de
+**16 000 octets UTF-8**. Le résumé principal est borné à 800 octets JSON échappés,
+chaque résumé de rubrique à 160 et chaque extrait de détail à 400. Les
+abrègements et nombres d’éléments ou de références omis sont explicites ;
+les références complètes restent consultables dans le panneau. Les règles
+d’échappement et le statut de données non fiables sont conservés. Un résultat
+de dossier n’hérite jamais de la provenance d’une simulation quantique.
+
+### Réception et mise en service
+
+Les preuves du complément sont rattachées au dossier existant
+`qa/resolution-qualification-20261125/`. Le reçu final distingue tests exécutés,
+transports substitués, contrôle SQL, essais navigateur, CI et service réel.
+Il faut livrer ensemble les migrations KARTA jusqu’à 036, le worker, les
+fonctions `creator-agent-generate` et `creator-agent-chat` avec leur lecteur
+partagé, et l’interface correspondante.
+
+L’inspection en lecture seule du 26 novembre a trouvé les anciens conteneurs
+KARTA, Redis KARTA, Auth et Edge arrêtés sur Hostinger. Les instances actives
+de qualification P8 et de ONE privé n’ont pas été assimilées à la destination
+de production de ce lot. Les fichiers présents dans `/opt/karta` ne prouvent
+pas les migrations appliquées à une base. La remise en service demande de
+rapprocher l’environnement et son propriétaire actuel avant migration ou
+redémarrage. Le détail daté figure dans `deployment-observation-20261126.json`.

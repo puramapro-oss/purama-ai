@@ -1,0 +1,138 @@
+{
+  "base": "dd59dae670db7d3fca0d0b7173ad55aec5d10891",
+  "branch": "feat/iao-resolution-qualification-20261125",
+  "sourceSha256": {
+    "karta/src/lib/resolution-qualification.ts": "12f0395cf064377bbcbae05bb79ac1254358077624b52fbc1c5812ba1ac82023",
+    "karta/src/tools/resolution-qualification.ts": "15fd9bb72f4c6d005441fce68093b54ec86555db0de36976ff1eb93ba0d27136",
+    "karta/src/tools/registry.ts": "0e16b4e83addd13ef0114b2a6c1f4fb7137ae07f78ffcc92ff8e35fa4c81e80d",
+    "karta/test/resolutionQualification.test.ts": "b355f2aeea5a6d801dfb6da26ebf04ae7ff5b7d7cb7650c1e62c9aa68080e8ab",
+    "karta/test/resolutionQualificationIntegration.test.ts": "e06446eded3af056ce4372c746f9caa0073a6dfca869fa07445afe1af123c0da"
+  },
+  "commands": [
+    {
+      "check": "targeted regression",
+      "cwd": "karta",
+      "command": "npm test -- --maxWorkers=1 test/resolutionQualification.test.ts test/resolutionQualificationIntegration.test.ts test/customRegistry.test.ts test/knowledgeQuantumIntegration.test.ts test/webAccessPlanTool.test.ts",
+      "exitCode": 0,
+      "observedOutput": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> karta-engine@1.0.0 test\n> vitest run --maxWorkers=1 test/resolutionQualification.test.ts test/resolutionQualificationIntegration.test.ts test/customRegistry.test.ts test/knowledgeQuantumIntegration.test.ts test/webAccessPlanTool.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/f4f8153261d6/repos/purama-ai-resolution/karta\n\n\n Test Files  5 passed (5)\n      Tests  73 passed (73)\n   Start at  21:26:25\n   Duration  2.97s (import 47%, transform 40%, tests 10%, setup 2%, worker 1%)\n\n    Isolate  5 workers spawned · ~198ms startup each (spawn + environment, per file)\n             at least ~790ms faster with isolate: false — reuses workers across files instead of one per file"
+    },
+    {
+      "check": "final affected tests",
+      "cwd": "karta",
+      "command": "npm test -- --maxWorkers=1 test/resolutionQualification.test.ts test/resolutionQualificationIntegration.test.ts",
+      "exitCode": 0,
+      "observedOutput": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> karta-engine@1.0.0 test\n> vitest run --maxWorkers=1 test/resolutionQualification.test.ts test/resolutionQualificationIntegration.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/f4f8153261d6/repos/purama-ai-resolution/karta\n\n\n Test Files  2 passed (2)\n      Tests  45 passed (45)\n   Start at  21:28:12\n   Duration  1.54s (transform 50%, import 38%, tests 11%, setup 1%, worker 1%)"
+    },
+    {
+      "check": "product build",
+      "cwd": "karta",
+      "command": "npm run build",
+      "exitCode": 0,
+      "observedOutput": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> karta-engine@1.0.0 build\n> tsc -p tsconfig.build.json"
+    },
+    {
+      "check": "complete KARTA types",
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "observedOutput": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> karta-engine@1.0.0 typecheck\n> tsc --noEmit -p tsconfig.json"
+    }
+  ],
+  "reviewRegression": {
+    "before": {
+      "failed": 6,
+      "passed": 33,
+      "logSha256": "7826149a6facda1d16200dd3b609a172a5ccf2fc82b2c3fb9dbba2584888d865"
+    },
+    "after": "All six adverse checks pass in the final 45-test set; no initial failing assertion removed. The observedAt test was separately corrected because observation time does not establish event order."
+  },
+  "independentReview": {
+    "reviewer": "/root/besoins_non_couverts",
+    "scope": "read-only source review and direct invocation",
+    "result": "No concrete defect remaining in the bounded implementation",
+    "qualifiedLibrarySha256": "12f0395cf064377bbcbae05bb79ac1254358077624b52fbc1c5812ba1ac82023"
+  },
+  "compiledEntry": {
+    "status": "PASS",
+    "receipt": "internal-call.json",
+    "sha256": "fb850008e33905c86ad383dd3a36550f3b7339b95673ed4019f77bfe6e6cd550",
+    "networkCalls": 0,
+    "externalActionsPerformed": 0
+  },
+  "preservation": {
+    "catalogues": "customRegistry.ts, creator-agent.ts and creator-agent-generate/index.ts identical to base",
+    "PR121_PR122_files": "checked diff against base: empty",
+    "newServices": 0,
+    "externalEffects": 0,
+    "remoteMutationsAtLocalAcceptance": 0,
+    "localAcceptanceDate": "2026-11-25",
+    "publicationBoundary": "Parent may later publish the reviewed proposal as a branch/draft PR; no merge or deployment is included in this local acceptance."
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "finalIndex": {
+      "nodes": 36770,
+      "edges": 104487,
+      "clusters": 944,
+      "flows": 744
+    },
+    "impact": "LOW on all modified qualification functions: one direct caller each, one to four impacted symbols. Initial catalogue constant analysis UNKNOWN, resolved by text inspection; those catalogue changes were withdrawn.",
+    "limitations": "FTS unavailable, keyword query degraded. Exact symbol context and impact ran. Graph absence is not proof of no caller.",
+    "detectChanges": {
+      "staged": {
+        "command": "gitnexus detect-changes --scope staged --repo purama-ai-resolution",
+        "exitCode": 0,
+        "files": 9,
+        "symbolsAndProperties": 318,
+        "affectedProcesses": 0,
+        "risk": "LOW"
+      },
+      "integrationBase": {
+        "command": "gitnexus detect-changes --scope compare --base-ref dd59dae670db7d3fca0d0b7173ad55aec5d10891 --repo purama-ai-resolution",
+        "exitCode": 0,
+        "files": 9,
+        "symbolsAndProperties": 318,
+        "affectedProcesses": 0,
+        "risk": "LOW"
+      },
+      "defaultBranch": {
+        "command": "gitnexus detect-changes --scope compare --base-ref origin/main --repo purama-ai-resolution",
+        "baseSha": "ae84415be0b9516422805910be999a2c1e6350c0",
+        "exitCode": 0,
+        "files": 3464,
+        "symbolsAndProperties": 26923,
+        "affectedProcesses": 727,
+        "risk": "CRITICAL",
+        "scope": "Full integration branch divergence from main, including pre-existing work. Not qualified for a merge or deployment by this lot."
+      },
+      "notices": "The CRITICAL signals were reported before committing. Text imports and the exact staged file list corroborate the bounded change. CLI symbol listings are abbreviated; counts and risks are preserved."
+    },
+    "status": "PASS scoped impact/change check; PARTIEL keyword search (FTS unavailable)",
+    "indexIncident": {
+      "observed": "An incremental index lost symbol id/type and reported unrelated Swift/frontend callers; staged risk CRITICAL (739 flows).",
+      "resolution": "Rebuilt once with analyze --force --no-parse-cache --index-only --workers 1. No product change or rename was made to affect the score. Exact ids and expected callers returned.",
+      "finalEntryImpact": {
+        "risk": "LOW",
+        "directCallers": 1,
+        "affectedSymbols": 1,
+        "caller": "resolutionQualificationTool.execute"
+      }
+    },
+    "evidenceSha256": {
+      "gitnexus-before.log": "d488046e7bdf63e778ed70d5d08093bb715d3c762ae0c15d6e80f1e11bd74b3b",
+      "gitnexus-rebuild.log": "19002d8d405abef9913c93516d1600fc6f0bf153b97235a3ae91aa36b9cad545",
+      "rebuilt-impact-qualification.log": "b8081b54c4aaa1e767e7622ce57c580b835e893520e834f8ac60d9dc7af064cf",
+      "rebuilt-detect-staged.log": "ac440b847367696e12ed7dd0b09d1e2bbeda865093f269e991d67a84e543bbde",
+      "rebuilt-detect-base.log": "db42d2c85df8500594c9d74b3fd57cf09e59a8ab8875c0dce37762f9e010cc33",
+      "rebuilt-detect-main.log": "a096055a7413a43c337b082ae854c30252b728814b463f831641e1d9e3229b79"
+    }
+  },
+  "limits": [
+    "Local deterministic preparation only; source assertions remain unverified.",
+    "No authorization resolver, country/service qualification, scheduler or external action.",
+    "No business dossier read/write; caller supplies a bounded snapshot.",
+    "Six facet qualifications do not compose an executable CHEF plan.",
+    "No selectable user option and no private UI result projection yet.",
+    "No ONE integration, CI, deployment or field acceptance claimed."
+  ]
+}

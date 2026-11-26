@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "status": "PASS_LOCAL",
+  "production_status": "BLOCKED",
+  "native_postgresql_status": "PENDING_CI",
+  "base_pr_head": "2115e796fb91589324c3d6dbf1fcabf150d59fb7",
+  "consolidation_base": "40e97b0bcf32b3c6ab841126e6436b22d8456d9a",
+  "local_reconciliation_commit": "ba6495c82cc45399fbf0b103f316a18c9283eacb",
+  "counts_note": "Groups below use distinct test files. CI totals overlap these tests and must not be added. Eleven roundtrip checks are acceptance assertions, separate from test counts.",
+  "checks": [
+    {
+      "name": "backend qualification, projection, reader and SQL",
+      "status": "PASS",
+      "tests": 240,
+      "files": 4,
+      "command": "cd karta && npm test -- --maxWorkers=1 test/resolutionQualification.test.ts test/resolutionPrivateResults.test.ts test/privateToolResults.test.ts test/privateToolResultsSql.test.ts",
+      "log_sha256": "85ac2d923ce130b3775fcfcfe065982d6b2d3cb5fb699b990d1d4a7857f3795b"
+    },
+    {
+      "name": "real engine cycle and approval with substituted external ports",
+      "status": "PASS",
+      "tests": 30,
+      "files": 2,
+      "command": "cd karta && npm test -- --maxWorkers=1 test/resolutionQualificationIntegration.test.ts test/privateToolResultsExecution.test.ts"
+    },
+    {
+      "name": "runtime, frontend and generator catalogs plus existing knowledge/quantum integration",
+      "status": "PASS",
+      "tests": 18,
+      "files": 2,
+      "command": "cd karta && npm test -- --run test/customRegistry.test.ts test/knowledgeQuantumIntegration.test.ts"
+    },
+    {
+      "name": "private panel and client reader",
+      "status": "PASS",
+      "tests": 55,
+      "files": 2,
+      "command": "node_modules/.bin/vitest run src/components/karta/PrivateToolResults.test.tsx src/lib/private-tool-results.test.ts",
+      "log_sha256": "0c9ebedcd6816652d22831b2f9936166d8c265fcf0769c520e08c77b4d4a4b9c"
+    },
+    {
+      "name": "real Edge handler with substituted provider/database transports",
+      "status": "PASS",
+      "tests": 59,
+      "files": 1,
+      "command": "node --experimental-vm-modules --test tests/creator-chat-authorization.test.mjs",
+      "log_sha256": "cee9e9fdfc54a37f9c6fab0a3ee847644736026d005fe45b1b3f8adeec18a856"
+    },
+    {
+      "name": "desktop and mobile through real route and actual SQL-produced synthetic fixture",
+      "status": "PASS",
+      "tests": 2,
+      "files": 1,
+      "browser": "Chromium 158.0.8127.0",
+      "viewports": [
+        [
+          1440,
+          1000
+        ],
+        [
+          390,
+          844
+        ]
+      ],
+      "command": "PLAYWRIGHT_EXECUTABLE_PATH=/tmp/chromium PURAMA_QUALITY_PORT=4193 node_modules/.bin/playwright test --config tests/quality/playwright.config.ts tests/quality/resolution-results.spec.ts --output /tmp/purama-resolution-browser",
+      "log_sha256": "51813d3561c50badbf38eb985f02674ec6edd1a901bf6f99247d64c2fe6df84f",
+      "visual_inspection": "Four final screenshots inspected; six sections, escaped references, keyboard context disclosure and horizontal layout checked. Root independently inspected both overview captures."
+    },
+    {
+      "name": "real tool to SQL to owner read to chat context",
+      "status": "PASS",
+      "checks": 11,
+      "network_attempts": 0,
+      "command": "cd karta && node --import tsx ../qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs",
+      "receipt": "private-resolution-roundtrip.json"
+    }
+  ],
+  "builds_and_static_checks": [
+    {
+      "name": "frontend-typecheck-received",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 19.26,
+      "log": "resolution-frontend-typecheck-received.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f"
+    },
+    {
+      "name": "frontend-build-received",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 14.93,
+      "log": "resolution-frontend-build-received.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "0d400e26a80d840793a7004563d1eb712ba5d10891debbfcc865e0cd922d3ca1"
+    },
+    {
+      "name": "karta-typecheck-received",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 12.5,
+      "log": "resolution-karta-typecheck-received.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6"
+    },
+    {
+      "name": "karta-build-received",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.81,
+      "log": "resolution-karta-build-received.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd"
+    },
+    {
+      "name": "lint-received",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 18.88,
+      "log": "resolution-lint-received.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "fc130f9780b8287df364646a8efba46f54817003b3952d53508537ed3381d483"
+    },
+    {
+      "name": "database-contracts",
+      "command": [
+        "npm",
+        "run",
+        "check:database-contracts"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.09,
+      "log": "resolution-database-contracts.log",
+      "node_max_old_space_size_mib": 1536,
+      "log_sha256": "329cc71802607ee3144894c22b2ff93fc397fd69ed83095098c4ab526b5c55b9"
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 22,
+    "warnings_in_changed_files": []
+  },
+  "backend_invariants": {
+    "old_028_unchanged": true,
+    "old_034_unchanged": true,
+    "programmatic_validator_branch_byte_identical": true,
+    "knowledge_quantum_validator_branches_byte_identical": true,
+    "persist_function_body_byte_identical": true,
+    "no_rpc_replacement_in_036": true,
+    "pg_get_functiondef_rpc_identical_before_after_036_twice": "PASS in privateToolResultsSql.test.ts",
+    "node_syntax_native": "PASS",
+    "targeted_tests": "240 PASS / 4 files",
+    "native_postgresql_execution": "NOT RUN: no disposable PG18 local; existing CI gate runs updated suite"
+  },
+  "resolved_findings": [
+    "Three large resolutions starved later sections of chat excerpts; exact JSON reservation now gives every nonempty section a first excerpt before enrichment, reverified59/59.",
+    "The shared reader used Object.hasOwn outside the frontend TS library and lost an unknown-value narrowing in a callback; fixed without changing global TS configuration.",
+    "Integration fixture custom agent identity was inferred as string; corrected template-literal fixture type.",
+    "The mobile overview was dominated by fourteen domain descriptions; complete context is now in a keyboard-accessible native disclosure, reverified55/55 and2/2.",
+    "An initial test incorrectly expected private approval execution parameters to be absent; the receipt now distinguishes necessary private pending-action parameters from minimized traces.",
+    "An installation exhausted workspace space and interrupted a test-file edit; incomplete dependencies removed, only this checkout analysis index moved to temporary space, test restored from HEAD and changes reapplied. Final syntax/tests/builds pass.",
+    "A concurrent frontend build ended137; final sequential builds with Node heap1536MiB pass. No product change was made for this interruption."
+  ],
+  "limits": [
+    "No production database or provider was used in the new qualification receipts.",
+    "Native PostgreSQL18 race tests are added to the existing CI; result will be recorded after the exact candidate runs.",
+    "The44 specified business scenarios are not field-service tests.",
+    "External facts, mandates, benefits, refunds, appointments, service availability and country coverage remain unverified by this lot.",
+    "Hostinger production blocker is documented in deployment-observation-20261126.json."
+  ],
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "8182fa6089f3f20da7db17808f3039b2b04b686d8b5149e50bd9c038b8e1fffe",
+    "docs/iao-private-results.md": "a9b0536a87e30161e167b2125f08fa1f2da488a8a1b5f14fe3693b2c25a718e6",
+    "karta/migrations/036_resolution_private_results.sql": "99edebad0f7ccfc34ef5c3318aea64d3874334f2fa64176aae125ca16d75b66c",
+    "karta/src/engine/private-tool-results.ts": "6bc9233d002539f68812dea76a8ca4a081e0e663b2207d56a153bc95ae5dd3c1",
+    "karta/src/engine/resolution-result-projection.ts": "30131c38b2775872d2061422577dda0a159f81926cd092c6ac27e1aaf8a6a59f",
+    "karta/src/knowledge/private-result-view.ts": "614cbbda3639bc51d8e449c4bea8a55f9bedf0e432d6c7b3bc90285b5dcfbe7c",
+    "karta/src/lib/resolution-qualification.ts": "4174f928e01f459dd8522f2c953dad8c69915fd27392408d058c0c9116e7e3ef",
+    "karta/src/tools/customRegistry.ts": "d892e57fc6d364c82a204589a8ea4fa89c8de7f475ef205938990bb15c234c94",
+    "karta/test/privateToolResults.native.mjs": "6e145bf37ebeefdd71a6239a301586721f3bc8c3d2b02f0328766cc8f4c9f95c",
+    "karta/test/privateToolResultsExecution.test.ts": "b1a0f60ffeed5493b6d61f5fa0a984db24f2c068284f63db3e9077c627c1c4fb",
+    "karta/test/privateToolResultsSql.test.ts": "2192a30c11a02a05d17bb56e99d0052305f18cea79b74070e753b6d5b1036d3d",
+    "karta/test/resolutionPrivateResults.test.ts": "3f95e2370ff284ee36d0289e15fd0ac3b5593356dcbabb15993d61068d9500d4",
+    "karta/test/resolutionQualification.test.ts": "4efbfdc5297bbb3183903b8efe5e4d9578b6fcdde6380b80996e417be8aaec5d",
+    "karta/test/resolutionQualificationIntegration.test.ts": "9a1a8e2e197913554f3dcb1cabd07bf6ce29e9bc9690dc9ff207f0f9628a1330",
+    "qa/resolution-qualification-20261125/deployment-observation-20261126.json": "453fa1004865c0db4e83b9c309406c1d8ec48afebf5eb55237bfc2cad37f2033",
+    "qa/resolution-qualification-20261125/private-resolution-roundtrip.json": "5edf06467d63add38feb92979f508ae6561f73990aa3405753570f2180696ce6",
+    "qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs": "5b9797da21cdf4e07270116e3196188b87e5b7cb73697994cb681b3021563bd6",
+    "src/components/karta/PrivateToolResults.test.tsx": "739565bde8d697b0ec8a2f49708776ec92fb05746426c01df322296092102779",
+    "src/components/karta/PrivateToolResults.tsx": "a5c43ccf4d0fa585f7bd099c2f3c6d13434a73d99698462aa8fe5c47e892294b",
+    "src/lib/creator-agent.ts": "0b7399d7e9c4abdbe6183893056d1f7e78139d9c8ce153eb13edc707ef6be496",
+    "src/lib/private-tool-results.test.ts": "1bd43ff6fee08009f6b570de73dc1e05402f89414e15aecc8542a7fdaa412cc4",
+    "supabase/functions/_shared/private-tool-results.ts": "eb44aaa019b8efbb312e7db12f06fb78d1a9552bb5e1b245cfccd0df60e8a05a",
+    "supabase/functions/creator-agent-generate/index.ts": "026dc88c03bec83d7f778938af70c8a1a097b624392bd90c5a529c80b89a7bc8",
+    "tests/creator-chat-authorization.test.mjs": "1312f0bc5d0f0d8cf46d59f4a09923e57df45976651de5a9c56ebb79f97f13fc",
+    "tests/quality/resolution-results.spec.ts": "a0008245f13425a94af2457b0a7f092bfe9a65769e868ba66dd167d4273c1443"
+  },
+  "evidence_scope_note": "Hashes cover the changed runtime, migration, tests, workflow, contract documentation and standalone receipts. This JSON and the mutable delivery overview/scope are excluded to avoid self-referential hashes.",
+  "graph_analysis": {
+    "status": "PARTIAL",
+    "pre_edit_impacts": {
+      "qualifyResolution": "LOW",
+      "projectPrivateToolResult": "HIGH",
+      "parsePrivateToolResult": "HIGH",
+      "PrivateToolResults": "LOW",
+      "formatPrivateToolResultContext": "LOW",
+      "SQL_validator": "UNKNOWN: not indexed; direct review and executed SQL tests used"
+    },
+    "final_refresh_attempts": [
+      {
+        "name": "serial full refresh",
+        "exit_code": 1,
+        "diagnostic": "Stopped during parsing without error text; cause not established."
+      },
+      {
+        "name": "serial full refresh with1536MiB V8 bound",
+        "exit_code": 1,
+        "diagnostic": "Stopped during parsing without error text; cause not established."
+      }
+    ],
+    "final_detect_staged": {
+      "exit_code": 0,
+      "files": 28,
+      "reported_symbols": 84,
+      "reported_processes": 1,
+      "reported_risk": "MEDIUM",
+      "limitation": "Uses the retained pre-edit graph; changed line offsets can misattribute symbols and new nodes are absent. These figures are not a fresh complete blast-radius measurement."
+    },
+    "compare_main": {
+      "exit_code": 0,
+      "files": 3489,
+      "reported_processes": 727,
+      "reported_risk": "CRITICAL",
+      "scope": "Whole historical consolidation divergence; no blanket merge into main is authorized or claimed by this lot."
+    },
+    "checks": "Exact file diff restricted to reserved paths, pre-edit HIGH warnings reported, independent source/contract review, unchanged historical migrations and RPC, targeted runtime/SQL/browser tests and complete builds.",
+    "fts": "Unavailable throughout; exact-symbol queries and direct source reads used.",
+    "log_sha256": {
+      "resolution-delivery-gitnexus-final.log": "de73c252ef66ee47c40c768dab98e0ce67a66a543335d8efd74673930b4898fb",
+      "resolution-delivery-gitnexus-final-bounded.log": "c422a7445c639d8d5c4e29fa93fbfa13b4b042aae4ded0310ce8ecc0388d240e",
+      "resolution-delivery-final-staged-impact.txt": "44d80117df0acd87919ff28e49a158680d78fe6810f204dbf43ad4479443832a",
+      "resolution-delivery-final-main-impact.txt": "40a67c4f6aa3a45070112bd8b3a66382a4f479cf36da78146c72e963d4c2eef4"
+    }
+  }
+}

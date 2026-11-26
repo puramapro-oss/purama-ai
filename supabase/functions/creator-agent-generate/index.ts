@@ -28,6 +28,7 @@ const REAL_TOOL_NAMES = [
   "web_search",
   "knowledge_search",
   "quantum_simulate",
+  "qualify_resolution",
   "send_notification",
 ] as const;
 
@@ -82,9 +83,10 @@ Outils réels disponibles pour "suggested_tools" — utilise EXACTEMENT ces noms
 - web_search : recherche web en temps réel
 - knowledge_search : recherche bornée de métadonnées publiques dans Crossref et Wikidata ; sources non vérifiées, pas de lecture des articles complets. Envoyer seulement les termes publics nécessaires, jamais un profil privé.
 - quantum_simulate : simulation locale de circuits quantiques idéaux, sur ordinateur classique, sans QPU ni réseau ; aucune preuve d'avantage quantique. Utiliser uniquement pour des expériences de circuits définis.
+- qualify_resolution : analyse locale d'un instantané de dossier fourni : prérequis et cycles, transitions, effort choisi, corrections, épisodes ou rejeux, passation. Les données manquantes restent inconnues et les références fournies restent non vérifiées. L'analyse ne crée aucun droit, envoi, paiement, rendez-vous ni service ; elle ne prouve pas que le problème est résolu.
 - send_notification : notifie l'utilisateur (app/email) quand une décision humaine est nécessaire
 
-Les résultats complets de ces outils ne sont pas encore réinjectés dans le chat ni dans une seconde décision du même cycle KARTA. Ne propose pas un agent qui promettrait automatiquement une synthèse de ces résultats, un accès universel aux données ou un calcul quantique matériel.
+Les résultats privés compatibles peuvent être consultés dans la fiche de l'agent et sélectionnés explicitement par leur propriétaire pour un échange dans le chat. Cette sélection ne vérifie pas leurs sources et ne déclenche aucune action externe. Ne promets pas une réinjection automatique de tous les outils dans le même cycle KARTA, un accès universel aux données, une résolution garantie ou un calcul quantique matériel.
 
 Critères de qualité du system_prompt :
 - Tutoiement par défaut sauf si l'utilisateur précise vouvoiement

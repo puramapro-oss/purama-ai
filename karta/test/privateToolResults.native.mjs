@@ -120,6 +120,7 @@ before(async () => {
   await admin.query(readFileSync(new URL('../migrations/029_model_usage_receipts.sql', import.meta.url), 'utf8'));
   await admin.query(readFileSync(new URL('../migrations/033_programmatic_model_usage.sql', import.meta.url), 'utf8'));
   await admin.query(readFileSync(new URL('../migrations/034_programmatic_private_reports.sql', import.meta.url), 'utf8'));
+  await admin.query(readFileSync(new URL('../migrations/036_resolution_private_results.sql', import.meta.url), 'utf8'));
 });
 
 after(async () => {
@@ -397,4 +398,73 @@ test('programmatic report insertion rechecks a read-catalog revocation after its
     if (late) await late;
     await Promise.all([caller, gate].map(close));
   }
+});
+
+// This fixture exercises the SQL protocol; real qualifier -> projector -> reader
+// is covered by privateToolResultsSql.test.ts and resolutionPrivateResults.test.ts.
+const resolutionPayload = {
+  schema_version: 1, tool_name: 'qualify_resolution', status: 'complete',
+  summary: 'Qualification de l’instantané fourni uniquement. Faits externes non vérifiés ; actions externes réalisées : 0.', sources: [],
+  details: { content_kind: 'resolution_qualification', verification_status: 'unverified', source_text_trust: 'untrusted_data',
+    provenance: 'caller_supplied_snapshot', qualification_only: true, external_facts_verified: false,
+    permissions_granted: false, external_actions_performed: 0, report_truncated: false,
+    snapshot: { caseId: 'case-🌍', snapshotRevision: 3, asOf: '2026-11-26T12:00:00Z' },
+    sections: [ ['dependencies', 'Prérequis'], ['transitions', 'Transitions'], ['effort', 'Effort choisi'],
+      ['corrections', 'Conséquences d’une correction'], ['occurrence', 'Récurrence et reprises'], ['handoffs', 'Passation'] ]
+      .map(([id, title]) => ({ id, title, availability: 'not_provided', summary: 'Aucune information fournie pour cette rubrique.', items: [] })),
+    supplied_references: [], rejected_source_ids: [],
+  },
+};
+const resolutionRpc = async (client, runId, payload = resolutionPayload, operation = `${runId}:0`) =>
+  (await client.query(reportSql, [owner, agentType, runId, operation, 'qualify_resolution', JSON.stringify(payload)])).rows[0].id;
+
+test('two simultaneous resolution deliveries reconcile one immutable result after the parent lock', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]);
+  const runId = await run(), gate = await connect('resolution_gate');
+  const first = await service('resolution_first'), second = await service('resolution_second');
+  let calls = [];
+  try {
+    await gate.query('BEGIN'); await gate.query('SELECT id FROM purama_ai.karta_runs WHERE id=$1 FOR UPDATE', [runId]);
+    calls = [settle(resolutionRpc(first, runId)), settle(resolutionRpc(second, runId, Object.fromEntries(Object.entries(resolutionPayload).reverse())))];
+    await waitForBlocked([first, second]); await gate.query('COMMIT');
+    const outcomes = await Promise.all(calls);
+    assert(outcomes.every(outcome => outcome.ok)); assert.equal(outcomes[0].id, outcomes[1].id);
+    assert.deepEqual(await rows(), [{ id: outcomes[0].id, payload: resolutionPayload }]);
+    await admin.query("UPDATE purama_ai.karta_runs SET status='success',duration_ms=1,finished_at=now() WHERE id=$1", [runId]);
+    assert.equal(await resolutionRpc(first, runId), outcomes[0].id);
+    refused(await settle(resolutionRpc(second, runId, { ...resolutionPayload, summary: 'Divergent qualification' })));
+  } finally {
+    await gate.query('ROLLBACK').catch(() => {}); await Promise.all(calls);
+    await Promise.all([first, second, gate].map(close));
+  }
+});
+
+test('resolution insertion rechecks tool revocation committed during its agent lock wait', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]);
+  const runId = await run(), gate = await connect('resolution_revoke'), caller = await service('resolution_revoked');
+  let late;
+  try {
+    await gate.query('BEGIN'); await gate.query("UPDATE purama_ai.creator_agents SET tools_enabled='{}' WHERE id=$1", [agent]);
+    late = settle(resolutionRpc(caller, runId)); await waitForBlocked([caller]); await gate.query('COMMIT');
+    refused(await late); assert.deepEqual(await rows(), []);
+  } finally {
+    await gate.query('ROLLBACK').catch(() => {}); if (late) await late;
+    await Promise.all([caller, gate].map(close));
+  }
+});
+
+test('native resolution JSONB preserves internal spaces and exact UTF-8 size boundary', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]);
+  const runId = await run(), caller = await service('resolution_boundary'), payload = structuredClone(resolutionPayload);
+  const section = payload.details.sections[0]; section.availability = 'provided'; section.summary = 'Texte fourni non vérifié';
+  section.items = Array.from({ length: 8 }, () => 'x');
+  let remaining = 61_440 - Buffer.byteLength(JSON.stringify(payload));
+  for (let index = 0; index < section.items.length; index++) { const amount = Math.min(8_191, remaining); section.items[index] += ' '.repeat(amount); remaining -= amount; }
+  assert.equal(remaining, 0); assert.equal(Buffer.byteLength(JSON.stringify(payload)), 61_440);
+  try {
+    const id = await resolutionRpc(caller, runId, payload); assert.deepEqual(await rows(), [{ id, payload }]);
+    assert((await admin.query('SELECT octet_length(payload::text) AS bytes FROM purama_ai.karta_tool_results')).rows[0].bytes <= 65_536);
+    section.items[0] = 'é' + section.items[0].slice(1);
+    refused(await settle(resolutionRpc(caller, runId, payload, `${runId}:1`)));
+  } finally { await close(caller); }
 });

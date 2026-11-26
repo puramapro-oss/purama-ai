@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { PGlite } from "@electric-sql/pglite";
+import { qualifyResolution, type ResolutionInput } from "../src/lib/resolution-qualification.js";
 import { normalizeModelUsage } from "../src/claude/usage.js";
 import { projectPrivateToolResult, type PrivateToolResultPayload } from "../src/engine/private-tool-results.js";
 import { simulateQuantumCircuit } from "../src/quantum/simulator.js";
@@ -89,6 +90,11 @@ beforeAll(async () => {
   const reports = await readFile(new URL("../migrations/034_programmatic_private_reports.sql", import.meta.url), "utf8");
   await db.exec(reports);
   await db.exec(reports);
+  const previousRpc = (await db.query<{ definition: string }>("SELECT pg_get_functiondef('purama_ai.karta_store_tool_result(uuid,text,uuid,text,text,jsonb)'::regprocedure) AS definition")).rows[0].definition;
+  const resolution = await readFile(new URL("../migrations/036_resolution_private_results.sql", import.meta.url), "utf8");
+  await db.exec(resolution);
+  await db.exec(resolution);
+  expect((await db.query<{ definition: string }>("SELECT pg_get_functiondef('purama_ai.karta_store_tool_result(uuid,text,uuid,text,text,jsonb)'::regprocedure) AS definition")).rows[0].definition).toBe(previousRpc);
 });
 
 describe("complete programmatic reports — existing private SQL delivery", () => {
@@ -379,5 +385,106 @@ describe("private result migration — actual PostgreSQL SQL", () => {
     if (parent === "agent") await db.query("DELETE FROM purama_ai.creator_agents WHERE id=$1", [agent]);
     if (parent === "run") await db.query("DELETE FROM purama_ai.karta_runs WHERE id=$1", [runId]);
     expect((await rows()).rows).toHaveLength(0);
+  });
+});
+
+describe("resolution qualification — complete existing private SQL delivery", () => {
+  const input = (): ResolutionInput => ({ caseId: "case-🌍", snapshotRevision: 3, asOf: "2026-11-26T12:00:00Z", domains: ["A"],
+    sources: [
+      { id: "reference", caseId: "case-🌍", snapshotRevision: 3, subjectId: "requirement", kind: "requirement", reference: 'Document supplied <script>alert(1)</script> https://unverified.invalid/a  b', observedAt: "2026-11-25T12:00:00+01:00" },
+      { id: "rejected", caseId: "case-🌍", snapshotRevision: 3, subjectId: "requirement", kind: "satisfaction", reference: "Date impossible retained", observedAt: "2026-02-30T12:00:00Z" },
+    ], dependencies: [], transitions: [], effort: { paused: false, steps: [] }, corrections: [], handoffs: [],
+    occurrence: { requested: "new_episode", current: { episodeId: "episode", operationId: "operation", payloadHash: "hash", beneficiaryId: "person", objectId: "object", periodId: "period", engagementId: "engagement", territory: "FR" }, attemptLimit: 3, revoked: false },
+  });
+  const resolution = () => projectPrivateToolResult("qualify_resolution", qualifyResolution(input()))!;
+  beforeEach(async () => { await db.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['qualify_resolution'] WHERE id=$1", [agent]); });
+
+  it("round-trips all six sections and full supplied references, using owner RLS and no trace payload", async () => {
+    const runId = await run(), data = resolution(), id = await store(runId, { tool: "qualify_resolution", data });
+    const stored = (await db.query("SELECT id,run_id,creator_agent_id,user_id,tool_name,payload,created_at::text AS created_at FROM purama_ai.karta_tool_results WHERE id=$1", [id])).rows[0];
+    const display = parsePrivateToolResult(stored, owner, agent)!;
+    expect(display.payload.resolution).toMatchObject({ snapshot: { caseId: "case-🌍", snapshotRevision: 3, asOf: input().asOf }, supplied_references: input().sources, rejected_source_ids: ["rejected"] });
+    expect(display.payload.resolution?.sections).toHaveLength(6);
+    expect(display.payload.resolution?.sections.every(section => section.availability === "provided")).toBe(true);
+    expect(display.payload.sources).toEqual([]); expect(display.payload).not.toHaveProperty("details");
+    expect((await db.query("SELECT tools_used,result_summary FROM purama_ai.karta_runs WHERE id=$1", [runId])).rows).toEqual([{ tools_used: [], result_summary: null }]);
+    await role("authenticated", otherOwner); expect((await rows()).rows).toHaveLength(0);
+    await role("authenticated", owner); expect((await rows()).rows).toHaveLength(1);
+  });
+
+  it("reconciles unchanged JSONB after closure and revocation, refuses divergence and never recreates owner deletion", async () => {
+    const runId = await run(), data = resolution(), id = await store(runId, { tool: "qualify_resolution", data });
+    await finish(runId); await db.query("UPDATE purama_ai.creator_agents SET is_active=false,tools_enabled='{}' WHERE id=$1", [agent]);
+    expect(await store(runId, { tool: "qualify_resolution", data: Object.fromEntries(Object.entries(data).reverse()) })).toBe(id);
+    await expect(store(runId, { tool: "qualify_resolution", data: { ...data, summary: "Different qualification" } })).rejects.toThrow("Private result unavailable");
+    await role("authenticated", owner); expect((await remove(id)).rows).toEqual([{ id }]);
+    await role("service_role"); await expect(store(runId, { tool: "qualify_resolution", data })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(0);
+  });
+
+  it.each([{ mode: "simulation" }, { mock: true }, { userId: otherOwner }, { type: `custom:${otherAgent}` }, { status: "success", duration: 1 }])(
+    "refuses wrong parent or non-live execution (%#)", async options => {
+      const runId = await run(options); await expect(store(runId, { tool: "qualify_resolution", data: resolution() })).rejects.toThrow("Private result unavailable");
+    },
+  );
+  it.each(["is_active=false", "karta_enabled=false", "tools_enabled='{}'", "tools_enabled=ARRAY['programmatic_report']", "tools_enabled=NULL"])(
+    "rechecks owned agent eligibility: %s", async assignment => {
+      await db.query(`UPDATE purama_ai.creator_agents SET ${assignment} WHERE id=$1`, [agent]);
+      await expect(store(await run(), { tool: "qualify_resolution", data: resolution() })).rejects.toThrow("Private result unavailable");
+    },
+  );
+  it("accepts an exactly matched executing approval, reconciles after completion, and rejects a foreign approval", async () => {
+    const runId = await run({ status: "awaiting_approval", duration: 1 }), data = resolution();
+    const operation = await pending(runId, { tool: "qualify_resolution" });
+    const id = await store(runId, { operation, tool: "qualify_resolution", data });
+    await db.query("UPDATE purama_ai.karta_pending_actions SET status='executed',resolved_at=now() WHERE id=$1", [operation]);
+    expect(await store(runId, { operation, tool: "qualify_resolution", data })).toBe(id);
+    const foreign = await pending(runId, { tool: "qualify_resolution", userId: otherOwner });
+    await expect(store(runId, { operation: foreign, tool: "qualify_resolution", data })).rejects.toThrow("Private result unavailable");
+  });
+
+  it.each([
+    (d: Record<string, unknown>) => { d.external_facts_verified = true; },
+    (d: Record<string, unknown>) => { d.permissions_granted = true; },
+    (d: Record<string, unknown>) => { d.external_actions_performed = 1; },
+    (d: Record<string, unknown>) => { d.report_truncated = true; },
+    (d: Record<string, unknown>) => { d.rejected_source_ids = []; },
+    (d: Record<string, unknown>) => { d.rejected_source_ids = ["rejected", "rejected"]; },
+    (d: Record<string, unknown>) => { (d.sections as unknown[]).reverse(); },
+    (d: Record<string, unknown>) => { (d.sections as unknown[]).pop(); },
+    (d: Record<string, unknown>) => { (d.sections as Record<string, unknown>[])[0].items = Array.from({ length: 2049 }, () => "x"); },
+    (d: Record<string, unknown>) => { (d.sections as Record<string, unknown>[])[0].items = ["🌍".repeat(4097)]; },
+    (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).caseId = "🌍".repeat(81); },
+    (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).asOf = "2026-02-30T12:00:00Z"; },
+    (d: Record<string, unknown>) => { (d.snapshot as Record<string, unknown>).asOf = "2026-11-26T12:00:00+14:01"; },
+    (d: Record<string, unknown>) => { (d.supplied_references as Record<string, unknown>[])[0].extra = "not allowed"; },
+    (d: Record<string, unknown>) => { (d.supplied_references as Record<string, unknown>[]).push({ ...(d.supplied_references as Record<string, unknown>[])[0] }); },
+  ])("SQL refuses tampered or oversized qualification fields (%#)", async change => {
+    const data = resolution(); change(data.details);
+    await expect(store(await run(), { tool: "qualify_resolution", data })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(0);
+  });
+
+  it.each(["2026-02-30T12:00:00Z", "2026-11-26T12:00:00+15:00", "2026-11-27T00:00:00Z", "invalid-date-00000000"])(
+    "retains invalid or future observation as supplied rejected data: %s", async observedAt => {
+      const value = input(); value.sources[0].observedAt = observedAt;
+      const data = projectPrivateToolResult("qualify_resolution", qualifyResolution(value))!;
+      await store(await run(), { tool: "qualify_resolution", data });
+      expect((await rows()).rows[0].payload.details.rejected_source_ids).toEqual(["reference", "rejected"]);
+      expect((await rows()).rows[0].payload.details.supplied_references).toEqual(value.sources);
+    },
+  );
+
+  it("matches exact compact UTF-8 bound without deleting spaces from supplied text", async () => {
+    const data = resolution(), section = (data.details.sections as Record<string, unknown>[])[0];
+    const items = Array.from({ length: 8 }, () => "x"); section.items = items;
+    let remaining = 61_440 - Buffer.byteLength(JSON.stringify(data));
+    for (let index = 0; index < items.length; index++) { const amount = Math.min(8_191, remaining); items[index] += " ".repeat(amount); remaining -= amount; }
+    expect(remaining).toBe(0); expect(Buffer.byteLength(JSON.stringify(data))).toBe(61_440);
+    const runId = await run(); await store(runId, { tool: "qualify_resolution", data });
+    expect((await db.query<{ bytes: number }>("SELECT octet_length(payload::text) AS bytes FROM purama_ai.karta_tool_results")).rows[0].bytes).toBeLessThanOrEqual(65_536);
+    items[0] = "é" + items[0].slice(1);
+    await expect(store(runId, { operation: `${runId}:1`, tool: "qualify_resolution", data })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(1);
   });
 });

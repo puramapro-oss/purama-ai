@@ -1,4 +1,5 @@
 import { isProxy } from "node:util/types";
+import { projectResolutionResult } from "./resolution-result-projection.js";
 import { supabase } from "../db/supabase.js";
 import { QUANTUM_LIMITS } from "../quantum/simulator.js";
 import { bounded } from "../runtime/lifecycle.js";
@@ -6,7 +7,7 @@ import {
   PROGRAMMATIC_REPORT_MAX_UTF16_UNITS, PROGRAMMATIC_REPORT_PROVENANCE, PROGRAMMATIC_REPORT_READ_TOOLS,
 } from "../knowledge/private-result-view.js";
 
-export type PrivateToolResultName = "knowledge_search" | "quantum_simulate" | "programmatic_report";
+export type PrivateToolResultName = "knowledge_search" | "quantum_simulate" | "programmatic_report" | "qualify_resolution";
 export interface PrivateToolResultSource {
   source: "crossref" | "wikidata";
   native_id: string;
@@ -43,7 +44,7 @@ export const PRIVATE_TOOL_RESULT_MAX_BYTES = 65_536;
 const MAX_TOOL_SNAPSHOT_BYTES = 524_288;
 const INVALID_RESULT = "Résultat privé indisponible : format ou identité non vérifiable.";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const names: readonly string[] = ["knowledge_search", "quantum_simulate", "programmatic_report"];
+const names: readonly string[] = ["knowledge_search", "quantum_simulate", "programmatic_report", "qualify_resolution"];
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Obj = { [key: string]: Json };
 const invalid = (): never => { throw new Error(INVALID_RESULT); };
@@ -276,7 +277,8 @@ export function projectPrivateToolResult(toolName: string, result: unknown): Pri
   try {
     const raw = object(snapshot(result));
     const projected = toolName === "knowledge_search" ? projectKnowledge(raw)
-      : toolName === "quantum_simulate" ? projectQuantum(raw) : projectProgrammaticReport(raw);
+      : toolName === "quantum_simulate" ? projectQuantum(raw)
+      : toolName === "qualify_resolution" ? projectResolutionResult(raw) : projectProgrammaticReport(raw);
     // PostgreSQL JSONB renders additional separators. The projected structures
     // have fewer than 3,000 entries; reserve 4 KiB below its 64 KiB text bound.
     if (projected && (projected.summary.length > (toolName === "programmatic_report" ? PROGRAMMATIC_REPORT_MAX_UTF16_UNITS : 4000) ||

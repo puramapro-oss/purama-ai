@@ -199,3 +199,86 @@ describe('panneau de résultats privés', () => {
     expect(props.onRemove).not.toHaveBeenCalled();
   });
 });
+
+function resolutionResult(): PrivateToolResult {
+  const row = result(1, 'Analyse de six rubriques à partir des informations fournies.');
+  row.tool_name = 'qualify_resolution';
+  row.payload.tool_name = 'qualify_resolution';
+  row.payload.sources = [];
+  row.payload.resolution = {
+    snapshot: { caseId: 'dossier-fourni-ancien', snapshotRevision: 3, asOf: '2022-01-10T12:00:00Z' },
+    sections: [
+      { id: 'dependencies', title: 'Prérequis', availability: 'provided', summary: 'Une condition reste à préciser.', items: ['Élément <img src=x> à rapprocher.'] },
+      { id: 'transitions', title: 'Transitions', availability: 'provided', summary: 'Une période reste sans couverture déclarée.', items: ['Couverture réelle non vérifiée.'] },
+      { id: 'effort', title: 'Effort choisi', availability: 'provided', summary: 'Deux minutes choisies.', items: ['Aucun droit supplémentaire.'] },
+      { id: 'corrections', title: 'Conséquences d’une correction', availability: 'provided', summary: 'Un impact demeure inconnu.', items: ['Lien intermédiaire absent.'] },
+      { id: 'occurrence', title: 'Récurrence et reprises', availability: 'not_provided', summary: 'Informations non fournies pour cette rubrique.', items: [] },
+      { id: 'handoffs', title: 'Passation', availability: 'provided', summary: 'Demande préparée ; réalisation non vérifiée.', items: ['Le rôle de parent n’accorde aucun mandat.'] },
+    ],
+    supplied_references: [{ id: 'reference-declaree', caseId: 'autre-dossier', snapshotRevision: 2,
+      subjectId: 'element-fourni', kind: 'authorization',
+      reference: 'javascript:alert(1) <img src=x onerror=alert(1)> REFERENCE_PRIVEE', observedAt: '2026-02-30T12:00:00Z' }],
+    rejected_source_ids: ['reference-declaree'],
+  };
+  return row;
+}
+
+describe('analyse privée de dossier', () => {
+  it('présente les six rubriques et l’instantané fourni sans afficher un objectif atteint', async () => {
+    api.listPrivateToolResults.mockResolvedValue([resolutionResult()]);
+    await render();
+    expect(host.querySelector('h3')?.textContent).toBe('Analyse de dossier');
+    expect(host.textContent).toContain('Analyse disponible');
+    expect(host.textContent).not.toContain('Complet');
+    expect([...host.querySelectorAll('h4')].map(heading => heading.textContent)).toEqual([
+      'Prérequis', 'Transitions', 'Effort choisi', 'Conséquences d’une correction', 'Récurrence et reprises', 'Passation',
+    ]);
+    expect(host.textContent).toContain('dossier-fourni-ancien');
+    expect(host.textContent).toContain('Révision fournie3');
+    expect(host.textContent).toContain('Date de l’instantané fournie');
+    expect(host.querySelector('time[datetime="2022-01-10T12:00:00Z"]')).not.toBeNull();
+    expect(host.textContent).toContain('Enregistrée le');
+    expect(host.querySelector(`time[datetime="${at}"]`)).not.toBeNull();
+    expect(host.textContent).toContain('Informations non fournies');
+    expect(host.textContent).toContain('Les références et les droits restent à vérifier');
+    expect(host.textContent).toContain('aucune démarche extérieure');
+    expect(props.onUseResults).not.toHaveBeenCalled();
+    expect(api.deletePrivateToolResult).not.toHaveBeenCalled();
+  });
+
+  it('conserve les détails et références comme texte déclaré sans lien ni interprétation de date invalide', async () => {
+    api.listPrivateToolResults.mockResolvedValue([resolutionResult()]);
+    await render();
+    expect(host.querySelectorAll('details')).toHaveLength(7);
+    expect(host.querySelector('details')?.open).toBe(false);
+    expect(host.querySelector('details summary')?.textContent).toBe('Contexte et orientations du dossier');
+    expect(host.querySelector('details p')?.textContent).toBe(resolutionResult().payload.summary);
+    expect(host.textContent).toContain('Élément <img src=x> à rapprocher.');
+    expect(host.textContent).toContain('Références fournies (1)');
+    expect(host.textContent).toContain('Non retenue par l’analyse');
+    expect(host.textContent).toContain('Autorisation déclarée');
+    expect(host.textContent).toContain('autre-dossier');
+    expect(host.textContent).toContain('element-fourni');
+    expect(host.textContent).toContain('2026-02-30T12:00:00Z');
+    expect(host.textContent).toContain('javascript:alert(1) <img src=x onerror=alert(1)> REFERENCE_PRIVEE');
+    expect(host.querySelector('img')).toBeNull();
+    expect(host.querySelector('a')).toBeNull();
+    const checkbox = host.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    expect(checkbox?.getAttribute('aria-label')).toContain('analyse de dossier');
+    await act(async () => { checkbox?.click(); });
+    expect(props.onToggle).toHaveBeenCalledExactlyOnceWith(resolutionResult().id);
+    expect(props.onUseResults).not.toHaveBeenCalled();
+  });
+
+  it('retire les références privées immédiatement lors du changement de compte', async () => {
+    const pending = deferred<PrivateToolResult[]>();
+    api.listPrivateToolResults.mockResolvedValueOnce([resolutionResult()]).mockReturnValueOnce(pending.promise);
+    await render();
+    expect(host.textContent).toContain('REFERENCE_PRIVEE');
+    await render({ ownerId: OTHER });
+    expect(host.textContent).not.toContain('REFERENCE_PRIVEE');
+    expect(host.textContent).not.toContain('dossier-fourni-ancien');
+    await act(async () => { pending.resolve([]); });
+    expect(host.textContent).toContain('Aucun résultat privé disponible');
+  });
+});

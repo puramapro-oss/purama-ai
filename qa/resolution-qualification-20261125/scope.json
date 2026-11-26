@@ -1,0 +1,101 @@
+{
+  "base": "dd59dae670db7d3fca0d0b7173ad55aec5d10891",
+  "branch": "feat/iao-resolution-qualification-20261125",
+  "owner": "/root/audit_doublons",
+  "status": "REALISE_ET_TESTE_LOCALEMENT",
+  "authority": "User approved six specializations and fourteen domain mappings; parent reserves this isolated clone.",
+  "files": [
+    "karta/src/lib/resolution-qualification.ts",
+    "karta/src/tools/resolution-qualification.ts",
+    "karta/src/tools/registry.ts",
+    "karta/test/resolutionQualification.test.ts",
+    "karta/test/resolutionQualificationIntegration.test.ts",
+    "qa/resolution-qualification-20261125/README.md",
+    "qa/resolution-qualification-20261125/scope.json",
+    "qa/resolution-qualification-20261125/verification.json",
+    "qa/resolution-qualification-20261125/internal-call.json"
+  ],
+  "boundaries": [
+    "No external effects or network in qualification",
+    "No new engine, memory, scheduler, service or permissions",
+    "No edits to PR121/122 owned runtime files",
+    "No publication, merge or deployment",
+    "Supplied evidence references do not prove external facts or authorization"
+  ],
+  "acceptance": [
+    "Six distinct deterministic qualification outputs",
+    "Unknown dates and costs never become zero or confirmed",
+    "Cycles retain sourced/accepted alternative distinction",
+    "Chosen effort does not confer authorization",
+    "Correction preserves version and external-stage distinction",
+    "New episode, reopening and technical replay remain distinct",
+    "Prepared/transmitted/accepted/performed cannot be advanced without required supplied references, and remain externally unverified",
+    "Existing KARTA entry invoked directly, original tests retained",
+    "Fourteen domain mappings reuse existing product identities"
+  ],
+  "userExposure": "Deferred until the existing private-result pipeline is qualified for this tool; no custom allowlist or UI option changed.",
+  "delivery_20261126": {
+    "status": "PASS_LOCAL_PENDING_REMOTE_CI",
+    "owner": "/root",
+    "authority": "User: Fini tout parfaitement dans les moindre détail; prior explicit approval of the six specializations and fourteen domains retained.",
+    "base_pr_head": "2115e796fb91589324c3d6dbf1fcabf150d59fb7",
+    "consolidation_base": "40e97b0bcf32b3c6ab841126e6436b22d8456d9a",
+    "reconciliation_commit": "ba6495c",
+    "scope": "Complete the existing private-result delivery path for qualify_resolution, without another engine, data store, scheduler, or product identity.",
+    "reservations": {
+      "/root/resolution_backend": [
+        "karta/src/lib/resolution-qualification.ts",
+        "karta/test/resolutionQualification.test.ts",
+        "karta/src/engine/private-tool-results.ts",
+        "karta/src/engine/resolution-result-projection.ts",
+        "karta/src/knowledge/private-result-view.ts",
+        "karta/migrations/036*",
+        "backend projection/reader and SQL validation tests"
+      ],
+      "/root/resolution_interface": [
+        "src/components/karta/PrivateToolResults.tsx",
+        "src/components/karta/PrivateToolResults.test.tsx",
+        "supabase/functions/_shared/private-tool-results.ts",
+        "tests/creator-chat-authorization.test.mjs",
+        "src/lib/private-tool-results.test.ts",
+        "tests/quality/resolution-results.spec.ts"
+      ],
+      "/root/resolution_reception": [
+        "karta/test/resolutionQualificationIntegration.test.ts",
+        "karta/test/privateToolResultsExecution.test.ts",
+        "qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs",
+        "qa/resolution-qualification-20261125/private-resolution-roundtrip.json"
+      ],
+      "/root": [
+        "karta/src/tools/customRegistry.ts",
+        "src/lib/creator-agent.ts",
+        "supabase/functions/creator-agent-generate/index.ts",
+        "karta/test/customRegistry.test.ts",
+        "QA and canonical documentation",
+        "Git reconciliation and qualified publication",
+        "docs/iao-private-results.md",
+        ".github/workflows/purama-chef-hardening.yml",
+        "qa/resolution-qualification-20261125/delivery-verification.json"
+      ]
+    },
+    "acceptance": [
+      "Real tool execution through existing engine persistence",
+      "SQL and account/agent isolation",
+      "Idempotent retries and deletion without resurrection",
+      "Six readable sections with explicit missing inputs and unverified provenance",
+      "Reopen and explicitly select in existing chat",
+      "Cross-account and session isolation",
+      "Desktop/mobile observable UI checks",
+      "Existing private result types remain compatible",
+      "Same PR and same canon updated with exact evidence"
+    ],
+    "boundaries": [
+      "No new permissions or external effects from qualification",
+      "No unverified external source promoted to fact",
+      "No blanket merge of consolidation into main",
+      "No new duplicated production runtime",
+      "No production migration without identifying the current owning environment"
+    ]
+  },
+  "original_reception_note": "Top-level fields preserve the internal qualification receipt of25November; delivery_20261126 is the current follow-up scope."
+}
