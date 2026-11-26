@@ -1,0 +1,32 @@
+[
+  {
+    "relative_path": "final-gate.json",
+    "sha256": "14193ee17b23ecc9550f4c6f47d474c140391f05f15bfd0ebad2f5f26d9e7956",
+    "original_sha256": "14193ee17b23ecc9550f4c6f47d474c140391f05f15bfd0ebad2f5f26d9e7956",
+    "original_bytes": 42368
+  },
+  {
+    "relative_path": "full-karta.json.gz",
+    "sha256": "baa04c6779dca279a9722c1a526e76e176945d5cfbd890c1e86693dfe557f69e",
+    "original_sha256": "fbee5cb25a38fbf0082809e845e7088d8ede577b23b92e21e18ee00c5c44b063",
+    "original_bytes": 2336636
+  },
+  {
+    "relative_path": "full-karta.log.gz",
+    "sha256": "b53806f7e9670c07b3621eba627985ff2f06961e82751fe743e7da9cc2ff37e4",
+    "original_sha256": "170593126c1cab543d8c069f1f914f61c12201323f0b1ebbe10ba47e7b5a3cd9",
+    "original_bytes": 59018
+  },
+  {
+    "relative_path": "node22-download-metadata.json",
+    "sha256": "dd617fba85b052c1f93760cdacd97ad656e69eb35c022191b7181e4e02d90530",
+    "original_sha256": "dd617fba85b052c1f93760cdacd97ad656e69eb35c022191b7181e4e02d90530",
+    "original_bytes": 859
+  },
+  {
+    "relative_path": "checkout-completion.json",
+    "sha256": "d65b84b2ed3c11adab99c718377f65e264f8ee8d696c07bd4cc7a9181336722e",
+    "original_sha256": "d65b84b2ed3c11adab99c718377f65e264f8ee8d696c07bd4cc7a9181336722e",
+    "original_bytes": 268
+  }
+]

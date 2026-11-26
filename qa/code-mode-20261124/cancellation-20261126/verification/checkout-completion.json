@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "sparse-checkout",
+    "disable"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 6.436949874972925,
+  "stdout": "",
+  "stderr": "",
+  "reason": "Complete same pinned baseline so full KARTA tests can load migrations and shared handlers."
+}

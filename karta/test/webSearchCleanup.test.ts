@@ -34,6 +34,34 @@ function failingResponse(kind: "oversized" | "HTTP error", cancel: () => Promise
 }
 
 describe("web_search response cleanup does not block confirmed failures", () => {
+  it.each(["resolve", "reject"] as const)("cancels a body on parent interruption without waiting for cleanup to %s", async settlement => {
+    const parent = new AbortController();
+    const cleanup = deferredCancellation();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) { controller.enqueue(new TextEncoder().encode("{")); }, cancel: cleanup.cancel,
+    });
+    fetchMock.mockResolvedValue(new Response(stream));
+    let outcome: unknown;
+    const pending = webSearchTool.execute({ query: "public query" }, { ...ctx, signal: parent.signal })
+      .then(value => { outcome = value; }, error => { outcome = error; });
+    try {
+      await vi.advanceTimersByTimeAsync(0);
+      parent.abort(new Error(privateDetail));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe("Recherche Tavily indisponible : réponse invalide ou délai dépassé.");
+      expect(cleanup.cancel).toHaveBeenCalledOnce();
+      expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(true);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      await vi.advanceTimersByTimeAsync(30_000);
+      if (settlement === "resolve") cleanup.resolve(); else cleanup.reject(new Error(privateDetail));
+      await pending;
+    }
+    expect(String(outcome)).not.toContain(privateDetail);
+    expect(stream.locked).toBe(false);
+  });
+
   for (const kind of ["oversized", "HTTP error"] as const) {
     it.each(["resolve", "reject"] as const)(`${kind}: settles before a pending cancel later %ss`, async (settlement) => {
       const cleanup = deferredCancellation();

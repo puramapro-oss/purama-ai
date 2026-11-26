@@ -1,0 +1,146 @@
+{
+  "base_commit": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "branch": "fix/iao-tool-cancellation-20261126",
+  "generated_at_utc": "2026-11-26T04:38:09.866139+00:00",
+  "patch_sha256": "24406101dfe51d7f4b2cbfd5b0133ac6c76654ed97dac9d9c91c9ee24bd1f4cb",
+  "patch": "/tmp/purama-iao-control-n7l8kL47/cancellation-final.patch",
+  "files": {
+    "karta/src/engine/types.ts": {
+      "bytes": 7159,
+      "sha256": "9a350e2ae48b7bb83c8fa1c79b2238ddbc963a44578171f47e63a0623ae906a6"
+    },
+    "karta/src/engine/loop.ts": {
+      "bytes": 36159,
+      "sha256": "e4ed21d3501b1c327f1654a85825d215d7c9438acb10022475e0ccd438ef4733"
+    },
+    "karta/src/tools/websearch.ts": {
+      "bytes": 16133,
+      "sha256": "cf11bf16d09199e2f5743f3cb633b659e43c11457fbce3a1a027a391252f5978"
+    },
+    "karta/src/tools/knowledge-search.ts": {
+      "bytes": 2056,
+      "sha256": "5dd714bc8be17d53872af22f57359fc27193ec2ac91a4ccdf8497e71edfd209a"
+    },
+    "karta/src/knowledge/public-search.ts": {
+      "bytes": 21507,
+      "sha256": "004c3047e352cfb0a9d938fac1baec452d374b3b505f37dfb71e577165b98883"
+    },
+    "karta/test/loopProgrammaticReads.test.ts": {
+      "bytes": 37065,
+      "sha256": "6c91508be0fbb6b0e0b7945d3b4bc26fa1547957cc6e3c4c1131ca59480d69f5"
+    },
+    "karta/test/webSearchTransportIntegrity.test.ts": {
+      "bytes": 7235,
+      "sha256": "ad97db3f9b72bd37f94e5bf8d2d42b55339ea99873e2304e317229b85cb7a4f1"
+    },
+    "karta/test/webSearchCleanup.test.ts": {
+      "bytes": 7988,
+      "sha256": "79e082d85e4b97e2322ea107e653e44129e7f25ae2a32f95d9dc2a350081ea01"
+    },
+    "karta/test/knowledgeSearch.test.ts": {
+      "bytes": 28645,
+      "sha256": "0226837b7925bfc7b286cca2f98642f21d542b6ac5ebb248721ebf90278d4c60"
+    },
+    "karta/test/readToolCancellationHttp.test.ts": {
+      "bytes": 5953,
+      "sha256": "d3f6ee161cb53e65f944e742970f82d782d72157abedf0f0fdaf48b4b05eba51"
+    }
+  },
+  "reports": [
+    {
+      "report": "/tmp/purama-iao-control-n7l8kL47/cancellation-final-before.json",
+      "log": "/tmp/purama-iao-control-n7l8kL47/cancellation-final-before.log",
+      "exit_code": 1,
+      "sha256": "e6f3fb4dbb388d8e63953d4c8fea0b1c17d84f6c223ba84b89fbb0bdad839001",
+      "total": 166,
+      "passed": 145,
+      "failed": 21,
+      "pending": 0,
+      "harness_errors": 0,
+      "files": [
+        {
+          "name": "knowledgeSearch.test.ts",
+          "total": 60,
+          "passed": 53,
+          "failed": 7
+        },
+        {
+          "name": "loopProgrammaticReads.test.ts",
+          "total": 79,
+          "passed": 75,
+          "failed": 4
+        },
+        {
+          "name": "readToolCancellationHttp.test.ts",
+          "total": 6,
+          "passed": 2,
+          "failed": 4
+        },
+        {
+          "name": "webSearchCleanup.test.ts",
+          "total": 11,
+          "passed": 9,
+          "failed": 2
+        },
+        {
+          "name": "webSearchTransportIntegrity.test.ts",
+          "total": 10,
+          "passed": 6,
+          "failed": 4
+        }
+      ]
+    },
+    {
+      "report": "/tmp/purama-iao-control-n7l8kL47/cancellation-final-after.json",
+      "log": "/tmp/purama-iao-control-n7l8kL47/cancellation-final-after.log",
+      "exit_code": 0,
+      "sha256": "937ef87cc206dcd1068ff72b5f152c1bd1643442cae323c9c96a6140c01a0695",
+      "total": 166,
+      "passed": 166,
+      "failed": 0,
+      "pending": 0,
+      "harness_errors": 0,
+      "files": [
+        {
+          "name": "knowledgeSearch.test.ts",
+          "total": 60,
+          "passed": 60,
+          "failed": 0
+        },
+        {
+          "name": "loopProgrammaticReads.test.ts",
+          "total": 79,
+          "passed": 79,
+          "failed": 0
+        },
+        {
+          "name": "readToolCancellationHttp.test.ts",
+          "total": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        {
+          "name": "webSearchCleanup.test.ts",
+          "total": 11,
+          "passed": 11,
+          "failed": 0
+        },
+        {
+          "name": "webSearchTransportIntegrity.test.ts",
+          "total": 10,
+          "passed": 10,
+          "failed": 0
+        }
+      ]
+    }
+  ],
+  "cleanup_finding_reproduction": "/tmp/purama-iao-control-n7l8kL47/cancellation-cleanup-before.json",
+  "node": "v24.22.3",
+  "vitest": "5.0.3",
+  "limits": [
+    "No external provider called",
+    "No production deployment",
+    "No whole KARTA gate or build in this child task",
+    "Only five source files and five test files changed by child"
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-11-26",
+  "scope": "Read-only diagnosis of the Android network preflight; no new test run or product correction",
+  "source": {
+    "repository": "puramapro-oss/purama-ai",
+    "previous_head": "40e97b0bcf32b3c6ab841126e6436b22d8456d9a",
+    "head": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "compare_commits": 3,
+    "compare_files": 32,
+    "mobile_files_changed": false,
+    "change_scope": "PR123 private resolution qualification, SQL projection, result interface and explicit chat selection"
+  },
+  "ci": {
+    "head_workflows_success": 7,
+    "head_workflows_failure": 1,
+    "run_id": 45733255220,
+    "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220",
+    "run_attempt": 1,
+    "workflow": "Native accessibility watch verification",
+    "job_id": 139620222818,
+    "job": "android-network",
+    "job_conclusion": "failure",
+    "failed_step_number": 6,
+    "failed_step": "Verify network preparation before compiling the application",
+    "step_started_at_utc": "2026-11-26T01:05:24Z",
+    "step_completed_at_utc": "2026-11-26T01:07:26Z",
+    "preparation_unit_tests_passed_before_emulator": 56,
+    "script_exit_code": 23,
+    "apple_job_conclusion": "success",
+    "android_native_job_conclusion": "skipped",
+    "checkout_sha": "27361dbda2d360db1d82be0b03f411fd670614f4",
+    "checkout_tree": "ae5d147a47012799caa1822be4d327767a215b82"
+  },
+  "artifact": {
+    "id": 15077034379,
+    "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220/artifacts/15077034379",
+    "zip_bytes": 113176,
+    "zip_sha256": "bdb21c2699f25eb6467c2645ee563061d47c4325e048ab6c20dad536be99165f",
+    "sha256_matches_ci_upload_log": true,
+    "all_zip_entries_crc_verified": true,
+    "download_count_this_diagnosis": 1,
+    "local_evidence_directory_on_mac": "/tmp/purama-native-diagnostic-20261126-8xim2vcz"
+  },
+  "observation": {
+    "run_id": "5ea49ac3-b9c2-4b3b-85bb-5a93196150b5",
+    "receipt": "network-preparation/receipt.json",
+    "status": "FAIL",
+    "reason": "data_subscription_not_ready",
+    "started_at_utc": "2026-11-26T01:06:51.117105+00:00",
+    "finished_at_utc": "2026-11-26T01:07:23.244986+00:00",
+    "elapsed_seconds": 32.127908,
+    "data_readiness_budget_seconds": 30,
+    "data_readiness_observations": 28,
+    "all_observations_same_subscription_state": true,
+    "default_data_sub_id": -1,
+    "active_data_sub_id": -1,
+    "general_default_sub_id": 1,
+    "active_modem_count": 1,
+    "logical_slot_to_subscription": {
+      "0": 1
+    },
+    "sim_state": "LOADED",
+    "all_subscriptions_loaded": true,
+    "device_provisioned": "1",
+    "mobile_data": "1",
+    "mobile_data1": "null",
+    "multi_sim_data_call": "null",
+    "airplane_mode_on": "0",
+    "wifi_on": "1",
+    "emulator_verified": true,
+    "mutation_attempted": false,
+    "network_verified": false,
+    "final_read_only_inspection_same_subscription_state": true,
+    "interpretation": "The emulator exposes a loaded mapped SIM but never selects a DATA default during the observed interval. The parser correctly refuses this state; no IAO regression or missing SIM is established."
+  },
+  "emulator_image": {
+    "api_level": 35,
+    "revision": 9,
+    "tag": "google_apis",
+    "abi": "x86_64",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:15/AE3A.240806.043/12960925:userdebug/dev-keys",
+    "cmd_phone_help_in_artifact": false
+  },
+  "primary_source_review": {
+    "tag": "android-15.0.0_r1",
+    "binary_identity_with_emulator_not_claimed": true,
+    "telephony_shell_command_url": "https://android.googlesource.com/platform/packages/services/Telephony/+/refs/tags/android-15.0.0_r1/src/com/android/phone/TelephonyShellCommand.java",
+    "telephony_shell_command_sha256": "6e1cf680a96dcf861d918ce02a75137a0f81fdcb6c1f623e6c6c6dde5105389b",
+    "cmd_phone_data_modes": [
+      "enable",
+      "disable"
+    ],
+    "cli_default_data_setter_established": false,
+    "subscription_manager_url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-15.0.0_r1/telephony/java/android/telephony/SubscriptionManager.java",
+    "subscription_manager_sha256": "7350db796916acf0feb0e88ce0662b1a117d55fcbdc30b04965a040bf148284a",
+    "platform_setter": "android.telephony.SubscriptionManager#setDefaultDataSubId(int)",
+    "platform_setter_annotations": [
+      "SystemApi",
+      "hide"
+    ],
+    "platform_setter_required_permission": "android.permission.MODIFY_PHONE_STATE",
+    "subscription_service_url": "https://android.googlesource.com/platform/frameworks/opt/telephony/+/refs/tags/android-15.0.0_r1/src/java/com/android/internal/telephony/subscription/SubscriptionManagerService.java",
+    "subscription_service_sha256": "a77e8c402d86b8647d432ef754bd9ec50e9473efdbeb3d1cffe9a8ff0b775c73",
+    "direct_setting_write_equivalence_not_established": true,
+    "existing_mobile_initializer_found_in_bounded_search": false
+  },
+  "continuity": {
+    "pr6_head_is_ancestor": true,
+    "pr39_head_is_ancestor": true,
+    "pr7_head_is_ancestor": false,
+    "pr18_head_is_ancestor": false,
+    "pr121_head_is_ancestor": false,
+    "non_ancestor_does_not_exclude_cherry_picked_changes": true
+  },
+  "remaining": [
+    "Qualify the Settings flow and visible targets on a disposable API35 emulator matching the CI image; this environment is not installed on the inspected Mac.",
+    "Before any preparation-symbol edit, run GitNexus impact on Preparation.execute, Preparation.wait_for_data_subscription and Preparation.run.",
+    "If the normal UI path is confirmed, test unknown or multiple subscriptions, absent Settings activity, ambiguous control, timeout, failed selection and receipt preservation in mobile/tests/watch-native/offline-preparation.test.cjs.",
+    "Retain the original defaultDataSubId guard and independent offline observer; do not certify isolation from Settings interaction alone.",
+    "Do not infer full Android or production qualification from the 56 preparatory unit tests."
+  ],
+  "actions_this_diagnosis": {
+    "product_code_modified": false,
+    "device_radio_modified": false,
+    "personal_device_used": false,
+    "hidden_api_bypass": false,
+    "telephony_database_modified": false,
+    "guard_relaxed": false,
+    "ci_dispatched": false,
+    "published": false
+  },
+  "followup_environment": {
+    "mac_tooling_inspected_read_only": true,
+    "adb_present": true,
+    "emulator_binary_present": true,
+    "adb_server_already_running": true,
+    "adb_connected_devices": 0,
+    "running_emulators": 0,
+    "existing_avd": {
+      "name": "Pixel_8_2",
+      "api": "37.1",
+      "tag": "google_apis_playstore",
+      "abi": "arm64-v8a",
+      "started_or_modified": false
+    },
+    "installed_image_api35_x86_64_available": false,
+    "ownership_search": "Bounded LOCKS.md inspection found a historical closed mobile-network claim and a later owner limited to documentary reception; this does not establish ownership of every active branch."
+  },
+  "settings_flow_review": {
+    "status": "SOURCE_SUPPORTED_CANDIDATE_NOT_RUNTIME_QUALIFIED",
+    "public_entry": "android.settings.NETWORK_OPERATOR_SETTINGS",
+    "public_subscription_extra": "android.provider.extra.SUB_ID",
+    "entry_documentation": "https://developer.android.com/reference/android/provider/Settings#ACTION_NETWORK_OPERATOR_SETTINGS",
+    "aosp_exported_activity": "com.android.settings.Settings$MobileNetworkActivity",
+    "controller": "MobileDataPreferenceController.setChecked",
+    "utility": "MobileNetworkUtils.setMobileDataEnabled",
+    "platform_user_action": "TelephonyManager.setDataEnabledForReason(DATA_ENABLED_REASON_USER, enabled)",
+    "platform_selection": "MultiSimSettingController.onUserDataEnabled selects an active non-opportunistic subscription when enabled and selection is requested.",
+    "possible_observation_driven_flow": "Resolve the Settings activity for the freshly observed mapped subscription; inspect the actual Mobile data control and state; perform the necessary user-interface transition on a disposable emulator; reread isub until the original DATA guard passes, otherwise fail.",
+    "limitations": [
+      "Activity resolution and visible controls were not executed on the CI image.",
+      "A click or successful launch is not proof of DATA selection.",
+      "The existing Mac AVD is API37.1, not the CI API35 image.",
+      "No blind coordinates, ambiguous target selection or hidden API call is proposed."
+    ],
+    "sources": [
+      {
+        "url": "https://android.googlesource.com/platform/packages/apps/Settings/+/refs/tags/android-15.0.0_r1/AndroidManifest.xml",
+        "sha256": "79f830779f6d2317dfc97a658d7c1d71ea2b71397bc7b20b6a6a066807ff22ae"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/packages/apps/Settings/+/refs/tags/android-15.0.0_r1/src/com/android/settings/network/telephony/MobileDataPreferenceController.java",
+        "sha256": "888919f0484d2ea0c33e8c9507053b818cd8ea98da6d57b7ca0ebaadacae7ded"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/packages/apps/Settings/+/refs/tags/android-15.0.0_r1/src/com/android/settings/network/telephony/MobileNetworkUtils.java",
+        "sha256": "d01b334d7b508e24032745ee162db01a06f1f8beba085e7fba33f466a8ba8150"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/opt/telephony/+/refs/tags/android-15.0.0_r1/src/java/com/android/internal/telephony/MultiSimSettingController.java",
+        "sha256": "bebee0bad777758b8fc06595adb61a249c2125c338af7b0c3e52778ce186f19c"
+      },
+      {
+        "url": "https://android.googlesource.com/platform/frameworks/opt/telephony/+/refs/tags/android-15.0.0_r1/src/java/com/android/internal/telephony/data/DataSettingsManager.java",
+        "sha256": "e5d01b2f7731b2164566ad0cf8927dcea4b209a2d294cdf39d3791409726cee3"
+      }
+    ]
+  }
+}

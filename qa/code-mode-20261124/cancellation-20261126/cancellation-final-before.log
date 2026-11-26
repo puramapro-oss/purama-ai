@@ -1,0 +1,604 @@
+
+ RUN  v5.0.3 /tmp/purama-iao-control-n7l8kL47/cancellation-baseline-final-kvpt66oi/karta
+
+ ❯ test/readToolCancellationHttp.test.ts (6 tests | 4 failed) 6109ms
+   ❯ public read cancellation over real loopback HTTP (6)
+     ✓ keeps an uncancelled web response usable 50ms
+     ✓ keeps an uncancelled knowledge response usable 16ms
+     × closes the real web headers transport when its parent is cancelled 1507ms
+     × closes the real web body transport when its parent is cancelled 1508ms
+     × closes the real knowledge headers transport when its parent is cancelled 1518ms
+     × closes the real knowledge body transport when its parent is cancelled 1508ms
+ ❯ test/knowledgeSearch.test.ts (60 tests | 7 failed) 100ms
+   ✓ knowledge_search provenance and engine outcomes (7)
+     ✓ retrieves only bounded metadata at fixed endpoints without redirects or credentials 22ms
+     ✓ does not fetch in simulation, and does not let the engine report it executed 2ms
+     ✓ preserves usable partial metadata while failing closed for the engine 2ms
+     ✓ distinguishes complete empty search from total unavailability 2ms
+     ✓ preserves date precision and rejects impossible or invented publication dates 1ms
+     ✓ ignores provider navigation URLs, abstracts and full text rather than following them 1ms
+     ✓ groups exact duplicate identifiers but keeps conflicting metadata visible 1ms
+   ✓ knowledge_search snapshots and admission (28)
+     ✓ rejects invalid request 0 before network 1ms
+     ✓ rejects invalid request 1 before network 1ms
+     ✓ rejects invalid request 2 before network 1ms
+     ✓ rejects invalid request 3 before network 1ms
+     ✓ rejects invalid request 4 before network 0ms
+     ✓ rejects invalid request 5 before network 0ms
+     ✓ rejects invalid request 6 before network 0ms
+     ✓ rejects invalid request 7 before network 0ms
+     ✓ rejects invalid request 8 before network 0ms
+     ✓ rejects invalid request 9 before network 0ms
+     ✓ rejects invalid request 10 before network 0ms
+     ✓ rejects invalid request 11 before network 0ms
+     ✓ rejects invalid request 12 before network 0ms
+     ✓ rejects invalid request 13 before network 0ms
+     ✓ rejects invalid request 14 before network 0ms
+     ✓ rejects invalid request 15 before network 0ms
+     ✓ rejects invalid request 16 before network 1ms
+     ✓ rejects invalid request 17 before network 0ms
+     ✓ rejects invalid request 18 before network 0ms
+     ✓ rejects invalid request 19 before network 0ms
+     ✓ rejects invalid request 20 before network 1ms
+     ✓ does not invoke object or array getters or proxy traps 1ms
+     ✓ rejects hidden, symbolic, sparse and custom-array properties 1ms
+     ✓ copies all parameters before either provider can mutate the caller object 1ms
+     ✓ enforces one in-flight request and a post-response cooldown with no hidden queue 2ms
+     ✓ honors Retry-After 2 without automatic retries 2ms
+     ✓ honors Retry-After Thu, 12 Nov 2026 12:00:02 GMT without automatic retries 4ms
+     ✓ recognizes Wikidata maxlag even with HTTP 200 1ms
+   ❯ knowledge_search transport boundaries (25)
+     × rejects a cancelled parent before any provider admission without disclosing its reason 8ms
+     × keeps a non-cooperative source reserved after cancellation until the transport settles 5ms
+     × interrupts a response body and does not return partial metadata after cancellation 2ms
+     × keeps a source reserved until its cancelled body cleanup actually resolves 2ms
+     × keeps a source reserved until its cancelled body cleanup actually rejects 1ms
+     × checks parent cancellation at the final multi-source handoff 2ms
+     × removes source listeners after success without retroactively aborting completed transports 2ms
+     ✓ rechecks the deadline after Promise.race adopts a result at 1999 ms 1ms
+     ✓ rechecks the deadline after Promise.race adopts a result at 2000 ms 1ms
+     ✓ rechecks the deadline after Promise.race adopts a result at 2001 ms 1ms
+     ✓ keeps HTTP 429 backoff when headers arrive at 2000 ms without accepting the late response 1ms
+     ✓ keeps HTTP 429 backoff when headers arrive at 2001 ms without accepting the late response 1ms
+     ✓ keeps HTTP 503 backoff when headers arrive at 2000 ms without accepting the late response 2ms
+     ✓ keeps HTTP 503 backoff when headers arrive at 2001 ms without accepting the late response 2ms
+     ✓ keeps HTTP 429 backoff received after the timeout result has returned 3ms
+     ✓ keeps HTTP 503 backoff received after the timeout result has returned 1ms
+     ✓ times out a stalled body and cancels its reader 1ms
+     ✓ holds admission after a non-cooperative fetch times out and cancels its late response 1ms
+     ✓ rejects an oversized stream and cancels it without waiting for its producer 1ms
+     ✓ rejects malformed metadata or transport #0 1ms
+     ✓ rejects malformed metadata or transport #1 1ms
+     ✓ rejects malformed metadata or transport #2 1ms
+     ✓ rejects malformed metadata or transport #3 1ms
+     ✓ rejects malformed metadata or transport #4 1ms
+     ✓ rejects malformed metadata or transport #5 1ms
+ ❯ test/loopProgrammaticReads.test.ts (79 tests | 4 failed) 92ms
+   ❯ programmatic admission without changing the direct route (19)
+     × executes a qualified read through the existing engine and server-owned identity 18ms
+     ✓ keeps the bridge absent for off 1ms
+     ✓ keeps the bridge absent for config mock 1ms
+     ✓ keeps the bridge absent for client mock 1ms
+     ✓ keeps the bridge absent for simulation 0ms
+     ✓ keeps the bridge absent for level one 0ms
+     ✓ keeps the bridge absent for unqualified 0ms
+     ✓ keeps the bridge absent for unknown reader 0ms
+     ✓ keeps the bridge absent for sensitive 0ms
+     ✓ keeps the bridge absent for explicit 0ms
+     ✓ keeps the bridge absent for mixed 0ms
+     ✓ keeps the bridge absent for empty 0ms
+     ✓ keeps the bridge absent for static 0ms
+     ✓ keeps the bridge absent for invalid agent 0ms
+     ✓ keeps the bridge absent for invalid user 0ms
+     ✓ keeps the bridge absent for invalid run 0ms
+     ✓ does not inherit read qualification or evaluate a prototype getter 1ms
+     ✓ preserves direct trace policy when the provider declines an available bridge 0ms
+     ✓ keeps direct approval behavior on a mixed catalogue 1ms
+   ❯ programmatic authority, abort and replay boundaries (27)
+     ✓ blocks a global change before the read 1ms
+     ✓ blocks a individual change before the read 1ms
+     ✓ blocks a disabled change before the read 1ms
+     ✓ blocks a simulation change before the read 1ms
+     ✓ blocks a autonomy change before the read 0ms
+     ✓ forbids replay after admitted inference loses its response without a durable delivery key 2ms
+     ✓ rechecks mutable qualification after the final inference-admission await 1ms
+     ✓ rechecks the qualified handler after awaiting state 1ms
+     ✓ rechecks the qualified handler after awaiting stop 1ms
+     ✓ rechecks the qualified handler after awaiting brief 2ms
+     ✓ refuses a new provider request after a global stop without executing another tool 1ms
+     ✓ does not hand a completed read back after a stop during its I/O 1ms
+     ✓ checks fresh custom model authority 1ms
+     ✓ checks fresh custom tool removed authority 0ms
+     ✓ checks fresh custom qualification authority 0ms
+     ✓ checks fresh custom sensitive authority 1ms
+     ✓ snapshots parameters before awaiting authority 1ms
+     ✓ rejects a malformed call ID "read_1\n" before a read 0ms
+     ✓ rejects a malformed call ID "read_1\r" before a read 0ms
+     ✓ rejects a malformed call ID "read_1 " before a read 1ms
+     ✓ rejects a malformed call ID "" before a read 0ms
+     ✓ rejects a malformed call ID "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" before a read 1ms
+     ✓ never reexecutes a repeated provider call identifier 1ms
+     ✓ does not hide a callback error behind a later successful model decision 1ms
+     × closes unresolved reads before logging and forbids late effects on the journal 2ms
+     × rejects a provider decision returned while a read is still in flight 2ms
+     × propagates a parent interruption while the read is running without exposing its reason 3ms
+   ✓ programmatic briefs, bounded complete results and usage (15)
+     ✓ arms a brief before the read and recognizes a completed read-only mission 1ms
+     ✓ shares one brief-arm barrier across concurrent reads 1ms
+     ✓ does not execute after an ambiguous brief arm acknowledgement 1ms
+     ✓ rechecks autonomy after arming the brief 1ms
+     ✓ uses distinct operation identities for reads and the delivered report 1ms
+     ✓ never creates an approval after composed reads when autonomy is lowered 1ms
+     ✓ stops before a seventeenth call 2ms
+     ✓ refuses an incomplete or unsafe too large result 1ms
+     ✓ refuses an incomplete or unsafe invalid number result 1ms
+     ✓ refuses an incomplete or unsafe accessor result 1ms
+     ✓ refuses an incomplete or unsafe toJSON result 1ms
+     ✓ refuses an incomplete or unsafe cyclic result 1ms
+     ✓ applies the complete aggregate result limit without truncating a fifth response 5ms
+     ✓ preserves every provider usage receipt even when a later turn fails 4ms
+     ✓ retains the direct first-receipt contract 0ms
+   ✓ private delivery of the final programmatic answer (18)
+     ✓ delivers the complete final answer to the run owner before closing, without exposing it as telemetry 1ms
+     ✓ arms and completes a brief whose final report requires no external read 1ms
+     ✓ never delivers an unqualified missing receipt as a real final report 1ms
+     ✓ never delivers an unqualified direct receipt as a real final report 0ms
+     ✓ never delivers an unqualified compatible receipt as a real final report 0ms
+     ✓ never delivers an unqualified mock as a real final report 0ms
+     ✓ never delivers an unqualified approval as a real final report 1ms
+     ✓ never delivers an unqualified deferred action as a real final report 0ms
+     ✓ does not claim delivery after not_applicable and never repeats inference 1ms
+     ✓ does not claim delivery after unavailable and never repeats inference 0ms
+     ✓ does not claim delivery after throws and never repeats inference 1ms
+     ✓ rechecks global stop before final delivery 1ms
+     ✓ rechecks autonomy before final delivery 0ms
+     ✓ rechecks ownership before final delivery 1ms
+     ✓ rechecks qualification before final delivery 0ms
+     ✓ rechecks a stop after arming a report-only brief 0ms
+     ✓ does not turn a late storage acknowledgement into success or rewrite the closed journal 5ms
+     ✓ never starts a late storage write after delivery authorization times out 2ms
+ ❯ test/webSearchCleanup.test.ts (11 tests | 2 failed) 43ms
+   ❯ web_search response cleanup does not block confirmed failures (11)
+     × cancels a body on parent interruption without waiting for cleanup to resolve 20ms
+     × cancels a body on parent interruption without waiting for cleanup to reject 2ms
+     ✓ oversized: settles before a pending cancel later resolves 2ms
+     ✓ oversized: settles before a pending cancel later rejects 1ms
+     ✓ oversized: contains an immediately rejected cancellation and releases the body 1ms
+     ✓ HTTP error: settles before a pending cancel later resolves 1ms
+     ✓ HTTP error: settles before a pending cancel later rejects 1ms
+     ✓ HTTP error: contains an immediately rejected cancellation and releases the body 1ms
+     ✓ keeps a valid successful response and releases its reader without cancellation 2ms
+     ✓ accepts the exact 1 MiB limit without cancelling the completed body 9ms
+     ✓ keeps the 30-second deadline and releases a stalled reader despite pending cancellation 2ms
+ ❯ test/webSearchTransportIntegrity.test.ts (10 tests | 4 failed) 50ms
+   ❯ web search parent cancellation (4)
+     × does not dispatch an already-cancelled request or disclose its reason 16ms
+     × settles cancellation with a cooperative=true header transport and rejects late results 5ms
+     × settles cancellation with a cooperative=false header transport and rejects late results 3ms
+     × removes the parent listener after success without cancelling the completed transport 4ms
+   ✓ web search byte integrity and terminal deadline (6)
+     ✓ preserves valid response bytes when the producer reuses its chunk buffer 3ms
+     ✓ rejects a response received after the monotonic deadline even when the timer callback has not run 3ms
+     ✓ rejects bytes delivered after expiry during a read without accepting a late result 1ms
+     ✓ rechecks the budget when the outer race hands back its result at 29999 ms 8ms
+     ✓ rechecks the budget when the outer race hands back its result at 30000 ms 2ms
+     ✓ rechecks the budget when the outer race hands back its result at 30001 ms 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > rejects a cancelled parent before any provider admission without disclosing its reason
+AssertionError: promise resolved "{ ok: true, status: 'complete', …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "evidence": {
++     "content_kind": "metadata_only",
++     "full_text_retrieved": false,
++     "page_read_by_karta": false,
++     "requested_language": "en",
++     "retrieval_id": "c11a9384-94c3-4761-8f2c-ad56d18c5940",
++     "schema_version": 1,
++     "scope": "selected_public_sources",
++     "selected_sources": [
++       "crossref",
++       "wikidata",
++     ],
++     "source_text_trust": "untrusted_data",
++     "sources": [
++       {
++         "duplicate_results_removed": 0,
++         "result_count": 1,
++         "retrieved_at": "2026-11-12T12:00:00.000Z",
++         "source": "crossref",
++         "status": "ok",
++       },
++       {
++         "duplicate_results_removed": 0,
++         "result_count": 1,
++         "retrieved_at": "2026-11-12T12:00:00.000Z",
++         "source": "wikidata",
++         "status": "ok",
++       },
++     ],
++     "verification_status": "unverified",
++   },
++   "message": "Métadonnées reçues des sources demandées ; contenu non vérifié et aucun texte intégral consulté.",
++   "ok": true,
++   "results": [
++     {
++       "canonical_id": "doi:10.1234/example",
++       "content_license": null,
++       "language": null,
++       "metadata_license": null,
++       "native_id": "10.1234/Example",
++       "provider_published_date": "2026-11",
++       "provider_ranks": [
++         1,
++       ],
++       "retrieved_at": "2026-11-12T12:00:00.000Z",
++       "source": "crossref",
++       "text": "Quantum results — Example Press — journal-article",
++       "title": "Quantum results",
++       "url": "https://doi.org/10.1234/example",
++     },
++     {
++       "canonical_id": "wikidata:Q17995793",
++       "content_license": null,
++       "language": "en",
++       "metadata_license": "CC0-1.0",
++       "native_id": "Q17995793",
++       "provider_published_date": null,
++       "provider_ranks": [
++         1,
++       ],
++       "retrieved_at": "2026-11-12T12:00:00.000Z",
++       "source": "wikidata",
++       "text": "study of a model of computation",
++       "title": "quantum computing",
++       "url": "https://www.wikidata.org/wiki/Q17995793",
++     },
++   ],
++   "status": "complete",
+  }
+
+ ❯ test/knowledgeSearch.test.ts:208:82
+    206|     parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+    207|     const fetch = workingFetch();
+    208|     await expect(tool(fetch).execute(request, { ...ctx, signal: parent…
+       |                                                                                  ^
+    209|       .rejects.toThrow("Recherche de connaissances interrompue.");
+    210|     expect(fetch).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > keeps a non-cooperative source reserved after cancellation until the transport settles
+AssertionError: expected undefined to be an instance of Error
+ ❯ test/knowledgeSearch.test.ts:227:23
+    225|       parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+    226|       await vi.advanceTimersByTimeAsync(0);
+    227|       expect(outcome).toBeInstanceOf(Error);
+       |                       ^
+    228|       expect((outcome as Error).message).toBe("Recherche de connaissan…
+    229|       expect(fetch.mock.calls[0][1]?.signal?.aborted).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > interrupts a response body and does not return partial metadata after cancellation
+AssertionError: expected undefined to be an instance of Error
+ ❯ test/knowledgeSearch.test.ts:260:23
+    258|       parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+    259|       await vi.advanceTimersByTimeAsync(0);
+    260|       expect(outcome).toBeInstanceOf(Error);
+       |                       ^
+    261|       expect((outcome as Error).message).toBe("Recherche de connaissan…
+    262|       expect(cancel).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > keeps a source reserved until its cancelled body cleanup actually resolves
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > keeps a source reserved until its cancelled body cleanup actually rejects
+AssertionError: expected undefined to be an instance of Error
+ ❯ test/knowledgeSearch.test.ts:299:23
+    297|       parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+    298|       await vi.advanceTimersByTimeAsync(0);
+    299|       expect(outcome).toBeInstanceOf(Error);
+       |                       ^
+    300|       expect((outcome as Error).message).toBe("Recherche de connaissan…
+    301|       expect(cancel).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > checks parent cancellation at the final multi-source handoff
+AssertionError: promise resolved "{ ok: true, status: 'complete', …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "evidence": {
++     "content_kind": "metadata_only",
++     "full_text_retrieved": false,
++     "page_read_by_karta": false,
++     "requested_language": "en",
++     "retrieval_id": "eff6685b-2a31-4206-a757-6fde9681f8a0",
++     "schema_version": 1,
++     "scope": "selected_public_sources",
++     "selected_sources": [
++       "crossref",
++       "wikidata",
++     ],
++     "source_text_trust": "untrusted_data",
++     "sources": [
++       {
++         "duplicate_results_removed": 0,
++         "result_count": 1,
++         "retrieved_at": "2026-11-12T12:00:00.000Z",
++         "source": "crossref",
++         "status": "ok",
++       },
++       {
++         "duplicate_results_removed": 0,
++         "result_count": 1,
++         "retrieved_at": "2026-11-12T12:00:00.000Z",
++         "source": "wikidata",
++         "status": "ok",
++       },
++     ],
++     "verification_status": "unverified",
++   },
++   "message": "Métadonnées reçues des sources demandées ; contenu non vérifié et aucun texte intégral consulté.",
++   "ok": true,
++   "results": [
++     {
++       "canonical_id": "doi:10.1234/example",
++       "content_license": null,
++       "language": null,
++       "metadata_license": null,
++       "native_id": "10.1234/Example",
++       "provider_published_date": "2026-11",
++       "provider_ranks": [
++         1,
++       ],
++       "retrieved_at": "2026-11-12T12:00:00.000Z",
++       "source": "crossref",
++       "text": "Quantum results — Example Press — journal-article",
++       "title": "Quantum results",
++       "url": "https://doi.org/10.1234/example",
++     },
++     {
++       "canonical_id": "wikidata:Q17995793",
++       "content_license": null,
++       "language": "en",
++       "metadata_license": "CC0-1.0",
++       "native_id": "Q17995793",
++       "provider_published_date": null,
++       "provider_ranks": [
++         1,
++       ],
++       "retrieved_at": "2026-11-12T12:00:00.000Z",
++       "source": "wikidata",
++       "text": "study of a model of computation",
++       "title": "quantum computing",
++       "url": "https://www.wikidata.org/wiki/Q17995793",
++     },
++   ],
++   "status": "complete",
+  }
+
+ ❯ test/knowledgeSearch.test.ts:332:91
+    330|       return result;
+    331|     }));
+    332|     await expect(tool(workingFetch()).execute(request, { ...ctx, signa…
+       |                                                                                           ^
+    333|       .rejects.toThrow("Recherche de connaissances interrompue.");
+    334|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > removes source listeners after success without retroactively aborting completed transports
+AssertionError: expected [] to have a length of 2 but got +0
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ test/knowledgeSearch.test.ts:343:23
+    341|     expect((await tool(fetch).execute(request, { ...ctx, signal: paren…
+    342|     const listeners = add.mock.calls.filter(([type]) => type === "abor…
+    343|     expect(listeners).toHaveLength(2);
+       |                       ^
+    344|     for (const listener of listeners) expect(remove).toHaveBeenCalledW…
+    345|     parent.abort();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+ FAIL  test/loopProgrammaticReads.test.ts > programmatic admission without changing the direct route > executes a qualified read through the existing engine and server-owned identity
+AssertionError: expected [ { query: 'public query' }, { …(5) } ] to deeply equal [ { query: 'public query' }, { …(6) } ]
+
+- Expected
++ Received
+
+@@ -4,11 +4,10 @@
+    },
+    {
+      "agentType": "custom:00000000-0000-4000-8000-000000000812",
+      "mode": "live",
+      "operationId": "00000000-0000-4000-8000-000000000801:0",
+-     "signal": Any<AbortSignal>,
+      "trigger": {
+        "source": "programmatic-fixture",
+        "type": "manual",
+      },
+      "userId": "00000000-0000-4000-8000-000000000811",
+
+ ❯ test/loopProgrammaticReads.test.ts:108:37
+    106|     const result = await cycle();
+    107|     expect(result.status).toBe("success"); expect(h.execute).toHaveBee…
+    108|     expect(h.execute.mock.calls[0]).toEqual([{ query: "public query" }…
+       |                                     ^
+    109|       userId: USER, agentType: AGENT, mode: "live", operationId: `${ru…
+    110|       trigger: { type: "manual", source: "programmatic-fixture" },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/21]⎯
+
+ FAIL  test/loopProgrammaticReads.test.ts > programmatic authority, abort and replay boundaries > closes unresolved reads before logging and forbids late effects on the journal
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ test/loopProgrammaticReads.test.ts:333:31
+    331|     });
+    332|     const result = await cycle();
+    333|     expect(observed?.aborted).toBe(true);
+       |                               ^
+    334|     expect(result.status).toBe("error"); expect(result.toolsUsed[0]).t…
+    335|     const closed = JSON.stringify([result, h.finish.mock.calls]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/21]⎯
+
+ FAIL  test/loopProgrammaticReads.test.ts > programmatic authority, abort and replay boundaries > rejects a provider decision returned while a read is still in flight
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ test/loopProgrammaticReads.test.ts:351:31
+    349|     });
+    350|     const result = await cycle(); expect(result.status).toBe("error");
+    351|     expect(observed?.aborted).toBe(true);
+       |                               ^
+    352|     release.resolve({ ok: true }); await expect(callback).rejects.toTh…
+    353|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/21]⎯
+
+ FAIL  test/loopProgrammaticReads.test.ts > programmatic authority, abort and replay boundaries > propagates a parent interruption while the read is running without exposing its reason
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/loopProgrammaticReads.test.ts:375:31
+    373|     });
+    374|     const result = await cycle();
+    375|     expect(abortedDuringRead).toBe(true);
+       |                               ^
+    376|     expect(result.status).toBe("error");
+    377|     expect(h.persist).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/21]⎯
+
+ FAIL  test/readToolCancellationHttp.test.ts > public read cancellation over real loopback HTTP > closes the real web headers transport when its parent is cancelled
+ FAIL  test/readToolCancellationHttp.test.ts > public read cancellation over real loopback HTTP > closes the real web body transport when its parent is cancelled
+ FAIL  test/readToolCancellationHttp.test.ts > public read cancellation over real loopback HTTP > closes the real knowledge headers transport when its parent is cancelled
+ FAIL  test/readToolCancellationHttp.test.ts > public read cancellation over real loopback HTTP > closes the real knowledge body transport when its parent is cancelled
+Error: Local transport did not reach the expected state
+ ❯ Timeout.<anonymous> test/readToolCancellationHttp.test.ts:26:39
+     24|   try {
+     25|     return await Promise.race([pending, new Promise<never>((_, reject)…
+     26|       timer = setTimeout(() => reject(new Error("Local transport did n…
+       |                                       ^
+     27|     })]);
+     28|   } finally { clearTimeout(timer); }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/21]⎯
+
+ FAIL  test/webSearchCleanup.test.ts > web_search response cleanup does not block confirmed failures > cancels a body on parent interruption without waiting for cleanup to resolve
+ FAIL  test/webSearchCleanup.test.ts > web_search response cleanup does not block confirmed failures > cancels a body on parent interruption without waiting for cleanup to reject
+AssertionError: expected undefined to be an instance of Error
+ ❯ test/webSearchCleanup.test.ts:51:23
+     49|       parent.abort(new Error(privateDetail));
+     50|       await vi.advanceTimersByTimeAsync(0);
+     51|       expect(outcome).toBeInstanceOf(Error);
+       |                       ^
+     52|       expect((outcome as Error).message).toBe("Recherche Tavily indisp…
+     53|       expect(cleanup.cancel).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/21]⎯
+
+ FAIL  test/webSearchTransportIntegrity.test.ts > web search parent cancellation > does not dispatch an already-cancelled request or disclose its reason
+AssertionError: promise resolved "{ results: [] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "results": [],
+  }
+
+ ❯ test/webSearchTransportIntegrity.test.ts:26:102
+     24|     parent.abort(new Error("PRIVATE_PARENT_ABORT_REASON"));
+     25|     transport.mockResolvedValue(new Response('{"results":[]}'));
+     26|     await expect(webSearchTool.execute({ query: "public query" }, { ..…
+       |                                                                                                      ^
+     27|       .rejects.toThrow(unavailable);
+     28|     expect(transport).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/21]⎯
+
+ FAIL  test/webSearchTransportIntegrity.test.ts > web search parent cancellation > settles cancellation with a cooperative=true header transport and rejects late results
+ FAIL  test/webSearchTransportIntegrity.test.ts > web search parent cancellation > settles cancellation with a cooperative=false header transport and rejects late results
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/webSearchTransportIntegrity.test.ts:46:39
+     44|       parent.abort(new Error("PRIVATE_PARENT_ABORT_REASON"));
+     45|       await vi.advanceTimersByTimeAsync(0);
+     46|       expect(providerSignal?.aborted).toBe(true);
+       |                                       ^
+     47|       expect(outcome).toBeInstanceOf(Error);
+     48|       expect((outcome as Error).message).toBe(unavailable);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/21]⎯
+
+ FAIL  test/webSearchTransportIntegrity.test.ts > web search parent cancellation > removes the parent listener after success without cancelling the completed transport
+AssertionError: expected undefined to be type of 'function'
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ test/webSearchTransportIntegrity.test.ts:66:22
+     64|       .resolves.toEqual({ results: [] });
+     65|     const listener = add.mock.calls.find(([type]) => type === "abort")…
+     66|     expect(listener).toBeTypeOf("function");
+       |                      ^
+     67|     expect(remove).toHaveBeenCalledWith("abort", listener);
+     68|     parent.abort(new Error("PRIVATE_LATE_ABORT"));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/21]⎯
+
+
+ Test Files  5 failed (5)
+      Tests  21 failed | 145 passed (166)
+   Start at  05:37:25
+   Duration  7.79s (tests 92%, transform 4%, import 3%)
+
+    Isolate  5 workers spawned · ~147ms startup each (spawn + environment, per file)
+             at least ~586ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /tmp/purama-iao-control-n7l8kL47/cancellation-final-before.json

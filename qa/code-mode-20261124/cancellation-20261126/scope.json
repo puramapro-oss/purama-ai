@@ -1,0 +1,111 @@
+{
+  "id": "IAO-TOOL-CANCELLATION-20261126-4F357A4B",
+  "repository": "puramapro-oss/purama-ai",
+  "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "branch": "fix/iao-tool-cancellation-20261126",
+  "design_state": "PRET_A_CODER",
+  "authority": "Existing interruption design and current user instruction to correct and verify IAO; preserve the collective validation of 2026-11-21.",
+  "reuse": {
+    "signal_contract": "PR7 caeff811a3ba75dd766cc02555ed196e3807663f; reconcile only the compatible ToolExecutionContext signal contract, not the obsolete loop or executeToolStrict implementation.",
+    "runtime": "Existing KARTA programmatic reads and current transport deadlines; no second orchestrator.",
+    "delivery": "Existing private programmatic report; no public tool traces."
+  },
+  "owner": "/root",
+  "product_writer": "/root/execution_cancellation",
+  "product_paths": [
+    "karta/src/engine/types.ts",
+    "karta/src/engine/loop.ts",
+    "karta/src/tools/websearch.ts",
+    "karta/src/tools/knowledge-search.ts",
+    "karta/src/knowledge/public-search.ts"
+  ],
+  "test_paths": [
+    "karta/test/loopProgrammaticReads.test.ts",
+    "karta/test/webSearchTransportIntegrity.test.ts",
+    "karta/test/webSearchCleanup.test.ts",
+    "karta/test/knowledgeSearch.test.ts",
+    "karta/test/readToolCancellationHttp.test.ts"
+  ],
+  "parent_paths": [
+    "karta/WEB_CAPABILITIES.md",
+    "task_plan.md",
+    "qa/code-mode-20261124/cancellation-20261126/"
+  ],
+  "acceptance": [
+    {
+      "id": "C1",
+      "outcome": "An already-aborted trusted signal causes zero provider requests."
+    },
+    {
+      "id": "C2",
+      "outcome": "Cancellation reaches fetch and body reading, not only the run journal."
+    },
+    {
+      "id": "C3",
+      "outcome": "Tool deadlines still bound caller waiting even if a transport ignores cancellation; late results cannot become success."
+    },
+    {
+      "id": "C4",
+      "outcome": "Closing programmatic reads cancels the outstanding reads while preserving immutable run evidence."
+    },
+    {
+      "id": "C5",
+      "outcome": "Knowledge source reservations remain held until the underlying work settles, even if it ignores abort."
+    },
+    {
+      "id": "C6",
+      "outcome": "Parent listeners and timers are cleaned up; custom abort reasons and provider errors never leak into user or technical traces."
+    },
+    {
+      "id": "C7",
+      "outcome": "A real loopback HTTP server observes interrupted request/body closure, with a successful non-cancelled control."
+    },
+    {
+      "id": "C8",
+      "outcome": "Permission gates, simulation, operation identity, legacy callers without signals and private delivery retain their existing behavior."
+    },
+    {
+      "id": "C9",
+      "outcome": "Affected suites, complete KARTA gate, TypeScript and build pass on the final source; environment and exact source identity are recorded."
+    },
+    {
+      "id": "C10",
+      "outcome": "GitNexus impacts precede symbol edits; final detect_changes and independent review cover the actual diff."
+    }
+  ],
+  "verification_scope": {
+    "network": "Local fixture only; no live Tavily, Crossref, Wikidata, email, payment or external account operation.",
+    "initial_characterization": "Real webSearchTool with a fake transport: pre-aborted dispatches=1 and resolved; during abort parent=true/provider=false; late response resolved.",
+    "historical_tests": "The earlier 511 tests belong to 40e97b0 and are not added to the new campaign."
+  },
+  "remaining_user_outcomes": [
+    "Browser operator, host authority, isolated worker and end-to-end principal IAO chat admission remain an integration task, not implemented by this cancellation fix.",
+    "Live session frames, pointer events and manual takeover remain unimplemented/unqualified in the audited path.",
+    "Android native CI at 271f40b is blocked before application qualification by an uninitialized DATA subscription; a separate diagnostic is retained without weakening the guard.",
+    "No universal device/app coverage or production deployment is asserted."
+  ],
+  "publication": "Local commits and reviewable candidate only; global Mac AGENTS.md requires explicit permission before push or deployment.",
+  "reception": {
+    "status": "PASS",
+    "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "full_karta": {
+      "tests": 5937,
+      "files": 238,
+      "passed": 5937,
+      "failed": 0,
+      "pending": 0,
+      "maxWorkers": 1,
+      "node": "22.23.5",
+      "report": "verification/final-gate.json",
+      "raw_report_sha256": "fbee5cb25a38fbf0082809e845e7088d8ede577b23b92e21e18ee00c5c44b063"
+    },
+    "typecheck": "PASS",
+    "build": "PASS",
+    "independent_review": "PASS",
+    "source_unchanged": true,
+    "git_status_unchanged": true,
+    "prior_attempts": "Preserved: incomplete checkout interruption, complete two-worker run with 5 timeouts and 72 skipped cases, successful 120-case SQL cohort. No count accumulation and no asserted host root cause.",
+    "external_provider_or_device_qualification": "NON_TESTE",
+    "publication": "LOCAL_CANDIDATE_ONLY"
+  }
+}

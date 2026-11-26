@@ -1,0 +1,89 @@
+{
+  "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "started_at_utc": "2026-11-26T04:46:56.810624+00:00",
+  "finished_at_utc": "2026-11-26T04:55:08.481516+00:00",
+  "runtime": {
+    "official_checksums_url": "https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt",
+    "official_archive_url": "https://nodejs.org/dist/v22.23.5/node-v22.23.5-darwin-arm64.tar.gz",
+    "filename": "node-v22.23.5-darwin-arm64.tar.gz",
+    "sha256_expected": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+    "architecture": "arm64",
+    "purpose": "Isolated Node22 runtime matching CI and Docker major; no global install or PATH mutation",
+    "sha256_verified": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+    "archive_bytes": 50004868,
+    "node_path": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+    "runtime": {
+      "node": "v22.23.5",
+      "arch": "arm64",
+      "platform": "darwin",
+      "abortSignalAny": "function"
+    },
+    "verified_at_utc": "2026-11-26T04:37:13Z"
+  },
+  "dependency_verification": {
+    "lock_sha256": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+    "cache": "/Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules",
+    "platform": "darwin-arm64",
+    "verified": 178,
+    "platform_excluded": 54,
+    "mismatches": []
+  },
+  "source_files_compared": 455,
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "full-karta",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/full-karta.json"
+      ],
+      "exit_code": 130,
+      "duration_seconds": 455.52,
+      "log": "full-karta.log",
+      "log_sha256": "aa7a00d042862d2128789fce2d912b11b528100c0ee08c6c536ced84a2228a99",
+      "error": null
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false",
+        "-p",
+        "tsconfig.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 28.127,
+      "log": "typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error": null
+    },
+    {
+      "name": "build",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json",
+        "--pretty",
+        "false"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 7.962,
+      "log": "build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error": null
+    }
+  ],
+  "vitest": null,
+  "status": "PARTIEL"
+}

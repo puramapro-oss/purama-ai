@@ -1,0 +1,94 @@
+
+ RUN  v5.0.3 /workspace/scratch/4f357a4ba348/purama-ai/karta
+
+ ❯ test/knowledgeSearch.test.ts (60 tests | 2 failed | 58 skipped) 58ms
+   ↓ knowledge_search provenance and engine outcomes (7)
+     ↓ retrieves only bounded metadata at fixed endpoints without redirects or credentials
+     ↓ does not fetch in simulation, and does not let the engine report it executed
+     ↓ preserves usable partial metadata while failing closed for the engine
+     ↓ distinguishes complete empty search from total unavailability
+     ↓ preserves date precision and rejects impossible or invented publication dates
+     ↓ ignores provider navigation URLs, abstracts and full text rather than following them
+     ↓ groups exact duplicate identifiers but keeps conflicting metadata visible
+   ↓ knowledge_search snapshots and admission (28)
+     ↓ rejects invalid request 0 before network
+     ↓ rejects invalid request 1 before network
+     ↓ rejects invalid request 2 before network
+     ↓ rejects invalid request 3 before network
+     ↓ rejects invalid request 4 before network
+     ↓ rejects invalid request 5 before network
+     ↓ rejects invalid request 6 before network
+     ↓ rejects invalid request 7 before network
+     ↓ rejects invalid request 8 before network
+     ↓ rejects invalid request 9 before network
+     ↓ rejects invalid request 10 before network
+     ↓ rejects invalid request 11 before network
+     ↓ rejects invalid request 12 before network
+     ↓ rejects invalid request 13 before network
+     ↓ rejects invalid request 14 before network
+     ↓ rejects invalid request 15 before network
+     ↓ rejects invalid request 16 before network
+     ↓ rejects invalid request 17 before network
+     ↓ rejects invalid request 18 before network
+     ↓ rejects invalid request 19 before network
+     ↓ rejects invalid request 20 before network
+     ↓ does not invoke object or array getters or proxy traps
+     ↓ rejects hidden, symbolic, sparse and custom-array properties
+     ↓ copies all parameters before either provider can mutate the caller object
+     ↓ enforces one in-flight request and a post-response cooldown with no hidden queue
+     ↓ honors Retry-After 2 without automatic retries
+     ↓ honors Retry-After Thu, 12 Nov 2026 12:00:02 GMT without automatic retries
+     ↓ recognizes Wikidata maxlag even with HTTP 200
+   ❯ knowledge_search transport boundaries (25)
+     ↓ rejects a cancelled parent before any provider admission without disclosing its reason
+     ↓ keeps a non-cooperative source reserved after cancellation until the transport settles
+     ↓ interrupts a response body and does not return partial metadata after cancellation
+     × keeps a source reserved until its cancelled body cleanup actually resolves 53ms
+     × keeps a source reserved until its cancelled body cleanup actually rejects 3ms
+     ↓ checks parent cancellation at the final multi-source handoff
+     ↓ removes source listeners after success without retroactively aborting completed transports
+     ↓ rechecks the deadline after Promise.race adopts a result at 1999 ms
+     ↓ rechecks the deadline after Promise.race adopts a result at 2000 ms
+     ↓ rechecks the deadline after Promise.race adopts a result at 2001 ms
+     ↓ keeps HTTP 429 backoff when headers arrive at 2000 ms without accepting the late response
+     ↓ keeps HTTP 429 backoff when headers arrive at 2001 ms without accepting the late response
+     ↓ keeps HTTP 503 backoff when headers arrive at 2000 ms without accepting the late response
+     ↓ keeps HTTP 503 backoff when headers arrive at 2001 ms without accepting the late response
+     ↓ keeps HTTP 429 backoff received after the timeout result has returned
+     ↓ keeps HTTP 503 backoff received after the timeout result has returned
+     ↓ times out a stalled body and cancels its reader
+     ↓ holds admission after a non-cooperative fetch times out and cancels its late response
+     ↓ rejects an oversized stream and cancels it without waiting for its producer
+     ↓ rejects malformed metadata or transport #0
+     ↓ rejects malformed metadata or transport #1
+     ↓ rejects malformed metadata or transport #2
+     ↓ rejects malformed metadata or transport #3
+     ↓ rejects malformed metadata or transport #4
+     ↓ rejects malformed metadata or transport #5
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > keeps a source reserved until its cancelled body cleanup actually resolves
+ FAIL  test/knowledgeSearch.test.ts > knowledge_search transport boundaries > keeps a source reserved until its cancelled body cleanup actually rejects
+AssertionError: expected 'empty' to be 'busy' // Object.is equality
+
+Expected: "busy"
+Received: "empty"
+
+ ❯ test/knowledgeSearch.test.ts:302:81
+    300|       expect(settled).toBe(false);
+    301|       await vi.advanceTimersByTimeAsync(2000);
+    302|       expect((await shared.execute(oneSource, ctx)).evidence.sources[0…
+       |                                                                                 ^
+    303|       expect(fetch).toHaveBeenCalledOnce();
+    304|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 58 skipped (60)
+   Start at  05:33:27
+   Duration  366ms (transform 51%, tests 32%, import 9%, setup 5%, worker 3%)
+
+JSON report written to /tmp/purama-iao-control-n7l8kL47/cancellation-cleanup-before.json

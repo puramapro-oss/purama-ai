@@ -279,10 +279,15 @@ les actions, ONE ID/VAJRA pour les droits et PURA Capsule pour le partage choisi
 Les paramètres de recherche n'importent pas automatiquement un profil privé.
 La langue et les critères peuvent être modifiés ou désactivés par la personne.
 
-La boucle inspectée appelle le modèle avant les outils puis produit une trace ;
-elle ne réinjecte pas leurs résultats dans un nouvel appel de synthèse. Ce lot
-ne constitue donc pas encore une réponse sourcée dans ONE. Les étapes de
-réception restantes sont :
+La boucle directe appelle le modèle avant les outils puis produit une trace.
+Depuis le raccordement des lectures programmatiques, un mode distinct et opt-in
+réutilise cette même autorité KARTA pour les seuls `web_search` et
+`knowledge_search` qualifiés : leurs résultats peuvent alimenter la continuation
+du modèle, puis un `programmatic_report` privé. Sa livraison et sa sélection dans
+le chat de l'agent personnalisé passent par le canal métier existant, sans
+réactiver les traces privées. Ce mode ne raccorde pas automatiquement la
+conversation principale de ONE, un lecteur de pages ou un opérateur navigateur.
+Les étapes de réception restantes pour ce parcours principal sont :
 
 1. Identifier le checkout ONE actif et son adaptateur serveur ; dériver le compte
    et l'espace depuis la session, jamais depuis un `userId` libre du navigateur.

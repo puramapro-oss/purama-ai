@@ -1,0 +1,18 @@
+
+ RUN  v5.0.3 /workspace/scratch/4f357a4ba348/purama-ai/karta
+
+ ✓ test/readToolCancellationHttp.test.ts (6 tests) 162ms
+ ✓ test/knowledgeSearch.test.ts (60 tests) 84ms
+ ✓ test/loopProgrammaticReads.test.ts (79 tests) 133ms
+ ✓ test/webSearchCleanup.test.ts (11 tests) 40ms
+ ✓ test/webSearchTransportIntegrity.test.ts (10 tests) 52ms
+
+ Test Files  5 passed (5)
+      Tests  166 passed (166)
+   Start at  05:37:25
+   Duration  1.85s (tests 45%, transform 34%, import 16%, setup 3%, worker 2%)
+
+    Isolate  5 workers spawned · ~151ms startup each (spawn + environment, per file)
+             at least ~605ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /tmp/purama-iao-control-n7l8kL47/cancellation-final-after.json

@@ -1,0 +1,77 @@
+{
+  "reviewer": "/root/operator_integration",
+  "recorded_at_utc": "2026-11-26T04:40:53.715269+00:00",
+  "status": "PASS",
+  "product_files": {
+    "karta/src/engine/types.ts": {
+      "bytes": 7159,
+      "sha256": "9a350e2ae48b7bb83c8fa1c79b2238ddbc963a44578171f47e63a0623ae906a6"
+    },
+    "karta/src/engine/loop.ts": {
+      "bytes": 36159,
+      "sha256": "e4ed21d3501b1c327f1654a85825d215d7c9438acb10022475e0ccd438ef4733"
+    },
+    "karta/src/tools/websearch.ts": {
+      "bytes": 16133,
+      "sha256": "cf11bf16d09199e2f5743f3cb633b659e43c11457fbce3a1a027a391252f5978"
+    },
+    "karta/src/tools/knowledge-search.ts": {
+      "bytes": 2056,
+      "sha256": "5dd714bc8be17d53872af22f57359fc27193ec2ac91a4ccdf8497e71edfd209a"
+    },
+    "karta/src/knowledge/public-search.ts": {
+      "bytes": 21507,
+      "sha256": "004c3047e352cfb0a9d938fac1baec452d374b3b505f37dfb71e577165b98883"
+    }
+  },
+  "finding": {
+    "id": "C5-body-cleanup",
+    "severity": "P2",
+    "status": "CLOSED",
+    "before": {
+      "calls": 2,
+      "cancelling": 1,
+      "cleanupFinished": false,
+      "secondStatus": "empty"
+    },
+    "after": {
+      "retained": {
+        "calls": 1,
+        "cancelling": 1,
+        "cleanupFinished": false,
+        "status": "busy"
+      },
+      "afterCleanupStatus": "rate_limited",
+      "afterDelayStatus": "empty",
+      "calls": 2,
+      "cleanupFinished": true
+    },
+    "qualification": "Independent local counterexample before and after; no external provider request; no universal remote stop assertion"
+  },
+  "reviewed": [
+    "optional signal contract and direct route compatibility",
+    "parent plus programmatic lifetime signal",
+    "transport and body interruption",
+    "deadline and late-result rejection",
+    "safe errors without caller reason",
+    "listener cleanup and successful transport not aborted",
+    "source reservation retained until cleanup settles"
+  ],
+  "unresolved_material_findings": [],
+  "external_provider_tested": false,
+  "http_harness": {
+    "path": "karta/test/readToolCancellationHttp.test.ts",
+    "sha256": "d3f6ee161cb53e65f944e742970f82d782d72157abedf0f0fdaf48b4b05eba51",
+    "status": "PASS",
+    "change_after_first_review": "Explicit return type only; no assertions, timing or transport changes"
+  },
+  "documentation_review": {
+    "reviewer": "/root/operator_integration",
+    "corrections_applied": [
+      "Explicitly distinguish the failed full run and the successful SQL cohort",
+      "Do not add the targeted/cohort counts to the full-suite unique total",
+      "Deadlines bound caller waiting; no claim that a non-cooperative transport is killed"
+    ],
+    "full_suite_status_at_review": "EN_COURS"
+  }
+}

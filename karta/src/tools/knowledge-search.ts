@@ -27,7 +27,7 @@ export function createKnowledgeSearchTool(options?: Parameters<typeof createPubl
       required: ["query", "sources"],
       additionalProperties: false,
     },
-    async execute(params, ctx) { return search(params, ctx.mode); },
+    async execute(params, ctx) { return search(params, ctx.mode, ctx.signal); },
   };
 }
 

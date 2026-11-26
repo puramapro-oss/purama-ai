@@ -267,7 +267,7 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
     required: ["query"],
     additionalProperties: false,
   },
-  async execute(params) {
+  async execute(params, ctx) {
     const requestParams = searchParams(params);
     if (!config.tavilyApiKey) throw new Error("TAVILY_API_KEY non configurée côté KARTA");
     const { query, response_format: format, ...filters } = requestParams;
@@ -276,9 +276,19 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
     // Same deadline/AbortController pattern as web-access-plan: no retries or
     // new execution framework. The deadline includes reading the response body.
     const controller = new AbortController();
+    const parentSignal = ctx.signal;
     const expiresAt = performance.now() + SEARCH_TIMEOUT_MS;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let onAbort: (() => void) | undefined;
     const deadline = new Promise<never>((_resolve, reject) => {
+      onAbort = () => {
+        // The caller's reason may contain private data. Only the interruption
+        // is forwarded to the transport and the existing safe error boundary.
+        controller.abort();
+        reject(new Error("Search interrupted"));
+      };
+      if (parentSignal?.aborted) { onAbort(); return; }
+      parentSignal?.addEventListener("abort", onAbort, { once: true });
       timer = setTimeout(() => {
         controller.abort();
         reject(new Error("Search deadline exceeded"));
@@ -324,6 +334,7 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
       throw new Error("Recherche Tavily indisponible : réponse invalide ou délai dépassé.");
     } finally {
       clearTimeout(timer);
+      if (onAbort) parentSignal?.removeEventListener("abort", onAbort);
     }
   },
 };

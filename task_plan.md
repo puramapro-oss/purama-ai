@@ -1,5 +1,17 @@
 # PURAMA AI — Task Plan V3
 
+## Annulation effective des lectures IAO — 26 novembre 2026
+
+État : `REALISE_ET_TESTE_LOCALEMENT`, sur la base `271f40b666c11d90fe4a350a41432513a08fc72f`, dans la branche isolée `fix/iao-tool-cancellation-20261126`. La demande de Matiss de corriger et vérifier le pilotage IAO prolonge la conception d'interruption existante. Le contrat facultatif `ToolExecutionContext.signal` de PR7 est rapproché des types actuels, sans réintroduire son ancien moteur. Un seul auteur produit a modifié les cinq fichiers runtime et les cinq tests du [périmètre de réception](qa/code-mode-20261124/cancellation-20261126/scope.json). Les autres branches et sessions sont préservées.
+
+Deux défauts sont corrigés : le signal reçu atteint désormais les transports web/connaissances et la fermeture des lectures encore ouvertes ; une source de connaissances reste réservée jusqu'au règlement réel de son nettoyage, sans retenir la réponse d'annulation. Les délais bornent l'attente de l'appelant même si le transport ignore l'arrêt ; un résultat tardif ne rouvre pas le journal. Les erreurs publiques ne révèlent pas la raison privée d'annulation et les appels réussis ne sont pas annulés rétroactivement.
+
+Réception : les mêmes 166 tests donnent 145 PASS/21 FAIL avant correction puis 166 PASS, dont six essais HTTP locaux. La revue indépendante a identifié puis contre-vérifié le défaut de nettoyage. Le dernier passage KARTA entier, sous Node 22.23.5 avec un worker, reçoit **5 937/5 937 PASS dans 238 fichiers**, zéro échec et zéro ignoré. Typage complet et compilation PASS ; code et état Git inchangés pendant la réception. Les analyses GitNexus précèdent les modifications runtime ; le risque CRITICAL du contexte partagé a été signalé et l'ajout reste facultatif. Détails, commandes, empreintes et limites dans [le rapport du lot](qa/code-mode-20261124/cancellation-20261126/README.md).
+
+Les incidents précédents restent conservés : checkout incomplet interrompu ; puis cinq timeouts et 72 cas ignorés dans le passage complet à deux workers. Les 120 tests SQL concernés passent avec un worker et les délais inchangés ; la cause précise des dépassements n'est pas établie. La dernière réception entière confirme ensuite les 5 937 cas. Les 166 tests ciblés, les 120 tests de reprise et les 511 tests historiques ne s'ajoutent pas au total final.
+
+Le navigateur opérateur, son flux direct, l'admission depuis la conversation principale ONE, les appareils physiques et la production restent des raccordements et qualifications distincts. Le blocage Android CI est documenté séparément sans affaiblir sa garde DATA. Le candidat local est préparé pour revue ; push et déploiement restent soumis à l'autorisation explicite prévue par le fichier global AGENTS du Mac.
+
 ## Admission IAO et raccordements canoniques — 24 novembre 2026, reprise après 18c40d0e
 
 État : `REALISE_ET_TESTE_LOCALEMENT`, réception de l'arbre publié encore requise avant intégration. La demande actuelle de Matiss prolonge le référentiel IAO de 168 capacités approuvé et la conception existante du cycle de vie KARTA. Ce lot corrige un écart reproduit à la politique d'arrêt global déjà appliquée aux admissions manuelles Atelier et consultation. Il ne crée aucune nouvelle autorité de session, mémoire ou calcul. Base : `18c40d0eb59b48636dd8d8fb54c0516b700ed746`, PR108 intégrée à la consolidation après réception de sa tête `4c54eb0c7fc281083fc69237d36ccad25765fb39`. Branche isolée : `feat/iao-runtime-composition-20261124`.

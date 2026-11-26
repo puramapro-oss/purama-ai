@@ -1,0 +1,18 @@
+{
+  "official_checksums_url": "https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt",
+  "official_archive_url": "https://nodejs.org/dist/v22.23.5/node-v22.23.5-darwin-arm64.tar.gz",
+  "filename": "node-v22.23.5-darwin-arm64.tar.gz",
+  "sha256_expected": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+  "architecture": "arm64",
+  "purpose": "Isolated Node22 runtime matching CI and Docker major; no global install or PATH mutation",
+  "sha256_verified": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+  "archive_bytes": 50004868,
+  "node_path": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+  "runtime": {
+    "node": "v22.23.5",
+    "arch": "arm64",
+    "platform": "darwin",
+    "abortSignalAny": "function"
+  },
+  "verified_at_utc": "2026-11-26T04:37:13Z"
+}

@@ -174,6 +174,7 @@ export async function runAgentCycle(
     let nextOperation = 0;
     let programmaticOpen = true;
     let programmaticFailed = false;
+    const readLifetime = new AbortController();
     let successfulReads = 0;
     let resultBytes = 0;
     const invocations = new Map<string, ReadInvocation>();
@@ -198,6 +199,7 @@ export async function runAgentCycle(
     closeProgrammaticReads = () => {
       if (!programmaticOpen) return;
       programmaticOpen = false;
+      readLifetime.abort();
       // An ignored abort can leave an external read in flight. Close its
       // observation now; late fulfillment cannot mutate the immutable journal.
       for (const invocation of invocations.values()) {
@@ -378,6 +380,7 @@ export async function runAgentCycle(
         const result = await handler.call(tool, call.params, {
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${ordinal}`,
           trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
+          ...(options.read ? { signal: options.read.signal } : {}),
         });
         active();
         // Preserve useful partial notices privately before asserting success.
@@ -407,7 +410,8 @@ export async function runAgentCycle(
         privateTrace = true;
         let invocation: ReadInvocation | undefined;
         try {
-          assertReadActive(signal);
+          const readSignal = AbortSignal.any([signal, readLifetime.signal]);
+          assertReadActive(readSignal);
           if (typeof call.id !== "string" || !/^[A-Za-z0-9_-]{1,200}$(?![\s\S])/.test(call.id)
             || invocations.has(call.id) || invocations.size >= 16) throw readError();
           const tool = readTools.get(call.tool);
@@ -418,8 +422,8 @@ export async function runAgentCycle(
           invocation = { call: captured, recorded: false, started: false, settled: false };
           invocations.set(call.id, invocation);
           const outcome = await executeCall(captured, { simulation: false, requiresApproval: false,
-            read: { signal, invocation } });
-          assertReadActive(signal);
+            read: { signal: readSignal, invocation } });
+          assertReadActive(readSignal);
           if (outcome.kind !== "executed") {
             if ("includeCurrent" in outcome && outcome.includeCurrent && !invocation.recorded) {
               toolsUsed.push(traceRecord(captured, outcome.reason, "skipped"));

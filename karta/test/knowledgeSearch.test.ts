@@ -201,6 +201,152 @@ describe("knowledge_search snapshots and admission", () => {
 });
 
 describe("knowledge_search transport boundaries", () => {
+  it("rejects a cancelled parent before any provider admission without disclosing its reason", async () => {
+    const parent = new AbortController();
+    parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+    const fetch = workingFetch();
+    await expect(tool(fetch).execute(request, { ...ctx, signal: parent.signal }))
+      .rejects.toThrow("Recherche de connaissances interrompue.");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("keeps a non-cooperative source reserved after cancellation until the transport settles", async () => {
+    const parent = new AbortController();
+    const remove = vi.spyOn(parent.signal, "removeEventListener");
+    let release!: (response: Response) => void;
+    const fetch = vi.fn<typeof globalThis.fetch>().mockImplementationOnce(() => new Promise<Response>(resolve => { release = resolve; }))
+      .mockResolvedValue(crossref([]));
+    const shared = tool(fetch, 1000);
+    let outcome: unknown;
+    const pending = shared.execute(oneSource, { ...ctx, signal: parent.signal })
+      .then(value => { outcome = value; }, error => { outcome = error; });
+    const cancel = vi.fn();
+    try {
+      parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe("Recherche de connaissances interrompue.");
+      expect(fetch.mock.calls[0][1]?.signal?.aborted).toBe(true);
+      expect(remove).toHaveBeenCalledWith("abort", expect.any(Function));
+      expect((await shared.execute(oneSource, ctx)).evidence.sources[0].status).toBe("busy");
+      expect(fetch).toHaveBeenCalledOnce();
+    } finally {
+      release(new Response(new ReadableStream<Uint8Array>({ cancel }), { headers: { "content-type": "application/json" } }));
+      await vi.advanceTimersByTimeAsync(1000);
+      await pending;
+    }
+    expect(cancel).toHaveBeenCalledOnce();
+    await vi.advanceTimersByTimeAsync(1101);
+    expect((await shared.execute(oneSource, ctx)).ok).toBe(true);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect((outcome as Error).message).toBe("Recherche de connaissances interrompue.");
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("interrupts a response body and does not return partial metadata after cancellation", async () => {
+    const parent = new AbortController();
+    const cancel = vi.fn();
+    const fetch = vi.fn<typeof globalThis.fetch>().mockImplementation(async url =>
+      new URL(String(url)).hostname === "api.crossref.org" ? crossref() : new Response(new ReadableStream<Uint8Array>({
+        start(controller) { controller.enqueue(new TextEncoder().encode("{")); }, cancel,
+      }), { headers: { "content-type": "application/json" } }));
+    let outcome: unknown;
+    const pending = tool(fetch, 100).execute(request, { ...ctx, signal: parent.signal })
+      .then(value => { outcome = value; }, error => { outcome = error; });
+    try {
+      await vi.advanceTimersByTimeAsync(0);
+      parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe("Recherche de connaissances interrompue.");
+      expect(cancel).toHaveBeenCalledOnce();
+      expect(fetch.mock.calls[1][1]?.signal?.aborted).toBe(true);
+    } finally {
+      await vi.advanceTimersByTimeAsync(100);
+      await pending;
+    }
+    expect(String(outcome)).not.toContain("PRIVATE_KNOWLEDGE_PARENT_ABORT");
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(["resolve", "reject"] as const)("keeps a source reserved until its cancelled body cleanup actually %ss", async settlement => {
+    const parent = new AbortController();
+    let finish!: () => void;
+    let fail!: (error: Error) => void;
+    const cleanup = new Promise<void>((resolve, reject) => { finish = resolve; fail = reject; });
+    // The negative baseline may not request cancellation before fixture cleanup.
+    void cleanup.catch(() => undefined);
+    const cancel = vi.fn(() => cleanup);
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      if (settlement === "resolve") finish(); else fail(new Error("PRIVATE_BODY_CLEANUP_FAILURE"));
+    };
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(new Response(new ReadableStream<Uint8Array>({
+        start(controller) { controller.enqueue(new TextEncoder().encode("{")); }, cancel,
+      }), { headers: { "content-type": "application/json" } }))
+      .mockResolvedValue(crossref([]));
+    const shared = tool(fetch, 10_000);
+    let outcome: unknown;
+    const pending = shared.execute(oneSource, { ...ctx, signal: parent.signal })
+      .then(value => { outcome = value; }, error => { outcome = error; });
+    try {
+      await vi.advanceTimersByTimeAsync(0);
+      parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe("Recherche de connaissances interrompue.");
+      expect(cancel).toHaveBeenCalledOnce();
+      expect(settled).toBe(false);
+      await vi.advanceTimersByTimeAsync(2000);
+      expect((await shared.execute(oneSource, ctx)).evidence.sources[0].status).toBe("busy");
+      expect(fetch).toHaveBeenCalledOnce();
+
+      settle();
+      await vi.advanceTimersByTimeAsync(0);
+      expect((await shared.execute(oneSource, ctx)).evidence.sources[0]).toMatchObject({
+        status: "rate_limited", retry_after_ms: 1100,
+      });
+      await vi.advanceTimersByTimeAsync(1100);
+      expect((await shared.execute(oneSource, ctx)).ok).toBe(true);
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      settle();
+      // Also release the unpatched baseline at its own deadline during cleanup.
+      await vi.advanceTimersByTimeAsync(10_000);
+      await pending;
+    }
+    expect(String(outcome)).not.toContain("PRIVATE_BODY_CLEANUP_FAILURE");
+  });
+
+  it("checks parent cancellation at the final multi-source handoff", async () => {
+    const parent = new AbortController();
+    const originalAll = Promise.all.bind(Promise);
+    vi.spyOn(Promise, "all").mockImplementationOnce(values => originalAll(values).then(result => {
+      parent.abort(new Error("PRIVATE_KNOWLEDGE_PARENT_ABORT"));
+      return result;
+    }));
+    await expect(tool(workingFetch()).execute(request, { ...ctx, signal: parent.signal }))
+      .rejects.toThrow("Recherche de connaissances interrompue.");
+  });
+
+  it("removes source listeners after success without retroactively aborting completed transports", async () => {
+    const parent = new AbortController();
+    const add = vi.spyOn(parent.signal, "addEventListener");
+    const remove = vi.spyOn(parent.signal, "removeEventListener");
+    const fetch = workingFetch();
+    expect((await tool(fetch).execute(request, { ...ctx, signal: parent.signal })).ok).toBe(true);
+    const listeners = add.mock.calls.filter(([type]) => type === "abort").map(([, callback]) => callback);
+    expect(listeners).toHaveLength(2);
+    for (const listener of listeners) expect(remove).toHaveBeenCalledWith("abort", listener);
+    parent.abort();
+    for (const [, init] of fetch.mock.calls) expect(init?.signal?.aborted).toBe(false);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it.each([
     { elapsed: 1_999, success: true },
     { elapsed: 2_000, success: false },

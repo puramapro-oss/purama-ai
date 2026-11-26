@@ -1,0 +1,14 @@
+{
+  "status": "INTERRUPTED_INCOMPLETE_CHECKOUT",
+  "reason": "Full KARTA tests import root supabase migrations/functions and shared sources absent from the sparse KARTA-only clone. No product regression is inferred from these missing files.",
+  "runner_pid": 82005,
+  "vitest_pid": 82025,
+  "signal": "SIGINT",
+  "recorded_at_utc": "2026-11-26T04:54:32.300768+00:00",
+  "observed_missing_paths": [
+    "supabase",
+    "shared",
+    "src"
+  ],
+  "action": "Complete the same pinned checkout, then qualify the complete gate with identical product/test hashes."
+}
