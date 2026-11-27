@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { createConsultationHost } from "../src/claude/consultation-host.js";
-import type { ConsultationOperation } from "../src/claude/consultation-store.js";
+import type { ConsultationEstimates, ConsultationOperation } from "../src/claude/consultation-store.js";
 import type { ConsultationInput } from "../src/api/consultation-contract.js";
 import type { ModelExecutionCapability } from "../src/claude/execution-profile.js";
 import type { ClaudeClient } from "../src/claude/types.js";
-import type { ConsultationResult } from "../src/claude/consultation.js";
+import type { ConsultationCall, ConsultationResult } from "../src/claude/consultation.js";
 
 const user = "11111111-1111-4111-8111-111111111111";
 const id = "22222222-2222-4222-8222-222222222222";
@@ -492,5 +492,247 @@ describe("real consultation host composition", () => {
     expect(recovered.citedSourceIds).toEqual(["S2"]);
     expect(recovered.verificationStatus).toBe("unverified");
     expect(f.decide).toHaveBeenCalledOnce();
+  });
+});
+
+describe("connected provider composition in the existing consultation host", () => {
+  it("uses the existing GOOGLE_AI_API_KEY environment account when the newer aliases are absent", async () => {
+    const f = fixture();
+    vi.stubEnv("GEMINI_API_KEY", "");
+    vi.stubEnv("GOOGLE_API_KEY", "");
+    vi.stubEnv("GOOGLE_AI_API_KEY", "test-existing-google-key");
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      expect(String(url)).toBe("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000");
+      expect(new Headers(init?.headers).get("x-goog-api-key")).toBe("test-existing-google-key");
+      return Response.json({ models: [{ name: "models/main", supportedGenerationMethods: ["generateContent"], outputTokenLimit: 16_384 }] });
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, apiKey: "", loadCatalog: undefined,
+        policyJson: JSON.stringify({ ...policy, models: [{ ...policy.models[0], provider: "google", reasoning: "none" }] }) });
+      const published = await host.catalog(user, new AbortController().signal);
+      expect(published.reason).toBe("ready");
+      expect(published.models).toEqual([expect.objectContaining({ model: "main", provider: "google" })]);
+      expect(JSON.stringify(published)).not.toContain("test-existing-google-key");
+      expect(transport).toHaveBeenCalledOnce();
+      expect(f.store.begin).not.toHaveBeenCalled();
+      expect(f.decide).not.toHaveBeenCalled();
+    } finally { transport.mockRestore(); vi.unstubAllEnvs(); }
+  });
+
+  it("keeps a healthy provider available when another catalogue stalls until its route timeout", async () => {
+    const f = fixture();
+    const stalledSignals: AbortSignal[] = [];
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      if (new URL(String(url)).hostname === "api.anthropic.com") {
+        stalledSignals.push(init!.signal!);
+        return new Promise<Response>(() => undefined);
+      }
+      expect(String(url)).toBe("https://api.openai.com/v1/models");
+      return Response.json({ data: [{ id: "peer" }] });
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, apiKey: undefined,
+        apiKeys: { anthropic: "test-anthropic", openai: "test-openai" }, loadCatalog: undefined,
+        policyJson: JSON.stringify({ ...policy, models: [policy.models[0], { ...policy.models[1], provider: "openai", reasoning: "none" }] }) });
+      const published = await host.catalog(user, new AbortController().signal);
+      expect(published.reason).toBe("ready");
+      expect(published.models).toEqual([expect.objectContaining({ model: "peer", provider: "openai" })]);
+      expect(stalledSignals).toHaveLength(1);
+      expect(stalledSignals[0].aborted).toBe(true);
+      expect(transport).toHaveBeenCalledTimes(2);
+      expect(f.store.begin).not.toHaveBeenCalled();
+      expect(f.decide).not.toHaveBeenCalled();
+    } finally { transport.mockRestore(); }
+  }, 10_000);
+
+  it("composes the native account catalogues and adapters through one reserved council with mocked HTTP", async () => {
+    const f = fixture();
+    const routes = [
+      { model: "qualified-claude", provider: "anthropic", hostname: "api.anthropic.com" },
+      { model: "qualified-openai", provider: "openai", hostname: "api.openai.com" },
+      { model: "qualified-gemini", provider: "google", hostname: "generativelanguage.googleapis.com" },
+      { model: "qualified-grok", provider: "xai", hostname: "api.x.ai" },
+    ] as const;
+    const apiKeys = { anthropic: "test-anthropic", openai: "test-openai", google: "test-google", xai: "test-xai" };
+    const modelPolicy = routes.map(({ model, provider }) => ({ model, provider, maxInputTokens: 131_072,
+      maxOutputTokens: 16_384, maxCostMicros: 300_000, reasoning: "adaptive", effortLevels: ["low", "medium", "high"] }));
+    const answer = JSON.stringify({ answer: "Conseil natif conservé", citedSourceIds: [], disagreements: [], uncertainties: ["Non vérifié"] });
+    const dispatched: Array<{ provider: string; model: string }> = [];
+    const discovered: string[] = [];
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      const target = new URL(String(url));
+      const route = routes.find(value => value.hostname === target.hostname);
+      if (!route) throw new Error("Unexpected provider endpoint");
+      const headers = new Headers(init?.headers);
+      if (route.provider === "anthropic") {
+        expect(headers.get("x-api-key")).toBe(apiKeys.anthropic);
+        expect(headers.has("authorization")).toBe(false);
+      } else if (route.provider === "google") {
+        expect(headers.get("x-goog-api-key")).toBe(apiKeys.google);
+        expect(headers.has("x-api-key")).toBe(false);
+        expect(headers.has("authorization")).toBe(false);
+      } else {
+        expect(headers.get("authorization")).toBe(`Bearer ${apiKeys[route.provider]}`);
+        expect(headers.has("x-api-key")).toBe(false);
+      }
+      if (init?.method === "GET") {
+        discovered.push(route.provider);
+        if (route.provider === "anthropic") return Response.json({ data: [{ id: route.model, lifecycle: "active", max_tokens: 16_384,
+          capabilities: { thinking: { supported: true, types: { adaptive: { supported: true } } },
+            effort: { supported: true, low: { supported: true }, medium: { supported: true }, high: { supported: true } } },
+        }], has_more: false });
+        if (route.provider === "google") return Response.json({ models: [{ name: `models/${route.model}`,
+          supportedGenerationMethods: ["generateContent"], outputTokenLimit: 16_384, thinking: true }] });
+        if (route.provider === "xai") {
+          expect(target.pathname).toBe("/v1/language-models");
+          return Response.json({ models: [{ id: route.model }] });
+        }
+        return Response.json({ object: "list", data: [{ id: route.model }], has_more: false });
+      }
+      expect(init?.method).toBe("POST");
+      expect(f.store.begin).toHaveBeenCalledOnce();
+      const body = JSON.parse(String(init?.body));
+      if (route.provider === "google") expect(target.pathname).toBe(`/v1beta/models/${route.model}:generateContent`);
+      else {
+        expect(body.model).toBe(route.model);
+        expect(target.pathname).toBe(route.provider === "anthropic" ? "/v1/messages" : "/v1/responses");
+      }
+      expect(f.admission.reserve.mock.calls).toContainEqual([expect.objectContaining({ model: route.model, provider: route.provider }), expect.any(AbortSignal)]);
+      dispatched.push({ provider: route.provider, model: route.model });
+      if (route.provider === "anthropic") return Response.json({ id: "msg_native_fixture", type: "message", role: "assistant",
+        model: route.model, stop_reason: "end_turn", content: [{ type: "text", text: answer }],
+        usage: { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } });
+      if (route.provider === "google") return Response.json({ responseId: "gemini_native_fixture", modelVersion: route.model,
+        candidates: [{ content: { role: "model", parts: [{ text: answer }] }, finishReason: "STOP" }],
+        usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5, cachedContentTokenCount: 0, thoughtsTokenCount: 0, totalTokenCount: 15 } });
+      return Response.json({ id: `${route.provider}_native_fixture`, model: route.model, status: "completed",
+        output: [{ type: "message", role: "assistant", status: "completed", content: [{ type: "output_text", text: answer }] }],
+        usage: { input_tokens: 10, output_tokens: 5, input_tokens_details: { cached_tokens: 0 },
+          output_tokens_details: { reasoning_tokens: 0 }, total_tokens: 15 } });
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, apiKey: undefined, apiKeys,
+        policyJson: JSON.stringify({ ...policy, models: modelPolicy }), loadCatalog: undefined, createClient: undefined });
+      const published = await host.catalog(user, new AbortController().signal);
+      expect(published.reason).toBe("ready");
+      expect(published.models.map(({ model, provider }) => ({ model, provider }))).toEqual(routes.map(({ model, provider }) => ({ model, provider })));
+      const result = await host.consult(user, { ...input,
+        preferences: { model: "qualified-openai", reflection: "maximum" },
+        reviewerModels: ["qualified-claude", "qualified-gemini", "qualified-grok"],
+      }, new AbortController().signal);
+      expect(result.result?.status).toBe("complete");
+      expect(result.result?.answer).toBe("Conseil natif conservé");
+      expect(discovered.sort()).toEqual(["anthropic", "google", "openai", "xai"]);
+      expect(dispatched).toHaveLength(8);
+      expect(new Set(dispatched.map(call => call.provider))).toEqual(new Set(routes.map(route => route.provider)));
+      expect(f.admission.reserve).toHaveBeenCalledTimes(8);
+      expect(f.admission.settle).toHaveBeenCalledTimes(8);
+      const receipts = (await f.store.status())?.result?.receipts ?? [];
+      expect(receipts).toHaveLength(8);
+      for (const receipt of receipts) {
+        expect(receipt.status).toBe("completed");
+        expect(receipt.usage).toHaveLength(1);
+        expect(receipt.usage[0]).toMatchObject({ routeKind: receipt.call.provider, requestedModel: receipt.call.model,
+          responseModel: receipt.call.model, inputTokens: 10, outputTokens: 5 });
+      }
+      expect(result.result).not.toHaveProperty("receipts");
+      expect(f.loadCatalog).not.toHaveBeenCalled();
+      expect(f.createClient).not.toHaveBeenCalled();
+      expect(f.decide).not.toHaveBeenCalled();
+    } finally { transport.mockRestore(); }
+  });
+
+  it("keeps provider identity and the exact financial policy aligned through catalogue, reservations and execution", async () => {
+    const f = fixture();
+    const routes = [
+      { model: "main", provider: "anthropic", maxCostMicros: 100_000 },
+      { model: "peer", provider: "openai", maxCostMicros: 200_000 },
+      { model: "gemini-qualified", provider: "google", maxCostMicros: 300_000 },
+      { model: "grok-qualified", provider: "xai", maxCostMicros: 400_000 },
+    ] as const;
+    const modelPolicy = routes.map(route => ({ ...route, maxInputTokens: 131_072, maxOutputTokens: 16_384,
+      reasoning: "adaptive", effortLevels: ["low", "medium", "high"], responseModels: [route.model + "-snapshot"] }));
+    const capabilities: ModelExecutionCapability[] = routes.map(route => ({ model: route.model,
+      maxOutputTokens: 16_384, reasoning: "adaptive", effortLevels: ["low", "medium", "high"] }));
+    const host = createConsultationHost({ ...f.options,
+      policyJson: JSON.stringify({ ...policy, models: modelPolicy }),
+      apiKeys: { anthropic: "test-anthropic", openai: "test-openai", google: "test-google", xai: "test-xai" },
+      loadCatalog: async () => capabilities,
+    });
+    const published = await host.catalog(user, new AbortController().signal);
+    expect(published.models.map(({ model, provider }) => ({ model, provider })))
+      .toEqual(routes.map(({ model, provider }) => ({ model, provider })));
+    expect(JSON.stringify(published)).not.toMatch(/test-openai|maxCostMicros|responseModels/);
+    const result = await host.consult(user, { ...input,
+      preferences: { model: "peer", reflection: "maximum" },
+      reviewerModels: ["main", "gemini-qualified", "grok-qualified"],
+    }, new AbortController().signal);
+    expect(result.result?.answer).toBe("Conclusion bornée");
+    expect(f.decide).toHaveBeenCalledTimes(8);
+    const estimates = (f.store.begin.mock.calls[0] as unknown as unknown[])[3] as ConsultationEstimates;
+    const reservations = f.admission.reserve.mock.calls as unknown as Array<[ConsultationCall]>;
+    expect(reservations).toHaveLength(8);
+    for (const [call] of reservations) {
+      const route = routes.find(value => value.model === call.model)!;
+      expect(call.provider).toBe(route.provider);
+      expect(estimates.calls).toContainEqual(expect.objectContaining({
+        kind: call.kind, model: call.model, provider: route.provider, maxCostMicros: route.maxCostMicros,
+      }));
+    }
+    expect(f.decide.mock.calls.filter(([call]) => call.systemPrompt.includes("citedSourceIds"))[0][0].preferences?.model).toBe("peer");
+    expect(f.admission.settle).toHaveBeenCalledTimes(8);
+  });
+
+  it("keeps a configured provider usable without an Anthropic key and rejects an unavailable selected route", async () => {
+    const f = fixture();
+    const host = createConsultationHost({ ...f.options, apiKey: "", apiKeys: { openai: "test-openai" },
+      policyJson: JSON.stringify({ ...policy, models: policy.models.map(model => ({ ...model,
+        provider: model.model === "peer" ? "openai" : "anthropic", reasoning: "adaptive", effortLevels: ["medium", "high"],
+      })) }),
+    });
+    expect((await host.catalog(user, new AbortController().signal)).models.map(({ model, provider }) => ({ model, provider })))
+      .toEqual([{ model: "peer", provider: "openai" }]);
+    await expect(host.consult(user, input, new AbortController().signal)).rejects.toMatchObject({ code: "IAO_INVALID" });
+    expect(f.store.begin).not.toHaveBeenCalled();
+    expect(f.decide).not.toHaveBeenCalled();
+    const result = await host.consult(user, { ...input, preferences: { model: "peer", reflection: "deep" } }, new AbortController().signal);
+    expect(result.result?.answer).toBe("Conclusion bornée");
+    expect(f.decide).toHaveBeenCalledOnce();
+    expect((f.admission.reserve.mock.calls as unknown as Array<[ConsultationCall]>)[0][0]).toMatchObject({ provider: "openai", model: "peer" });
+  });
+
+  it("does not inherit an unselected account when an explicit credential map is supplied", async () => {
+    const f = fixture();
+    const host = createConsultationHost({ ...f.options, apiKey: undefined, apiKeys: {} });
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("not_configured");
+    expect(f.loadCatalog).not.toHaveBeenCalled();
+    expect(f.store.availability).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ ...policy.models[0], provider: "unqualified" }],
+    [{ ...policy.models[0], provider: "openai", endpoint: "https://example.com" }],
+    [{ ...policy.models[0], provider: "openai" }, { ...policy.models[0], provider: "google" }],
+    [{ ...policy.models[0], responseModels: ["allowed", "allowed"] }],
+    [{ ...policy.models[0], maxCostMicros: 0 }],
+  ])("rejects an ambiguous or invalid host route policy before discovery: %j", async (...models) => {
+    const f = fixture();
+    const host = createConsultationHost({ ...f.options, apiKeys: { openai: "test-openai", google: "test-google" },
+      policyJson: JSON.stringify({ ...policy, models }),
+    });
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("not_configured");
+    expect(f.loadCatalog).not.toHaveBeenCalled();
+    expect(f.store.begin).not.toHaveBeenCalled();
+    expect(f.decide).not.toHaveBeenCalled();
+  });
+
+  it("never admits a newly discovered model outside the configured policy", async () => {
+    const f = fixture();
+    const host = createConsultationHost({ ...f.options, loadCatalog: async () => [...catalog, { model: "new-unapproved",
+      reasoning: "none", maxOutputTokens: 1024 }] });
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("account_unavailable");
+    expect(f.store.availability).not.toHaveBeenCalled();
+    expect(f.store.begin).not.toHaveBeenCalled();
+    expect(f.decide).not.toHaveBeenCalled();
   });
 });

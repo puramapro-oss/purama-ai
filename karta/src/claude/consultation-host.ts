@@ -3,8 +3,9 @@ import { bounded } from "../runtime/lifecycle.js";
 import { isGlobalKillSwitchActive } from "../engine/killswitch.js";
 import type { ConsultationCatalog, ConsultationHost, ConsultationInput, ConsultationOperation as PublicOperation } from "../api/consultation-contract.js";
 import { createConnectedResearchClient } from "../knowledge/connected-research.js";
-import { createRealClaudeClient } from "./real.js";
-import { loadAnthropicModelCatalog } from "./model-catalog.js";
+import { createConnectedModelClient } from "./connected-provider.js";
+import { loadConnectedModelCatalog, normalizeConnectedModelLimits,
+  type ConnectedModelLimit, type ModelProvider } from "./model-catalog.js";
 import { normalizeModelCatalog, resolveModelExecutionPlan, type ModelExecutionCapability } from "./execution-profile.js";
 import { normalizeConsultationRequest, runModelConsultation, type ConsultationRequest, type ConsultationResult, type ConsultationDependencies } from "./consultation.js";
 import { allocateSourceExcerpts, MODEL_SOURCE_EXCERPT_LIMITS } from "./consultation-excerpts.js";
@@ -17,7 +18,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // Generic transports such as LM Studio may support a wider model grammar.
 const NATIVE_CONSULTATION_MODEL = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\s\S])/;
 const OVERHEAD = 16_384;
-interface ModelPolicy { model: string; maxInputTokens: number; maxOutputTokens: number; maxCostMicros: number }
+interface ModelPolicy extends ConnectedModelLimit { maxInputTokens: number; maxCostMicros: number }
 interface ConsultationPolicy {
   version: string;
   expiresAt: string;
@@ -35,14 +36,20 @@ function parsePolicy(raw: string | undefined): ConsultationPolicy | null {
       || typeof p.version !== "string" || !/^[A-Za-z0-9._:-]{1,120}$/.test(p.version)
       || typeof p.expiresAt !== "string" || !Number.isFinite(Date.parse(p.expiresAt))
       || !Array.isArray(p.models) || p.models.length < 1 || p.models.length > 32) return null;
-    const models: ModelPolicy[] = [];
+    const modelRows: Array<{ limits: Record<string, unknown>; maxInputTokens: number; maxCostMicros: number }> = [];
     for (const m of p.models) {
-      if (!object(m) || Object.keys(m).some(k => !["model", "maxInputTokens", "maxOutputTokens", "maxCostMicros"].includes(k))
+      if (!object(m) || Object.keys(m).some(k => !["model", "maxInputTokens", "maxOutputTokens", "maxCostMicros",
+        "provider", "reasoning", "effortLevels", "responseModels"].includes(k))
         || typeof m.model !== "string" || !integer(m.maxInputTokens, 32_768, 278_528)
         || !integer(m.maxOutputTokens, 1024, 65_536) || !integer(m.maxCostMicros, 1, 1_000_000_000)) return null;
-      models.push({ model: m.model, maxInputTokens: m.maxInputTokens, maxOutputTokens: m.maxOutputTokens, maxCostMicros: m.maxCostMicros });
+      const { maxInputTokens, maxCostMicros, ...limits } = m;
+      modelRows.push({ limits, maxInputTokens, maxCostMicros });
     }
-    normalizeModelCatalog(models.map(m => ({ model: m.model, maxOutputTokens: m.maxOutputTokens, reasoning: "none" })));
+    const qualifiedLimits = normalizeConnectedModelLimits(modelRows.map(row => row.limits));
+    const models: ModelPolicy[] = qualifiedLimits.map(limits => {
+      const row = modelRows.find(value => value.limits.model === limits.model)!;
+      return { ...limits, maxInputTokens: row.maxInputTokens, maxCostMicros: row.maxCostMicros };
+    });
     let research: ConsultationPolicy["research"];
     if (p.research !== undefined) {
       if (!object(p.research) || Object.keys(p.research).some(k => !["searchMaxCostMicros", "scrapeMaxCostMicros"].includes(k))) return null;
@@ -100,6 +107,9 @@ function storeError(error: unknown): never {
 export function createConsultationHost(options: {
   policyJson?: string;
   apiKey?: string;
+  /** Explicit host credentials. A supplied map does not inherit other accounts
+   * from the environment; the legacy apiKey still selects Anthropic only. */
+  apiKeys?: Partial<Record<ModelProvider, string>>;
   simulation?: boolean;
   store?: ReturnType<typeof createConsultationStore>;
   loadCatalog?: (limits: ModelPolicy[], signal: AbortSignal) => Promise<ModelExecutionCapability[]>;
@@ -111,7 +121,22 @@ export function createConsultationHost(options: {
   now?: () => number;
 } = {}): ConsultationHost {
   const policy = parsePolicy(options.policyJson ?? process.env.KARTA_CONSULTATION_POLICY_JSON);
-  const apiKey = options.apiKey ?? config.anthropicApiKey;
+  const apiKeys: Partial<Record<ModelProvider, string>> = options.apiKeys ? { ...options.apiKeys } : {
+    anthropic: config.anthropicApiKey,
+    openai: process.env.OPENAI_API_KEY,
+    google: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY,
+    xai: process.env.XAI_API_KEY || process.env.GROK_API_KEY,
+  };
+  if (options.apiKey !== undefined) apiKeys.anthropic = options.apiKey;
+  // One policy-owned table drives discovery, public identity, reservations and
+  // execution. A second provider must never be inferred from a model's name.
+  const providers = new Map<string, ModelProvider>((policy?.models ?? []).map(model => [model.model, model.provider ?? "anthropic"]));
+  const allowed: ConnectedModelLimit[] = (policy?.models ?? []).map(({ maxInputTokens: _input, maxCostMicros: _cost, ...limits }) => limits);
+  const configured = (model: string) => {
+    const provider = providers.get(model);
+    return provider !== undefined && !!apiKeys[provider];
+  };
+  const hasConfiguredRoute = () => allowed.some(model => configured(model.model));
   const simulation = options.simulation ?? config.mockClaude;
   const store = options.store ?? createConsultationStore();
   const now = options.now ?? Date.now;
@@ -127,7 +152,7 @@ export function createConsultationHost(options: {
   const valid = () => !!policy && Date.parse(policy.expiresAt) > now();
   const authorize = async (signal: AbortSignal) => {
     signal.throwIfAborted();
-    if (!valid() || simulation || !apiKey) throw failure("IAO_UNAVAILABLE");
+    if (!valid() || simulation || !hasConfiguredRoute()) throw failure("IAO_UNAVAILABLE");
     if (await bounded(() => stopped(), 5000, signal) !== false) throw failure("IAO_UNAVAILABLE");
     signal.throwIfAborted();
     if (!valid()) throw failure("IAO_UNAVAILABLE");
@@ -139,13 +164,15 @@ export function createConsultationHost(options: {
     if (!loading) {
       const controller = new AbortController();
       const pending = { controller, waiters: 0, promise: bounded(async current => {
+        // Let a provider's timeout settle before the host deadline so that
+        // healthy providers still contribute their qualified models.
         const found = await (options.loadCatalog
           ? options.loadCatalog(policy.models, current)
-          : loadAnthropicModelCatalog({ apiKey, allowed: policy.models.map(({ model, maxOutputTokens }) => ({ model, maxOutputTokens })) }, current));
+          : loadConnectedModelCatalog({ apiKeys, allowed, timeoutMs: 4000 }, current));
         current.throwIfAborted();
         const qualified = found.length ? normalizeModelCatalog(found) : [];
         if (qualified.some(m => !policy.models.some(p => p.model === m.model && p.maxOutputTokens >= m.maxOutputTokens))) throw failure("IAO_UNAVAILABLE");
-        return qualified.filter(model => NATIVE_CONSULTATION_MODEL.test(model.model));
+        return qualified.filter(model => configured(model.model) && NATIVE_CONSULTATION_MODEL.test(model.model));
       }, 5000, controller.signal).then(qualified => {
         controller.signal.throwIfAborted();
         if (!valid()) throw failure("IAO_UNAVAILABLE");
@@ -181,7 +208,7 @@ export function createConsultationHost(options: {
         available: false, reason, models: [], research: { search: false, scrape: false },
       });
       if (simulation) return empty("simulation_enabled");
-      if (!valid() || !apiKey) return empty("not_configured");
+      if (!valid() || !hasConfiguredRoute()) return empty("not_configured");
       try { if (await bounded(() => stopped(), 5000, signal) !== false) return empty("paused"); }
       catch { return empty("service_unavailable"); }
       let found: ModelExecutionCapability[];
@@ -199,7 +226,7 @@ export function createConsultationHost(options: {
                 profiles.push({ reflection, speed, research: plan.research }); } catch { /* unsupported level is omitted */ }
             }
           }
-          return { model: model.model, provider: "anthropic", maxOutputTokens: model.maxOutputTokens, profiles,
+          return { model: model.model, provider: providers.get(model.model)!, maxOutputTokens: model.maxOutputTokens, profiles,
             reflections: [...new Set(profiles.map(p => p.reflection))], speeds: [...new Set(profiles.map(p => p.speed))] };
         }) };
     },
@@ -226,7 +253,7 @@ export function createConsultationHost(options: {
       const estimates: ConsultationEstimates = { policyVersion: policy!.version, calls: [] };
       const addModel = (model: string, kind: "proposal" | "critique" | "synthesis") => {
         const limits = policy!.models.find(m => m.model === model)!;
-        estimates.calls.push({ kind, provider: "anthropic", model, maxCalls: 1,
+        estimates.calls.push({ kind, provider: providers.get(model)!, model, maxCalls: 1,
           maxInputTokens: limits.maxInputTokens, maxOutputTokens: resolveModelExecutionPlan({ ...request.preferences, model }, catalog).maxOutputTokens,
           maxCostMicros: limits.maxCostMicros });
       };
@@ -239,7 +266,9 @@ export function createConsultationHost(options: {
         maxInputTokens: 0, maxOutputTokens: 0, maxCostMicros: policy!.research!.searchMaxCostMicros! });
       if (request.research.urls.length) estimates.calls.push({ kind: "scrape", provider: "firecrawl", maxCalls: request.research.urls.length,
         maxInputTokens: 0, maxOutputTokens: 0, maxCostMicros: policy!.research!.scrapeMaxCostMicros! });
-      const client = (options.createClient ?? (c => createRealClaudeClient({ modelCatalog: c, nativeAnthropicAccount: { apiKey } })))(catalog);
+      const client = (options.createClient ?? (c => createConnectedModelClient({
+        apiKeys, allowed, modelCatalog: c, timeoutMs: config.anthropicTimeoutMs,
+      })))(catalog);
       if (client.isMock || typeof client.decide !== "function") throw failure("IAO_UNAVAILABLE");
       let admission;
       try { admission = await store.begin(userId, request, plan, estimates, signal); }
@@ -255,9 +284,10 @@ export function createConsultationHost(options: {
       try {
         const result = await runModelConsultation(request, {
           maxContextBytes: Math.min(262_144, ...selected.map(m => policy!.models.find(p => p.model === m)!.maxInputTokens - OVERHEAD)),
-          catalog, models: selected.map(model => ({ model, provider: "anthropic", client })), research,
+          catalog, models: selected.map(model => ({ model, provider: providers.get(model)!, client })), research,
           admission: { ...begun.admission, reserve: async (call, current) => {
             await authorize(current);
+            if (call.model && (!configured(call.model) || providers.get(call.model) !== call.provider)) throw failure("IAO_UNAVAILABLE");
             const accepted = await begun.admission.reserve(call, current);
             current.throwIfAborted();
             if (!valid()) throw failure("IAO_UNAVAILABLE");

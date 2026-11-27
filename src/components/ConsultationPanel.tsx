@@ -8,6 +8,7 @@ import type { ConsultationReflection, ConsultationSpeed } from '../../karta/src/
 
 const reflectionLabels = { auto: 'Automatique (standard)', standard: 'Standard', deep: 'Approfondie', maximum: 'Maximale' };
 const speedLabels = { standard: 'Standard', fast: 'Rapide', ultra_fast: 'Ultra rapide' };
+const providerLabels: Record<string, string> = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI' };
 const availabilityLabels: Record<ConsultationCatalog['reason'], string> = {
   ready: 'Consultation disponible.',
   not_configured: 'La consultation n’est pas encore configurée.',
@@ -221,9 +222,10 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
           <label className="block text-xs font-medium">Modèle principal
             <select aria-label="Modèle principal" value={model} onChange={event => setModel(event.target.value)} className={fieldClass}>
               {!selected && <option value={model} disabled>{model || 'Aucun modèle disponible'}</option>}
-              {catalog?.models.map(item => <option key={item.model} value={item.model}>{item.model}</option>)}
+              {catalog?.models.map(item => <option key={item.model} value={item.model}>{item.model} · {providerLabels[item.provider] ?? item.provider}</option>)}
             </select>
           </label>
+          {selected && <p className="text-xs text-muted-foreground">Fournisseur : {providerLabels[selected.provider] ?? selected.provider}. Ce modèle est proposé pour cette consultation.</p>}
           <div className="grid grid-cols-2 gap-2">
             <label className="text-xs font-medium">Réflexion
               <select aria-label="Réflexion de la consultation" value={reflection} onChange={event => setReflection(event.target.value as ConsultationReflection)} className={fieldClass}>
@@ -246,7 +248,7 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
                 disabled={!reviewers.includes(item.model) && (!profile || reviewers.length >= profile.research.maxReviewers
                   || !item.profiles.some(variant => variant.reflection === reflection && variant.speed === speed))}
                 onChange={event => setReviewers(current => event.target.checked ? [...current, item.model] : current.filter(name => name !== item.model))} />
-              <span>{item.model}{item.model === model ? ' — déjà principal, retirer cet avis' : ''}</span>
+              <span>{item.model} · {providerLabels[item.provider] ?? item.provider}{item.model === model ? ' — déjà principal, retirer cet avis' : ''}</span>
             </label>)}
           </fieldset>
         </details>}
