@@ -51,10 +51,7 @@ jobs:
     env:
       CI: '1'
       DENO_NO_UPDATE_CHECK: '1'
-      DENO_DIR: ${{ runner.temp }}/notifications-deno-cache
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-      EVIDENCE_DIR: ${{ runner.temp }}/notifications-quality
-      NOTIFICATIONS_BROWSER_EVIDENCE: ${{ runner.temp }}/notifications-quality/browser
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         id: checkout
@@ -65,7 +62,13 @@ jobs:
         id: evidence
         run: |
           set -euo pipefail
+          EVIDENCE_DIR="$RUNNER_TEMP/notifications-quality"
           mkdir -p "$EVIDENCE_DIR"
+          {
+            printf 'DENO_DIR=%s/notifications-deno-cache\n' "$RUNNER_TEMP"
+            printf 'EVIDENCE_DIR=%s\n' "$EVIDENCE_DIR"
+            printf 'NOTIFICATIONS_BROWSER_EVIDENCE=%s/browser\n' "$EVIDENCE_DIR"
+          } >> "$GITHUB_ENV"
           {
             git rev-parse HEAD HEAD^{tree}
             sha256sum package.json package-lock.json
@@ -170,6 +173,7 @@ jobs:
           BROWSER_OUTCOME: ${{ steps.browser.outcome }}
         run: |
           set -euo pipefail
+          export EVIDENCE_DIR="${EVIDENCE_DIR:-$RUNNER_TEMP/notifications-quality}"
           mkdir -p "$EVIDENCE_DIR"
           python3 - <<'PY'
           import hashlib, json, os, pathlib

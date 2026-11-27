@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-27T04:41:38.863510+00:00",
+  "invalid_run": {
+    "id": 45940966908,
+    "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45940966908",
+    "head": "13ecc001580517cda0217e471e936ffcf527f2b4",
+    "jobs": 0,
+    "artifacts": 0,
+    "annotation": "Invalid workflow file. Lines 54, 56, 57: Unrecognized named-value: runner. Located at position 1 within expression: runner.temp",
+    "evidence": "Exact public run page read HTTP200 by inventory_remote on Mac; root independently verified allowed contexts in official reference."
+  },
+  "official_reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+  "correction": "Initialize temporary paths inside the evidence step from RUNNER_TEMP and persist via GITHUB_ENV; always-step evidence fallback; runner.temp expression retained only under step.with.path.",
+  "product_changes": false,
+  "workflow_before_sha256": "4c8da492763d4ffde071200cc33a7864a36df2a2f4fca908116b96ef5caab5e6",
+  "workflow_after_sha256": "e2e22230fa01b5f6ed72e1ed1cab7e7a9e48d99fcca8df72e729336d324a7e4e",
+  "structural_validation": "PASS YAML1.2, eight Bash blocks, embedded Python, expression availability, whitespace; GitHub execution pending."
+}
