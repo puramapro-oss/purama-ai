@@ -1,0 +1,43 @@
+{
+  "status": "FAIL",
+  "startedAt": "2026-11-27T04:21:03.267Z",
+  "source": "/workspace/scratch/b643db4cccea/iao-notifications",
+  "sourceSha256": {
+    "src/hooks/useNotifications.ts": "57b6ab0c0ab6621521a374a28bb90f3c80013512c8832060866df35bf8348ab7",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/pages/Notifications.tsx": "d1475c95fb8e1328ec7421545a1362464bfb04455cbe90340d9430fcbfce389b",
+    "src/pages/NotificationSettings.tsx": "453177ad1a76f0898b347d8112379cb2dd9651ea3fa82d09b3648d13f25ae59d",
+    "src/components/notifications/NotificationCenter.tsx": "85ab861676979c0fd54f574fce3610977c1790529abaaab2ddefc1d9437b6849",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "node": "v24.22.3",
+  "backend": "controlled in-memory Supabase and authentication fixtures",
+  "reactQueryAndSonner": "real installed packages",
+  "checks": [],
+  "pageErrors": [],
+  "externalRequests": [],
+  "screenshots": [],
+  "bundleSha256": "def49f06d57e4337bf9c96efd8240ca47a657d2f37b64c2ee560f94d7e75cd81",
+  "cssSha256": "c5bb0fc9f91ebe4efabbbb99ac7c90ac825d6d1b38cbc98a323d65f9802b24d3",
+  "browserPackage": "1.65.1",
+  "executablePath": "/usr/bin/chromium",
+  "fatal": "browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,HttpsUpgrades,HttpsFirstBalancedModeAutoEnable,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,AvoidCorsURLLoaderRestartOnRedirect,TcpPortRandomizationWin,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,PreconnectToSearch,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface,SkipListAccountsWithoutGaiaCookies --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-unsafe-swiftshader --edge-skip-compat-layer-relaunch --disable-stack-profiler --disable-infobars --disable-sync --do-not-de-elevate --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-dev-shm-usage --disable-background-networking --host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1 --user-data-dir=/tmp/playwright_chromiumdev_profile-OOkxyM --remote-debugging-pipe --no-startup-window\n<launched> pid=29\n[pid=29][err] /usr/bin/chromium: 9: [: 5225713664: unexpected operator\n[pid=29][err] /usr/bin/chromium: 153: exec: /usr/lib/chromium/chromium: not found\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,HttpsUpgrades,HttpsFirstBalancedModeAutoEnable,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,AvoidCorsURLLoaderRestartOnRedirect,TcpPortRandomizationWin,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,PreconnectToSearch,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface,SkipListAccountsWithoutGaiaCookies --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-unsafe-swiftshader --edge-skip-compat-layer-relaunch --disable-stack-profiler --disable-infobars --disable-sync --do-not-de-elevate --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --disable-dev-shm-usage --disable-background-networking --host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1 --user-data-dir=/tmp/playwright_chromiumdev_profile-OOkxyM --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=29\u001b[22m\n\u001b[2m  - [pid=29][err] /usr/bin/chromium: 9: [: 5225713664: unexpected operator\u001b[22m\n\u001b[2m  - [pid=29][err] /usr/bin/chromium: 153: exec: /usr/lib/chromium/chromium: not found\u001b[22m\n\u001b[2m  - [pid=29] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=29] <kill>\u001b[22m\n\u001b[2m  - [pid=29] <will force kill>\u001b[22m\n\u001b[2m  - [pid=29] exception while trying to kill process: Error: kill ESRCH\u001b[22m\n\u001b[2m  - [pid=29] <process did exit: exitCode=127, signal=null>\u001b[22m\n\u001b[2m  - [pid=29] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=29] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=29] <gracefully close end>\u001b[22m\n\n    at /workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/browser/run.mjs:117:30",
+  "finishedAt": "2026-11-27T04:21:04.939Z",
+  "sourceSha256After": {
+    "src/hooks/useNotifications.ts": "57b6ab0c0ab6621521a374a28bb90f3c80013512c8832060866df35bf8348ab7",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/pages/Notifications.tsx": "d1475c95fb8e1328ec7421545a1362464bfb04455cbe90340d9430fcbfce389b",
+    "src/pages/NotificationSettings.tsx": "453177ad1a76f0898b347d8112379cb2dd9651ea3fa82d09b3648d13f25ae59d",
+    "src/components/notifications/NotificationCenter.tsx": "85ab861676979c0fd54f574fce3610977c1790529abaaab2ddefc1d9437b6849",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "sourceUnchanged": true
+}

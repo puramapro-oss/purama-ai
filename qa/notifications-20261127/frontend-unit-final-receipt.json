@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--reporter=json",
+    "--outputFile=qa/notifications-20261127/frontend-unit-final.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 39.049,
+  "numTotalTests": 954,
+  "numPassedTests": 954,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true
+}

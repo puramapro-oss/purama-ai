@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "mode": "REAL_REACT_DOM_IN_JSDOM_NOT_BROWSER",
+  "at": "2026-11-27T04:27:37.572Z",
+  "node": "v24.22.3",
+  "jsdom": "26.1.0",
+  "sourceSha256": {
+    "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/lib/safeNavigation.ts": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0",
+    "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+    "src/pages/NotificationSettings.tsx": "bf50b88e83b58fbc066082e7622bf612d35e62e3823f60ce990a00af57a79210",
+    "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "bundleSha256": "c5a8f62bea6909b731b41c0f1f7cd5e5ca6d9785d02f79f422091c6ea5018526",
+  "observations": [
+    {
+      "view": "settings",
+      "status": "PASS",
+      "before": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan Gratuit1CDTAPréférences de notificationPersonnalisez les notifications que vous recevezImpossible de charger les préférencesRéessayez pour afficher vos réglages enregistrés.RéessayerImpossible de charger les préférences",
+        "alerts": [
+          "Impossible de charger les préférencesRéessayez pour afficher vos réglages enregistrés.Réessayer"
+        ],
+        "switches": []
+      },
+      "after": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan Gratuit1CDTAPréférences de notificationPersonnalisez les notifications que vous recevezNotifications par emailRecevez un email pour chaque notification importanteActiver les emailsNous vous enverrons un email pour les notifications importantesTypes de notificationsChoisissez les types de notifications que vous souhaitez recevoirTâches terminéesQuand un agent a fini son travailQuestions des agentsQuand un agent a besoin d'une réponse de votre partRapports quotidiensRésumé de ce que vos agents ont fait chaque jourAlertesProblèmes détectés ou actions requisesImpossible de charger les préférences",
+        "alerts": [],
+        "switches": [
+          {
+            "id": "email-enabled",
+            "checked": "false",
+            "disabled": false
+          },
+          {
+            "id": "task-completed",
+            "checked": "false",
+            "disabled": false
+          },
+          {
+            "id": "question",
+            "checked": "true",
+            "disabled": false
+          },
+          {
+            "id": "daily-report",
+            "checked": "false",
+            "disabled": false
+          },
+          {
+            "id": "alert",
+            "checked": "true",
+            "disabled": false
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "view": "notifications",
+      "status": "PASS",
+      "before": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan GratuitCDTAMes notificationsNotifications indisponiblesFiltres:Tous les typesTous les agentsImpossible de charger les notificationsRéessayerImpossible de charger les notifications",
+        "alerts": [
+          "Impossible de charger les notificationsRéessayer"
+        ],
+        "switches": []
+      },
+      "after": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan Gratuit1CDTAMes notifications1 notification non lueTout marquer comme luFiltres:Tous les typesTous les agentsAujourd'huiRECOVERED_NOTIFICATIONAlerteSyntheticil y a environ 4 heuresImpossible de charger les notifications",
+        "alerts": [],
+        "switches": []
+      },
+      "errors": []
+    },
+    {
+      "view": "center",
+      "status": "PASS",
+      "before": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)Impossible de charger les notificationsNotifications[data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}Impossible de charger les notificationsRéessayerVoir toutes les notifications",
+        "alerts": [
+          "Impossible de charger les notificationsRéessayer"
+        ],
+        "switches": []
+      },
+      "after": {
+        "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)1Impossible de charger les notificationsNotificationsTout marquer lu[data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}⚠️RECOVERED_NOTIFICATIONSyntheticil y a environ 4 heuresVoir toutes les notifications",
+        "alerts": [],
+        "switches": []
+      },
+      "errors": []
+    }
+  ],
+  "limits": [
+    "No browser engine, screenshot or visual layout verified",
+    "Auth/DB/Realtime transport fixtures; no production request or email"
+  ]
+}

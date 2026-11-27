@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-notifications-20261127-b643": false,
       "audit/unlazy-reconciliation-20261125": false,
       "test/partner-discovery-postgres-20261124": false,
       "fix/iao-wealth-evidence-20261124": false,

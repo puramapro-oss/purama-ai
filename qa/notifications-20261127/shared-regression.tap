@@ -1,0 +1,268 @@
+TAP version 13
+# Subtest: body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+ok 1 - body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+  ---
+  duration_ms: 7.261769
+  type: 'test'
+  ...
+# Subtest: body reader: an empty request returns an empty string
+ok 2 - body reader: an empty request returns an empty string
+  ---
+  duration_ms: 0.340561
+  type: 'test'
+  ...
+# Subtest: body reader: the byte limit permits exactly the maximum
+ok 3 - body reader: the byte limit permits exactly the maximum
+  ---
+  duration_ms: 0.424554
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {}
+ok 4 - body reader: excessive bytes are refused {}
+  ---
+  duration_ms: 0.838392
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {"content-length":"5"}
+ok 5 - body reader: excessive bytes are refused {"content-length":"5"}
+  ---
+  duration_ms: 0.615655
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length -1 is refused
+ok 6 - body reader: invalid Content-Length -1 is refused
+  ---
+  duration_ms: 0.337646
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1.5 is refused
+ok 7 - body reader: invalid Content-Length 1.5 is refused
+  ---
+  duration_ms: 0.257108
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length NaN is refused
+ok 8 - body reader: invalid Content-Length NaN is refused
+  ---
+  duration_ms: 0.244128
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1e2 is refused
+ok 9 - body reader: invalid Content-Length 1e2 is refused
+  ---
+  duration_ms: 0.260172
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 9007199254740992 is refused
+ok 10 - body reader: invalid Content-Length 9007199254740992 is refused
+  ---
+  duration_ms: 0.468959
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 2 must match "abc"
+ok 11 - body reader: declared length 2 must match "abc"
+  ---
+  duration_ms: 0.330075
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 4 must match "abc"
+ok 12 - body reader: declared length 4 must match "abc"
+  ---
+  duration_ms: 0.284198
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 1 must match ""
+ok 13 - body reader: declared length 1 must match ""
+  ---
+  duration_ms: 0.470301
+  type: 'test'
+  ...
+# Subtest: body reader: a declared body cannot be absent
+ok 14 - body reader: a declared body cannot be absent
+  ---
+  duration_ms: 0.262536
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 255 is refused
+ok 15 - body reader: invalid UTF-8 255 is refused
+  ---
+  duration_ms: 0.402542
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 192,175 is refused
+ok 16 - body reader: invalid UTF-8 192,175 is refused
+  ---
+  duration_ms: 0.194766
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 226,130 is refused
+ok 17 - body reader: invalid UTF-8 226,130 is refused
+  ---
+  duration_ms: 0.225191
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 237,160,128 is refused
+ok 18 - body reader: invalid UTF-8 237,160,128 is refused
+  ---
+  duration_ms: 0.388551
+  type: 'test'
+  ...
+# Subtest: body reader: empty chunks cannot keep a request alive indefinitely
+ok 19 - body reader: empty chunks cannot keep a request alive indefinitely
+  ---
+  duration_ms: 5.996621
+  type: 'test'
+  ...
+# Subtest: body reader: an immediately resolving stream still observes the absolute deadline
+ok 20 - body reader: an immediately resolving stream still observes the absolute deadline
+  ---
+  duration_ms: 5.523496
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=resolve
+ok 21 - body reader: a stalled read times out even when cancel=resolve
+  ---
+  duration_ms: 16.613992
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=reject
+ok 22 - body reader: a stalled read times out even when cancel=reject
+  ---
+  duration_ms: 14.264118
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=never
+ok 23 - body reader: a stalled read times out even when cancel=never
+  ---
+  duration_ms: 15.288995
+  type: 'test'
+  ...
+# Subtest: body reader: a pre-aborted request is refused and cancelled
+ok 24 - body reader: a pre-aborted request is refused and cancelled
+  ---
+  duration_ms: 1.370042
+  type: 'test'
+  ...
+# Subtest: body reader: abort during a stalled read cannot wait for the producer
+ok 25 - body reader: abort during a stalled read cannot wait for the producer
+  ---
+  duration_ms: 0.937888
+  type: 'test'
+  ...
+# Subtest: body reader: final handoff honors abort before returning text
+ok 26 - body reader: final handoff honors abort before returning text
+  ---
+  duration_ms: 1.221665
+  type: 'test'
+  ...
+# Subtest: body reader: final handoff honors deadline before returning text
+ok 27 - body reader: final handoff honors deadline before returning text
+  ---
+  duration_ms: 0.478764
+  type: 'test'
+  ...
+# Subtest: body reader: read failures are sanitized and locks released
+ok 28 - body reader: read failures are sanitized and locks released
+  ---
+  duration_ms: 0.543909
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves none priority
+ok 29 - body reader: rejected read text preserves none priority
+  ---
+  duration_ms: 0.521446
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves deadline priority
+ok 30 - body reader: rejected read text preserves deadline priority
+  ---
+  duration_ms: 0.431474
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves abort-handoff priority
+ok 31 - body reader: rejected read text preserves abort-handoff priority
+  ---
+  duration_ms: 0.4491
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves none priority
+ok 32 - body reader: rejected read bytes preserves none priority
+  ---
+  duration_ms: 0.441639
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves deadline priority
+ok 33 - body reader: rejected read bytes preserves deadline priority
+  ---
+  duration_ms: 0.311618
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves abort-handoff priority
+ok 34 - body reader: rejected read bytes preserves abort-handoff priority
+  ---
+  duration_ms: 0.390363
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":0} fail immediately
+ok 35 - body reader: invalid internal limits {"maxBytes":0} fail immediately
+  ---
+  duration_ms: 0.232802
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":null} fail immediately
+ok 36 - body reader: invalid internal limits {"maxBytes":null} fail immediately
+  ---
+  duration_ms: 0.155759
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":0} fail immediately
+ok 37 - body reader: invalid internal limits {"timeoutMs":0} fail immediately
+  ---
+  duration_ms: 0.15705
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+ok 38 - body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+  ---
+  duration_ms: 0.187225
+  type: 'test'
+  ...
+# Subtest: bearer authentication accepts only the exact configured value
+ok 39 - bearer authentication accepts only the exact configured value
+  ---
+  duration_ms: 1.65412
+  type: 'test'
+  ...
+# Subtest: HMAC authentication accepts prefixed and bare signatures
+ok 40 - HMAC authentication accepts prefixed and bare signatures
+  ---
+  duration_ms: 13.440518
+  type: 'test'
+  ...
+# Subtest: HMAC authentication rejects tampering and malformed encodings
+ok 41 - HMAC authentication rejects tampering and malformed encodings
+  ---
+  duration_ms: 2.189367
+  type: 'test'
+  ...
+# Subtest: webhook authentication supports configured bearer or HMAC transport
+ok 42 - webhook authentication supports configured bearer or HMAC transport
+  ---
+  duration_ms: 2.141256
+  type: 'test'
+  ...
+# Subtest: only explicit local environments may opt into the development exception
+ok 43 - only explicit local environments may opt into the development exception
+  ---
+  duration_ms: 0.260122
+  type: 'test'
+  ...
+1..43
+# tests 43
+# suites 0
+# pass 43
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 258.573412

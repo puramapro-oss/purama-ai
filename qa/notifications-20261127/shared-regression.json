@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "supabase/functions/_shared/request-body.test.ts",
+    "supabase/functions/_shared/webhook-security.test.ts"
+  ],
+  "exit_code": 0,
+  "summary": [
+    "# tests 43",
+    "# pass 43",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0",
+    "# todo 0"
+  ]
+}

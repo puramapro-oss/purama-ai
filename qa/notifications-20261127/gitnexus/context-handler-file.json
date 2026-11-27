@@ -1,0 +1,165 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "File:supabase/functions/send-notification/index.ts",
+    "name": "index.ts",
+    "filePath": "supabase/functions/send-notification/index.ts"
+  },
+  "epistemic": "exact",
+  "incoming": {},
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/test/approvalContinuation.test.ts:query",
+        "name": "query",
+        "filePath": "karta/test/approvalContinuation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/approvalContinuation.test.ts:query",
+        "name": "query",
+        "filePath": "karta/test/approvalContinuation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/approvalContinuation.test.ts:query",
+        "name": "query",
+        "filePath": "karta/test/approvalContinuation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/approvalContinuation.test.ts:query",
+        "name": "query",
+        "filePath": "karta/test/approvalContinuation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/assistantPolicy.test.ts:database.from@70:2",
+        "name": "from",
+        "filePath": "karta/test/assistantPolicy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/assistantPolicy.test.ts:database.from@70:2",
+        "name": "from",
+        "filePath": "karta/test/assistantPolicy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/assistantPolicy.test.ts:database.from@70:2",
+        "name": "from",
+        "filePath": "karta/test/assistantPolicy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/assistantPolicy.test.ts:database.from@70:2",
+        "name": "from",
+        "filePath": "karta/test/assistantPolicy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/assistantPolicy.test.ts:runtime.register@162:2",
+        "name": "register",
+        "filePath": "karta/test/assistantPolicy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/briefSubmissionFlow.test.ts:from",
+        "name": "from",
+        "filePath": "karta/test/briefSubmissionFlow.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/briefSubmissionFlow.test.ts:from",
+        "name": "from",
+        "filePath": "karta/test/briefSubmissionFlow.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/briefSubmissionFlow.test.ts:from",
+        "name": "from",
+        "filePath": "karta/test/briefSubmissionFlow.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/briefSubmissionFlow.test.ts:from",
+        "name": "from",
+        "filePath": "karta/test/briefSubmissionFlow.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/chatEscalation.test.ts:harness.from@34:2",
+        "name": "from",
+        "filePath": "karta/test/chatEscalation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/chatEscalation.test.ts:harness.from@34:2",
+        "name": "from",
+        "filePath": "karta/test/chatEscalation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/chatEscalation.test.ts:harness.from@34:2",
+        "name": "from",
+        "filePath": "karta/test/chatEscalation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/chatEscalation.test.ts:harness.from@34:2",
+        "name": "from",
+        "filePath": "karta/test/chatEscalation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/logger.test.ts:fn@12:32.from@12:53.result@14:1",
+        "name": "result",
+        "filePath": "karta/test/logger.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/loopTriggerContext.test.ts:fn@20:33.from@21:8.read@23:4",
+        "name": "read",
+        "filePath": "karta/test/loopTriggerContext.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/loopTriggerContext.test.ts:fn@20:33.from@21:8.read@23:4",
+        "name": "read",
+        "filePath": "karta/test/loopTriggerContext.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/loopTriggerContext.test.ts:fn@20:33.from@21:8.read@23:4",
+        "name": "read",
+        "filePath": "karta/test/loopTriggerContext.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/loopTriggerContext.test.ts:fn@20:33.from@21:8.read@23:4",
+        "name": "read",
+        "filePath": "karta/test/loopTriggerContext.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/partnerDiscovery.test.ts:runtime.from@62:2",
+        "name": "from",
+        "filePath": "karta/test/partnerDiscovery.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/partnerDiscovery.test.ts:runtime.from@62:2",
+        "name": "from",
+        "filePath": "karta/test/partnerDiscovery.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/partnerDiscovery.test.ts:runtime.from@62:2",
+        "name": "from",
+        "filePath": "karta/test/partnerDiscovery.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/partnerDiscovery.test.ts:runtime.from@62:2",
+        "name": "from",
+        "filePath": "karta/test/partnerDiscovery.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/providerCompletion.test.ts:select",
+        "name": "select",
+        "filePath": "karta/test/providerCompletion.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/providerCompletion.test.ts:select",
+        "name": "select",
+        "filePath": "karta/test/providerCompletion.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/providerCompletion.test.ts:select",
+        "name": "select",
+        "filePath": "karta/test/providerCompletion.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/providerCompletion.test.ts:select",
+        "name": "select",
+        "filePath": "karta/test/providerCompletion.test.ts"
+      }
+    ]
+  },
+  "processes": []
+}

@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-27T04:06:50.101892+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "ref": "refs/remotes/origin/main",
+  "sha": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "remoteConfirmation": {
+    "method": "read-only GitHub GET /repos/puramapro-oss/purama-ai/git/ref/heads/main",
+    "observer": "/root/inventory_remote",
+    "confirmedSha": "ae84415be0b9516422805910be999a2c1e6350c0"
+  },
+  "localImport": {
+    "source": "/workspace/scratch/04c7a6d73c0d/iao-capabilities-20261127",
+    "sourceRef": "refs/remotes/origin/main",
+    "command": [
+      "git",
+      "fetch",
+      "--no-tags",
+      "/workspace/scratch/04c7a6d73c0d/iao-capabilities-20261127",
+      "refs/remotes/origin/main:refs/remotes/origin/main"
+    ],
+    "sourceModified": false
+  },
+  "scope": "Only the isolated checkout remote-tracking ref was added; product branch, working files and source repository unchanged."
+}

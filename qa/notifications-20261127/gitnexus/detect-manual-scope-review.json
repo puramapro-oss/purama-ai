@@ -1,0 +1,63 @@
+{
+  "status": "PASS_FOR_SCOPED_INDEXED_SYMBOLS_WITH_EXPLICIT_MANUAL_SUPPLEMENT",
+  "at": "2026-11-27T04:34:47.604307+00:00",
+  "changedSymbolCount": 45,
+  "affectedProcessCount": 9,
+  "risk": "HIGH",
+  "symbolsByFile": {
+    "src/components/notifications/NotificationCenter.tsx": 1,
+    "src/hooks/useNotifications.ts": 26,
+    "src/pages/NotificationSettings.tsx": 2,
+    "src/pages/Notifications.tsx": 1,
+    "supabase/functions/send-notification/index.ts": 15
+  },
+  "allListedSymbolsInsideExpectedProductScope": true,
+  "baseHead": "272074017383c9a8f8c817d3bdea945cf692b3bc",
+  "indexedBase": "6c8c1b8d37f97b33e02b9181d1083420279631a9",
+  "indexIndexedAt": "2026-11-27T03:44:30.789Z",
+  "baseChangesSinceIndexedCommit": [
+    ".github/workflows/purama-chef-hardening.yml"
+  ],
+  "indexReanalysisPerformed": false,
+  "manualSupplement": {
+    "helpers": [
+      "useNotificationOwner",
+      "bindNotificationMutation",
+      "ownedNotification",
+      "ownedPreferences",
+      "preferencePatch",
+      "record",
+      "email",
+      "validText",
+      "validatePayload",
+      "escapeHtml",
+      "reply",
+      "resolveNotificationActionUrl"
+    ],
+    "currentCallersReceipt": "manual-current-callers.log",
+    "currentHelpersReceipt": "manual-current-helpers.log",
+    "currentSourceSha256": {
+      "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81",
+      "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+      "src/pages/NotificationSettings.tsx": "bf50b88e83b58fbc066082e7622bf612d35e62e3823f60ce990a00af57a79210",
+      "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+      "supabase/functions/send-notification/index.ts": "8fd7ca9d8d09a40cae897bd13b920d91bf200127723d192198ee9021f2e10045",
+      "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0"
+    },
+    "review": [
+      "useNotifications has two current production consumers: Notifications page and NotificationCenter; useNotificationPreferences is consumed by NotificationSettings.",
+      "Shared resolveNotificationActionUrl is used by stored/Realtime row normalization in useNotifications and payload validation in the notification handler; it delegates navigation policy to the existing safeNavigation helper.",
+      "New hook owner-lifetime and mutation adapters are local to useNotifications.ts; both exported hooks use useNotificationOwner; all notification mutations and preference updates pass through bindNotificationMutation; ownedNotification guards query/Realtime rows; ownedPreferences guards read and upsert receipts; preferencePatch validates the patch.",
+      "New edge record/email/validText/validatePayload/escapeHtml/reply helpers are local to the handler file; the anonymous Deno.serve callback invokes payload validation and response shaping, and generateEmailHtml invokes escapeHtml.",
+      "The anonymous Deno.serve callback, new helper functions, new shared file and new tests are absent from the reused base graph; absence is not an all-clear. Current source and call sites were read directly and are covered by separate recorded product qualifications.",
+      "Graph process labels involving generic mutationFn/from/query/entries are heuristic paths, not evidence of real remote service execution."
+    ]
+  },
+  "limits": [
+    "Full means all 45 symbols returned by the pre-edit base graph for the staged diff, not a new index of the edited source.",
+    "The 145 staged files include QA receipts and tests; only five pre-existing product files map to the 45 indexed symbols.",
+    "The comparison with origin/main is PARTIEL: 28057 aggregate symbols, 740 processes, 3712 files, CRITICAL; only 1000 symbols are listed due to a fixed backend cap. Aggregate counts do not prove exhaustive per-symbol review.",
+    "Index reused at exact base6c8; current base272 differs by the existing CI workflow alone. No fresh reanalysis is claimed.",
+    "New docs/receipts staged after this capture alter file counts, not evidence for newly changed product symbols; root must preserve this receipt timestamp and staged snapshot."
+  ]
+}

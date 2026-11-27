@@ -1,0 +1,76 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:supabase/functions/send-notification/index.ts:generateEmailHtml",
+    "name": "generateEmailHtml",
+    "kind": "Function",
+    "filePath": "supabase/functions/send-notification/index.ts",
+    "startLine": 40,
+    "endLine": 116
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:supabase/functions/send-notification/index.ts",
+        "name": "index.ts",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "uses": [
+      {
+        "uid": "Interface:supabase/functions/send-notification/index.ts:NotificationPayload",
+        "name": "NotificationPayload",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.agent_slug",
+        "name": "agent_slug",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.agent_slug",
+        "name": "agent_slug",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.message",
+        "name": "message",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.title",
+        "name": "title",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.title",
+        "name": "title",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.type",
+        "name": "type",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.type",
+        "name": "type",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      },
+      {
+        "uid": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.type",
+        "name": "type",
+        "filePath": "supabase/functions/send-notification/index.ts"
+      }
+    ]
+  },
+  "processes": []
+}
+
+  GitNexus Context (1.6.12)
+{"level":40,"time":1795752250475,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

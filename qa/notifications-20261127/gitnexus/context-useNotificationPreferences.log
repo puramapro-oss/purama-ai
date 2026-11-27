@@ -1,0 +1,34 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/hooks/useNotifications.ts:useNotificationPreferences",
+    "name": "useNotificationPreferences",
+    "kind": "Function",
+    "filePath": "src/hooks/useNotifications.ts",
+    "startLine": 160,
+    "endLine": 239
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:src/pages/NotificationSettings.tsx:NotificationSettings",
+        "name": "NotificationSettings",
+        "filePath": "src/pages/NotificationSettings.tsx"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:src/hooks/useAuth.ts:useAuth",
+        "name": "useAuth",
+        "filePath": "src/hooks/useAuth.ts"
+      }
+    ]
+  },
+  "processes": []
+}
+
+  GitNexus Context (1.6.12)
+{"level":40,"time":1795752255099,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

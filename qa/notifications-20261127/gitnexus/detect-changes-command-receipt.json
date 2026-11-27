@@ -1,0 +1,38 @@
+[
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "iao-notifications-b643",
+      "--scope",
+      "staged",
+      "--limit",
+      "200"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-27T04:32:04.835978+00:00",
+    "stdout_tail": "alert \u2192 src/hooks/useNotifications.ts\n  Function onClick \u2192 src/hooks/useNotifications.ts\n  Function mutationFn \u2192 src/hooks/useNotifications.ts\n  Function onSuccess \u2192 src/hooks/useNotifications.ts\n  Function mutationFn \u2192 src/hooks/useNotifications.ts\n  Function onSuccess \u2192 src/hooks/useNotifications.ts\n  Function mutationFn \u2192 src/hooks/useNotifications.ts\n  Function onSuccess \u2192 src/hooks/useNotifications.ts\n... and 30 more\n\nAffected execution flows:\n  \u2022 NotificationSettings \u2192 UseAuth (4 steps) \u2014 changed: NotificationSettings\n  \u2022 Notifications \u2192 UseAuth (4 steps) \u2014 changed: Notifications\n  \u2022 NotificationSettings \u2192 Cn (4 steps) \u2014 changed: NotificationSettings\n  \u2022 Notifications \u2192 Cn (4 steps) \u2014 changed: Notifications\n  \u2022 MutationFn \u2192 From (5 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 From (5 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 Query (5 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 Entries (4 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 Entries (4 steps) \u2014 changed: mutationFn\n"
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "iao-notifications-b643",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/main",
+      "--limit",
+      "200"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-27T04:32:10.761950+00:00",
+    "stdout_tail": "ROTOCOL.md\n  Section Consolidation KARTA du 10 novembre 2026 \u2192 IAO-EVALUATION-PROTOCOL.md\n... and 28042 more\n\nAffected execution flows:\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, query, execute, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, from, execute, from, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, query, execute, from, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, query, execute, from, map\n  \u2022 BuildContext \u2192 Entries (4 steps) \u2014 changed: buildContext, execute, from, entries\n... and 730 more\n"
+  }
+]

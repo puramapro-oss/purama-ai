@@ -1,0 +1,201 @@
+name: Notifications quality
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/notifications-quality.yml'
+      - 'supabase/functions/send-notification/**'
+      - 'supabase/functions/_shared/notification-action-url.ts'
+      - 'supabase/functions/_shared/request-body*.ts'
+      - 'supabase/functions/_shared/request-deadline.ts'
+      - 'supabase/functions/_shared/webhook-security*.ts'
+      - 'src/hooks/useNotifications*'
+      - 'src/hooks/useRequestScope.ts'
+      - 'src/hooks/useAuth.ts'
+      - 'src/hooks/useProfile.ts'
+      - 'src/hooks/useAgents.ts'
+      - 'src/pages/Notifications.tsx'
+      - 'src/pages/NotificationSettings.tsx'
+      - 'src/components/notifications/**'
+      - 'src/components/dashboard/DashboardHeader.tsx'
+      - 'src/components/ui/**'
+      - 'src/integrations/supabase/**'
+      - 'src/lib/safeNavigation.ts'
+      - 'src/lib/utils.ts'
+      - 'src/index.css'
+      - 'src/fonts.css'
+      - 'src/assets/fonts/**'
+      - 'tests/notifications/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.npmrc'
+      - 'tsconfig*.json'
+      - 'vitest.config.ts'
+      - 'tailwind.config.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notifications-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notifications:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI: '1'
+      DENO_NO_UPDATE_CHECK: '1'
+      DENO_DIR: ${{ runner.temp }}/notifications-deno-cache
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      EVIDENCE_DIR: ${{ runner.temp }}/notifications-quality
+      NOTIFICATIONS_BROWSER_EVIDENCE: ${{ runner.temp }}/notifications-quality/browser
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        id: checkout
+        with:
+          persist-credentials: false
+
+      - name: Record the tested checkout
+        id: evidence
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          {
+            git rev-parse HEAD HEAD^{tree}
+            sha256sum package.json package-lock.json
+            sha256sum .github/workflows/notifications-quality.yml
+          } | tee "$EVIDENCE_DIR/identity.log"
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        id: node
+        with:
+          node-version: '24.22.3'
+          cache: npm
+
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        id: deno
+        if: ${{ !cancelled() && steps.evidence.outcome == 'success' }}
+        with:
+          deno-version: v2.9.6
+
+      - name: Install the locked JavaScript dependencies
+        id: dependencies
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && steps.evidence.outcome == 'success' }}
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          { node --version; npm --version; } | tee "$EVIDENCE_DIR/node-runtime.log"
+          npm ci --no-audit --no-fund 2>&1 | tee "$EVIDENCE_DIR/npm-ci.log"
+
+      - name: Verify the server and shared security helpers under Node
+        id: server
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && steps.evidence.outcome == 'success' }}
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          node --experimental-vm-modules --experimental-strip-types \
+            --test --test-concurrency=1 --test-reporter=tap --test-timeout=30000 \
+            tests/notifications/handler.test.mjs \
+            tests/notifications/action-url.test.mjs \
+            supabase/functions/_shared/request-body.test.ts \
+            supabase/functions/_shared/webhook-security.test.ts \
+            2>&1 | tee "$EVIDENCE_DIR/server.tap"
+
+      - name: Verify the native Deno handler with inert local adapters
+        id: native
+        if: ${{ !cancelled() && steps.deno.outcome == 'success' && steps.evidence.outcome == 'success' }}
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          deno --version | tee "$EVIDENCE_DIR/deno-runtime.log"
+          deno test --no-remote --no-npm --no-lock --no-prompt --deny-net --deny-run \
+            --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY \
+            --config tests/notifications/deno.json tests/notifications/runtime.ts \
+            2>&1 | tee "$EVIDENCE_DIR/native.log"
+
+      - name: Verify notification hooks and account lifetimes
+        id: hooks
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          node node_modules/vitest/vitest.mjs run src/hooks/useNotifications.test.tsx \
+            --reporter=default --reporter=json --outputFile.json="$EVIDENCE_DIR/hooks.json" \
+            2>&1 | tee "$EVIDENCE_DIR/hooks.log"
+
+      - name: Reuse the installed Chrome or provision the locked browser
+        id: browser_setup
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          if [[ -x /opt/google/chrome/chrome ]]; then
+            browser_path=/opt/google/chrome/chrome
+            printf 'Using the GitHub runner Chrome; no browser download.\n' | tee "$EVIDENCE_DIR/browser-setup.log"
+          else
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0 node node_modules/@playwright/test/cli.js install --with-deps chromium \
+              2>&1 | tee "$EVIDENCE_DIR/browser-setup.log"
+            browser_path="$(node -e 'console.log(require("@playwright/test").chromium.executablePath())')"
+          fi
+          test -x "$browser_path"
+          printf 'PLAYWRIGHT_EXECUTABLE_PATH=%s\n' "$browser_path" >> "$GITHUB_ENV"
+          "$browser_path" --version 2>&1 | tee "$EVIDENCE_DIR/browser-version.log"
+
+      - name: Verify the real notification UI in the browser
+        id: browser
+        if: ${{ !cancelled() && steps.browser_setup.outcome == 'success' }}
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          node tests/notifications/browser/run.mjs 2>&1 | tee "$EVIDENCE_DIR/browser.log"
+
+      - name: Record every outcome and evidence digest
+        if: always()
+        env:
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          EVIDENCE_OUTCOME: ${{ steps.evidence.outcome }}
+          NODE_OUTCOME: ${{ steps.node.outcome }}
+          DENO_OUTCOME: ${{ steps.deno.outcome }}
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          SERVER_OUTCOME: ${{ steps.server.outcome }}
+          NATIVE_OUTCOME: ${{ steps.native.outcome }}
+          HOOKS_OUTCOME: ${{ steps.hooks.outcome }}
+          BROWSER_SETUP_OUTCOME: ${{ steps.browser_setup.outcome }}
+          BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib
+          evidence = pathlib.Path(os.environ['EVIDENCE_DIR'])
+          names = ['checkout', 'evidence', 'node', 'deno', 'dependencies', 'server', 'native', 'hooks', 'browser_setup', 'browser']
+          result = {
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'event_sha': os.environ['GITHUB_SHA'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'outcomes': {name: os.environ[name.upper() + '_OUTCOME'] for name in names},
+              'scope': 'Synthetic database, authentication, Realtime and email adapters; no live service qualification.',
+          }
+          (evidence / 'outcomes.json').write_text(json.dumps(result, indent=2) + '\n')
+          hashes = [
+              f'{hashlib.sha256(file.read_bytes()).hexdigest()}  {file.relative_to(evidence).as_posix()}'
+              for file in sorted(evidence.rglob('*')) if file.is_file() and file.name != 'SHA256SUMS'
+          ]
+          (evidence / 'SHA256SUMS').write_text('\n'.join(hashes) + '\n')
+          PY
+
+      - name: Preserve QA logs and browser screenshots, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: notifications-quality-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/notifications-quality
+          if-no-files-found: error
+          retention-days: 14

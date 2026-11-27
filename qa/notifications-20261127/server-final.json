@@ -1,0 +1,32 @@
+{
+  "at_utc": "2026-11-27T04:28:02.081655+00:00",
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/notifications/action-url.test.mjs",
+    "tests/notifications/handler.test.mjs"
+  ],
+  "exit_code": 0,
+  "summary": [
+    "# tests 163",
+    "# pass 163",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0",
+    "# todo 0"
+  ],
+  "hashes": {
+    "supabase/functions/send-notification/index.ts": "8fd7ca9d8d09a40cae897bd13b920d91bf200127723d192198ee9021f2e10045",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/lib/safeNavigation.ts": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0",
+    "tests/notifications/handler.test.mjs": "2b2987979bff9d67f10407c2641f00733108525aaa0d690f37451802445ed949",
+    "tests/notifications/action-url.test.mjs": "b2b35d97a712779c618c6ef9cdfcb16c0652560d753dea33563ec9a5e6d849ea",
+    "tests/notifications/fixtures.mjs": "c52a85b285c33ca076580ffd72865279f878b249fe8bb5dd2c8881281a09bb48",
+    "tests/notifications/runtime.ts": "b1796cc5da7be4bda157f9915c093542d7fe42566f963084bdd7794e2a85951b",
+    "tests/notifications/deno-fixture.ts": "44fa358cabb9d0a5e4be2aa03c12f267701eb1a99faa1162cbcb86d7a2b2a294",
+    "tests/notifications/deno.json": "c09f1b7b25903fef6320d16b6219948e034730e9bf3ecc7b0b60c36e1a5f7306"
+  }
+}

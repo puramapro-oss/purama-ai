@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-27T04:34:37.414217+00:00",
+  "file": ".github/workflows/notifications-quality.yml",
+  "sha256": "4c8da492763d4ffde071200cc33a7864a36df2a2f4fca908116b96ef5caab5e6",
+  "status": "PASS_STRUCTURAL_ONLY",
+  "reviewer": "inventory_remote; received by root",
+  "checks": [
+    "YAML 1.2 without duplicate keys",
+    "Eight Bash blocks parsed",
+    "Embedded Python compiled",
+    "Pinned Actions reused from existing repository workflows",
+    "Referenced scripts and Vitest CLI options verified",
+    "No existing workflow changed in notification delta"
+  ],
+  "github_execution": "NOT_YET_EXECUTED",
+  "actionlint": "unavailable"
+}

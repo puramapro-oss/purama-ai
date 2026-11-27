@@ -1,0 +1,103 @@
+{
+  "mode": "REAL_REACT_DOM_IN_JSDOM_NOT_BROWSER",
+  "at": "2026-11-27T04:24:15.025Z",
+  "node": "v24.22.3",
+  "sourceSha256": {
+    "src/hooks/useNotifications.ts": "57b6ab0c0ab6621521a374a28bb90f3c80013512c8832060866df35bf8348ab7",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/pages/Notifications.tsx": "d1475c95fb8e1328ec7421545a1362464bfb04455cbe90340d9430fcbfce389b",
+    "src/pages/NotificationSettings.tsx": "453177ad1a76f0898b347d8112379cb2dd9651ea3fa82d09b3648d13f25ae59d",
+    "src/components/notifications/NotificationCenter.tsx": "85ab861676979c0fd54f574fce3610977c1790529abaaab2ddefc1d9437b6849",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "bundleSha256": "def49f06d57e4337bf9c96efd8240ca47a657d2f37b64c2ee560f94d7e75cd81",
+  "observations": [
+    {
+      "view": "settings",
+      "toast": [
+        "Impossible de charger les préférences"
+      ],
+      "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan GratuitCDTAPréférences de notificationPersonnalisez les notifications que vous recevezNotifications par emailRecevez un email pour chaque notification importanteActiver les emailsNous vous enverrons un email pour les notifications importantesTypes de notificationsChoisissez les types de notifications que vous souhaitez recevoirTâches terminéesQuand un agent a fini son travailQuestions des agentsQuand un agent a besoin d'une réponse de votre partRapports quotidiensRésumé de ce que vos agents ont fait chaque jourAlertesProblèmes détectés ou actions requisesImpossible de charger les préférences",
+      "switches": [
+        {
+          "id": "email-enabled",
+          "checked": "true",
+          "disabled": false
+        },
+        {
+          "id": "task-completed",
+          "checked": "true",
+          "disabled": false
+        },
+        {
+          "id": "question",
+          "checked": "true",
+          "disabled": false
+        },
+        {
+          "id": "daily-report",
+          "checked": "true",
+          "disabled": false
+        },
+        {
+          "id": "alert",
+          "checked": "true",
+          "disabled": false
+        }
+      ],
+      "retryButtons": 0,
+      "errors": [],
+      "recoveredSwitches": [
+        {
+          "id": "email-enabled",
+          "checked": "false",
+          "disabled": false
+        },
+        {
+          "id": "task-completed",
+          "checked": "false",
+          "disabled": false
+        },
+        {
+          "id": "question",
+          "checked": "true",
+          "disabled": false
+        },
+        {
+          "id": "daily-report",
+          "checked": "false",
+          "disabled": false
+        },
+        {
+          "id": "alert",
+          "checked": "true",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "view": "notifications",
+      "toast": [
+        "Impossible de charger les notifications"
+      ],
+      "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)AgentiaPlan GratuitCDTAMes notificationsToutes les notifications sont luesFiltres:Tous les typesTous les agentsAucune notificationVous n'avez pas encore reçu de notificationsImpossible de charger les notifications",
+      "switches": [],
+      "retryButtons": 0,
+      "errors": []
+    },
+    {
+      "view": "center",
+      "toast": [
+        "Impossible de charger les notifications"
+      ],
+      "body": "ACompte A (banc)Compte B (banc)Déconnexion (banc)Relire les données (banc)Impossible de charger les notificationsNotifications[data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}Aucune notificationVoir toutes les notifications",
+      "switches": [],
+      "retryButtons": 0,
+      "errors": []
+    }
+  ]
+}

@@ -15,14 +15,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useNotificationPreferences } from '@/hooks/useNotifications';
+import { useNotificationPreferences, type NotificationPreferencePatch } from '@/hooks/useNotifications';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function NotificationSettings() {
-  const { preferences, isLoading, updatePreferences } = useNotificationPreferences();
+  const { preferences, isLoading, isError, isFetching, refetch, updatePreferences } = useNotificationPreferences();
 
-  const handleToggle = (key: keyof typeof preferences, value: boolean) => {
+  const handleToggle = (key: keyof NotificationPreferencePatch, value: boolean) => {
     if (!preferences) return;
     updatePreferences.mutate({ [key]: value });
   };
@@ -55,6 +55,16 @@ export default function NotificationSettings() {
             <Skeleton className="h-[200px] w-full" />
             <Skeleton className="h-[300px] w-full" />
           </div>
+        ) : isError || !preferences ? (
+          <Card className="p-6 space-y-4 glass-effect" role="alert">
+            <p className="font-medium">Impossible de charger les préférences</p>
+            <p className="text-sm text-muted-foreground">
+              Réessayez pour afficher vos réglages enregistrés.
+            </p>
+            <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+              {isFetching ? 'Chargement…' : 'Réessayer'}
+            </Button>
+          </Card>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -84,7 +94,7 @@ export default function NotificationSettings() {
                   </div>
                   <Switch
                     id="email-enabled"
-                    checked={preferences?.email_enabled ?? true}
+                    checked={preferences.email_enabled}
                     onCheckedChange={(checked) => handleToggle('email_enabled', checked)}
                     disabled={updatePreferences.isPending}
                   />
@@ -121,7 +131,7 @@ export default function NotificationSettings() {
                   </div>
                   <Switch
                     id="task-completed"
-                    checked={preferences?.task_completed_enabled ?? true}
+                    checked={preferences.task_completed_enabled}
                     onCheckedChange={(checked) => handleToggle('task_completed_enabled', checked)}
                     disabled={updatePreferences.isPending}
                   />
@@ -146,7 +156,7 @@ export default function NotificationSettings() {
                   </div>
                   <Switch
                     id="question"
-                    checked={preferences?.question_enabled ?? true}
+                    checked={preferences.question_enabled}
                     onCheckedChange={(checked) => handleToggle('question_enabled', checked)}
                     disabled={updatePreferences.isPending}
                   />
@@ -171,7 +181,7 @@ export default function NotificationSettings() {
                   </div>
                   <Switch
                     id="daily-report"
-                    checked={preferences?.daily_report_enabled ?? true}
+                    checked={preferences.daily_report_enabled}
                     onCheckedChange={(checked) => handleToggle('daily_report_enabled', checked)}
                     disabled={updatePreferences.isPending}
                   />
@@ -196,7 +206,7 @@ export default function NotificationSettings() {
                   </div>
                   <Switch
                     id="alert"
-                    checked={preferences?.alert_enabled ?? true}
+                    checked={preferences.alert_enabled}
                     onCheckedChange={(checked) => handleToggle('alert_enabled', checked)}
                     disabled={updatePreferences.isPending}
                   />

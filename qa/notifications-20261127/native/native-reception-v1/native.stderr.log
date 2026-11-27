@@ -1,0 +1,17 @@
+[0m[32mCheck[0m tests/notifications/runtime.ts
+[0m[1mTS2339 [0m[ERROR]: Property 'to' does not exist on type 'never'.
+  equal(state.identities[0], USER); equal(state.emails[0].to[0], EMAIL); equal(state.network.length, 0);
+[0m[31m                                                          ~~[0m
+    at [0m[36mfile:///Users/matissdornier/purama-patches/notifications-20261127-b643/native-reception-v1/tests/notifications/runtime.ts[0m:[0m[33m41[0m:[0m[33m59[0m
+
+[0m[1mTS2339 [0m[ERROR]: Property 'html' does not exist on type 'never'.
+  const html = getFixture().state.emails[0].html;
+[0m[31m                                            ~~~~[0m
+    at [0m[36mfile:///Users/matissdornier/purama-patches/notifications-20261127-b643/native-reception-v1/tests/notifications/runtime.ts[0m:[0m[33m98[0m:[0m[33m45[0m
+
+Found 2 errors.
+
+[0m[1m[31merror[0m: Type checking failed.
+
+  [33minfo:[39m The program failed type-checking, but it still might work correctly.
+  [36mhint:[39m Re-run with [4m--no-check[24m to skip type-checking.

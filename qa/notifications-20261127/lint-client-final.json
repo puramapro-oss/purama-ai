@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "src/hooks/useNotifications.ts",
+    "src/hooks/useNotifications.test.tsx",
+    "--max-warnings=0"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.801,
+  "sources": [
+    {
+      "path": "src/hooks/useNotifications.ts",
+      "sha256": "57b6ab0c0ab6621521a374a28bb90f3c80013512c8832060866df35bf8348ab7"
+    },
+    {
+      "path": "src/hooks/useNotifications.test.tsx",
+      "sha256": "ccfd5a3d219d27406ee199c487743ffb21ba515294d4153e0b02c136c5c844b9"
+    }
+  ]
+}

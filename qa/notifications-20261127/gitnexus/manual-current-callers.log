@@ -1,0 +1,13 @@
+supabase/functions/_shared/notification-action-url.ts:7:export function resolveNotificationActionUrl(value: unknown): string | null {
+supabase/functions/send-notification/index.ts:6:import { resolveNotificationActionUrl } from "../_shared/notification-action-url.ts";
+supabase/functions/send-notification/index.ts:58:    ? undefined : resolveNotificationActionUrl(value.action_url);
+src/pages/Notifications.tsx:26:import { useNotifications, NotificationType } from '@/hooks/useNotifications';
+src/pages/Notifications.tsx:56:  const { notifications, unreadCount, isLoading, isError, isFetching, refetch, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+src/components/notifications/NotificationCenter.tsx:13:import { useNotifications, NotificationType } from '@/hooks/useNotifications';
+src/components/notifications/NotificationCenter.tsx:33:  const { notifications, unreadCount, isLoading, isError, isFetching, refetch, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+src/pages/NotificationSettings.tsx:18:import { useNotificationPreferences, type NotificationPreferencePatch } from '@/hooks/useNotifications';
+src/pages/NotificationSettings.tsx:23:  const { preferences, isLoading, isError, isFetching, refetch, updatePreferences } = useNotificationPreferences();
+src/hooks/useNotifications.ts:8:import { resolveNotificationActionUrl } from '../../supabase/functions/_shared/notification-action-url';
+src/hooks/useNotifications.ts:92:    action_url: resolveNotificationActionUrl(row.action_url), created_at: row.created_at,
+src/hooks/useNotifications.ts:123:export function useNotifications() {
+src/hooks/useNotifications.ts:315:export function useNotificationPreferences() {

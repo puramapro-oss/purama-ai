@@ -1,0 +1,7 @@
+{
+  "nodeModulesDir": "manual",
+  "imports": {
+    "https://esm.sh/@supabase/supabase-js@2": "./deno-fixture.ts",
+    "resend": "./deno-fixture.ts"
+  }
+}

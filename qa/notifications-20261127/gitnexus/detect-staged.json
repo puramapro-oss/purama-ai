@@ -1,0 +1,435 @@
+{
+  "summary": {
+    "changed_count": 45,
+    "affected_count": 9,
+    "changed_files": 145,
+    "risk_level": "high"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:src/components/notifications/NotificationCenter.tsx:NotificationCenter",
+      "name": "NotificationCenter",
+      "type": "Function",
+      "filePath": "src/components/notifications/NotificationCenter.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:src/hooks/useNotifications.ts:NotificationType",
+      "name": "NotificationType",
+      "type": "TypeAlias",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications",
+      "name": "useNotifications",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.queryFn@39:4",
+      "name": "queryFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.fn@57:12.fn@70:8.task_completed@75:12",
+      "name": "task_completed",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.fn@57:12.fn@70:8.question@76:12",
+      "name": "question",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.fn@57:12.fn@70:8.daily_report@77:12",
+      "name": "daily_report",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.fn@57:12.fn@70:8.alert@78:12",
+      "name": "alert",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.fn@57:12.fn@70:8.onClick@86:14",
+      "name": "onClick",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.mutationFn@103:4",
+      "name": "mutationFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.onSuccess@111:4",
+      "name": "onSuccess",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.mutationFn@118:4",
+      "name": "mutationFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.onSuccess@128:4",
+      "name": "onSuccess",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.mutationFn@136:4",
+      "name": "mutationFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotifications.onSuccess@144:4",
+      "name": "onSuccess",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.notifications@150:4",
+      "name": "notifications",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.unreadCount@151:4",
+      "name": "unreadCount",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.isLoading@152:4",
+      "name": "isLoading",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.markAsRead@153:4",
+      "name": "markAsRead",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.markAllAsRead@154:4",
+      "name": "markAllAsRead",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotifications.deleteNotification@155:4",
+      "name": "deleteNotification",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotificationPreferences",
+      "name": "useNotificationPreferences",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotificationPreferences.queryFn@165:4",
+      "name": "queryFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotificationPreferences.mutationFn@197:4",
+      "name": "mutationFn",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useNotifications.ts:useNotificationPreferences.onSuccess@227:4",
+      "name": "onSuccess",
+      "type": "Function",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotificationPreferences.isLoading@235:4",
+      "name": "isLoading",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useNotifications.ts:useNotificationPreferences.updatePreferences@236:4",
+      "name": "updatePreferences",
+      "type": "Property",
+      "filePath": "src/hooks/useNotifications.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/NotificationSettings.tsx:NotificationSettings",
+      "name": "NotificationSettings",
+      "type": "Function",
+      "filePath": "src/pages/NotificationSettings.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/NotificationSettings.tsx:NotificationSettings.handleToggle@24:2",
+      "name": "handleToggle",
+      "type": "Function",
+      "filePath": "src/pages/NotificationSettings.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/Notifications.tsx:Notifications",
+      "name": "Notifications",
+      "type": "Function",
+      "filePath": "src/pages/Notifications.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:supabase/functions/send-notification/index.ts:corsHeaders",
+      "name": "corsHeaders",
+      "type": "Const",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Interface:supabase/functions/send-notification/index.ts:NotificationPayload",
+      "name": "NotificationPayload",
+      "type": "Interface",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:NotificationPayload.user_email",
+      "name": "user_email",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:supabase/functions/send-notification/index.ts:typeEmoji",
+      "name": "typeEmoji",
+      "type": "Const",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:supabase/functions/send-notification/index.ts:typeLabel",
+      "name": "typeLabel",
+      "type": "Const",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeLabel.task_completed",
+      "name": "task_completed",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeLabel.question",
+      "name": "question",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeLabel.daily_report",
+      "name": "daily_report",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeLabel.alert",
+      "name": "alert",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:supabase/functions/send-notification/index.ts:typeColor",
+      "name": "typeColor",
+      "type": "Const",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeColor.task_completed",
+      "name": "task_completed",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeColor.question",
+      "name": "question",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeColor.daily_report",
+      "name": "daily_report",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:supabase/functions/send-notification/index.ts:typeColor.alert",
+      "name": "alert",
+      "type": "Property",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:supabase/functions/send-notification/index.ts:generateEmailHtml",
+      "name": "generateEmailHtml",
+      "type": "Function",
+      "filePath": "supabase/functions/send-notification/index.ts",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_331_notificationsettings",
+      "name": "NotificationSettings → UseAuth",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "NotificationSettings",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_347_notifications",
+      "name": "Notifications → UseAuth",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "Notifications",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_401_notificationsettings",
+      "name": "NotificationSettings → Cn",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "NotificationSettings",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_413_notifications",
+      "name": "Notifications → Cn",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "Notifications",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_614_mutationfn",
+      "name": "MutationFn → From",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "mutationFn",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_619_mutationfn",
+      "name": "MutationFn → From",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "mutationFn",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_630_mutationfn",
+      "name": "MutationFn → Query",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "mutationFn",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_708_mutationfn",
+      "name": "MutationFn → Entries",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "mutationFn",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_709_mutationfn",
+      "name": "MutationFn → Entries",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "mutationFn",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}
