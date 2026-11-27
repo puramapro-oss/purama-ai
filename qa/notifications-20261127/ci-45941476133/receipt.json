@@ -1,0 +1,24 @@
+{
+  "artifact_id": 15172339821,
+  "run_id": 45941476133,
+  "archive_sha256": "58558e81923bff78fc25935fdb700f7f41bc5c24377ebb16b4df74c4f7f1ec73",
+  "archive_bytes": 348158,
+  "head": "6933f9081344a38daaf13cfffb42f2e2ca819877",
+  "tested_merge_sha": "a207e0142c78a89ef691953af6424f42ea47b4c1",
+  "tested_tree": "9ae8e282f115026963a7b8c95dac652d90acd80f",
+  "tree_matches_head": true,
+  "evidence_hashes_verified": true,
+  "browser_source_hashes_match": true,
+  "browser_status": "PASS",
+  "browser_checks": 12,
+  "browser_version": "157.0.8103.78",
+  "page_errors": [],
+  "external_requests": [],
+  "screenshots": [
+    "desktop-notifications.png",
+    "mobile-notifications.png",
+    "desktop-preferences.png",
+    "mobile-preferences.png",
+    "preferences-load-error.png"
+  ]
+}

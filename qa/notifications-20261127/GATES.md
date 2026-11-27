@@ -10,7 +10,7 @@
 - Recette navigateur : writer `inventory_iao` ; nouveau workflow isolé `notifications-quality.yml` : writer `inventory_remote`, sous coordination root.
 - Recette : `tests/notifications/**` ; preuves : présent dossier ; compte rendu : `docs/qa/notifications-20261127.md`.
 - Validation utilisateur : demande du 27 novembre de corriger et vérifier les erreurs des codes existants ; aucune nouvelle conception ni nouveau moteur de notification.
-- Aucun envoi, aucune écriture distante, aucun secret réel et aucune modification de configuration de production.
+- Aucun envoi réel, aucune écriture de données de production, aucun secret réel dans les recettes et aucune modification de configuration de production.
 
 ## Critères d'acceptation observables
 
@@ -25,21 +25,26 @@
 9. Avant modification du produit : impacts GitNexus frais et revue manuelle de la frontière. Avant commit : `detect_changes`, revue de diff et preuves rattachées aux SHA-256.
 10. Extension client : tester les hooks avec React et QueryClient réels, reproduire les anciens défauts, vérifier lint/typecheck/build et les parcours dans un navigateur réel. Les événements d'un ancien compte, les mutations sans reçu et les URL historiques dangereuses ne doivent pas produire de succès visible. Une erreur de chargement ne doit pas devenir une fausse liste vide ni des préférences faussement activées ; le retry doit récupérer les données.
 
-## Résultats reçus avant lancement CI
+## Résultats reçus et dernière réception attendue
+
+État du 27 novembre 2026 : CI reçue sur `6933f90`, avant publication des
+microcorrectifs du footer email et de la disposition mobile des préférences.
 
 | Gate | Statut | Preuve et portée |
 | --- | --- | --- |
 | Régression initiale serveur | **PASS pour la reproduction** : 17 réussites, 89 échecs sur 106 cas | `before.json` et `before.tap`, sources initiales identifiées |
-| Handler final + helper URL, Node 24.22.3 | **PASS 163/163** | `server-final.json` et `server-final.tap`, fournisseurs inertes |
+| Handler après correction du footer + helper URL, Node 24.22.3 | **PASS 163/163** | `server-footer-final.json` et `server-footer-final.tap`, fournisseurs inertes |
 | Helpers partagés inchangés | **PASS 43/43** | `shared-regression.json` |
-| Deno natif 2.9.7, types actifs | **PASS 26/26** | `native/native-reception-v3/`, handler final et modules fournisseurs locaux |
-| Lint serveur | **PASS** | `lint-server-final.json`, sept fichiers nommés, zéro avertissement |
+| Deno natif, types actifs | **PASS 26/26 avant le footer** | `native/native-reception-v3/` et `ci-45941476133/native.log` ; nouvelle head attendue en CI |
+| Lint serveur | **PASS** | `lint-server-final.json` initial, puis `server-footer-final.lint.json` sur le handler modifié, zéro avertissement |
 | Hook React / QueryClient | **PASS 36/36** | `client-final.json`, cas inclus dans la suite frontend |
-| Suite frontend après corrections UI | **PASS 954/954** | `frontend-ui-unit-final-receipt.json` et sortie complète associée ; inclut les 36 tests précédents |
+| Suite frontend après corrections des erreurs UI | **PASS 954/954** | `frontend-ui-unit-final-receipt.json`, avant le dernier ajustement mobile ; inclut les 36 tests précédents |
 | Contre-épreuves UI React / jsdom | **PASS 3/3** | `browser-dom-before.json` et `browser-dom-after.json`, pas un navigateur |
-| TypeScript, lint client, build Vite | **PASS** | `typecheck-ui-final.json`, `lint-ui-final.json`, `build-final.json` |
+| TypeScript, lint client, build Vite | **PASS** | Réception initiale, puis `lint-layout-final.json` et `build-layout-final.json` après l'ajustement mobile |
 | Browser local | **BLOQUÉ**, zéro scénario exécuté | Binaire indisponible puis téléchargement unique HTTP 403 ; reçus conservés |
-| Recette navigateur CI, 12 scénarios | **NON TESTÉ** | Recette et workflow prêts ; exécution et captures à recevoir par root |
+| CI `6933f90`, Node / Deno / hook / navigateur | **PASS 206/206, 26/26, 36/36, 12/12** | `ci-45941476133/`, arbre testé identique à la head, empreintes vérifiées ; 206 = 163 + 43 |
+| Revue des cinq captures navigateur | **4 PASS, 1 défaut mobile corrigé** | `visual-review-first.json`, rétrécissement des icônes et espacement corrigés par root ; nouvelle capture attendue |
+| CI après footer et ajustement mobile | **NON TESTÉ à cet état** | Exécution à recevoir sur la prochaine head exacte, sans attribuer les reçus antérieurs aux nouveaux deltas |
 | GitNexus avant édition | **PASS** | Impacts dans `gitnexus/`, revue manuelle HIGH, hook CRITICAL |
 | GitNexus final, index Git préparé | **PASS pour l'exécution**, risque **HIGH**, 45 symboles / 9 flux | `gitnexus/detect-staged.json`, liste complète ; revue d'intégration root |
 | GitNexus comparé à `main` | **PARTIEL**, risque **CRITICAL**, 28 057 symboles / 740 flux | Résumé reçu ; liste des symboles plafonnée à 1 000 malgré une demande de 30 000, limite du backend conservée dans les reçus |
@@ -60,7 +65,7 @@ git diff --cached --check -- . ':!qa/notifications-20261127/**/*.log' ':!qa/noti
 ```
 
 La qualification Deno hors réseau a été exécutée sur le runtime existant :
-**26 cas PASS sur les sources finales**, contrôle de types actif, réseau et
+**26 cas PASS avant la modification du footer**, contrôle de types actif, réseau et
 sous-processus interdits. Un premier refus de typage des tableaux de fixture
 est conservé ; JSDoc a corrigé les types sans modifier le produit ni désactiver
 un contrôle. La réception v2 qualifiait 25 cas, la v3 ajoute la compatibilité
@@ -72,8 +77,15 @@ explicite `action_url: null`. Les trois tentatives restent dans
 deno test --no-remote --no-npm --no-prompt --deny-net --deny-run --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY --config tests/notifications/deno.json tests/notifications/runtime.ts
 ```
 
-La nouvelle CI isolée sera qualifiée par son propre reçu, sans modifier un
-workflow d'un autre owner. Les 12 scénarios et leurs instructions sont dans
+La CI isolée sur `6933f90` est reçue dans `ci-45941476133/` et disponible au
+[run 45941476133](https://github.com/puramapro-oss/purama-ai/actions/runs/45941476133).
+Le footer email pointe désormais vers la route existante
+`https://purama-ai.purama.dev/notification-settings`. Les tests Node existants et
+le lint du handler ont été rejoués ; les anciens reçus restent inchangés.
+La nouvelle CI devra qualifier le Deno exact de ce handler et recevoir la
+capture mobile après le correctif de disposition effectué par root. Aucun
+rejeu Mac ni test miroir supplémentaire n'est nécessaire pour ce lien statique.
+Les 12 scénarios et leurs instructions sont dans
 `tests/notifications/browser/README.md`. Les archives de bundles intermédiaires
 restent des preuves locales ; elles ne font pas partie du code à committer.
 

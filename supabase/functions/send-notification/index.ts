@@ -166,7 +166,7 @@ function generateEmailHtml(payload: NotificationPayload, actionUrl: string | nul
             <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
               <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
                 Vous recevez cet email car vous avez activé les notifications par email.<br>
-                <a href="#" style="color: #a855f7; text-decoration: none;">Gérer vos préférences</a>
+                <a href="https://purama-ai.purama.dev/notification-settings" style="color: #a855f7; text-decoration: none;">Gérer vos préférences</a>
               </p>
             </td>
           </tr>

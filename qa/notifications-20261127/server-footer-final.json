@@ -1,0 +1,32 @@
+{
+  "at_utc": "2026-11-27T04:50:08.895711+00:00",
+  "base_head": "6933f9081344a38daaf13cfffb42f2e2ca819877",
+  "scope": "Existing server regressions after the preferences footer link correction",
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/notifications/action-url.test.mjs",
+    "tests/notifications/handler.test.mjs"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.99,
+  "summary": [
+    "# tests 163",
+    "# pass 163",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0",
+    "# todo 0"
+  ],
+  "hashes": {
+    "supabase/functions/send-notification/index.ts": "c3e9a990542c7c933884a72bde1470769b4bf54da4a4b0b9d9629587f27886c4",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "tests/notifications/handler.test.mjs": "2b2987979bff9d67f10407c2641f00733108525aaa0d690f37451802445ed949",
+    "tests/notifications/action-url.test.mjs": "b2b35d97a712779c618c6ef9cdfcb16c0652560d753dea33563ec9a5e6d849ea",
+    "tests/notifications/fixtures.mjs": "c52a85b285c33ca076580ffd72865279f878b249fe8bb5dd2c8881281a09bb48"
+  },
+  "sources_unchanged_during_run": true
+}

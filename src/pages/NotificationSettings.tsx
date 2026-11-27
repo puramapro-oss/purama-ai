@@ -83,8 +83,8 @@ export default function NotificationSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1 space-y-0.5">
                     <Label htmlFor="email-enabled" className="text-base">
                       Activer les emails
                     </Label>
@@ -115,12 +115,12 @@ export default function NotificationSettings() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Task completed */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1 flex items-start gap-3">
+                    <div className="w-10 h-10 shrink-0 rounded-full bg-green-500/20 flex items-center justify-center">
                       <CheckCircle2 className="w-5 h-5 text-green-400" />
                     </div>
-                    <div className="space-y-0.5">
+                    <div className="min-w-0 space-y-0.5">
                       <Label htmlFor="task-completed" className="text-base">
                         Tâches terminées
                       </Label>
@@ -140,12 +140,12 @@ export default function NotificationSettings() {
                 <Separator />
 
                 {/* Questions */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1 flex items-start gap-3">
+                    <div className="w-10 h-10 shrink-0 rounded-full bg-blue-500/20 flex items-center justify-center">
                       <HelpCircle className="w-5 h-5 text-blue-400" />
                     </div>
-                    <div className="space-y-0.5">
+                    <div className="min-w-0 space-y-0.5">
                       <Label htmlFor="question" className="text-base">
                         Questions des agents
                       </Label>
@@ -165,12 +165,12 @@ export default function NotificationSettings() {
                 <Separator />
 
                 {/* Daily reports */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1 flex items-start gap-3">
+                    <div className="w-10 h-10 shrink-0 rounded-full bg-purple-500/20 flex items-center justify-center">
                       <BarChart3 className="w-5 h-5 text-purple-400" />
                     </div>
-                    <div className="space-y-0.5">
+                    <div className="min-w-0 space-y-0.5">
                       <Label htmlFor="daily-report" className="text-base">
                         Rapports quotidiens
                       </Label>
@@ -190,12 +190,12 @@ export default function NotificationSettings() {
                 <Separator />
 
                 {/* Alerts */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1 flex items-start gap-3">
+                    <div className="w-10 h-10 shrink-0 rounded-full bg-orange-500/20 flex items-center justify-center">
                       <AlertTriangle className="w-5 h-5 text-orange-400" />
                     </div>
-                    <div className="space-y-0.5">
+                    <div className="min-w-0 space-y-0.5">
                       <Label htmlFor="alert" className="text-base">
                         Alertes
                       </Label>

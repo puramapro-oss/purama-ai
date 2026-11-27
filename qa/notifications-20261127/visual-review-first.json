@@ -1,0 +1,17 @@
+{
+  "reviewers": [
+    "root",
+    "inventory_iao"
+  ],
+  "run_id": 45941476133,
+  "status": "FOUR_CAPTURES_PASS_ONE_MOBILE_LAYOUT_DEFECT",
+  "observations": {
+    "desktop-notifications.png": "Readable; no visible overflow",
+    "mobile-notifications.png": "Readable; wrapping preserved; no visible overflow",
+    "desktop-preferences.png": "Readable; no visible overflow",
+    "preferences-load-error.png": "Explicit error and retry; no misleading controls",
+    "mobile-preferences.png": "Type icon backgrounds shrink into ovals; insufficient minimum gap before switches"
+  },
+  "correction": "NotificationSettings only: gap-3 on five rows; min-w-0 flex-1 on left blocks; shrink-0 on four icon backgrounds; min-w-0 on type texts. No typography/color/shared Switch change.",
+  "final_browser_receipt": "PENDING_ON_NEXT_COMMIT"
+}

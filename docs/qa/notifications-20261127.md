@@ -2,8 +2,10 @@
 
 ## Portée et résultat
 
-**PASS pour les contrôles serveur, les tests client et les contre-épreuves DOM
-exécutés ; PARTIEL pour la réception complète, en attente du navigateur réel.**
+**PASS pour la CI de `6933f90`, dont les 12 scénarios dans un navigateur réel.
+PARTIEL pour la réception des deux derniers correctifs : lien du footer email
+et mise en page mobile des préférences, en attente de leur nouvelle CI.**
+État du 27 novembre 2026, avant publication de ces deux derniers deltas.
 Le lot part de `6c8c1b8` dans `fix/iao-notifications-20261127-b643`, puis reçoit
 la base `2720740` avant intégration. Il conserve
 le service `send-notification`, son schéma `purama_ai`, ses quatre types de
@@ -21,27 +23,31 @@ après ne doivent pas être additionnés.
 
 | Contrôle exécuté | Résultat observé | Portée |
 | --- | --- | --- |
-| Handler réel + helper de navigation sous Node 24.22.3 | **163/163 PASS**, aucun échec, skip, annulation ou todo | Supabase et Resend doublés, réseau interdit dans la VM |
+| Handler réel + helper de navigation sous Node 24.22.3, après correction du footer | **163/163 PASS**, aucun échec, skip, annulation ou todo | `server-footer-final.json`, Supabase et Resend doublés, réseau interdit dans la VM |
 | Helpers partagés inchangés, lecture du corps et secret webhook | **43/43 PASS** | Régression des contrôles réellement réutilisés |
-| ESLint des sept fichiers serveur nommés dans le reçu | **PASS**, zéro avertissement | Commande avec `--max-warnings 0` |
+| ESLint serveur | **PASS**, zéro avertissement | Sept fichiers qualifiés initialement ; handler revérifié après le footer dans `server-footer-final.lint.json` |
 | Diff de code et documentation | **PASS** | Contrôle des espacements ; journaux et TAP bruts exclus du contrôle final pour préserver les preuves |
-| Runtime Deno natif 2.9.7, réception v3 | **26/26 PASS**, contrôle de types actif | `--no-remote --no-npm --deny-net --deny-run`, modules fournisseurs remplacés par des doubles locaux |
-| Suite frontend finale après les corrections UI | **954/954 PASS**, aucun test en attente | Inclut les **36 tests du hook** avec React et QueryClient réels ; ne pas additionner ces deux nombres |
+| Runtime Deno natif, réception v3 et CI `6933f90` | **26/26 PASS**, contrôle de types actif | Avant modification du footer ; réception Deno de la prochaine head attendue en CI |
+| Suite frontend après les corrections des erreurs UI | **954/954 PASS**, aucun test en attente | Avant le dernier ajustement mobile ; inclut les **36 tests du hook**, ne pas additionner ces deux nombres |
 | Trois contre-épreuves des écrans Settings, Notifications et Center | **3/3 PASS** | Composants React réels dans jsdom 26.1.0 ; contrôle du DOM, sans moteur navigateur |
-| TypeScript frontend, lint des cinq fichiers client, build Vite | **PASS** | Reçus associés aux empreintes finales des sources |
-| Recette de 12 scénarios dans un navigateur réel | **NON TESTÉ** | Lancement local bloqué avant tout scénario ; CI dédiée préparée, sans exécution reçue |
+| TypeScript frontend, lint client, build Vite | **PASS** | Réception initiale ; lint et build réexécutés après l'ajustement mobile dans `lint-layout-final.json` et `build-layout-final.json` |
+| CI `6933f90` : serveur Node, Deno, hook et navigateur | **206/206, 26/26, 36/36 et 12/12 PASS** | Node 206 = 163 notifications + 43 helpers ; composants réels, fournisseurs et transports inertes |
+| Revue des cinq captures CI | **4 PASS, 1 défaut mobile corrigé** | `visual-review-first.json` ; nouvelle capture du correctif mobile attendue |
+| CI après les corrections du footer et de la mise en page mobile | **NON TESTÉ à cet état** | Nouvelle exécution à recevoir sur la prochaine head exacte |
 | Production SQL / Auth / Realtime / email | **NON TESTÉ** | Aucun effet distant ni déploiement réalisé dans cette qualification |
 
-Les commandes, sorties et empreintes finales se trouvent dans
-`qa/notifications-20261127/server-final.json`, `server-final.tap`, `lint-server-final.json` et
-`shared-regression.json`. Les doubles n'ouvrent aucun socket, ne possèdent aucun
+Les commandes, sorties et empreintes de la dernière réception locale serveur
+se trouvent dans `qa/notifications-20261127/server-footer-final.json`,
+`server-footer-final.tap` et `server-footer-final.lint.json`. Les reçus précédents
+`server-final.json`, `lint-server-final.json` et `shared-regression.json` restent
+conservés sans réécriture. Les doubles n'ouvrent aucun socket, ne possèdent aucun
 secret réel et capturent chaque tentative d'insertion ou d'email.
 
 Le contrôle Deno a d'abord refusé le typage de deux accès à un tableau de fixture
 inféré `never[]` ; aucun test n'avait alors démarré. Les types du double ont été
 explicités par JSDoc, sans modifier le produit et sans désactiver le contrôle de
 types. La seconde exécution a passé les 25 cas. La troisième a passé **26 cas
-sur le handler final**, y compris la compatibilité `action_url: null`. Les trois
+sur le handler avant correction du footer**, y compris la compatibilité `action_url: null`. Les trois
 tentatives et leurs manifestes restent dans
 `qa/notifications-20261127/native/native-reception-v1/`, `native-reception-v2/`
 et `native-reception-v3/`. Ces cas éprouvent le même contrat dans le runtime
@@ -89,6 +95,16 @@ omis. La contre-épreuve `before-null-url.json` a reproduit le refus excessif av
 correction ; le cas supplémentaire passe ensuite dans les 163 tests Node. Les
 autres champs d'identité n'ont pas reçu cette exception.
 
+La revue finale a identifié le lien inopérant `href="#"` du footer email.
+**Gérer vos préférences** pointe désormais vers
+`https://purama-ai.purama.dev/notification-settings`, route existante déclarée
+dans `src/App.tsx`, sur l'origine déjà utilisée par le handler. Ce changement
+d'une ligne conserve le contenu et le style du message. Les 163 tests existants
+et le lint du handler passent après cette correction ; aucun test miroir ni
+rejeu natif Mac n'a été ajouté. L'empreinte du nouveau handler est
+`c3e9a990542c7c933884a72bde1470769b4bf54da4a4b0b9d9629587f27886c4`.
+Son exécution Deno exacte reste à recevoir dans la nouvelle CI.
+
 Le client DB désactive les reprises automatiques (`db.retry: false`). Une réponse
 de création n'est produite qu'après un reçu d'insertion valide. Un échec ou une
 réponse perdue du prestataire email conserve cette unique insertion sans la
@@ -131,10 +147,27 @@ La recette navigateur reproductible est décrite dans
 `tests/notifications/browser/README.md`. Le lancement local s'est arrêté avant
 le premier scénario, faute de binaire disponible ; l'unique téléchargement
 tenté a été refusé avec HTTP 403. Les reçus `browser-local-attempt/results.json`
-et `browser-install-attempt.log` conservent ces échecs d'environnement. Le nouveau
-workflow isolé `.github/workflows/notifications-quality.yml` est préparé pour
-exécuter les contrôles et les 12 scénarios. **Sa réception CI et les captures
-navigateur restent à obtenir** ; aucun ancien reçu d'un autre lot ne les remplace.
+et `browser-install-attempt.log` conservent ces échecs d'environnement.
+
+Le workflow isolé `.github/workflows/notifications-quality.yml` a ensuite
+réellement exécuté les 12 scénarios dans Chromium 157.0.8103.78 : **12/12 PASS**,
+aucune erreur de page ni requête vers un service externe. Le
+[run 45941476133](https://github.com/puramapro-oss/purama-ai/actions/runs/45941476133)
+qualifie la head `6933f9081344a38daaf13cfffb42f2e2ca819877`. Son arbre testé
+`9ae8e282f115026963a7b8c95dac652d90acd80f` correspond à celui de cette head.
+Les preuves, empreintes et cinq captures sont conservées dans
+`qa/notifications-20261127/ci-45941476133/` ; `receipt.json` confirme l'identité
+des sources et la vérification des empreintes de l'archive.
+
+La revue visuelle root + `inventory_iao` a accepté quatre captures et identifié
+sur **mobile-preferences.png** des fonds d'icônes rétrécis et un espacement
+insuffisant avant les switches. Root a corrigé uniquement les classes de
+disposition de `NotificationSettings` : espace entre les blocs, largeur minimale
+du texte et conservation de la taille des icônes. Le reçu
+`visual-review-first.json` conserve le défaut initial. Lint et build passent
+après cette correction ; **la nouvelle capture et la CI de la head contenant
+ce correctif et le footer email restent à recevoir**. Le premier PASS navigateur
+ne constitue pas cette réception ultérieure.
 
 ## Impact, coordination et limites
 
@@ -152,9 +185,9 @@ sur la divergence totale à cette référence, pas uniquement sur ce correctif.
 Son résumé est reçu mais la liste des symboles est **PARTIELLE**, plafonnée à
 1 000 par le backend même après une demande de 30 000 ; le reçu conserve cette
 limite dans `detect-main.json` et `detect-structured-command-receipt.json`.
-La revue d'intégration appartient à root. La réception du navigateur en CI sera
-enregistrée séparément après son exécution ; ce document ne la présente pas
-comme acquise.
+La revue d'intégration appartient à root. La première réception navigateur est
+désormais conservée ; les deux microcorrectifs postérieurs restent soumis à
+leur propre réception CI avant d'être présentés comme qualifiés sur cette head.
 
 Les journaux et fichiers TAP conservent volontairement leurs espaces d'origine,
 y compris ceux des échecs initiaux. Le contrôle final des espacements exclut

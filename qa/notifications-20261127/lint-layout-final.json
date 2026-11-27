@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "src/pages/NotificationSettings.tsx",
+    "--max-warnings=0"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 1.363,
+  "source": "src/pages/NotificationSettings.tsx",
+  "sha256": "5d34d019f4356040aae3c3f430ffb2250ea7544a5d7f1050c0ac0f350bb78fe6"
+}
