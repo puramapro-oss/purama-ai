@@ -1,0 +1,60 @@
+{
+  "exit_code": 0,
+  "elapsed_seconds": 2.6548305000178516,
+  "command": [
+    "/opt/homebrew/bin/deno",
+    "test",
+    "--no-remote",
+    "--no-npm",
+    "--no-prompt",
+    "--deny-net",
+    "--deny-run",
+    "--allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+    "--config",
+    "tests/notifications/deno.json",
+    "tests/notifications/runtime.ts"
+  ],
+  "root": "/Users/matissdornier/purama-patches/notifications-20261127-b643/native-reception-v3",
+  "files": [
+    {
+      "path": "supabase/functions/send-notification/index.ts",
+      "sha256": "8fd7ca9d8d09a40cae897bd13b920d91bf200127723d192198ee9021f2e10045"
+    },
+    {
+      "path": "supabase/functions/_shared/request-body.ts",
+      "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+    },
+    {
+      "path": "supabase/functions/_shared/request-deadline.ts",
+      "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+    },
+    {
+      "path": "supabase/functions/_shared/webhook-security.ts",
+      "sha256": "a24338182d40ae7a03db08f593518d759d4b210835093e7a78ec77001ad2c24f"
+    },
+    {
+      "path": "supabase/functions/_shared/notification-action-url.ts",
+      "sha256": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0"
+    },
+    {
+      "path": "src/lib/safeNavigation.ts",
+      "sha256": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0"
+    },
+    {
+      "path": "tests/notifications/runtime.ts",
+      "sha256": "b1796cc5da7be4bda157f9915c093542d7fe42566f963084bdd7794e2a85951b"
+    },
+    {
+      "path": "tests/notifications/deno-fixture.ts",
+      "sha256": "44fa358cabb9d0a5e4be2aa03c12f267701eb1a99faa1162cbcb86d7a2b2a294"
+    },
+    {
+      "path": "tests/notifications/fixtures.mjs",
+      "sha256": "c52a85b285c33ca076580ffd72865279f878b249fe8bb5dd2c8881281a09bb48"
+    },
+    {
+      "path": "tests/notifications/deno.json",
+      "sha256": "c09f1b7b25903fef6320d16b6219948e034730e9bf3ecc7b0b60c36e1a5f7306"
+    }
+  ]
+}

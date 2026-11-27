@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-11-27T04:28:02.188952+00:00",
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "supabase/functions/send-notification/index.ts",
+    "supabase/functions/_shared/notification-action-url.ts",
+    "tests/notifications/fixtures.mjs",
+    "tests/notifications/handler.test.mjs",
+    "tests/notifications/action-url.test.mjs",
+    "tests/notifications/deno-fixture.ts",
+    "tests/notifications/runtime.ts",
+    "--max-warnings",
+    "0"
+  ],
+  "exit_code": 0,
+  "scope": "Server handler, common action URL helper, server Node and Deno recipes; browser recipe remains separately owned"
+}

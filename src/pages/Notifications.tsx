@@ -53,7 +53,7 @@ const typeConfig: Record<NotificationType, { icon: typeof Bell; label: string; c
 };
 
 export default function Notifications() {
-  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const { notifications, unreadCount, isLoading, isError, isFetching, refetch, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const { data: agents = [] } = useAgents();
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [agentFilter, setAgentFilter] = useState<string>('all');
@@ -116,7 +116,7 @@ export default function Notifications() {
                 Mes notifications
               </h1>
               <p className="text-muted-foreground">
-                {unreadCount > 0 
+                {isLoading ? 'Chargement des notifications…' : isError ? 'Notifications indisponibles' : unreadCount > 0
                   ? `${unreadCount} notification${unreadCount > 1 ? 's' : ''} non lue${unreadCount > 1 ? 's' : ''}`
                   : 'Toutes les notifications sont lues'
                 }
@@ -125,7 +125,7 @@ export default function Notifications() {
           </div>
 
           <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
+            {!isError && !isLoading && unreadCount > 0 && (
               <Button
                 variant="outline"
                 onClick={() => markAllAsRead.mutate()}
@@ -196,7 +196,18 @@ export default function Notifications() {
         </Card>
 
         {/* Notifications list */}
-        {filteredNotifications.length === 0 ? (
+        {isLoading ? (
+          <Card className="p-12 text-center glass-effect" role="status">
+            Chargement des notifications…
+          </Card>
+        ) : isError ? (
+          <Card className="p-8 space-y-4 text-center glass-effect" role="alert">
+            <p className="font-medium">Impossible de charger les notifications</p>
+            <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+              {isFetching ? 'Chargement…' : 'Réessayer'}
+            </Button>
+          </Card>
+        ) : filteredNotifications.length === 0 ? (
           <Card className="p-12 text-center glass-effect">
             <Bell className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
             <h3 className="text-lg font-medium text-foreground mb-2">

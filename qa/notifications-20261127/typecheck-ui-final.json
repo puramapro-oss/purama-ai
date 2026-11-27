@@ -1,0 +1,33 @@
+{
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 14.177,
+  "sources": [
+    {
+      "path": "src/hooks/useNotifications.ts",
+      "sha256": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd"
+    },
+    {
+      "path": "src/hooks/useNotifications.test.tsx",
+      "sha256": "ccfd5a3d219d27406ee199c487743ffb21ba515294d4153e0b02c136c5c844b9"
+    },
+    {
+      "path": "src/pages/NotificationSettings.tsx",
+      "sha256": "bf50b88e83b58fbc066082e7622bf612d35e62e3823f60ce990a00af57a79210"
+    },
+    {
+      "path": "src/pages/Notifications.tsx",
+      "sha256": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c"
+    },
+    {
+      "path": "src/components/notifications/NotificationCenter.tsx",
+      "sha256": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81"
+    }
+  ]
+}

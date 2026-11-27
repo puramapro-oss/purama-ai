@@ -1,0 +1,9 @@
+{
+  "error": "Target 'Deno.serve' not found",
+  "target": {
+    "name": "Deno.serve"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

@@ -1,0 +1,1249 @@
+TAP version 13
+# Subtest: body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+ok 1 - body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+  ---
+  duration_ms: 35.875028
+  type: 'test'
+  ...
+# Subtest: body reader: an empty request returns an empty string
+ok 2 - body reader: an empty request returns an empty string
+  ---
+  duration_ms: 0.45588
+  type: 'test'
+  ...
+# Subtest: body reader: the byte limit permits exactly the maximum
+ok 3 - body reader: the byte limit permits exactly the maximum
+  ---
+  duration_ms: 0.562717
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {}
+ok 4 - body reader: excessive bytes are refused {}
+  ---
+  duration_ms: 1.057373
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {"content-length":"5"}
+ok 5 - body reader: excessive bytes are refused {"content-length":"5"}
+  ---
+  duration_ms: 0.682588
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length -1 is refused
+ok 6 - body reader: invalid Content-Length -1 is refused
+  ---
+  duration_ms: 0.515481
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1.5 is refused
+ok 7 - body reader: invalid Content-Length 1.5 is refused
+  ---
+  duration_ms: 0.356823
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length NaN is refused
+ok 8 - body reader: invalid Content-Length NaN is refused
+  ---
+  duration_ms: 0.287316
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1e2 is refused
+ok 9 - body reader: invalid Content-Length 1e2 is refused
+  ---
+  duration_ms: 0.357345
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 9007199254740992 is refused
+ok 10 - body reader: invalid Content-Length 9007199254740992 is refused
+  ---
+  duration_ms: 0.513471
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 2 must match "abc"
+ok 11 - body reader: declared length 2 must match "abc"
+  ---
+  duration_ms: 0.53048
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 4 must match "abc"
+ok 12 - body reader: declared length 4 must match "abc"
+  ---
+  duration_ms: 0.346559
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 1 must match ""
+ok 13 - body reader: declared length 1 must match ""
+  ---
+  duration_ms: 0.34123
+  type: 'test'
+  ...
+# Subtest: body reader: a declared body cannot be absent
+ok 14 - body reader: a declared body cannot be absent
+  ---
+  duration_ms: 0.273209
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 255 is refused
+ok 15 - body reader: invalid UTF-8 255 is refused
+  ---
+  duration_ms: 0.315682
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 192,175 is refused
+ok 16 - body reader: invalid UTF-8 192,175 is refused
+  ---
+  duration_ms: 0.315468
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 226,130 is refused
+ok 17 - body reader: invalid UTF-8 226,130 is refused
+  ---
+  duration_ms: 0.294672
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 237,160,128 is refused
+ok 18 - body reader: invalid UTF-8 237,160,128 is refused
+  ---
+  duration_ms: 0.306607
+  type: 'test'
+  ...
+# Subtest: body reader: empty chunks cannot keep a request alive indefinitely
+ok 19 - body reader: empty chunks cannot keep a request alive indefinitely
+  ---
+  duration_ms: 0.72993
+  type: 'test'
+  ...
+# Subtest: body reader: an immediately resolving stream still observes the absolute deadline
+ok 20 - body reader: an immediately resolving stream still observes the absolute deadline
+  ---
+  duration_ms: 5.50598
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=resolve
+ok 21 - body reader: a stalled read times out even when cancel=resolve
+  ---
+  duration_ms: 14.402607
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=reject
+ok 22 - body reader: a stalled read times out even when cancel=reject
+  ---
+  duration_ms: 13.596106
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=never
+ok 23 - body reader: a stalled read times out even when cancel=never
+  ---
+  duration_ms: 15.703521
+  type: 'test'
+  ...
+# Subtest: body reader: a pre-aborted request is refused and cancelled
+ok 24 - body reader: a pre-aborted request is refused and cancelled
+  ---
+  duration_ms: 0.602993
+  type: 'test'
+  ...
+# Subtest: body reader: abort during a stalled read cannot wait for the producer
+ok 25 - body reader: abort during a stalled read cannot wait for the producer
+  ---
+  duration_ms: 0.500612
+  type: 'test'
+  ...
+# Subtest: body reader: final handoff honors abort before returning text
+ok 26 - body reader: final handoff honors abort before returning text
+  ---
+  duration_ms: 0.599478
+  type: 'test'
+  ...
+# Subtest: body reader: final handoff honors deadline before returning text
+ok 27 - body reader: final handoff honors deadline before returning text
+  ---
+  duration_ms: 0.267521
+  type: 'test'
+  ...
+# Subtest: body reader: read failures are sanitized and locks released
+ok 28 - body reader: read failures are sanitized and locks released
+  ---
+  duration_ms: 0.292116
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves none priority
+ok 29 - body reader: rejected read text preserves none priority
+  ---
+  duration_ms: 0.278923
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves deadline priority
+ok 30 - body reader: rejected read text preserves deadline priority
+  ---
+  duration_ms: 0.192207
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read text preserves abort-handoff priority
+ok 31 - body reader: rejected read text preserves abort-handoff priority
+  ---
+  duration_ms: 0.298981
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves none priority
+ok 32 - body reader: rejected read bytes preserves none priority
+  ---
+  duration_ms: 0.268897
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves deadline priority
+ok 33 - body reader: rejected read bytes preserves deadline priority
+  ---
+  duration_ms: 0.157858
+  type: 'test'
+  ...
+# Subtest: body reader: rejected read bytes preserves abort-handoff priority
+ok 34 - body reader: rejected read bytes preserves abort-handoff priority
+  ---
+  duration_ms: 0.208211
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":0} fail immediately
+ok 35 - body reader: invalid internal limits {"maxBytes":0} fail immediately
+  ---
+  duration_ms: 0.131758
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":null} fail immediately
+ok 36 - body reader: invalid internal limits {"maxBytes":null} fail immediately
+  ---
+  duration_ms: 0.058783
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":0} fail immediately
+ok 37 - body reader: invalid internal limits {"timeoutMs":0} fail immediately
+  ---
+  duration_ms: 0.052535
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+ok 38 - body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+  ---
+  duration_ms: 0.049426
+  type: 'test'
+  ...
+# Subtest: bearer authentication accepts only the exact configured value
+ok 39 - bearer authentication accepts only the exact configured value
+  ---
+  duration_ms: 0.690638
+  type: 'test'
+  ...
+# Subtest: HMAC authentication accepts prefixed and bare signatures
+ok 40 - HMAC authentication accepts prefixed and bare signatures
+  ---
+  duration_ms: 7.172332
+  type: 'test'
+  ...
+# Subtest: HMAC authentication rejects tampering and malformed encodings
+ok 41 - HMAC authentication rejects tampering and malformed encodings
+  ---
+  duration_ms: 1.339314
+  type: 'test'
+  ...
+# Subtest: webhook authentication supports configured bearer or HMAC transport
+ok 42 - webhook authentication supports configured bearer or HMAC transport
+  ---
+  duration_ms: 14.576279
+  type: 'test'
+  ...
+# Subtest: only explicit local environments may opt into the development exception
+ok 43 - only explicit local environments may opt into the development exception
+  ---
+  duration_ms: 0.213343
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses null
+ok 44 - notification navigation refuses null
+  ---
+  duration_ms: 1.705707
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses missing
+ok 45 - notification navigation refuses missing
+  ---
+  duration_ms: 0.107249
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses number
+ok 46 - notification navigation refuses number
+  ---
+  duration_ms: 0.065181
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses object
+ok 47 - notification navigation refuses object
+  ---
+  duration_ms: 0.093247
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses boxed string
+ok 48 - notification navigation refuses boxed string
+  ---
+  duration_ms: 0.06906
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses empty
+ok 49 - notification navigation refuses empty
+  ---
+  duration_ms: 0.08565
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses relative
+ok 50 - notification navigation refuses relative
+  ---
+  duration_ms: 0.198698
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses space prefix
+ok 51 - notification navigation refuses space prefix
+  ---
+  duration_ms: 0.121527
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses space suffix
+ok 52 - notification navigation refuses space suffix
+  ---
+  duration_ms: 0.08294
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses protocol relative
+ok 53 - notification navigation refuses protocol relative
+  ---
+  duration_ms: 0.304389
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses decoded protocol relative
+ok 54 - notification navigation refuses decoded protocol relative
+  ---
+  duration_ms: 0.115159
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses double encoded protocol relative
+ok 55 - notification navigation refuses double encoded protocol relative
+  ---
+  duration_ms: 0.095848
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses encoded backslash
+ok 56 - notification navigation refuses encoded backslash
+  ---
+  duration_ms: 0.057054
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses double encoded backslash
+ok 57 - notification navigation refuses double encoded backslash
+  ---
+  duration_ms: 0.038053
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses dot-segment protocol relative
+ok 58 - notification navigation refuses dot-segment protocol relative
+  ---
+  duration_ms: 0.044306
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses invalid percent encoding
+ok 59 - notification navigation refuses invalid percent encoding
+  ---
+  duration_ms: 0.03444
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses encoded control
+ok 60 - notification navigation refuses encoded control
+  ---
+  duration_ms: 0.021667
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses double encoded control
+ok 61 - notification navigation refuses double encoded control
+  ---
+  duration_ms: 0.03599
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses raw backslash
+ok 62 - notification navigation refuses raw backslash
+  ---
+  duration_ms: 0.023244
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses raw NUL
+ok 63 - notification navigation refuses raw NUL
+  ---
+  duration_ms: 0.021924
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses raw line break
+ok 64 - notification navigation refuses raw line break
+  ---
+  duration_ms: 0.021227
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses Unicode separator
+ok 65 - notification navigation refuses Unicode separator
+  ---
+  duration_ms: 0.048595
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses plain HTTP
+ok 66 - notification navigation refuses plain HTTP
+  ---
+  duration_ms: 0.032071
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses script
+ok 67 - notification navigation refuses script
+  ---
+  duration_ms: 0.01877
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses data
+ok 68 - notification navigation refuses data
+  ---
+  duration_ms: 0.017811
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses ambiguous HTTPS
+ok 69 - notification navigation refuses ambiguous HTTPS
+  ---
+  duration_ms: 0.017868
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses username
+ok 70 - notification navigation refuses username
+  ---
+  duration_ms: 0.029196
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses password
+ok 71 - notification navigation refuses password
+  ---
+  duration_ms: 0.021316
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses HTTPS backslash
+ok 72 - notification navigation refuses HTTPS backslash
+  ---
+  duration_ms: 0.017443
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses over limit
+ok 73 - notification navigation refuses over limit
+  ---
+  duration_ms: 0.028382
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses quote
+ok 74 - notification navigation refuses quote
+  ---
+  duration_ms: 0.018854
+  type: 'test'
+  ...
+# Subtest: notification navigation refuses bracket
+ok 75 - notification navigation refuses bracket
+  ---
+  duration_ms: 0.017438
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts /
+ok 76 - notification navigation accepts /
+  ---
+  duration_ms: 0.075652
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts /dashboard
+ok 77 - notification navigation accepts /dashboard
+  ---
+  duration_ms: 0.027462
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts /one/../dashboard?view=all\#item
+ok 78 - notification navigation accepts /one/../dashboard?view=all\#item
+  ---
+  duration_ms: 0.063891
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts /dashboard?q=hello%20world&view=all
+ok 79 - notification navigation accepts /dashboard?q=hello%20world&view=all
+  ---
+  duration_ms: 0.052406
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts https://partner.example.invalid/detail?id=1&view=full
+ok 80 - notification navigation accepts https://partner.example.invalid/detail?id=1&view=full
+  ---
+  duration_ms: 0.033533
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts HTTPS://PARTNER.EXAMPLE.INVALID:443/a/../b
+ok 81 - notification navigation accepts HTTPS://PARTNER.EXAMPLE.INVALID:443/a/../b
+  ---
+  duration_ms: 0.039631
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts https://purama-ai.purama.dev/dashboard
+ok 82 - notification navigation accepts https://purama-ai.purama.dev/dashboard
+  ---
+  duration_ms: 0.029136
+  type: 'test'
+  ...
+# Subtest: notification navigation accepts /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+ok 83 - notification navigation accepts /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  ---
+  duration_ms: 0.214325
+  type: 'test'
+  ...
+# Subtest: notification navigation never invokes an object conversion hook
+ok 84 - notification navigation never invokes an object conversion hook
+  ---
+  duration_ms: 0.068514
+  type: 'test'
+  ...
+# (node:2484) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:2484) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# Subtest: notification: valid authenticated POST persists once and acknowledges accepted email
+ok 85 - notification: valid authenticated POST persists once and acknowledges accepted email
+  ---
+  duration_ms: 61.619241
+  type: 'test'
+  ...
+# Subtest: notification: OPTIONS is effect-free and advertises POST
+ok 86 - notification: OPTIONS is effect-free and advertises POST
+  ---
+  duration_ms: 2.015052
+  type: 'test'
+  ...
+# Subtest: notification: refuses GET
+ok 87 - notification: refuses GET
+  ---
+  duration_ms: 2.19166
+  type: 'test'
+  ...
+# Subtest: notification: refuses HEAD
+ok 88 - notification: refuses HEAD
+  ---
+  duration_ms: 2.099149
+  type: 'test'
+  ...
+# Subtest: notification: refuses PUT
+ok 89 - notification: refuses PUT
+  ---
+  duration_ms: 2.052156
+  type: 'test'
+  ...
+# Subtest: notification: refuses PATCH
+ok 90 - notification: refuses PATCH
+  ---
+  duration_ms: 1.789401
+  type: 'test'
+  ...
+# Subtest: notification: refuses DELETE
+ok 91 - notification: refuses DELETE
+  ---
+  duration_ms: 1.963095
+  type: 'test'
+  ...
+# Subtest: notification: refuses secret null
+ok 92 - notification: refuses secret null
+  ---
+  duration_ms: 1.99086
+  type: 'test'
+  ...
+# Subtest: notification: refuses secret incorrect
+ok 93 - notification: refuses secret incorrect
+  ---
+  duration_ms: 2.05528
+  type: 'test'
+  ...
+# Subtest: notification: refuses secret fixture-notification-secret-suffix
+ok 94 - notification: refuses secret fixture-notification-secret-suffix
+  ---
+  duration_ms: 2.062936
+  type: 'test'
+  ...
+# Subtest: notification: missing configuration WEBHOOK_SECRET
+ok 95 - notification: missing configuration WEBHOOK_SECRET
+  ---
+  duration_ms: 2.013268
+  type: 'test'
+  ...
+# Subtest: notification: missing configuration SUPABASE_URL
+ok 96 - notification: missing configuration SUPABASE_URL
+  ---
+  duration_ms: 2.348447
+  type: 'test'
+  ...
+# Subtest: notification: missing configuration SUPABASE_SERVICE_ROLE_KEY
+ok 97 - notification: missing configuration SUPABASE_SERVICE_ROLE_KEY
+  ---
+  duration_ms: 2.31228
+  type: 'test'
+  ...
+# Subtest: notification: accepts JSON content type with charset
+ok 98 - notification: accepts JSON content type with charset
+  ---
+  duration_ms: 2.455617
+  type: 'test'
+  ...
+# Subtest: notification: refuses content type text/plain
+ok 99 - notification: refuses content type text/plain
+  ---
+  duration_ms: 1.901703
+  type: 'test'
+  ...
+# Subtest: notification: refuses content type application/x-www-form-urlencoded
+ok 100 - notification: refuses content type application/x-www-form-urlencoded
+  ---
+  duration_ms: 1.781375
+  type: 'test'
+  ...
+# Subtest: notification: refuses content type application/jsonp
+ok 101 - notification: refuses content type application/jsonp
+  ---
+  duration_ms: 1.814474
+  type: 'test'
+  ...
+# Subtest: notification: input validation malformed JSON
+ok 102 - notification: input validation malformed JSON
+  ---
+  duration_ms: 2.172611
+  type: 'test'
+  ...
+# Subtest: notification: input validation null
+ok 103 - notification: input validation null
+  ---
+  duration_ms: 2.156536
+  type: 'test'
+  ...
+# Subtest: notification: input validation array
+ok 104 - notification: input validation array
+  ---
+  duration_ms: 2.219845
+  type: 'test'
+  ...
+# Subtest: notification: input validation scalar
+ok 105 - notification: input validation scalar
+  ---
+  duration_ms: 2.095617
+  type: 'test'
+  ...
+# Subtest: notification: input validation missing fields
+ok 106 - notification: input validation missing fields
+  ---
+  duration_ms: 2.216661
+  type: 'test'
+  ...
+# Subtest: notification: input validation title number
+ok 107 - notification: input validation title number
+  ---
+  duration_ms: 3.261301
+  type: 'test'
+  ...
+# Subtest: notification: input validation title whitespace
+ok 108 - notification: input validation title whitespace
+  ---
+  duration_ms: 2.262836
+  type: 'test'
+  ...
+# Subtest: notification: input validation title too long
+ok 109 - notification: input validation title too long
+  ---
+  duration_ms: 2.172188
+  type: 'test'
+  ...
+# Subtest: notification: input validation title header break
+ok 110 - notification: input validation title header break
+  ---
+  duration_ms: 2.086387
+  type: 'test'
+  ...
+# Subtest: notification: input validation message object
+ok 111 - notification: input validation message object
+  ---
+  duration_ms: 2.186147
+  type: 'test'
+  ...
+# Subtest: notification: input validation message empty
+ok 112 - notification: input validation message empty
+  ---
+  duration_ms: 2.103555
+  type: 'test'
+  ...
+# Subtest: notification: input validation message too long
+ok 113 - notification: input validation message too long
+  ---
+  duration_ms: 2.240649
+  type: 'test'
+  ...
+# Subtest: notification: input validation message NUL
+ok 114 - notification: input validation message NUL
+  ---
+  duration_ms: 2.306506
+  type: 'test'
+  ...
+# Subtest: notification: input validation invalid type
+ok 115 - notification: input validation invalid type
+  ---
+  duration_ms: 2.291532
+  type: 'test'
+  ...
+# Subtest: notification: input validation type object
+ok 116 - notification: input validation type object
+  ---
+  duration_ms: 2.178521
+  type: 'test'
+  ...
+# Subtest: notification: input validation id number
+ok 117 - notification: input validation id number
+  ---
+  duration_ms: 2.193997
+  type: 'test'
+  ...
+# Subtest: notification: input validation id malformed
+ok 118 - notification: input validation id malformed
+  ---
+  duration_ms: 2.280231
+  type: 'test'
+  ...
+# Subtest: notification: input validation no identity
+ok 119 - notification: input validation no identity
+  ---
+  duration_ms: 2.248807
+  type: 'test'
+  ...
+# Subtest: notification: input validation email invalid
+ok 120 - notification: input validation email invalid
+  ---
+  duration_ms: 2.230621
+  type: 'test'
+  ...
+# Subtest: notification: input validation email object
+ok 121 - notification: input validation email object
+  ---
+  duration_ms: 2.609268
+  type: 'test'
+  ...
+# Subtest: notification: input validation email CRLF
+ok 122 - notification: input validation email CRLF
+  ---
+  duration_ms: 2.361347
+  type: 'test'
+  ...
+# Subtest: notification: input validation email too long
+ok 123 - notification: input validation email too long
+  ---
+  duration_ms: 2.309651
+  type: 'test'
+  ...
+# Subtest: notification: input validation slug number
+ok 124 - notification: input validation slug number
+  ---
+  duration_ms: 2.22883
+  type: 'test'
+  ...
+# Subtest: notification: input validation slug too long
+ok 125 - notification: input validation slug too long
+  ---
+  duration_ms: 3.671993
+  type: 'test'
+  ...
+# Subtest: notification: input validation url number
+ok 126 - notification: input validation url number
+  ---
+  duration_ms: 2.226893
+  type: 'test'
+  ...
+# Subtest: notification: input validation url too long
+ok 127 - notification: input validation url too long
+  ---
+  duration_ms: 2.261008
+  type: 'test'
+  ...
+# Subtest: notification: input validation unexpected field
+ok 128 - notification: input validation unexpected field
+  ---
+  duration_ms: 2.163369
+  type: 'test'
+  ...
+# Subtest: notification: accepts documented text bounds and multiline message
+ok 129 - notification: accepts documented text bounds and multiline message
+  ---
+  duration_ms: 2.76442
+  type: 'test'
+  ...
+# Subtest: notification: bounded body invalid UTF-8
+ok 130 - notification: bounded body invalid UTF-8
+  ---
+  duration_ms: 2.11047
+  type: 'test'
+  ...
+# Subtest: notification: bounded body byte limit
+ok 131 - notification: bounded body byte limit
+  ---
+  duration_ms: 2.135885
+  type: 'test'
+  ...
+# Subtest: notification: bounded body multibyte byte limit
+ok 132 - notification: bounded body multibyte byte limit
+  ---
+  duration_ms: 2.167748
+  type: 'test'
+  ...
+# Subtest: notification: exact 32 KiB input is accepted without truncation
+ok 133 - notification: exact 32 KiB input is accepted without truncation
+  ---
+  duration_ms: 2.443146
+  type: 'test'
+  ...
+# Subtest: notification: invalid Content-Length -1
+ok 134 - notification: invalid Content-Length -1
+  ---
+  duration_ms: 2.032547
+  type: 'test'
+  ...
+# Subtest: notification: invalid Content-Length 1.5
+ok 135 - notification: invalid Content-Length 1.5
+  ---
+  duration_ms: 2.06938
+  type: 'test'
+  ...
+# Subtest: notification: invalid Content-Length unknown
+ok 136 - notification: invalid Content-Length unknown
+  ---
+  duration_ms: 2.081906
+  type: 'test'
+  ...
+# Subtest: notification: invalid Content-Length 9007199254740993
+ok 137 - notification: invalid Content-Length 9007199254740993
+  ---
+  duration_ms: 2.000195
+  type: 'test'
+  ...
+# Subtest: notification: invalid Content-Length 1
+ok 138 - notification: invalid Content-Length 1
+  ---
+  duration_ms: 2.557335
+  type: 'test'
+  ...
+# Subtest: notification: declared oversized input is refused before reading
+ok 139 - notification: declared oversized input is refused before reading
+  ---
+  duration_ms: 2.939971
+  type: 'test'
+  ...
+# Subtest: notification: stalled body respects shared five-second deadline and non-cooperative cancellation
+ok 140 - notification: stalled body respects shared five-second deadline and non-cooperative cancellation
+  ---
+  duration_ms: 3.435252
+  type: 'test'
+  ...
+# Subtest: notification: an aborted request cannot read profiles or perform effects
+ok 141 - notification: an aborted request cannot read profiles or perform effects
+  ---
+  duration_ms: 2.830078
+  type: 'test'
+  ...
+# Subtest: notification: cancellation during profile prevents subsequent effects
+ok 142 - notification: cancellation during profile prevents subsequent effects
+  ---
+  duration_ms: 3.39844
+  type: 'test'
+  ...
+# Subtest: notification: cancellation during preferences prevents subsequent effects
+ok 143 - notification: cancellation during preferences prevents subsequent effects
+  ---
+  duration_ms: 6.173078
+  type: 'test'
+  ...
+# Subtest: notification: cancellation during identity prevents subsequent effects
+ok 144 - notification: cancellation during identity prevents subsequent effects
+  ---
+  duration_ms: 2.480533
+  type: 'test'
+  ...
+# Subtest: notification: cancellation during insertion keeps its receipt and stops the additional email
+ok 145 - notification: cancellation during insertion keeps its receipt and stops the additional email
+  ---
+  duration_ms: 2.63751
+  type: 'test'
+  ...
+# Subtest: notification: verified recipient id only
+ok 146 - notification: verified recipient id only
+  ---
+  duration_ms: 2.478186
+  type: 'test'
+  ...
+# Subtest: notification: verified recipient matching id and email
+ok 147 - notification: verified recipient matching id and email
+  ---
+  duration_ms: 2.951083
+  type: 'test'
+  ...
+# Subtest: notification: verified recipient case-insensitive matching email
+ok 148 - notification: verified recipient case-insensitive matching email
+  ---
+  duration_ms: 2.585007
+  type: 'test'
+  ...
+# Subtest: notification: verified recipient email only
+ok 149 - notification: verified recipient email only
+  ---
+  duration_ms: 2.376753
+  type: 'test'
+  ...
+# Subtest: notification: different supplied email cannot override the profile recipient
+ok 150 - notification: different supplied email cannot override the profile recipient
+  ---
+  duration_ms: 2.433478
+  type: 'test'
+  ...
+# Subtest: notification: recipient missing profile
+ok 151 - notification: recipient missing profile
+  ---
+  duration_ms: 2.219824
+  type: 'test'
+  ...
+# Subtest: notification: recipient failed lookup
+ok 152 - notification: recipient failed lookup
+  ---
+  duration_ms: 2.236409
+  type: 'test'
+  ...
+# Subtest: notification: recipient ambiguous lookup
+ok 153 - notification: recipient ambiguous lookup
+  ---
+  duration_ms: 2.409527
+  type: 'test'
+  ...
+# Subtest: notification: recipient thrown lookup
+ok 154 - notification: recipient thrown lookup
+  ---
+  duration_ms: 2.563805
+  type: 'test'
+  ...
+# Subtest: notification: recipient wrong id
+ok 155 - notification: recipient wrong id
+  ---
+  duration_ms: 2.345173
+  type: 'test'
+  ...
+# Subtest: notification: recipient invalid profile email
+ok 156 - notification: recipient invalid profile email
+  ---
+  duration_ms: 2.389332
+  type: 'test'
+  ...
+# Subtest: notification: a known profile without email retains the in-app notification
+ok 157 - notification: a known profile without email retains the in-app notification
+  ---
+  duration_ms: 2.503999
+  type: 'test'
+  ...
+# Subtest: notification: a mutable stale profile email cannot become the outbound recipient
+ok 158 - notification: a mutable stale profile email cannot become the outbound recipient
+  ---
+  duration_ms: 2.726362
+  type: 'test'
+  ...
+# Subtest: notification: an explicit canonical email can accompany an id whose profile email is stale
+ok 159 - notification: an explicit canonical email can accompany an id whose profile email is stale
+  ---
+  duration_ms: 2.467413
+  type: 'test'
+  ...
+# Subtest: notification: email-only lookup cannot route to an address copied into a mutable profile
+ok 160 - notification: email-only lookup cannot route to an address copied into a mutable profile
+  ---
+  duration_ms: 2.359411
+  type: 'test'
+  ...
+# Subtest: notification: canonical identity admin error fails before effects
+ok 161 - notification: canonical identity admin error fails before effects
+  ---
+  duration_ms: 2.424273
+  type: 'test'
+  ...
+# Subtest: notification: canonical identity admin throws fails before effects
+ok 162 - notification: canonical identity admin throws fails before effects
+  ---
+  duration_ms: 2.4928
+  type: 'test'
+  ...
+# Subtest: notification: canonical identity foreign user fails before effects
+ok 163 - notification: canonical identity foreign user fails before effects
+  ---
+  duration_ms: 2.354121
+  type: 'test'
+  ...
+# Subtest: notification: canonical identity invalid canonical email fails before effects
+ok 164 - notification: canonical identity invalid canonical email fails before effects
+  ---
+  duration_ms: 2.306029
+  type: 'test'
+  ...
+# Subtest: notification: canonical unconfirmed keeps only the in-app notification
+ok 165 - notification: canonical unconfirmed keeps only the in-app notification
+  ---
+  duration_ms: 2.405408
+  type: 'test'
+  ...
+# Subtest: notification: canonical absent email keeps only the in-app notification
+ok 166 - notification: canonical absent email keeps only the in-app notification
+  ---
+  duration_ms: 2.389268
+  type: 'test'
+  ...
+# Subtest: notification: canonical invalid confirmation date keeps only the in-app notification
+ok 167 - notification: canonical invalid confirmation date keeps only the in-app notification
+  ---
+  duration_ms: 2.523493
+  type: 'test'
+  ...
+# Subtest: notification: canonical future confirmation keeps only the in-app notification
+ok 168 - notification: canonical future confirmation keeps only the in-app notification
+  ---
+  duration_ms: 2.487148
+  type: 'test'
+  ...
+# Subtest: notification: preference read error stops before effects
+ok 169 - notification: preference read error stops before effects
+  ---
+  duration_ms: 2.362592
+  type: 'test'
+  ...
+# Subtest: notification: preference thrown read stops before effects
+ok 170 - notification: preference thrown read stops before effects
+  ---
+  duration_ms: 2.816456
+  type: 'test'
+  ...
+# Subtest: notification: preference invalid flag stops before effects
+ok 171 - notification: preference invalid flag stops before effects
+  ---
+  duration_ms: 2.432056
+  type: 'test'
+  ...
+# Subtest: notification: preference missing selected flag stops before effects
+ok 172 - notification: preference missing selected flag stops before effects
+  ---
+  duration_ms: 2.397759
+  type: 'test'
+  ...
+# Subtest: notification: preference foreign row stops before effects
+ok 173 - notification: preference foreign row stops before effects
+  ---
+  duration_ms: 2.554303
+  type: 'test'
+  ...
+# Subtest: notification: confirmed absence keeps the historical default
+ok 174 - notification: confirmed absence keeps the historical default
+  ---
+  duration_ms: 2.495208
+  type: 'test'
+  ...
+# Subtest: notification: legacy nullable flags keeps the historical default
+ok 175 - notification: legacy nullable flags keeps the historical default
+  ---
+  duration_ms: 2.709144
+  type: 'test'
+  ...
+# Subtest: notification: disabled task_completed has no effects
+ok 176 - notification: disabled task_completed has no effects
+  ---
+  duration_ms: 2.461242
+  type: 'test'
+  ...
+# Subtest: notification: disabled question has no effects
+ok 177 - notification: disabled question has no effects
+  ---
+  duration_ms: 2.479019
+  type: 'test'
+  ...
+# Subtest: notification: disabled daily_report has no effects
+ok 178 - notification: disabled daily_report has no effects
+  ---
+  duration_ms: 2.54063
+  type: 'test'
+  ...
+# Subtest: notification: disabled alert has no effects
+ok 179 - notification: disabled alert has no effects
+  ---
+  duration_ms: 2.400653
+  type: 'test'
+  ...
+# Subtest: notification: disabled email keeps only the in-app effect
+ok 180 - notification: disabled email keeps only the in-app effect
+  ---
+  duration_ms: 2.442103
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "javascript:alert(1)"
+ok 181 - notification: unsafe action URL "javascript:alert(1)"
+  ---
+  duration_ms: 2.464549
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "data:text/html,hello"
+ok 182 - notification: unsafe action URL "data:text/html,hello"
+  ---
+  duration_ms: 2.472381
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "http://example.invalid/a"
+ok 183 - notification: unsafe action URL "http://example.invalid/a"
+  ---
+  duration_ms: 2.400959
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "//example.invalid/a"
+ok 184 - notification: unsafe action URL "//example.invalid/a"
+  ---
+  duration_ms: 2.428679
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "/\\\\example.invalid"
+ok 185 - notification: unsafe action URL "/\\\\example.invalid"
+  ---
+  duration_ms: 2.411201
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "https://u:p@example.invalid/"
+ok 186 - notification: unsafe action URL "https://u:p@example.invalid/"
+  ---
+  duration_ms: 2.409066
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "https:example.invalid"
+ok 187 - notification: unsafe action URL "https:example.invalid"
+  ---
+  duration_ms: 2.440359
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "/a\\n/b"
+ok 188 - notification: unsafe action URL "/a\\n/b"
+  ---
+  duration_ms: 2.449472
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "/a\\" onclick=\\"x"
+ok 189 - notification: unsafe action URL "/a\\" onclick=\\"x"
+  ---
+  duration_ms: 2.357611
+  type: 'test'
+  ...
+# Subtest: notification: unsafe action URL "https://example.invalid/\\u0000x"
+ok 190 - notification: unsafe action URL "https://example.invalid/\\u0000x"
+  ---
+  duration_ms: 2.453727
+  type: 'test'
+  ...
+# Subtest: notification: safe action URL /dashboard
+ok 191 - notification: safe action URL /dashboard
+  ---
+  duration_ms: 4.824398
+  type: 'test'
+  ...
+# Subtest: notification: safe action URL /dashboard/tasks?view=all&n=2\#item
+ok 192 - notification: safe action URL /dashboard/tasks?view=all&n=2\#item
+  ---
+  duration_ms: 2.58436
+  type: 'test'
+  ...
+# Subtest: notification: safe action URL https://partner.example.invalid/detail?id=1&view=full
+ok 193 - notification: safe action URL https://partner.example.invalid/detail?id=1&view=full
+  ---
+  duration_ms: 2.620131
+  type: 'test'
+  ...
+# Subtest: notification: safe action URL https://purama-ai.purama.dev/dashboard
+ok 194 - notification: safe action URL https://purama-ai.purama.dev/dashboard
+  ---
+  duration_ms: 2.57869
+  type: 'test'
+  ...
+# Subtest: notification: explicit null action URL retains no link
+ok 195 - notification: explicit null action URL retains no link
+  ---
+  duration_ms: 2.50502
+  type: 'test'
+  ...
+# Subtest: notification: text is escaped in every HTML context without altering stored plain text
+ok 196 - notification: text is escaped in every HTML context without altering stored plain text
+  ---
+  duration_ms: 2.496676
+  type: 'test'
+  ...
+# Subtest: notification: insertion database error cannot acknowledge success or email
+ok 197 - notification: insertion database error cannot acknowledge success or email
+  ---
+  duration_ms: 2.480969
+  type: 'test'
+  ...
+# Subtest: notification: insertion thrown insert cannot acknowledge success or email
+ok 198 - notification: insertion thrown insert cannot acknowledge success or email
+  ---
+  duration_ms: 2.548632
+  type: 'test'
+  ...
+# Subtest: notification: insertion missing receipt cannot acknowledge success or email
+ok 199 - notification: insertion missing receipt cannot acknowledge success or email
+  ---
+  duration_ms: 2.490865
+  type: 'test'
+  ...
+# Subtest: notification: insertion invalid receipt cannot acknowledge success or email
+ok 200 - notification: insertion invalid receipt cannot acknowledge success or email
+  ---
+  duration_ms: 2.449984
+  type: 'test'
+  ...
+# Subtest: notification: email provider rejection preserves the single successful in-app effect
+ok 201 - notification: email provider rejection preserves the single successful in-app effect
+  ---
+  duration_ms: 2.572243
+  type: 'test'
+  ...
+# Subtest: notification: email thrown email preserves the single successful in-app effect
+ok 202 - notification: email thrown email preserves the single successful in-app effect
+  ---
+  duration_ms: 2.583063
+  type: 'test'
+  ...
+# Subtest: notification: email missing receipt preserves the single successful in-app effect
+ok 203 - notification: email missing receipt preserves the single successful in-app effect
+  ---
+  duration_ms: 2.624702
+  type: 'test'
+  ...
+# Subtest: notification: email empty receipt preserves the single successful in-app effect
+ok 204 - notification: email empty receipt preserves the single successful in-app effect
+  ---
+  duration_ms: 2.527092
+  type: 'test'
+  ...
+# Subtest: notification: absent email configuration preserves only the in-app effect
+ok 205 - notification: absent email configuration preserves only the in-app effect
+  ---
+  duration_ms: 2.556773
+  type: 'test'
+  ...
+# Subtest: notification: success logs do not expose recipient email or user text
+ok 206 - notification: success logs do not expose recipient email or user text
+  ---
+  duration_ms: 2.623229
+  type: 'test'
+  ...
+1..206
+# tests 206
+# suites 0
+# pass 206
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 939.140044

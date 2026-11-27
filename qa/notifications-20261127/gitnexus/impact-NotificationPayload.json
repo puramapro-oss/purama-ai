@@ -1,0 +1,51 @@
+{
+  "target": {
+    "id": "Interface:supabase/functions/send-notification/index.ts:NotificationPayload",
+    "name": "NotificationPayload",
+    "type": "Interface",
+    "filePath": "supabase/functions/send-notification/index.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "NotificationPayload is an interface with 2 interface-level consumers; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 2,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:supabase/functions/send-notification/index.ts:generateEmailHtml",
+        "name": "generateEmailHtml",
+        "filePath": "supabase/functions/send-notification/index.ts",
+        "relationType": "USES",
+        "confidence": 0.53,
+        "processes": []
+      }
+    ]
+  }
+}

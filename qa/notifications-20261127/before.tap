@@ -1,0 +1,1700 @@
+(node:13) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+✖ notification: valid authenticated POST persists once and acknowledges accepted email (48.136817ms)
+✖ notification: OPTIONS is effect-free and advertises POST (1.530519ms)
+✖ notification: refuses GET (3.095319ms)
+✖ notification: refuses HEAD (1.395912ms)
+✖ notification: refuses PUT (1.731064ms)
+✖ notification: refuses PATCH (1.557429ms)
+✖ notification: refuses DELETE (1.672528ms)
+✖ notification: refuses secret null (1.46977ms)
+✖ notification: refuses secret incorrect (1.429561ms)
+✖ notification: refuses secret fixture-notification-secret-suffix (1.35393ms)
+✖ notification: missing configuration WEBHOOK_SECRET (1.295824ms)
+✖ notification: missing configuration SUPABASE_URL (1.369903ms)
+✖ notification: missing configuration SUPABASE_SERVICE_ROLE_KEY (1.337225ms)
+✔ notification: accepts JSON content type with charset (1.222828ms)
+✖ notification: refuses content type text/plain (1.57866ms)
+✖ notification: refuses content type application/x-www-form-urlencoded (1.427088ms)
+✖ notification: refuses content type application/jsonp (1.642154ms)
+✖ notification: input validation malformed JSON (3.062041ms)
+✖ notification: input validation null (2.23888ms)
+✖ notification: input validation array (3.666408ms)
+✖ notification: input validation scalar (3.718095ms)
+✖ notification: input validation missing fields (2.471062ms)
+✖ notification: input validation title number (3.534435ms)
+✖ notification: input validation title whitespace (1.315864ms)
+✖ notification: input validation title too long (4.202396ms)
+✖ notification: input validation title header break (3.614342ms)
+✖ notification: input validation message object (3.337144ms)
+✖ notification: input validation message empty (1.393798ms)
+✖ notification: input validation message too long (1.626771ms)
+✖ notification: input validation message NUL (1.366158ms)
+✖ notification: input validation invalid type (1.230228ms)
+✖ notification: input validation type object (1.650305ms)
+✖ notification: input validation id number (2.991126ms)
+✖ notification: input validation id malformed (1.331277ms)
+✖ notification: input validation no identity (1.625409ms)
+✖ notification: input validation email invalid (1.628824ms)
+✖ notification: input validation email object (1.746778ms)
+✖ notification: input validation email CRLF (1.392106ms)
+✖ notification: input validation email too long (1.376563ms)
+✖ notification: input validation slug number (2.161617ms)
+✖ notification: input validation slug too long (1.666159ms)
+✖ notification: input validation url number (1.737644ms)
+✖ notification: input validation url too long (1.876007ms)
+✖ notification: input validation unexpected field (1.684516ms)
+✔ notification: accepts documented text bounds and multiline message (2.387058ms)
+✖ notification: bounded body invalid UTF-8 (1.908575ms)
+✖ notification: bounded body byte limit (2.101238ms)
+✖ notification: bounded body multibyte byte limit (2.596185ms)
+✔ notification: exact 32 KiB input is accepted without truncation (2.307441ms)
+✖ notification: invalid Content-Length -1 (2.254634ms)
+✖ notification: invalid Content-Length 1.5 (25.142182ms)
+✖ notification: invalid Content-Length unknown (3.835482ms)
+✖ notification: invalid Content-Length 9007199254740993 (6.174635ms)
+✖ notification: invalid Content-Length 1 (2.416612ms)
+✖ notification: declared oversized input is refused before reading (2.158923ms)
+✖ notification: stalled body respects shared five-second deadline and non-cooperative cancellation (203.297477ms)
+✖ notification: an aborted request cannot read profiles or perform effects (2.369282ms)
+✔ notification: verified recipient id only (1.785844ms)
+✖ notification: verified recipient matching id and email (1.3947ms)
+✖ notification: verified recipient case-insensitive matching email (1.212011ms)
+✔ notification: verified recipient email only (1.227144ms)
+✖ notification: different supplied email cannot override the profile recipient (1.841487ms)
+✖ notification: recipient missing profile (1.444583ms)
+✖ notification: recipient failed lookup (1.276025ms)
+✖ notification: recipient ambiguous lookup (1.278809ms)
+✖ notification: recipient thrown lookup (1.092606ms)
+✖ notification: recipient wrong id (1.364025ms)
+✖ notification: recipient invalid profile email (1.320892ms)
+✔ notification: a known profile without email retains the in-app notification (1.225441ms)
+✖ notification: preference read error stops before effects (1.539973ms)
+✖ notification: preference thrown read stops before effects (1.421069ms)
+✖ notification: preference invalid flag stops before effects (1.30642ms)
+✖ notification: preference missing selected flag stops before effects (1.293622ms)
+✖ notification: preference foreign row stops before effects (1.233883ms)
+✔ notification: confirmed absence keeps the historical default (1.258039ms)
+✔ notification: legacy nullable flags keeps the historical default (1.381169ms)
+✔ notification: disabled task_completed has no effects (1.185763ms)
+✔ notification: disabled question has no effects (1.145313ms)
+✔ notification: disabled daily_report has no effects (1.207745ms)
+✔ notification: disabled alert has no effects (1.332749ms)
+✔ notification: disabled email keeps only the in-app effect (1.644968ms)
+✖ notification: unsafe action URL "javascript:alert(1)" (1.741089ms)
+✖ notification: unsafe action URL "data:text/html,hello" (1.557639ms)
+✖ notification: unsafe action URL "http://example.invalid/a" (1.464642ms)
+✖ notification: unsafe action URL "//example.invalid/a" (1.356323ms)
+✖ notification: unsafe action URL "/\\example.invalid" (1.621193ms)
+✖ notification: unsafe action URL "https://u:p@example.invalid/" (1.460286ms)
+✖ notification: unsafe action URL "https:example.invalid" (1.260833ms)
+✖ notification: unsafe action URL "/a\n/b" (1.689052ms)
+✖ notification: unsafe action URL "/a\" onclick=\"x" (1.998347ms)
+✖ notification: unsafe action URL "https://example.invalid/\u0000x" (1.883669ms)
+✔ notification: safe action URL /dashboard (2.010194ms)
+✖ notification: safe action URL /dashboard/tasks?view=all&n=2#item (7.845841ms)
+✖ notification: safe action URL https://partner.example.invalid/detail?id=1&view=full (2.242125ms)
+✔ notification: safe action URL https://purama-ai.purama.dev/dashboard (2.104442ms)
+✖ notification: text is escaped in every HTML context without altering stored plain text (2.336123ms)
+✖ notification: insertion database error cannot acknowledge success or email (2.045666ms)
+✖ notification: insertion thrown insert cannot acknowledge success or email (2.032086ms)
+✖ notification: insertion missing receipt cannot acknowledge success or email (2.087067ms)
+✖ notification: insertion invalid receipt cannot acknowledge success or email (2.179143ms)
+✔ notification: email provider rejection preserves the single successful in-app effect (2.08888ms)
+✖ notification: email thrown email preserves the single successful in-app effect (2.236396ms)
+✖ notification: email missing receipt preserves the single successful in-app effect (2.716913ms)
+✖ notification: email empty receipt preserves the single successful in-app effect (2.576828ms)
+✔ notification: absent email configuration preserves only the in-app effect (1.91184ms)
+✖ notification: success logs do not expose recipient email or user text (2.671506ms)
+ℹ tests 106
+ℹ suites 0
+ℹ pass 17
+ℹ fail 89
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 607.044555
+
+✖ failing tests:
+
+test at tests/notifications/handler.test.mjs:72:1
+✖ notification: valid authenticated POST persists once and acknowledges accepted email (48.136817ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /delivered/i. Input:
+  
+  'Notification sent and email delivered'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:76:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Notification sent and email delivered',
+    expected: /delivered/i,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:83:1
+✖ notification: OPTIONS is effect-free and advertises POST (1.530519ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /POST/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:85:59)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /POST/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:88:65
+✖ notification: refuses GET (3.095319ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 405
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:90:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 405,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:88:65
+✖ notification: refuses HEAD (1.395912ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 405
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:90:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 405,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:88:65
+✖ notification: refuses PUT (1.731064ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 405
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:90:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 405,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:88:65
+✖ notification: refuses PATCH (1.557429ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 405
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:90:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 405,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:88:65
+✖ notification: refuses DELETE (1.672528ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 405
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:90:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 405,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:92:81
+✖ notification: refuses secret null (1.46977ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:93:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:92:81
+✖ notification: refuses secret incorrect (1.429561ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:93:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:92:81
+✖ notification: refuses secret fixture-notification-secret-suffix (1.35393ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:93:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:95:84
+✖ notification: missing configuration WEBHOOK_SECRET (1.295824ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:96:58)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:95:84
+✖ notification: missing configuration SUPABASE_URL (1.369903ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:96:58)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:95:84
+✖ notification: missing configuration SUPABASE_SERVICE_ROLE_KEY (1.337225ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:96:58)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:101:94
+✖ notification: refuses content type text/plain (1.57866ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 415
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:102:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 415,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:101:94
+✖ notification: refuses content type application/x-www-form-urlencoded (1.427088ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 415
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:102:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 415,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:101:94
+✖ notification: refuses content type application/jsonp (1.642154ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 415
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:102:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 415,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation malformed JSON (3.062041ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation null (2.23888ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation array (3.666408ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation scalar (3.718095ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation missing fields (2.471062ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation title number (3.534435ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation title whitespace (1.315864ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation title too long (4.202396ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation title header break (3.614342ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation message object (3.337144ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation message empty (1.393798ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation message too long (1.626771ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation message NUL (1.366158ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation invalid type (1.230228ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation type object (1.650305ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation id number (2.991126ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation id malformed (1.331277ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation no identity (1.625409ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation email invalid (1.628824ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation email object (1.746778ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation email CRLF (1.392106ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation email too long (1.376563ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation slug number (2.161617ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation slug too long (1.666159ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation url number (1.737644ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation url too long (1.876007ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:121:38
+✖ notification: input validation unexpected field (1.684516ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:122:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:132:4
+✖ notification: bounded body invalid UTF-8 (1.908575ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:133:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:132:4
+✖ notification: bounded body byte limit (2.101238ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 413
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:133:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:132:4
+✖ notification: bounded body multibyte byte limit (2.596185ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 413
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:133:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:139:75
+✖ notification: invalid Content-Length -1 (2.254634ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:140:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:139:75
+✖ notification: invalid Content-Length 1.5 (25.142182ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:140:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:139:75
+✖ notification: invalid Content-Length unknown (3.835482ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:140:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:139:75
+✖ notification: invalid Content-Length 9007199254740993 (6.174635ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:140:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:139:75
+✖ notification: invalid Content-Length 1 (2.416612ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:140:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:142:1
+✖ notification: declared oversized input is refused before reading (2.158923ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 413
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:143:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:145:1
+✖ notification: stalled body respects shared five-second deadline and non-cooperative cancellation (203.297477ms)
+  Error: Handler remained blocked
+      at Timeout.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:68:106)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/notifications/handler.test.mjs:151:1
+✖ notification: an aborted request cannot read profiles or perform effects (2.369282ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 408
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:153:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 408,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:159:4
+✖ notification: verified recipient matching id and email (1.3947ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:161:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:159:4
+✖ notification: verified recipient case-insensitive matching email (1.212011ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:161:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:164:1
+✖ notification: different supplied email cannot override the profile recipient (1.841487ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:165:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient missing profile (1.444583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 404
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient failed lookup (1.276025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient ambiguous lookup (1.278809ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient thrown lookup (1.092606ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient wrong id (1.364025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:174:4
+✖ notification: recipient invalid profile email (1.320892ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:175:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:188:4
+✖ notification: preference read error stops before effects (1.539973ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:189:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:188:4
+✖ notification: preference thrown read stops before effects (1.421069ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  500 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:189:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:188:4
+✖ notification: preference invalid flag stops before effects (1.30642ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:189:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:188:4
+✖ notification: preference missing selected flag stops before effects (1.293622ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:189:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:188:4
+✖ notification: preference foreign row stops before effects (1.233883ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 503
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:189:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "javascript:alert(1)" (1.741089ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "data:text/html,hello" (1.557639ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "http://example.invalid/a" (1.464642ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "//example.invalid/a" (1.356323ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "/\\example.invalid" (1.621193ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "https://u:p@example.invalid/" (1.460286ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "https:example.invalid" (1.260833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "/a\n/b" (1.689052ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "/a\" onclick=\"x" (1.998347ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:208:261
+✖ notification: unsafe action URL "https://example.invalid/\u0000x" (1.883669ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 400
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:209:36)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:211:172
+✖ notification: safe action URL /dashboard/tasks?view=all&n=2#item (7.845841ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(h.state.emails[0].html.includes(`href="${expected}"`))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:216:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:211:172
+✖ notification: safe action URL https://partner.example.invalid/detail?id=1&view=full (2.242125ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(h.state.emails[0].html.includes(`href="${expected}"`))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:216:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:218:1
+✖ notification: text is escaped in every HTML context without altering stored plain text (2.336123ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(!html.includes('<img src="https://tracker.invalid/pixel">'))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:222:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:230:4
+✖ notification: insertion database error cannot acknowledge success or email (2.045666ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /PRIVATE_NOTIFICATION_customer@example.invalid/. Input:
+  
+  '{"error":"Failed to create notification","details":"PRIVATE_NOTIFICATION_customer@example.invalid"}'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:60:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:231:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '{"error":"Failed to create notification","details":"PRIVATE_NOTIFICATION_customer@example.invalid"}',
+    expected: /PRIVATE_NOTIFICATION_customer@example.invalid/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:230:4
+✖ notification: insertion thrown insert cannot acknowledge success or email (2.032086ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /PRIVATE_NOTIFICATION_customer@example.invalid/. Input:
+  
+  '{"error":"Internal server error","details":"PRIVATE_NOTIFICATION_customer@example.invalid"}'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:60:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:231:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '{"error":"Internal server error","details":"PRIVATE_NOTIFICATION_customer@example.invalid"}',
+    expected: /PRIVATE_NOTIFICATION_customer@example.invalid/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:230:4
+✖ notification: insertion missing receipt cannot acknowledge success or email (2.087067ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 'no-store'
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:62:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:231:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'no-store',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:230:4
+✖ notification: insertion invalid receipt cannot acknowledge success or email (2.179143ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  201 !== 500
+  
+      at failure (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:58:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:231:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 500,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:237:4
+✖ notification: email thrown email preserves the single successful in-app effect (2.236396ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /PRIVATE_NOTIFICATION_customer@example.invalid/. Input:
+  
+  '{"success":true,"notification_id":"00000000-0000-4000-8000-000000000003","email_sent":false,"message":"Notification sent (email skipped or failed)"}Notification created: 00000000-0000-4000-8000-000000000003\n' +
+    'Email sending failed: Error: PRIVATE_NOTIFICATION_customer@example.invalid'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:240:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '{"success":true,"notification_id":"00000000-0000-4000-8000-000000000003","email_sent":false,"message":"Notification sent (email skipped or failed)"}Notification created: 00000000-0000-4000-8000-000000000003\nEmail sending failed: Error: PRIVATE_NOTIFICATION_customer@example.invalid',
+    expected: /PRIVATE_NOTIFICATION_customer@example.invalid/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:237:4
+✖ notification: email missing receipt preserves the single successful in-app effect (2.716913ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:239:82)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:237:4
+✖ notification: email empty receipt preserves the single successful in-app effect (2.576828ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:239:82)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notifications/handler.test.mjs:247:1
+✖ notification: success logs do not expose recipient email or user text (2.671506ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(!h.state.logs.join('\n').includes(EMAIL))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b643db4cccea/iao-notifications/tests/notifications/handler.test.mjs:250:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

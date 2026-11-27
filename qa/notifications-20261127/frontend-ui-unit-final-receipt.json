@@ -1,0 +1,22 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--reporter=json",
+    "--outputFile=qa/notifications-20261127/frontend-ui-unit-final.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 38.254,
+  "source_sha256": {
+    "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+    "src/pages/NotificationSettings.tsx": "bf50b88e83b58fbc066082e7622bf612d35e62e3823f60ce990a00af57a79210",
+    "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+    "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81"
+  },
+  "numTotalTests": 954,
+  "numPassedTests": 954,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true
+}

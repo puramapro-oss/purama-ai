@@ -1,0 +1,80 @@
+supabase/functions/_shared/notification-action-url.ts:7:export function resolveNotificationActionUrl(value: unknown): string | null {
+supabase/functions/send-notification/index.ts:6:import { resolveNotificationActionUrl } from "../_shared/notification-action-url.ts";
+supabase/functions/send-notification/index.ts:29:function record(value: unknown): value is Record<string, unknown> {
+supabase/functions/send-notification/index.ts:33:function email(value: unknown): value is string {
+supabase/functions/send-notification/index.ts:39:function validText(value: unknown, max: number, multiline = false): value is string {
+supabase/functions/send-notification/index.ts:48:function validatePayload(value: unknown): NotificationPayload | null {
+supabase/functions/send-notification/index.ts:49:  if (!record(value) || Object.keys(value).some(key => !payloadKeys.has(key))
+supabase/functions/send-notification/index.ts:51:    || !validText(value.title, 300) || !validText(value.message, 5000, true)
+supabase/functions/send-notification/index.ts:54:  if (value.user_email !== undefined && !email(value.user_email)) return null;
+supabase/functions/send-notification/index.ts:55:  if (value.agent_slug !== undefined && !validText(value.agent_slug, 100)) return null;
+supabase/functions/send-notification/index.ts:58:    ? undefined : resolveNotificationActionUrl(value.action_url);
+supabase/functions/send-notification/index.ts:69:function escapeHtml(value: string): string {
+supabase/functions/send-notification/index.ts:73:function reply(body: unknown, status: number, headers: Record<string, string> = {}): Response {
+supabase/functions/send-notification/index.ts:104:  const title = escapeHtml(payload.title);
+supabase/functions/send-notification/index.ts:105:  const message = escapeHtml(payload.message);
+supabase/functions/send-notification/index.ts:106:  const agentSlug = payload.agent_slug ? escapeHtml(payload.agent_slug) : null;
+supabase/functions/send-notification/index.ts:107:  const actionHref = actionUrl ? escapeHtml(actionUrl) : null;
+supabase/functions/send-notification/index.ts:168:                Vous recevez cet email car vous avez activé les notifications par email.<br>
+supabase/functions/send-notification/index.ts:187:    if (req.method !== 'POST') return reply({ error: 'Method not allowed' }, 405, { Allow: 'POST, OPTIONS' });
+supabase/functions/send-notification/index.ts:190:    if (!expectedSecret) return reply({ error: 'Notification service unavailable' }, 503);
+supabase/functions/send-notification/index.ts:193:      return reply({ error: 'Unauthorized' }, 401);
+supabase/functions/send-notification/index.ts:196:      return reply({ error: 'JSON content type required' }, 415);
+supabase/functions/send-notification/index.ts:202:      return reply({ error: 'Invalid notification request' }, error instanceof RequestBodyError ? error.status : 400);
+supabase/functions/send-notification/index.ts:204:    const payload = validatePayload(parsed);
+supabase/functions/send-notification/index.ts:205:    if (!payload) return reply({ error: 'Invalid notification request' }, 400);
+supabase/functions/send-notification/index.ts:206:    if (req.signal.aborted) return reply({ error: 'Notification request interrupted' }, 408);
+supabase/functions/send-notification/index.ts:210:    if (!supabaseUrl || !supabaseServiceKey) return reply({ error: 'Notification service unavailable' }, 503);
+supabase/functions/send-notification/index.ts:216:    // profiles is a routing hint, not an authority for a confirmed email address.
+supabase/functions/send-notification/index.ts:217:    // A user can edit that profile: never send to its email without Auth proof.
+supabase/functions/send-notification/index.ts:220:      const lookup = supabase.from('profiles').select('user_id,email');
+supabase/functions/send-notification/index.ts:223:        : lookup.eq('email', payload.user_email!)).maybeSingle();
+supabase/functions/send-notification/index.ts:224:      if (req.signal.aborted) return reply({ error: 'Notification request interrupted' }, 408);
+supabase/functions/send-notification/index.ts:225:      if (result.error) return reply({ error: 'Recipient unavailable' }, 503);
+supabase/functions/send-notification/index.ts:226:      if (result.data === null) return reply({ error: 'Recipient not found' }, 404);
+supabase/functions/send-notification/index.ts:227:      if (!record(result.data) || typeof result.data.user_id !== 'string' || !uuid.test(result.data.user_id)
+supabase/functions/send-notification/index.ts:228:        || (result.data.email !== null && !email(result.data.email))) return reply({ error: 'Recipient unavailable' }, 503);
+supabase/functions/send-notification/index.ts:231:      if (payload.user_id && profileId !== payload.user_id) return reply({ error: 'Recipient unavailable' }, 503);
+supabase/functions/send-notification/index.ts:232:      if (!payload.user_id && (typeof profile.email !== 'string'
+supabase/functions/send-notification/index.ts:233:        || profile.email.toLowerCase() !== payload.user_email!.toLowerCase())) return reply({ error: 'Recipient unavailable' }, 503);
+supabase/functions/send-notification/index.ts:234:    } catch { return reply({ error: 'Recipient unavailable' }, 503); }
+supabase/functions/send-notification/index.ts:241:      if (req.signal.aborted) return reply({ error: 'Notification request interrupted' }, 408);
+supabase/functions/send-notification/index.ts:242:      if (result.error || (result.data !== null && (!record(result.data)
+supabase/functions/send-notification/index.ts:245:        return reply({ error: 'Notification preferences unavailable' }, 503);
+supabase/functions/send-notification/index.ts:248:    } catch { return reply({ error: 'Notification preferences unavailable' }, 503); }
+supabase/functions/send-notification/index.ts:251:      return reply({ success: true, message: 'Notification skipped - user has disabled this type', notification_type: payload.type }, 200);
+supabase/functions/send-notification/index.ts:257:    const wantsEmail = emailEnabled && profile.email !== null && Boolean(resendApiKey);
+supabase/functions/send-notification/index.ts:261:        if (req.signal.aborted) return reply({ error: 'Notification request interrupted' }, 408);
+supabase/functions/send-notification/index.ts:264:          || (user.email !== undefined && user.email !== null && !email(user.email))) {
+supabase/functions/send-notification/index.ts:265:          return reply({ error: 'Recipient unavailable' }, 503);
+supabase/functions/send-notification/index.ts:267:        if (payload.user_email !== undefined && (!email(user.email)
+supabase/functions/send-notification/index.ts:268:          || user.email.toLowerCase() !== payload.user_email.toLowerCase())) {
+supabase/functions/send-notification/index.ts:269:          return reply({ error: 'Recipient does not match' }, 400);
+supabase/functions/send-notification/index.ts:272:        if (wantsEmail && email(user.email) && Number.isFinite(confirmedAt) && confirmedAt <= Date.now()) recipientEmail = user.email;
+supabase/functions/send-notification/index.ts:273:      } catch { return reply({ error: 'Recipient unavailable' }, 503); }
+supabase/functions/send-notification/index.ts:276:    // Store the same validated navigation reference used by the email and UI.
+supabase/functions/send-notification/index.ts:278:    if (req.signal.aborted) return reply({ error: 'Notification request interrupted' }, 408);
+supabase/functions/send-notification/index.ts:285:      if (result.error || !record(result.data) || typeof result.data.id !== 'string' || !uuid.test(result.data.id)) {
+supabase/functions/send-notification/index.ts:286:        return reply({ error: 'Notification creation could not be confirmed' }, 500);
+supabase/functions/send-notification/index.ts:289:    } catch { return reply({ error: 'Notification creation could not be confirmed' }, 500); }
+supabase/functions/send-notification/index.ts:304:    return reply({
+supabase/functions/send-notification/index.ts:306:      message: emailSent ? 'Notification created and email accepted' : 'Notification created (email acceptance not confirmed or disabled)',
+supabase/functions/send-notification/index.ts:309:    return reply({ error: 'Notification service unavailable' }, 503);
+src/hooks/useNotifications.ts:8:import { resolveNotificationActionUrl } from '../../supabase/functions/_shared/notification-action-url';
+src/hooks/useNotifications.ts:47:function useNotificationOwner(ownerId: string | undefined) {
+src/hooks/useNotifications.ts:62:function bindNotificationMutation<T>(
+src/hooks/useNotifications.ts:80:function ownedNotification(value: unknown, ownerId: string): Notification | null {
+src/hooks/useNotifications.ts:92:    action_url: resolveNotificationActionUrl(row.action_url), created_at: row.created_at,
+src/hooks/useNotifications.ts:96:function ownedPreferences(value: unknown, ownerId: string): NotificationPreferences {
+src/hooks/useNotifications.ts:115:function preferencePatch(value: NotificationPreferencePatch): NotificationPreferencePatch {
+src/hooks/useNotifications.ts:127:  const { captureRequest, input } = useNotificationOwner(ownerId);
+src/hooks/useNotifications.ts:149:    const notification = ownedNotification(row, ownerId);
+src/hooks/useNotifications.ts:179:          const newNotification = ownedNotification(payload.new, ownerId);
+src/hooks/useNotifications.ts:309:    markAsRead: bindNotificationMutation(markAsRead, input<string>),
+src/hooks/useNotifications.ts:310:    markAllAsRead: bindNotificationMutation(markAllAsRead, input<void>),
+src/hooks/useNotifications.ts:311:    deleteNotification: bindNotificationMutation(deleteNotification, input<string>),
+src/hooks/useNotifications.ts:319:  const { input } = useNotificationOwner(ownerId);
+src/hooks/useNotifications.ts:349:      return ownedPreferences(data, ownerId);
+src/hooks/useNotifications.ts:363:      const patch = preferencePatch(newPreferences);
+src/hooks/useNotifications.ts:371:      const saved = ownedPreferences(data, ownerId);
+src/hooks/useNotifications.ts:396:    updatePreferences: bindNotificationMutation(updatePreferences, input<NotificationPreferencePatch>),

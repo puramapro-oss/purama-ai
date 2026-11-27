@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--test-name-pattern=explicit null action URL",
+    "tests/notifications/handler.test.mjs"
+  ],
+  "exit_code": 1,
+  "handler_sha256": "f9de447fbbc671890036a2328262511ae79e82bce1a13666bf2e6fec8d9a4eaa",
+  "expected": "201 with no action link",
+  "summary": [
+    "not ok 1 - notification: explicit null action URL retains no link",
+    "# tests 1",
+    "# pass 0",
+    "# fail 1",
+    "# skipped 0"
+  ]
+}

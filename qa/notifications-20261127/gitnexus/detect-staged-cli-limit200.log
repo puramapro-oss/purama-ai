@@ -1,0 +1,32 @@
+Changes: 145 files, 45 symbols
+Affected processes: 9
+Risk level: high
+
+Changed symbols:
+  Function NotificationCenter → src/components/notifications/NotificationCenter.tsx
+  TypeAlias NotificationType → src/hooks/useNotifications.ts
+  Function useNotifications → src/hooks/useNotifications.ts
+  Function queryFn → src/hooks/useNotifications.ts
+  Property task_completed → src/hooks/useNotifications.ts
+  Property question → src/hooks/useNotifications.ts
+  Property daily_report → src/hooks/useNotifications.ts
+  Property alert → src/hooks/useNotifications.ts
+  Function onClick → src/hooks/useNotifications.ts
+  Function mutationFn → src/hooks/useNotifications.ts
+  Function onSuccess → src/hooks/useNotifications.ts
+  Function mutationFn → src/hooks/useNotifications.ts
+  Function onSuccess → src/hooks/useNotifications.ts
+  Function mutationFn → src/hooks/useNotifications.ts
+  Function onSuccess → src/hooks/useNotifications.ts
+... and 30 more
+
+Affected execution flows:
+  • NotificationSettings → UseAuth (4 steps) — changed: NotificationSettings
+  • Notifications → UseAuth (4 steps) — changed: Notifications
+  • NotificationSettings → Cn (4 steps) — changed: NotificationSettings
+  • Notifications → Cn (4 steps) — changed: Notifications
+  • MutationFn → From (5 steps) — changed: mutationFn
+  • MutationFn → From (5 steps) — changed: mutationFn
+  • MutationFn → Query (5 steps) — changed: mutationFn
+  • MutationFn → Entries (4 steps) — changed: mutationFn
+  • MutationFn → Entries (4 steps) — changed: mutationFn

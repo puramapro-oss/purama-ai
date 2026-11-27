@@ -1,0 +1,42 @@
+[
+  {
+    "path": "supabase/functions/send-notification/index.ts",
+    "sha256": "f9de447fbbc671890036a2328262511ae79e82bce1a13666bf2e6fec8d9a4eaa"
+  },
+  {
+    "path": "supabase/functions/_shared/request-body.ts",
+    "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  {
+    "path": "supabase/functions/_shared/request-deadline.ts",
+    "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+  },
+  {
+    "path": "supabase/functions/_shared/webhook-security.ts",
+    "sha256": "a24338182d40ae7a03db08f593518d759d4b210835093e7a78ec77001ad2c24f"
+  },
+  {
+    "path": "supabase/functions/_shared/notification-action-url.ts",
+    "sha256": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0"
+  },
+  {
+    "path": "src/lib/safeNavigation.ts",
+    "sha256": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0"
+  },
+  {
+    "path": "tests/notifications/runtime.ts",
+    "sha256": "49b5c1b27286bf33d842d61d35b86d52589e49ae3e626b3743aa0a69c8c2e62a"
+  },
+  {
+    "path": "tests/notifications/deno-fixture.ts",
+    "sha256": "44fa358cabb9d0a5e4be2aa03c12f267701eb1a99faa1162cbcb86d7a2b2a294"
+  },
+  {
+    "path": "tests/notifications/fixtures.mjs",
+    "sha256": "baae4e5f51ca2605798782efa6127878fc4c8c13fb60ff1cf4b55816aeccf582"
+  },
+  {
+    "path": "tests/notifications/deno.json",
+    "sha256": "c09f1b7b25903fef6320d16b6219948e034730e9bf3ecc7b0b60c36e1a5f7306"
+  }
+]

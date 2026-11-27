@@ -1,0 +1,198 @@
+
+> vite_react_shadcn_ts@0.0.0 build
+> npm run check:offline-assets && vite build
+
+
+> vite_react_shadcn_ts@0.0.0 check:offline-assets
+> node scripts/check-offline-assets.mjs
+
+PASS — 4 offline assets match their exact release sizes and SHA-256 hashes for purama-offline-v10.
+vite v6.4.6 building for production...
+transforming...
+✓ 4292 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                    3.94 kB │ gzip:   1.22 kB
+dist/assets/space-grotesk-vietnamese-wght-normal-D0rl6rjA.woff2    6.71 kB
+dist/assets/iao-media-variants-CQRH5Oqv.py                        10.99 kB
+dist/assets/orbitron-latin-wght-normal-Du7j2Vp2.woff2             11.80 kB
+dist/assets/space-grotesk-latin-ext-wght-normal-D9tNdqV9.woff2    18.94 kB
+dist/assets/space-grotesk-latin-wght-normal-BhU9QXUp.woff2        22.29 kB
+dist/assets/index-DKlO2Ecg.css                                   134.83 kB │ gzip:  22.28 kB
+dist/assets/form-vendor-voc1kG65.js                                0.04 kB │ gzip:   0.06 kB
+dist/assets/useAgents-C4wiCNy0.js                                  0.29 kB │ gzip:   0.24 kB
+dist/assets/chevron-right-C2dhSf9F.js                              0.30 kB │ gzip:   0.25 kB
+dist/assets/chevron-left-DyN5FtK3.js                               0.30 kB │ gzip:   0.25 kB
+dist/assets/filter-BA2HEJXA.js                                     0.33 kB │ gzip:   0.26 kB
+dist/assets/circle-check-BJ6C8FBg.js                               0.34 kB │ gzip:   0.27 kB
+dist/assets/power-CUcmP_Ri.js                                      0.34 kB │ gzip:   0.27 kB
+dist/assets/circle-x-B2UHc7h8.js                                   0.37 kB │ gzip:   0.28 kB
+dist/assets/trending-down-DWGqQU7x.js                              0.38 kB │ gzip:   0.28 kB
+dist/assets/bell-DTCg96H-.js                                       0.38 kB │ gzip:   0.29 kB
+dist/assets/copy-R2glfZS2.js                                       0.40 kB │ gzip:   0.31 kB
+dist/assets/link-2-CuRKs08I.js                                     0.41 kB │ gzip:   0.31 kB
+dist/assets/banknote-CVt5TESL.js                                   0.41 kB │ gzip:   0.31 kB
+dist/assets/circle-alert-Cbs_HJ6z.js                               0.42 kB │ gzip:   0.29 kB
+dist/assets/external-link-BCFjkOOQ.js                              0.42 kB │ gzip:   0.30 kB
+dist/assets/eye-DrCte6Xg.js                                        0.42 kB │ gzip:   0.30 kB
+dist/assets/lock-keyhole-BSRYPolP.js                               0.42 kB │ gzip:   0.32 kB
+dist/assets/pencil-CoIy2H2j.js                                     0.45 kB │ gzip:   0.32 kB
+dist/assets/pen-line-BbT1fP-M.js                                   0.45 kB │ gzip:   0.33 kB
+dist/assets/coins-DpfPkDMl.js                                      0.45 kB │ gzip:   0.32 kB
+dist/assets/flask-conical-DdjSP7hF.js                              0.48 kB │ gzip:   0.34 kB
+dist/assets/shield-check-BVExSAQ0.js                               0.49 kB │ gzip:   0.35 kB
+dist/assets/refresh-cw-CMAqt55z.js                                 0.49 kB │ gzip:   0.33 kB
+dist/assets/save-C02kQSai.js                                       0.50 kB │ gzip:   0.33 kB
+dist/assets/session-id-afipKs38.js                                 0.51 kB │ gzip:   0.34 kB
+dist/assets/useFaq-CQiy1V54.js                                     0.51 kB │ gzip:   0.30 kB
+dist/assets/share-2-CFqGICri.js                                    0.52 kB │ gzip:   0.33 kB
+dist/assets/useRequestScope-BElBO3dj.js                            0.54 kB │ gzip:   0.30 kB
+dist/assets/textarea-De04sXb8.js                                   0.56 kB │ gzip:   0.35 kB
+dist/assets/building-2-Df3UK-qN.js                                 0.61 kB │ gzip:   0.35 kB
+dist/assets/unlink-B6JKF8Tq.js                                     0.70 kB │ gzip:   0.40 kB
+dist/assets/Forge-BHjJZsBR.js                                      0.71 kB │ gzip:   0.42 kB
+dist/assets/badge-D98pjfBY.js                                      0.75 kB │ gzip:   0.40 kB
+dist/assets/GoRedirect-BraCSRUa.js                                 0.80 kB │ gzip:   0.52 kB
+dist/assets/store-IRB6c8X6.js                                      0.81 kB │ gzip:   0.40 kB
+dist/assets/skeleton-Dg5DdVIV.js                                   0.90 kB │ gzip:   0.50 kB
+dist/assets/card-BgBYR5BV.js                                       1.07 kB │ gzip:   0.42 kB
+dist/assets/tabs-B6pD2TOO.js                                       1.19 kB │ gzip:   0.50 kB
+dist/assets/request-deadline-DxMOZ-Wx.js                           1.24 kB │ gzip:   0.69 kB
+dist/assets/useSubscription-DprbHGaf.js                            1.30 kB │ gzip:   0.65 kB
+dist/assets/oauth-google-DSxKP7_p.js                               1.34 kB │ gzip:   0.72 kB
+dist/assets/useAgentStats-CADuC9Rg.js                              1.39 kB │ gzip:   0.74 kB
+dist/assets/usePoints-Yu6oMVbk.js                                  1.43 kB │ gzip:   0.67 kB
+dist/assets/useWallet-BrPt1rtI.js                                  1.54 kB │ gzip:   0.64 kB
+dist/assets/useAgentSelections-Bks36Bze.js                         1.54 kB │ gzip:   0.72 kB
+dist/assets/table-Bc2-J9LO.js                                      1.56 kB │ gzip:   0.56 kB
+dist/assets/NotFound-DU45I6yT.js                                   1.59 kB │ gzip:   0.75 kB
+dist/assets/useDailyGift-DXqww3Au.js                               1.86 kB │ gzip:   0.92 kB
+dist/assets/progress-D0ZvdFyp.js                                   2.02 kB │ gzip:   1.00 kB
+dist/assets/dialog-DrimH7oW.js                                     2.28 kB │ gzip:   0.90 kB
+dist/assets/request-body-DQwlIFOU.js                               2.49 kB │ gzip:   1.11 kB
+dist/assets/switch-BUURfJtm.js                                     2.56 kB │ gzip:   1.28 kB
+dist/assets/PendingActionsList-Cr_mht6t.js                         3.03 kB │ gzip:   1.28 kB
+dist/assets/select-4vysaAK0.js                                     3.04 kB │ gzip:   1.11 kB
+dist/assets/AnimatedStarfield-DnKedDtf.js                          3.15 kB │ gzip:   1.21 kB
+dist/assets/Breathe-_VSRX0m4.js                                    3.59 kB │ gzip:   1.48 kB
+dist/assets/ForgotPassword-BkZZCO5I.js                             3.88 kB │ gzip:   1.53 kB
+dist/assets/OAuthCallback-CgmJB-za.js                              3.96 kB │ gzip:   1.72 kB
+dist/assets/CreatorAgentRuns-C6Zc3ENt.js                           4.39 kB │ gzip:   1.78 kB
+dist/assets/MentionsLegales-DhNsz0JV.js                            4.61 kB │ gzip:   1.78 kB
+dist/assets/avatar-BEukXXo4.js                                     4.65 kB │ gzip:   1.90 kB
+dist/assets/social-Yc3MQ_UB.js                                     4.87 kB │ gzip:   2.15 kB
+dist/assets/LegalAgentVeille-CtMe3dys.js                           4.90 kB │ gzip:   1.96 kB
+dist/assets/TutorialOverlay-DGwcUSWO.js                            5.04 kB │ gzip:   2.06 kB
+dist/assets/ShareButtons-B2cY4oln.js                               5.15 kB │ gzip:   2.16 kB
+dist/assets/ResetPassword-D8ZDf28g.js                              5.26 kB │ gzip:   1.77 kB
+dist/assets/DashboardAnalytics-Bwqp__vo.js                         5.62 kB │ gzip:   2.00 kB
+dist/assets/index-D76m7gDE.js                                      5.67 kB │ gzip:   2.36 kB
+dist/assets/Boutique-Ctk9Mokq.js                                   5.72 kB │ gzip:   2.16 kB
+dist/assets/Ecosystem-ClFut3iX.js                                  5.72 kB │ gzip:   2.22 kB
+dist/assets/PolitiqueCookies-DeDFn0Kw.js                           5.77 kB │ gzip:   1.90 kB
+dist/assets/InfluencerSignup-BJpk3w-9.js                           5.82 kB │ gzip:   1.79 kB
+dist/assets/PartnerAgentEmails-DNAPVIPi.js                         5.84 kB │ gzip:   2.37 kB
+dist/assets/Aide-_ymKf9xj.js                                       5.84 kB │ gzip:   2.28 kB
+dist/assets/Gratitude-CEPIMtXg.js                                  5.90 kB │ gzip:   2.32 kB
+dist/assets/CGU-DpS3LJoA.js                                        5.94 kB │ gzip:   2.39 kB
+dist/assets/DailyGift-_GDzPT2-.js                                  6.09 kB │ gzip:   2.27 kB
+dist/assets/MyAgents-QAy9FIq6.js                                   6.14 kB │ gzip:   2.02 kB
+dist/assets/NotificationSettings-CBNwT1Au.js                       6.23 kB │ gzip:   1.79 kB
+dist/assets/Tirage-CpRoN9T9.js                                     6.26 kB │ gzip:   2.03 kB
+dist/assets/compta-D8eWcR__.js                                     6.49 kB │ gzip:   2.42 kB
+dist/assets/Guide-BYI-ggsk.js                                      6.53 kB │ gzip:   2.78 kB
+dist/assets/Reglement-Dfk7Sux2.js                                  6.54 kB │ gzip:   2.74 kB
+dist/assets/EmailAgentTemplates-Bb-Om1uy.js                        6.58 kB │ gzip:   2.51 kB
+dist/assets/PublicCreatorModel-i6PwhOKP.js                         6.61 kB │ gzip:   2.63 kB
+dist/assets/EmailAgentMemory-CvEBgG2z.js                           6.74 kB │ gzip:   2.38 kB
+dist/assets/CreatorAgentTemplates-CdLStWdq.js                      6.92 kB │ gzip:   2.75 kB
+dist/assets/PolitiqueConfidentialite-BVnavkOZ.js                   6.92 kB │ gzip:   2.28 kB
+dist/assets/ComptaAgentDeclarations-Cf96JnkI.js                    7.11 kB │ gzip:   2.53 kB
+dist/assets/Wallet-nwStMTE3.js                                     7.25 kB │ gzip:   2.45 kB
+dist/assets/zh-CW0WtLgL.js                                         7.26 kB │ gzip:   4.12 kB
+dist/assets/Notifications-B0Uz8juf.js                              7.28 kB │ gzip:   2.66 kB
+dist/assets/legal-hFYxES5f.js                                      7.37 kB │ gzip:   2.20 kB
+dist/assets/LegalAgentDocuments-BGxxWAR4.js                        7.46 kB │ gzip:   2.69 kB
+dist/assets/tr-CzZWgeVh.js                                         7.50 kB │ gzip:   3.51 kB
+dist/assets/sv-CWKFz1ez.js                                         7.52 kB │ gzip:   3.49 kB
+dist/assets/ko-B75z5Onj.js                                         7.54 kB │ gzip:   3.68 kB
+dist/assets/CGV-64q_UpHN.js                                        7.55 kB │ gzip:   2.95 kB
+dist/assets/pl-DZ8Y0zv0.js                                         7.57 kB │ gzip:   3.54 kB
+dist/assets/nl-yDHHnmtg.js                                         7.57 kB │ gzip:   3.50 kB
+dist/assets/ja-CP3qVp20.js                                         7.65 kB │ gzip:   3.75 kB
+dist/assets/AgentChatTab-B2xp44_5.js                               7.76 kB │ gzip:   3.30 kB
+dist/assets/ar-DiqEeXz5.js                                         7.79 kB │ gzip:   3.71 kB
+dist/assets/DashboardAgents-D8acnqId.js                            7.88 kB │ gzip:   2.62 kB
+dist/assets/ru-D38cn72W.js                                         7.94 kB │ gzip:   3.80 kB
+dist/assets/ComptaAgentReports-dyi5bThS.js                         7.97 kB │ gzip:   2.60 kB
+dist/assets/hi-O7thiiWk.js                                         8.07 kB │ gzip:   3.74 kB
+dist/assets/it-C4DKIlGv.js                                         8.08 kB │ gzip:   3.75 kB
+dist/assets/pt-bVCr-byI.js                                         8.11 kB │ gzip:   3.87 kB
+dist/assets/es-CRg780Hy.js                                         8.11 kB │ gzip:   3.85 kB
+dist/assets/LegalAgentImpayes-DgrmmW8n.js                          8.24 kB │ gzip:   2.75 kB
+dist/assets/de-CCzV9SJp.js                                         8.34 kB │ gzip:   3.93 kB
+dist/assets/LegalAgentChat-NwD3LcPN.js                             8.39 kB │ gzip:   3.30 kB
+dist/assets/AdminInfluencers-BqA_5Fe0.js                           8.40 kB │ gzip:   2.41 kB
+dist/assets/CreatorAgent-Co9NWAT6.js                               8.63 kB │ gzip:   2.70 kB
+dist/assets/MyConnections-BcOI77Mf.js                              8.71 kB │ gzip:   3.39 kB
+dist/assets/Fiscal-0NABc70C.js                                     8.88 kB │ gzip:   3.25 kB
+dist/assets/ComptaAgentTransactions-ocxiKfs9.js                    8.88 kB │ gzip:   3.20 kB
+dist/assets/useVoice-21-kaDYu.js                                   9.15 kB │ gzip:   3.77 kB
+dist/assets/EmailAgentRules-C2sF-RvL.js                            9.37 kB │ gzip:   3.06 kB
+dist/assets/DashboardBilling-DgJOJpty.js                           9.89 kB │ gzip:   3.74 kB
+dist/assets/Concours-CWCVPyT5.js                                  10.21 kB │ gzip:   2.93 kB
+dist/assets/LegalAgent-B9E56qhK.js                                10.25 kB │ gzip:   3.21 kB
+dist/assets/EmailAgentSettings-Cs_eUqda.js                        10.35 kB │ gzip:   3.28 kB
+dist/assets/LegalAgentCases-BjHk8n_Z.js                           10.54 kB │ gzip:   3.40 kB
+dist/assets/DashboardSettings-BvTFBkuz.js                         10.57 kB │ gzip:   3.42 kB
+dist/assets/confetti.module-oQXWb4Lk.js                           10.67 kB │ gzip:   4.28 kB
+dist/assets/partner-completion-Dyq3ZQfx.js                        10.71 kB │ gzip:   3.70 kB
+dist/assets/email-agent-BJWHczRq.js                               10.78 kB │ gzip:   3.55 kB
+dist/assets/ComptaAgentSettings-BdpB3sBo.js                       10.97 kB │ gzip:   3.24 kB
+dist/assets/PartnerAgentPartners-B47iIQDX.js                      11.35 kB │ gzip:   4.16 kB
+dist/assets/AdminDashboard-CtT_rdPc.js                            11.41 kB │ gzip:   4.09 kB
+dist/assets/Classement-D8KAdbMz.js                                11.53 kB │ gzip:   3.85 kB
+dist/assets/AmbassadeurRejoindre-el-3I50P.js                      11.60 kB │ gzip:   4.39 kB
+dist/assets/VoiceMode-BPbIV6JT.js                                 11.67 kB │ gzip:   4.13 kB
+dist/assets/useKartaEmployees-DcdFTVLn.js                         12.29 kB │ gzip:   4.21 kB
+dist/assets/EmailAgentLogs-8i-HTTPy.js                            12.50 kB │ gzip:   4.13 kB
+dist/assets/Pricing-inCluYC2.js                                   12.51 kB │ gzip:   4.67 kB
+dist/assets/ComptaAgentInvoices-DQvY1JnX.js                       12.61 kB │ gzip:   3.87 kB
+dist/assets/fr-DFLOaQKc.js                                        12.94 kB │ gzip:   4.06 kB
+dist/assets/format-CnaxfSYm.js                                    13.02 kB │ gzip:   3.45 kB
+dist/assets/SocialSettings-DzWS9tji.js                            13.07 kB │ gzip:   4.62 kB
+dist/assets/Parrainage-DKOPRxwT.js                                13.08 kB │ gzip:   4.24 kB
+dist/assets/AdminContracts-DrzkGIh7.js                            13.10 kB │ gzip:   4.70 kB
+dist/assets/ComptaAgent-B6sT2aSz.js                               13.15 kB │ gzip:   4.26 kB
+dist/assets/SocialAgent-BVqhT77x.js                               13.48 kB │ gzip:   4.40 kB
+dist/assets/PuramaCompta-B_jLe39o.js                              13.67 kB │ gzip:   4.42 kB
+dist/assets/creator-agent-CvNs6BUO.js                             15.06 kB │ gzip:   5.62 kB
+dist/assets/PartnerAgent-DYjuSdPr.js                              16.83 kB │ gzip:   5.64 kB
+dist/assets/DashboardOverview-CNXHVXzc.js                         18.82 kB │ gzip:   5.45 kB
+dist/assets/DashboardHeader-BgxIS0Lr.js                           19.62 kB │ gzip:   5.99 kB
+dist/assets/PartnerAgentSettings-DAjn4CVf.js                      20.89 kB │ gzip:   6.27 kB
+dist/assets/EmailAgent-C4gD330c.js                                21.24 kB │ gzip:   7.52 kB
+dist/assets/CreatorAgentNew-BWKXwOK8.js                           22.82 kB │ gzip:   7.24 kB
+dist/assets/MyEmployees-DAqNNEkI.js                               23.36 kB │ gzip:   7.52 kB
+dist/assets/Workshop-DVm68POT.js                                  23.54 kB │ gzip:   7.40 kB
+dist/assets/partner-Co_8Xfp-.js                                   25.74 kB │ gzip:   8.15 kB
+dist/assets/Financer-DOwoA48Y.js                                  27.15 kB │ gzip:   6.78 kB
+dist/assets/Entraide-CbUSRBkk.js                                  29.30 kB │ gzip:   8.30 kB
+dist/assets/purify.es-CAi2OJFm.js                                 30.47 kB │ gzip:  11.73 kB
+dist/assets/PartnerAgentProspects-B5om9Trl.js                     36.39 kB │ gzip:  10.70 kB
+dist/assets/AgentDetail-CmMfSUzW.js                               37.21 kB │ gzip:  11.99 kB
+dist/assets/IaoTrialPanel-V4hdkanr.js                             38.06 kB │ gzip:  13.47 kB
+dist/assets/query-vendor-kentRW2F.js                              40.16 kB │ gzip:  12.19 kB
+dist/assets/CreatorAgentDetail-CfPlhZDm.js                        41.50 kB │ gzip:  12.18 kB
+dist/assets/InfluencerDashboard-DiP-nmn9.js                       43.84 kB │ gzip:  12.37 kB
+dist/assets/radix-vendor-LhLf8nfB.js                             112.05 kB │ gzip:  35.90 kB
+dist/assets/motion-vendor-BWhsJliQ.js                            116.90 kB │ gzip:  38.67 kB
+dist/assets/index-C41wFEKy.js                                    117.63 kB │ gzip:  36.20 kB
+dist/assets/index.es-DC5qWQPe.js                                 159.43 kB │ gzip:  53.45 kB
+dist/assets/react-vendor-MqopRN9q.js                             182.30 kB │ gzip:  60.10 kB
+dist/assets/html2canvas.esm-QH1iLAAe.js                          202.38 kB │ gzip:  48.04 kB
+dist/assets/supabase-vendor-DZ_t1zzL.js                          230.94 kB │ gzip:  60.21 kB
+dist/assets/pdf-vendor-pAfzbnFQ.js                               391.67 kB │ gzip: 129.28 kB
+dist/assets/App-X_3cOVoL.js                                      408.63 kB │ gzip: 119.27 kB
+dist/assets/charts-vendor-QSSdUgQb.js                            431.18 kB │ gzip: 114.79 kB
+✓ built in 11.70s

@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-27T04:28:03.846183+00:00",
+  "base": "272074017383c9a8f8c817d3bdea945cf692b3bc",
+  "parent_base": "6c8c1b8d37f97b33e02b9181d1083420279631a9",
+  "base_delta": [
+    ".github/workflows/purama-chef-hardening.yml"
+  ],
+  "source_received_by": "verified incremental git bundle from isolated bare Mac repository; no writes to source checkout",
+  "react_review": {
+    "hooks": "Hooks remain unconditional; request/account lifetimes are explicit, including StrictMode and A-B-A; mutation inputs snapshot ownership.",
+    "fetching": "Existing TanStack Query key per owner reused; no new HTTP calls in render or automatic mutation retry. Retry buttons share isFetching and guard account lifetime.",
+    "rendering": "Explicit loading/error/empty branches; unavailable preferences never become enabled defaults. Existing components and Tailwind retained.",
+    "accessibility": "Error panels role=alert, loading role=status, keyboard-operable retry buttons, notification bell accessible name.",
+    "dependencies": "No package/lockfile changes or new runtime dependency. Shared navigation helper is static and contains no server/client side effects.",
+    "limits": "Existing whole-product accessibility/performance outside the notification delta is not certified by this focused review."
+  },
+  "product_sha256": {
+    "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+    "src/pages/NotificationSettings.tsx": "bf50b88e83b58fbc066082e7622bf612d35e62e3823f60ce990a00af57a79210",
+    "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+    "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81",
+    "vercel.json": "267393e37e9d5c2bb7c5ffab3d54033aa2d5f8b57e692447c48b1adddd9dfbcc"
+  }
+}

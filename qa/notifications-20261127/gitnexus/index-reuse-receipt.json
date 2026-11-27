@@ -1,0 +1,89 @@
+{
+  "at": "2026-11-27T04:03:45.542472+00:00",
+  "method": "verified independent copy of exact-base full GitNexus index; path and branch rebinding only; original indexedAt preserved",
+  "source": "/workspace/scratch/1ff3bc9d41b0/iao-ci-fix/.gitnexus",
+  "destination": "/workspace/scratch/b643db4cccea/iao-notifications/.gitnexus",
+  "base": "6c8c1b8d37f97b33e02b9181d1083420279631a9",
+  "head": "6c8c1b8d37f97b33e02b9181d1083420279631a9",
+  "sourceIndexAt": "2026-11-27T03:44:30.789Z",
+  "sourceStats": {
+    "files": 3231,
+    "nodes": 37972,
+    "edges": 109308,
+    "communities": 963,
+    "processes": 757,
+    "embeddings": 0
+  },
+  "sourceBefore": {
+    "lbug": {
+      "sha256": "7f522d7997ef0584f4b20862b0853bb846ea410f15ab340615d807f37698646c",
+      "size": 114290688,
+      "mtimeNs": 1795751072079001212
+    },
+    "meta.json": {
+      "sha256": "243de81fe4bf014ee8b146c8ad1d657eec3d572468a107de2bb66bf169b71411",
+      "size": 441887,
+      "mtimeNs": 1795751072116765101
+    },
+    "gitnexus.json": {
+      "sha256": "243de81fe4bf014ee8b146c8ad1d657eec3d572468a107de2bb66bf169b71411",
+      "size": 441887,
+      "mtimeNs": 1795751072112765177
+    },
+    "run.cjs": {
+      "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7",
+      "size": 19564,
+      "mtimeNs": 1795751072067240179
+    },
+    ".gitignore": {
+      "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b",
+      "size": 2,
+      "mtimeNs": 1795751072056766237
+    }
+  },
+  "sourceAfter": {
+    "lbug": {
+      "sha256": "7f522d7997ef0584f4b20862b0853bb846ea410f15ab340615d807f37698646c",
+      "size": 114290688,
+      "mtimeNs": 1795751072079001212
+    },
+    "meta.json": {
+      "sha256": "243de81fe4bf014ee8b146c8ad1d657eec3d572468a107de2bb66bf169b71411",
+      "size": 441887,
+      "mtimeNs": 1795751072116765101
+    },
+    "gitnexus.json": {
+      "sha256": "243de81fe4bf014ee8b146c8ad1d657eec3d572468a107de2bb66bf169b71411",
+      "size": 441887,
+      "mtimeNs": 1795751072112765177
+    },
+    "run.cjs": {
+      "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7",
+      "size": 19564,
+      "mtimeNs": 1795751072067240179
+    },
+    ".gitignore": {
+      "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b",
+      "size": 2,
+      "mtimeNs": 1795751072056766237
+    }
+  },
+  "sourceUnchanged": true,
+  "failedAttemptsPreserved": "/workspace/scratch/b643db4cccea/gitnexus-notifications-interrupted-20261127",
+  "attemptResults": [
+    {
+      "log": "analyze-before.log",
+      "exitCode": 1
+    },
+    {
+      "log": "analyze-before-bounded.log",
+      "exitCode": 137
+    }
+  ],
+  "limitations": [
+    "FTS disabled in source index; exact UID context/impact still available",
+    "GitNexus source analysis truncation warnings preserved; absence of graph edge is not absence of caller",
+    "No statement-level PDG layer in source index",
+    "Metadata repoPath/storagePath/branch rebound, index graph source revision and indexedAt unchanged"
+  ]
+}

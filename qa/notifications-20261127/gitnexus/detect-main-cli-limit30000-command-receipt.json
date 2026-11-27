@@ -1,0 +1,29 @@
+{
+  "finishedAt": "2026-11-27T04:35:17.636889+00:00",
+  "command": [
+    "node",
+    "--max-old-space-size=768",
+    "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--repo",
+    "iao-notifications-b643",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "origin/main",
+    "--limit",
+    "30000"
+  ],
+  "env": {
+    "GITNEXUS_MEMORY": "off",
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "268435456"
+  },
+  "exit_code": 0,
+  "stdout": "detect-main-cli-limit30000.log",
+  "stderr": "detect-main-cli-limit30000.stderr.log",
+  "outputSha256": "bf6672c6292e34bb80a77b14bcac9217278dd249a7ccb4aefc4ca5a42d0b2de6",
+  "status": "PARTIEL_LISTING_CAPPED",
+  "backendHardCap": 1000,
+  "libraryOrIndexModified": false,
+  "note": "Limit30000 does not lift backend cap1000; CLI formatter prints at most15symbols/10flows. Full structured returned payload is in detect-main.json; its truncated flag is preserved."
+}

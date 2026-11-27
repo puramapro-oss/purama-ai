@@ -1,0 +1,10 @@
+Changes: 37 files, 1 symbols
+Affected processes: 2
+Risk level: medium
+
+Changed symbols:
+  Function NotificationSettings → src/pages/NotificationSettings.tsx
+
+Affected execution flows:
+  • NotificationSettings → UseAuth (4 steps) — changed: NotificationSettings
+  • NotificationSettings → Cn (4 steps) — changed: NotificationSettings

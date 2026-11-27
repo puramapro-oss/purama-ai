@@ -1,0 +1,98 @@
+[
+  {
+    "symbol": "NotificationSettings",
+    "file": "src/pages/NotificationSettings.tsx",
+    "sha256": "453177ad1a76f0898b347d8112379cb2dd9651ea3fa82d09b3648d13f25ae59d",
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "NotificationSettings",
+      "--file",
+      "src/pages/NotificationSettings.tsx",
+      "--direction",
+      "upstream",
+      "--depth",
+      "4",
+      "--limit",
+      "100",
+      "--repo",
+      "iao-notifications-b643"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-27T04:22:14.724295+00:00",
+    "risk": "UNKNOWN",
+    "impactedCount": 0,
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    },
+    "error": null
+  },
+  {
+    "symbol": "Notifications",
+    "file": "src/pages/Notifications.tsx",
+    "sha256": "d1475c95fb8e1328ec7421545a1362464bfb04455cbe90340d9430fcbfce389b",
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "Notifications",
+      "--file",
+      "src/pages/Notifications.tsx",
+      "--direction",
+      "upstream",
+      "--depth",
+      "4",
+      "--limit",
+      "100",
+      "--repo",
+      "iao-notifications-b643"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-27T04:22:15.363767+00:00",
+    "risk": "UNKNOWN",
+    "impactedCount": 0,
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    },
+    "error": null
+  },
+  {
+    "symbol": "NotificationCenter",
+    "file": "src/components/notifications/NotificationCenter.tsx",
+    "sha256": "85ab861676979c0fd54f574fce3610977c1790529abaaab2ddefc1d9437b6849",
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "NotificationCenter",
+      "--file",
+      "src/components/notifications/NotificationCenter.tsx",
+      "--direction",
+      "upstream",
+      "--depth",
+      "4",
+      "--limit",
+      "100",
+      "--repo",
+      "iao-notifications-b643"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-27T04:22:16.024305+00:00",
+    "risk": "CRITICAL",
+    "impactedCount": 7,
+    "summary": {
+      "direct": 1,
+      "processes_affected": 6,
+      "modules_affected": 1
+    },
+    "error": null
+  }
+]

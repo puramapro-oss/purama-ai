@@ -30,7 +30,7 @@ const typeColors: Record<NotificationType, string> = {
 
 export function NotificationCenter() {
   const [open, setOpen] = useState(false);
-  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const { notifications, unreadCount, isLoading, isError, isFetching, refetch, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
 
   const recentNotifications = notifications.slice(0, 10);
 
@@ -43,10 +43,10 @@ export function NotificationCenter() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
           <Bell className="h-5 w-5" />
           <AnimatePresence>
-            {unreadCount > 0 && (
+            {!isError && !isLoading && unreadCount > 0 && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -71,7 +71,7 @@ export function NotificationCenter() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-semibold text-foreground">Notifications</h3>
-          {unreadCount > 0 && (
+          {!isError && !isLoading && unreadCount > 0 && (
             <Button
               variant="ghost"
               size="sm"
@@ -87,7 +87,18 @@ export function NotificationCenter() {
 
         {/* Notifications list */}
         <ScrollArea className="h-[400px]">
-          {recentNotifications.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 text-center text-muted-foreground" role="status">
+              Chargement des notifications…
+            </div>
+          ) : isError ? (
+            <div className="p-6 space-y-4 text-center" role="alert">
+              <p>Impossible de charger les notifications</p>
+              <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+                {isFetching ? 'Chargement…' : 'Réessayer'}
+              </Button>
+            </div>
+          ) : recentNotifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>Aucune notification</p>

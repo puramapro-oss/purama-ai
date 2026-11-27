@@ -1,0 +1,19 @@
+{
+  "repository": "puramapro-oss/purama-ai",
+  "event_sha": "a207e0142c78a89ef691953af6424f42ea47b4c1",
+  "run_id": "45941476133",
+  "run_attempt": "1",
+  "outcomes": {
+    "checkout": "success",
+    "evidence": "success",
+    "node": "success",
+    "deno": "success",
+    "dependencies": "success",
+    "server": "success",
+    "native": "success",
+    "hooks": "success",
+    "browser_setup": "success",
+    "browser": "success"
+  },
+  "scope": "Synthetic database, authentication, Realtime and email adapters; no live service qualification."
+}

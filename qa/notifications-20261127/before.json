@@ -1,0 +1,28 @@
+{
+  "at_utc": "2026-11-27T04:02:49.845956+00:00",
+  "cwd": "/workspace/scratch/b643db4cccea/iao-notifications",
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-concurrency=1",
+    "tests/notifications/handler.test.mjs"
+  ],
+  "exit_code": 1,
+  "handler_sha256": "a4afd6b43651a665be581ab8de963d17eb808bef9c7ef73e7e8a8d0b93007f53",
+  "network": "inert providers; VM fetch denied",
+  "summary": [
+    "\u2139 tests 106",
+    "\u2139 suites 0",
+    "\u2139 pass 17",
+    "\u2139 fail 89",
+    "\u2139 cancelled 0",
+    "\u2139 skipped 0",
+    "\u2139 todo 0",
+    "\u2139 duration_ms 607.044555"
+  ],
+  "source_hashes": {
+    "tests/notifications/handler.test.mjs": "15e5b50e70c7737a45012480bf2a2511817bfccce92a6e8cce7538c7c48abd4e",
+    "tests/notifications/fixtures.mjs": "9c488fe2b757a6e24ef3df48e2dc9e3b6b8b8ae8d25f5fc48a5ae79fa09e51ef"
+  }
+}

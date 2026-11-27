@@ -1,0 +1,18 @@
+{
+  "processes": [],
+  "process_symbols": [],
+  "definitions": [],
+  "timing": {
+    "bm25": 0.5,
+    "vector": 5,
+    "merge": 0,
+    "symbol_lookup": 0,
+    "ranking": 0,
+    "formatting": 0,
+    "wall": 5.8
+  },
+  "warning": "FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset. (resolved: iao-notifications-b643/branch:fix/iao-notifications-20261127-b643, indexed 2026-11-27T03:44:30.789Z)"
+}
+
+  GitNexus Query (1.6.12)
+{"level":40,"time":1795752249892,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

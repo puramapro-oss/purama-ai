@@ -1,0 +1,70 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/hooks/useNotifications.ts:useNotifications",
+    "name": "useNotifications",
+    "kind": "Function",
+    "filePath": "src/hooks/useNotifications.ts",
+    "startLine": 33,
+    "endLine": 158
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:src/components/notifications/NotificationCenter.tsx:NotificationCenter",
+        "name": "NotificationCenter",
+        "filePath": "src/components/notifications/NotificationCenter.tsx"
+      },
+      {
+        "uid": "Function:src/pages/Notifications.tsx:Notifications",
+        "name": "Notifications",
+        "filePath": "src/pages/Notifications.tsx"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:src/hooks/useAuth.ts:useAuth",
+        "name": "useAuth",
+        "filePath": "src/hooks/useAuth.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "Interface:src/hooks/useNotifications.ts:Notification",
+        "name": "Notification",
+        "filePath": "src/hooks/useNotifications.ts"
+      },
+      {
+        "uid": "TypeAlias:src/hooks/useNotifications.ts:NotificationType",
+        "name": "NotificationType",
+        "filePath": "src/hooks/useNotifications.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:src/hooks/useNotifications.ts:Notification.action_url",
+        "name": "action_url",
+        "filePath": "src/hooks/useNotifications.ts"
+      },
+      {
+        "uid": "Property:src/hooks/useNotifications.ts:Notification.message",
+        "name": "message",
+        "filePath": "src/hooks/useNotifications.ts"
+      },
+      {
+        "uid": "Property:src/hooks/useNotifications.ts:Notification.title",
+        "name": "title",
+        "filePath": "src/hooks/useNotifications.ts"
+      },
+      {
+        "uid": "Property:src/hooks/useNotifications.ts:Notification.type",
+        "name": "type",
+        "filePath": "src/hooks/useNotifications.ts"
+      }
+    ]
+  },
+  "processes": []
+}

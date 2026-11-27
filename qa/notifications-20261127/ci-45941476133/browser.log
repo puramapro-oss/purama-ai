@@ -1,0 +1,13 @@
+PASS real list renders owned notification and safe link on desktop and mobile
+PASS list failure is distinct from empty and retry filters non-owned rows
+PASS unsafe historical navigation is removed from real rendered links
+PASS real notification popover distinguishes errors and recovers with safe content
+PASS real Sonner notification is dismissed when the account changes
+PASS logout dismisses visible private notification toasts
+PASS late A callback remains rejected after an A-B-A account cycle
+PASS Realtime rejects foreign rows and removes unsafe toast action
+PASS real preference switches show confirmed false and persist a requested change
+PASS failed preference save preserves confirmed state and a later retry succeeds
+PASS preference load failure does not present enabled defaults and can recover
+PASS a late list response for A never replaces the visible B list
+{"status":"PASS","passed":12,"failed":0,"pageErrors":[],"externalRequests":[],"sourceUnchanged":true}
