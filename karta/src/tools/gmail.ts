@@ -189,10 +189,7 @@ export interface GmailMessageSummary extends GmailBodyContent {
  * Gmail "after:" attend une date/timestamp, jamais un message id. Un léger chevauchement
  * évite de perdre un message situé exactement à la frontière temporelle.
  */
-export async function listNewGmailMessages(userId: string, lastSyncAt: string | null): Promise<GmailMessageSummary[]> {
-  const accessToken = await getGmailAccessToken(userId);
-  if (!accessToken) throw new Error("Gmail OAuth absent : collecte impossible, synchronisation non avancée");
-
+async function collectInboxMessages(accessToken: string, lastSyncAt: string | null, excludedEmails: Set<string>, excludedDomains: Set<string>): Promise<GmailMessageSummary[]> {
   let query = "is:unread";
   if (lastSyncAt) {
     const millis = new Date(lastSyncAt).getTime();
@@ -201,7 +198,7 @@ export async function listNewGmailMessages(userId: string, lastSyncAt: string | 
     }
   }
 
-  const seen = new Set<string>();
+  const seen = new Map<string, string>();
   const seenPages = new Set<string>();
   const messages: Array<{ id: string; threadId: string }> = [];
   let pageToken: string | undefined;
@@ -209,16 +206,20 @@ export async function listNewGmailMessages(userId: string, lastSyncAt: string | 
     const pageParam = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
     const listResponse = await fetch(
       `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${GMAIL_LIST_LIMIT}&q=${encodeURIComponent(query)}${pageParam}`,
-      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) }
+      { headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000) }
     );
     if (!listResponse.ok) throw new Error(`Gmail list échoué (${listResponse.status})`);
     const list = (await readBoundedGmailJson(listResponse)) as { messages?: Array<{ id?: unknown; threadId?: unknown }>; nextPageToken?: unknown };
-    const rawMessages = list.messages ?? [];
+    if (!list || typeof list !== "object" || Array.isArray(list)) throw new Error("Réponse Gmail list invalide");
+    const rawMessages = list.messages === undefined ? [] : list.messages;
     if (!Array.isArray(rawMessages) || rawMessages.length > GMAIL_LIST_LIMIT) throw new Error("Réponse Gmail list invalide");
     for (const m of rawMessages) {
-      if (typeof m.id !== "string" || typeof m.threadId !== "string" || !m.id || !m.threadId) throw new Error("Réponse Gmail list invalide");
-      if (!seen.has(m.id)) {
-        seen.add(m.id);
+      assertGmailId(m?.id);
+      assertGmailId(m.threadId);
+      const previousThread = seen.get(m.id);
+      if (previousThread && previousThread !== m.threadId) throw new Error("Fil Gmail incohérent entre les pages");
+      if (!previousThread) {
+        seen.set(m.id, m.threadId);
         messages.push({ id: m.id, threadId: m.threadId });
       }
     }
@@ -229,75 +230,107 @@ export async function listNewGmailMessages(userId: string, lastSyncAt: string | 
     pageToken = list.nextPageToken;
   }
 
+  const hasExclusions = excludedEmails.size > 0 || excludedDomains.size > 0;
   const summaries: GmailMessageSummary[] = [];
   let contextBytes = 0;
   for (const m of messages) {
-    const detailResponse = await fetch(
-      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}?format=full`,
-      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) }
-    );
-    if (!detailResponse.ok) {
-      throw new Error(`Gmail message ${m.id} illisible (${detailResponse.status})`);
-    }
-    const detail = (await readBoundedGmailJson(detailResponse)) as {
-      id?: unknown;
-      threadId?: unknown;
-      snippet?: unknown;
-      payload?: unknown;
+    const baseUrl = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}`;
+    const getMessage = async (query: string) => {
+      const response = await fetch(`${baseUrl}?${query}`, {
+        headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000),
+      });
+      if (!response.ok) throw new Error(`Lecture Gmail indisponible (${response.status})`);
+      const detail = await readBoundedGmailJson(response) as { id?: unknown; threadId?: unknown; payload?: unknown; snippet?: unknown };
+      if (detail?.id !== m.id || detail.threadId !== m.threadId) throw new Error("Identité du message Gmail incohérente");
+      return detail;
     };
-    if (detail.id !== m.id || detail.threadId !== m.threadId) throw new Error("Identité du message Gmail incohérente");
+    let authorizedSender: string | undefined;
+    if (hasExclusions) {
+      // The fields projection deliberately excludes the body, subject and snippet.
+      const metadata = await getMessage("format=metadata&metadataHeaders=From&fields=id,threadId,payload(headers)");
+      try { authorizedSender = singleMailbox(gmailHeader(metadata.payload, "From") ?? ""); }
+      catch { continue; } // Ambiguous sender: keep the message private.
+      if (excludedEmails.has(authorizedSender) || excludedDomains.has(authorizedSender.split("@")[1])) continue;
+    }
+    const detail = await getMessage("format=full");
+    const from = gmailHeader(detail.payload, "From");
+    if (hasExclusions && singleMailbox(from ?? "") !== authorizedSender) throw new Error("Expéditeur Gmail modifié pendant la collecte");
     const content = extractGmailPlainText(detail.payload);
-    contextBytes += Buffer.byteLength(content.body ?? "", "utf8");
-    // Fail before the caller advances last_sync_at; a truncated batch is not a completed sync.
-    if (contextBytes > 256 * 1024) throw new Error("Lot Gmail trop volumineux : synchronisation non avancée");
-    summaries.push({
+    const summary = {
       id: m.id,
       threadId: m.threadId,
-      from: gmailHeader(detail.payload, "From") ?? "inconnu",
+      from: from ?? "inconnu",
       subject: gmailHeader(detail.payload, "Subject") ?? "(sans sujet)",
       snippet: typeof detail.snippet === "string" ? detail.snippet : "",
       replyToMessageId: m.id,
       ...content,
-    });
+    };
+    // Include headers and previews as well as the inline body in the model budget.
+    contextBytes += Buffer.byteLength(JSON.stringify(summary), "utf8");
+    if (contextBytes > 256 * 1024) throw new Error("Lot Gmail trop volumineux : synchronisation non avancée");
+    summaries.push(summary);
   }
 
   return summaries;
 }
 
-/**
- * Contexte "boîte mail" partagé par l'agent cœur Email et le Répondeur Intelligent.
- */
-export async function buildGmailInboxContext(userId: string): Promise<Record<string, unknown>> {
-  const { data: emailConfig, error: configError } = await supabase
-    .from("email_agent_config")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
+async function readInboxConfig(userId: string) {
+  const { data, error } = await supabase.from("email_agent_config")
+    .select("id,updated_at,is_active,gmail_email,gmail_access_token,last_sync_at,tone,signature,excluded_emails,excluded_domains")
+    .eq("user_id", userId).maybeSingle();
+  if (error) throw new Error("Configuration Gmail illisible");
+  return data;
+}
 
-  if (configError) throw new Error(`Configuration Gmail illisible: ${configError.message}`);
-  if (!emailConfig?.is_active) {
-    return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
+function exclusionSet(value: unknown): Set<string> {
+  if (value == null) return new Set(); // Historical nullable columns.
+  if (!Array.isArray(value) || value.some(entry => typeof entry !== "string")) throw new Error("Configuration des exclusions Gmail invalide");
+  return new Set(value.map((entry: string) => entry.trim().toLowerCase()).filter(Boolean));
+}
+
+async function readInbox(userId: string, lastSyncAt?: string | null) {
+  let config = await readInboxConfig(userId);
+  if (!config?.is_active) return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
+  const accessToken = await getGmailAccessToken(userId);
+  if (!accessToken) throw new Error("Gmail OAuth absent : collecte impossible, synchronisation non avancée");
+
+  // Refresh may legitimately update this row. Rebind the refreshed token and
+  // user policy to the same active account before inspecting any message.
+  if (!config.gmail_access_token || decryptGmailToken(config.gmail_access_token) !== accessToken) {
+    const fresh = await readInboxConfig(userId);
+    if (!fresh?.is_active || fresh.id !== config.id || fresh.gmail_email !== config.gmail_email
+      || !fresh.gmail_access_token || decryptGmailToken(fresh.gmail_access_token) !== accessToken) {
+      throw new Error("Connexion Gmail modifiée avant la collecte");
+    }
+    config = fresh;
   }
-
+  if (!config.id || !config.updated_at) throw new Error("Version de la configuration Gmail indisponible");
   const syncStartedAt = new Date().toISOString();
-  const newEmails = await listNewGmailMessages(userId, emailConfig.last_sync_at ?? null);
+  const newEmails = await collectInboxMessages(accessToken, lastSyncAt === undefined ? config.last_sync_at : lastSyncAt,
+    exclusionSet(config.excluded_emails), exclusionSet(config.excluded_domains));
 
-  const update: Record<string, unknown> = { last_sync_at: syncStartedAt };
-  if (newEmails.length > 0) update.last_email_id = newEmails[0].id;
+  const configTable = supabase.from("email_agent_config");
+  const query = lastSyncAt === undefined
+    ? configTable.update({ last_sync_at: syncStartedAt, ...(newEmails.length ? { last_email_id: newEmails[0].id } : {}) }).select("id")
+    : configTable.select("id");
+  const sameConfig = query.eq("user_id", userId).eq("id", config.id)
+    .eq("is_active", true).eq("updated_at", config.updated_at);
+  const sameCursor = config.last_sync_at == null
+    ? sameConfig.is("last_sync_at", null)
+    : sameConfig.eq("last_sync_at", config.last_sync_at);
+  const { data: matched, error } = await sameCursor.maybeSingle();
+  if (error || matched?.id !== config.id) throw new Error("Configuration ou curseur Gmail modifié : collecte écartée");
+  return { tone: config.tone, signature: config.signature, newEmails };
+}
 
-  const { error: syncError } = await supabase
-    .from("email_agent_config")
-    .update(update)
-    .eq("user_id", userId);
+/** Explicit list reads enforce the same mailbox policy without advancing the scheduler cursor. */
+export async function listNewGmailMessages(userId: string, lastSyncAt: string | null): Promise<GmailMessageSummary[]> {
+  return (await readInbox(userId, lastSyncAt)).newEmails;
+}
 
-  if (syncError) throw new Error(`Curseur Gmail non enregistré: ${syncError.message}`);
-
-  return {
-    tone: emailConfig.tone,
-    signature: emailConfig.signature,
-    excludedEmails: emailConfig.excluded_emails,
-    newEmails,
-  };
+/** Shared by Email and Répondeur Intelligent. Only authorized messages enter the model context. */
+export async function buildGmailInboxContext(userId: string): Promise<Record<string, unknown>> {
+  return readInbox(userId);
 }
 
 export const gmailCreateDraftTool: ToolDefinition<
@@ -424,6 +457,25 @@ async function gmailReplyHeaders(
   return { inReplyTo, references };
 }
 
+// Explicit phrases are a backstop for the agent's review decision, not a legal classifier.
+function needsReviewedGmailDraft(subject: string, body: string): boolean {
+  const text = (subject + "\n" + body).normalize("NFKD").replace(/\p{M}/gu, "")
+    .replace(/[\u2018\u2019\u02bc]/gu, "'").replace(/\s+/gu, " ").toLowerCase();
+  const amount = /(?:\p{Sc}|\b(?:eur|usd|gbp|chf))\s*\d|\d\s*(?:\p{Sc}|(?:euros?|dollars?|francs?|eur|usd|gbp|chf)\b)/u.test(text)
+    || /\b(?:un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt|trente|quarante|cinquante|soixante|vingts|cents?|mille|one|two|three|four|five|seven|eight|nine|ten|twenty|thirty|forty|fifty|hundred|thousand)\s+(?:euros?|dollars?|francs?|pounds?)\b/.test(text);
+  const dispute = /\b(?:je conteste|nous contestons|contestation (?:de|du|des)|i dispute|we dispute|i am disputing|we are disputing)\b/.test(text);
+  const correction = /\b(?:corriger|rectifier|regulariser|annuler|corrigez|rectifiez|annulez) (?:la|le|les|cette|ce|ces|ma|mon|mes) (?:factur\w*|montant\w*|debit\w*|prelevement\w*|frais|ligne\w*)\b/.test(text)
+    || /\b(?:correct|amend|reverse|cancel) (?:my |our |this |these |the )?(?:bill|invoice|charge|amount|line item)s?\b/.test(text);
+  const claim = /\b(?:je (?:demande|sollicite|reclame)|j'exige|nous (?:demandons|sollicitons|reclamons|exigeons)|merci de|veuillez)\s+(?:le |un |une |mon |notre |me |nous )?(?:remboursement|rembourser|indemnis[a-z]*)\b/.test(text)
+    || /\b(?:remboursez|indemnisez)[ -](?:moi|nous)\b/.test(text)
+    || /\b(?:i request|we request|i am requesting|we are requesting|please issue)\s+(?:a |the |full )*(?:refund|compensation|reimbursement)\b/.test(text);
+  const accepts = /\b(?:j'accepte|nous acceptons|je valide|nous validons)\s+(?:le |la |l'|votre |cet |cette |vos |les )?(?:accord|proposition|offre|echeancier|transaction|reglement|conditions)\b/.test(text)
+    || /\b(?:bon pour accord|(?:i|we) accept (?:the |your |this )?(?:settlement|offer|terms|repayment plan))\b/.test(text);
+  const acknowledgesDebt = /\b(?:je reconnais|nous reconnaissons)\s+(?:(?:vous |lui )?devoir|(?:ma|notre|cette|la) dette|etre redevables?)\b/.test(text)
+    || /\b(?:i owe you|we owe you|(?:i|we) acknowledge (?:that (?:i|we) owe|(?:the |this |my |our )?debt))\b/.test(text);
+  return (amount && (dispute || correction || claim)) || accepts || acknowledgesDebt;
+}
+
 export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string } & GmailReplyInput, { messageId: string }> = {
   name: "gmail_send",
   description: "Envoie réellement un email ordinaire — action sensible. Pour une réponse, fournir threadId et replyToMessageId du parent, en conservant son sujet et son destinataire. Les échanges avec les partenaires médias et éditoriaux nécessitent le brouillon lié et approuvé du parcours Partenariats puis Emails ; les exclusions de contact restent applicables à tous.",
@@ -442,6 +494,9 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
+    if (needsReviewedGmailDraft(params.subject, params.body)) {
+      throw new Error("Texte engageant : préparer un brouillon à relire et à envoyer personnellement dans Gmail.");
+    }
     assertReplyInput(params, ctx.agentType === "email" || ctx.agentType === "repondeur-intelligent");
     const deadline = createProviderDeadline(GMAIL_ACTION_TIMEOUT_MS, "Délai de l’action Gmail dépassé");
     let postStarted = false;

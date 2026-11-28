@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { rpc, configUpdates, mailbox } = vi.hoisted(() => ({ rpc: vi.fn(async (name: string) => ({
   data: name === "partner_direct_send_guard" ? { status: "allowed", reason: null } : 1, error: null,
-})), configUpdates: [] as Array<Record<string, unknown>>, mailbox: { oauthAvailable: true } }));
+})), configUpdates: [] as Array<Record<string, unknown>>, mailbox: { oauthAvailable: true, active: true, version: 1, cachedToken: "fixture-access", refreshedToken: "fixture-access", initialCursor: null as string | null,
+  excludedEmails: [] as string[], excludedDomains: [] as string[] } }));
 vi.mock("../src/lib/gmail-token-crypto.js", () => ({ decryptGmailToken: (v: string) => v, encryptGmailToken: (v: string) => v }));
 vi.mock("../src/config.js", () => ({ config: {} }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: {
@@ -10,10 +11,27 @@ vi.mock("../src/db/supabase.js", () => ({ supabase: {
     const request = rpc(...args);
     return Object.assign(request, { abortSignal: () => request });
   }, from: () => ({
-  select() { return this; }, eq() { return this; },
-  abortSignal() { return this; },
-  update(value: Record<string, unknown>) { configUpdates.push(value); return { eq: async () => ({ error: null }) }; },
-  async maybeSingle() { return { data: { is_active: true, gmail_refresh_token: mailbox.oauthAvailable ? "fixture-refresh" : null, gmail_access_token: "fixture-access", gmail_token_expiry: new Date(Date.now() + 3600000).toISOString() }, error: null }; },
+    fields: "", filters: {} as Record<string, unknown>, patch: undefined as Record<string, unknown> | undefined,
+    select(fields: string) { this.fields = fields; return this; },
+    eq(key: string, value: unknown) { this.filters[key] = value; return this; },
+    is(key: string, value: unknown) { this.filters[key] = value; return this; },
+    abortSignal() { return this; },
+    update(value: Record<string, unknown>) { this.patch = value; return this; },
+    async maybeSingle() {
+      if (this.fields === "id") {
+        if (!mailbox.active || this.filters.updated_at !== String(mailbox.version) || this.filters.user_id !== "fixture-user" ||
+          this.filters.id !== "fixture-config" || this.filters.is_active !== true || this.filters.last_sync_at !== mailbox.initialCursor) return { data: null, error: null };
+        if (this.patch) { configUpdates.push(this.patch); mailbox.version++; }
+        return { data: { id: "fixture-config" }, error: null };
+      }
+      if (this.fields.includes("gmail_refresh_token")) {
+        if (mailbox.cachedToken !== mailbox.refreshedToken) { mailbox.cachedToken = mailbox.refreshedToken; mailbox.version++; }
+      }
+      return { data: { id: "fixture-config", gmail_email: "owner@example.com", updated_at: String(mailbox.version),
+        is_active: mailbox.active, last_sync_at: mailbox.initialCursor, excluded_emails: mailbox.excludedEmails, excluded_domains: mailbox.excludedDomains,
+        gmail_refresh_token: mailbox.oauthAvailable ? "fixture-refresh" : null, gmail_access_token: mailbox.cachedToken,
+        gmail_token_expiry: new Date(Date.now() + 3600000).toISOString() }, error: null };
+    },
 }) } }));
 
 const { listNewGmailMessages, buildGmailInboxContext, gmailSendTool, gmailCreateDraftTool } = await import("../src/tools/gmail.js");
@@ -33,7 +51,8 @@ let fetchMock: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   rpc.mockClear();
   configUpdates.length = 0;
-  mailbox.oauthAvailable = true;
+  Object.assign(mailbox, { oauthAvailable: true, active: true, version: 1, initialCursor: null, cachedToken: "fixture-access",
+    refreshedToken: "fixture-access", excludedEmails: [], excludedDomains: [] });
   fetchMock = vi.fn(async (url: string) => {
     if (url.includes("/messages?")) return json({ messages: [{ id: "parent1", threadId: "thread1" }] });
     if (url.includes("/messages/parent1?")) return json(parent());
@@ -158,6 +177,96 @@ describe("Gmail complete input and anchored replies", () => {
     await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/Pagination Gmail/);
     expect(configUpdates).toEqual([]);
     expect(fetchMock).toHaveBeenCalledTimes(mode === "repeated" ? 2 : 5);
+  });
+  it.each(["address", "domain"] as const)("never requests private content for an excluded %s", async kind => {
+    if (kind === "address") mailbox.excludedEmails = [" Private@Example.Org "];
+    else mailbox.excludedDomains = [" EXAMPLE.ORG "];
+    fetchMock.mockImplementation(async (raw: string) => {
+      const url = new URL(raw);
+      if (url.pathname.endsWith("/messages")) return json({ messages: [
+        { id: "private", threadId: "thread1" }, { id: "public", threadId: "thread1" }] });
+      const id = url.pathname.split("/").pop()!;
+      const from = id === "private" ? "Private Person <private@example.org>" : "person@other.example.org";
+      if (url.searchParams.get("format") === "metadata") {
+        expect(url.searchParams.get("fields")).toBe("id,threadId,payload(headers)");
+        expect(url.searchParams.get("metadataHeaders")).toBe("From");
+        return json({ id, threadId: "thread1", payload: { headers: [{ name: "From", value: from }] } });
+      }
+      expect(id).toBe("public");
+      const p = parent(); p.id = id; p.payload.headers[0]!.value = from; return json(p);
+    });
+    const context = await buildGmailInboxContext("fixture-user");
+    expect(context.newEmails).toHaveLength(1);
+    expect((context.newEmails as Array<{ id: string }>)[0]?.id).toBe("public");
+    expect(JSON.stringify(context)).not.toContain("private@example.org");
+    expect(context).not.toHaveProperty("excludedEmails");
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+  it.each(["missing", "duplicate", "multiple"] as const)("protects %s senders even on explicit list reads", async mode => {
+    mailbox.excludedDomains = ["private.example"];
+    fetchMock.mockImplementation(async (raw: string) => {
+      const url = new URL(raw);
+      if (url.pathname.endsWith("/messages")) return json({ messages: [{ id: "private", threadId: "thread1" }] });
+      expect(url.searchParams.get("format")).toBe("metadata");
+      const from = { name: "From", value: "unknown@example.com" };
+      const headers = mode === "missing" ? [] : mode === "duplicate" ? [from, from] : [{ ...from, value: "x@example.net, unknown@example.com" }];
+      return json({ id: "private", threadId: "thread1", payload: { headers } });
+    });
+    expect(await listNewGmailMessages("fixture-user", null)).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(configUpdates).toEqual([]);
+  });
+  it("discards the entire batch if a sender changes after its header check", async () => {
+    mailbox.excludedEmails = ["private@example.org"];
+    fetchMock.mockImplementation(async (raw: string) => {
+      if (raw.includes("/messages?")) return json({ messages: [{ id: "parent1", threadId: "thread1" }] });
+      const p = parent();
+      if (raw.includes("format=full")) p.payload.headers[0]!.value = "private@example.org";
+      return json(p);
+    });
+    await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/Expéditeur Gmail modifié/);
+    expect(configUpdates).toEqual([]);
+  });
+  it.each(["disabled", "policy", "cursor"] as const)("does not release a stale batch after concurrent %s change", async changed => {
+    fetchMock.mockImplementation(async (raw: string) => {
+      if (raw.includes("/messages?")) return json({ messages: [{ id: "parent1", threadId: "thread1" }] });
+      if (changed === "disabled") mailbox.active = false;
+      if (changed === "policy") mailbox.excludedEmails = ["camille@example.com"];
+      if (changed === "cursor") mailbox.initialCursor = "2026-11-26T00:00:00Z";
+      if (changed !== "cursor") mailbox.version++;
+      return json(parent());
+    });
+    await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/collecte écartée/);
+    expect(configUpdates).toEqual([]);
+  });
+  it("keeps a legitimate credential refresh usable during the same poll", async () => {
+    mailbox.refreshedToken = "fixture-renewed";
+    const context = await buildGmailInboxContext("fixture-user");
+    expect(context.newEmails).toHaveLength(1);
+    expect(configUpdates).toHaveLength(1);
+    expect(fetchMock.mock.calls.every(([, options]) => options.headers.Authorization === "Bearer fixture-renewed")).toBe(true);
+  });
+  it("refuses the same provider message ID assigned to different threads across pages", async () => {
+    let page = 0;
+    fetchMock.mockImplementation(async () => {
+      page++;
+      return json({ messages: [{ id: "parent1", threadId: `thread${page}` }], ...(page === 1 ? { nextPageToken: "next" } : {}) });
+    });
+    await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/Fil Gmail incohérent/);
+    expect(configUpdates).toEqual([]);
+  });
+  it.each([[], null, "invalid", { messages: null }])("rejects an invalid list without advancing sync", async invalid => {
+    fetchMock.mockImplementation(async () => json(invalid));
+    await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/Réponse Gmail list invalide/);
+    expect(configUpdates).toEqual([]);
+  });
+  it("includes previews and headers in the total context budget", async () => {
+    fetchMock.mockImplementation(async (raw: string) => {
+      if (raw.includes("/messages?")) return json({ messages: [{ id: "parent1", threadId: "thread1" }] });
+      const p = parent(); p.snippet = "a".repeat(256 * 1024); return json(p);
+    });
+    await expect(buildGmailInboxContext("fixture-user")).rejects.toThrow(/Lot Gmail trop volumineux/);
+    expect(configUpdates).toEqual([]);
   });
   it("does not advance an active inbox cursor when OAuth is absent", async () => {
     mailbox.oauthAvailable = false;
