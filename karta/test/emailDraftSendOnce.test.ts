@@ -94,7 +94,7 @@ function approvedRaw():string {
     +"MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nApproved body";
 }
 function harness(options:Options={}) {
-  const sends:{url:string;body:Row;headers:Headers;redirect?:RequestRedirect}[]=[];
+  const sends:{url:string;body:Row;headers:Headers;redirect?:RequestInit["redirect"]}[]=[];
   const profiles:string[]=[];
   const draftReads:string[]=[];
   let remoteRaw=options.rawDraft??Buffer.from(approvedRaw()).toString("base64url");
