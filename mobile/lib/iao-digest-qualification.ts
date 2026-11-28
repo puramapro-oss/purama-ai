@@ -77,7 +77,7 @@ async function qualifyDigest(runId: string, commit: string, onStatus?: (status: 
 
   try {
     fileSystem = await import("expo-file-system");
-    const { Platform, NativeModules, TurboModuleRegistry } = await import("react-native");
+    const { Platform, NativeModules, TurboModuleRegistry } = await import("./iao-digest-qualification-runtime");
     if (Platform.OS === "ios" || Platform.OS === "android" || Platform.OS === "web") platform = Platform.OS;
     requireCheck(platform === "ios", "ios-required");
     const hermes = (globalThis as typeof globalThis & { HermesInternal?: unknown }).HermesInternal;

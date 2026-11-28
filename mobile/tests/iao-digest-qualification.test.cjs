@@ -18,8 +18,24 @@ const validEnv = {
   EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION_COMMIT: commit,
 };
 
+// Use the installed Metro loader, not TypeScript's getter-preserving helper:
+// Metro's CommonJS namespace conversion eagerly reads exported properties.
+function metroNamespaceImporter() {
+  const context = { __DEV__: false, __METRO_GLOBAL_PREFIX__: '', console };
+  context.global = context;
+  vm.createContext(context);
+  const filename = require.resolve('metro-runtime/src/polyfills/require.js');
+  vm.runInContext(fs.readFileSync(filename, 'utf8'), context, { filename });
+  let nextId = 0;
+  return value => {
+    const moduleId = ++nextId;
+    context.__d((_global, _require, _default, _all, module) => { module.exports = value; }, moduleId, []);
+    return context.__r.importAll(moduleId);
+  };
+}
+
 function loadHarness(options = {}) {
-  const imports = [], calls = [], objects = [], writes = [], published = [];
+  const imports = [], calls = [], objects = [], writes = [], published = [], unusedNativeReads = [];
   class NativeDigest {
     constructor() { this.hash = crypto.createHash('sha256'); this.retainedInputs = []; this.closed = false; this.released = false; objects.push(this); }
     update(input) {
@@ -123,22 +139,38 @@ function loadHarness(options = {}) {
       },
     },
   };
-  const file = path.join(root, 'lib/iao-digest-qualification.ts');
-  const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: {
-    module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true,
-  } }).outputText;
-  const module = { exports: {} };
+  if (options.unavailableNotifications) {
+    Object.defineProperty(externals['react-native'], 'PushNotificationIOS', {
+      enumerable: true,
+      get() {
+        unusedNativeReads.push('PushNotificationIOS');
+        throw new Error('`new NativeEventEmitter()` requires a non-null argument.');
+      },
+    });
+  }
+  const importContext = options.metroImports ? { __importStar: metroNamespaceImporter() } : undefined;
+  const loadTypeScript = file => {
+    const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: {
+      module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true,
+    } }).outputText;
+    const module = { exports: {} };
+    vm.runInThisContext(`(function(require,module,exports,process,globalThis){${code}\n})`, { filename: file }).call(
+      importContext, requireLocal, module, module.exports, { env }, runtime);
+    return module.exports;
+  };
   const requireLocal = name => {
     imports.push(name);
     if (name === './iao-digest-qualification-contract.json') return contract;
+    if (name === './iao-digest-qualification-runtime') {
+      return loadTypeScript(path.join(root, 'lib/iao-digest-qualification-runtime.ts'));
+    }
     if (Object.hasOwn(externals, name)) return externals[name];
     throw new Error(`Unexpected fixture import: ${name}`);
   };
   const env = { ...validEnv, ...options.env };
   const runtime = { HermesInternal: options.noHermes ? undefined : {} };
-  vm.runInThisContext(`(function(require,module,exports,process,globalThis){${code}\n})`, { filename: file })(
-    requireLocal, module, module.exports, { env }, runtime);
-  return { api: module.exports, imports, calls, objects, writes, published, files };
+  const api = loadTypeScript(path.join(root, 'lib/iao-digest-qualification.ts'));
+  return { api, imports, calls, objects, writes, published, files, unusedNativeReads };
 }
 
 for (const flag of [undefined, '', '0', 'true', '01']) {
@@ -191,6 +223,27 @@ test('the synthetic harness reaches every assertion and emits exactly the agreed
   assert.deepEqual(loaded.published, [receipt]);
   assert.equal(loaded.files.size, 1);
   assert.ok(!JSON.stringify(receipt).includes('file:///'), 'no local device path enters the receipt');
+});
+
+test('qualification reads only required React Native exports under Metro importAll', async () => {
+  const positiveControl = metroNamespaceImporter();
+  let controlReads = 0;
+  assert.throws(() => positiveControl({
+    get PushNotificationIOS() {
+      controlReads++;
+      throw new Error('`new NativeEventEmitter()` requires a non-null argument.');
+    },
+  }), /NativeEventEmitter.*requires a non-null argument/);
+  assert.equal(controlReads, 1, 'the real Metro loader must exercise the unused getter in the positive control');
+
+  const loaded = loadHarness({ metroImports: true, unavailableNotifications: true });
+  const receipt = await loaded.api.runIaoDigestQualification();
+  assert.equal(receipt.status, 'PASS');
+  assert.equal(receipt.platform, 'ios');
+  assert.deepEqual(loaded.unusedNativeReads, []);
+  assert.ok(Object.values(receipt.checks).every(value => value === true));
+  assert.deepEqual(loaded.published, [receipt]);
+  assert.ok(loaded.objects.every(object => object.released));
 });
 
 test('repeated route mounts share one execution and one written receipt', async () => {
