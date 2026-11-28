@@ -112,7 +112,7 @@ jobs:
       - name: Audit complete KARTA dependency lock
         run: npm audit --package-lock-only --audit-level=high --ignore-scripts
 
-  site:
+  site-core:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -133,11 +133,6 @@ jobs:
       - run: npm run lint
       - name: Typecheck state-isolation test fixtures
         run: npx tsc --noEmit -p tests/ui-state/tsconfig.json
-      - name: Prepare the locked Playwright image without Ubuntu downloads
-        run: bash scripts/ci/run-site-browser.sh --prepare
-      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
-      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
-      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql
       - name: Saved agent execution preferences and ownership
@@ -196,8 +191,29 @@ jobs:
           --config tests/revenue/deno.json tests/revenue/webhook.test.ts
       - run: npm run test:founder
       - run: npm run test:founder:types
-      - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
+      - run: npx tsc --noEmit -p tests/public/tsconfig.json
+      - run: npm run typecheck:distribution
+      - name: Audit complete site dependency lock
+        run: npm audit --package-lock-only --audit-level=high --ignore-scripts
+
+
+  site-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit
+      - run: npm run build
+      - name: Prepare the locked Playwright image without Ubuntu downloads
+        run: bash scripts/ci/run-site-browser.sh --prepare
+      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
+      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
+      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
       - name: Workshop account isolation and mission lifecycle
         id: workshop_browser
         env:
@@ -216,8 +232,6 @@ jobs:
         env:
           SOCIAL_BROWSER_EXECUTABLE: /opt/google/chrome/chrome
         run: node tests/social-browser/run.mjs
-      - run: npx tsc --noEmit -p tests/public/tsconfig.json
-      - run: npm run typecheck:distribution
       - run: bash scripts/ci/run-site-browser.sh npm run test:distribution:browser
       - run: bash scripts/ci/run-site-browser.sh npm run test:public
       - name: Offline workspace browser tests
@@ -237,8 +251,34 @@ jobs:
       - run: bash scripts/ci/run-site-browser.sh npm run test:quality
       - run: bash scripts/ci/run-site-browser.sh npm run test:oauth:browser
       - run: bash scripts/ci/run-site-browser.sh npm run test:founder:browser
-      - run: bash scripts/ci/run-site-browser.sh npm run test:account-isolation
-      - run: bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser
+      - name: Cross-account browser isolation
+        id: account_isolation
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          env ACCOUNT_ISOLATION_EVIDENCE=test-results/account-isolation
+          npm run test:account-isolation
+      - name: Preserve account isolation receipt
+        if: ${{ always() && steps.account_isolation.outcome != '' && steps.account_isolation.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-account-isolation-${{ github.sha }}
+          path: test-results/account-isolation/results.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Contract verification browser behavior
+        id: contracts_browser
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          env CONTRACTS_OTS_BROWSER_EVIDENCE=test-results/contracts-ots
+          npm run test:contracts-ots:browser
+      - name: Preserve contract browser receipt
+        if: ${{ always() && steps.contracts_browser.outcome != '' && steps.contracts_browser.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-contracts-browser-${{ github.sha }}
+          path: test-results/contracts-ots/results.json
+          if-no-files-found: error
+          retention-days: 14
       - run: bash scripts/ci/run-site-browser.sh npm run test:wellbeing
       - run: bash scripts/ci/run-site-browser.sh npm run test:voice-consent
       - name: Archive voice consent and accessibility browser evidence
@@ -248,8 +288,22 @@ jobs:
           name: iao-voice-accessibility-${{ github.sha }}
           path: test-results/voice-consent
           retention-days: 14
-      - name: Audit complete site dependency lock
-        run: npm audit --package-lock-only --audit-level=high --ignore-scripts
+
+  # Keep the existing required check as the conjunction of both bounded jobs.
+  # A failed, cancelled or skipped branch must never admit the site candidate.
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    needs: [site-core, site-browser]
+    if: ${{ always() }}
+    steps:
+      - name: Require both site qualifications
+        env:
+          SITE_CORE_RESULT: ${{ needs.site-core.result }}
+          SITE_BROWSER_RESULT: ${{ needs.site-browser.result }}
+        run: |
+          test "$SITE_CORE_RESULT" = success
+          test "$SITE_BROWSER_RESULT" = success
 
   device-compatibility:
     runs-on: ubuntu-24.04

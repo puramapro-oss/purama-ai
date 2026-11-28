@@ -352,3 +352,19 @@ Registre : `qa/iao-release-qualification-20261123/audit-ledger.json`. Responsabl
 
 - Qualification élargie : 65 nouveaux cas serveur, 9 CLI, 4 client et 24 scénarios navigateur ; trois corrections bornées avec preuves avant/après. CI du candidat à exécuter avant intégration.
 - Composant local réel : 5/7 oracles passent ; JSON contraint HTTP501 et socket Compute Fabric refusé conservés comme blocages. Aucun déploiement natif ni cloud payant.
+
+## Intégration des fournisseurs IAO — 27 novembre 2026
+
+État de conception : `PRET_A_CODER`, demande explicite de Matiss d'intégrer les capacités aux parcours existants sans doublon. Base de consolidation : `a18e6a0ed78a891827b2fb76ce44b97fb110a854` (PR40), branche isolée `feat/iao-provider-capabilities-20261127`. Réservation : `IAO-PROVIDER-CAPABILITIES-20261127-04C7` dans le registre Mac existant.
+
+Responsables : root pour les transports natifs et la revue ; integration_lineage pour le catalogue ; capability_gap_review pour la composition du Conseil et son sélecteur ; native_usage_receipts pour les reçus et leur validation SQL. Les PR121 et PR125 restent des travaux distincts préservés.
+
+Critères : même fournisseur/modèle du catalogue jusqu'au reçu ; compatibilité des politiques Anthropic existantes ; choix manuel exact et alias explicitement qualifiés ; catalogue rafraîchi sans élargir droits, destinataires ni budgets ; annulation, refus, réponses incomplètes et secrets protégés ; compteurs natifs conservés sans les présenter comme une facture ; tests des transports, du Conseil, de la persistance et du sélecteur existants. Les tests de contrat avec fournisseurs simulés seront distingués des appels réels et de la production.
+
+- [x] Étendre le catalogue et les transports existants pour les routes natives OpenAI, Anthropic, Gemini et xAI.
+- [x] Raccorder catalogue, sélecteur, réservations, exécution et reçus dans le Conseil existant.
+- [x] Exécuter les contrôles disponibles : 770 tests ciblés KARTA, 29 tests React, types/builds et migration locale ; consigner les limites navigateur et sockets Unix.
+- [x] Préparer la branche de revue et expliciter les limites d'activation dans `docs/iao-connected-providers.md` et `docs/qa/iao-connected-providers-20261127.md`.
+- [ ] Terminer les essais navigateur/sockets sur un runner adapté, activer la politique et la migration dans l'environnement cible et qualifier l'inférence réelle ; aucun déploiement effectué par ce lot.
+
+Qualification comptes en lecture seule : catalogues Anthropic, OpenAI et Google HTTP200 ; xAI HTTP403 classé facturation/crédit pour la clé actuellement sélectionnée. La clé Google existante `GOOGLE_AI_API_KEY` est réutilisée. Ces observations ne prouvent pas une inférence disponible ni toutes les fonctionnalités des applications fournisseurs.

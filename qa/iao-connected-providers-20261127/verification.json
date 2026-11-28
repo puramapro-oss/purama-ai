@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-27",
+  "timezone": "Europe/Paris",
+  "baseCommit": "a18e6a0ed78a891827b2fb76ce44b97fb110a854",
+  "branch": "feat/iao-provider-capabilities-20261127",
+  "status": "PARTIEL",
+  "files": {
+    "karta/src/claude/consultation-host.ts": "c0260c824f677cbccdf034a97179fb4dce2c2e421decc135bdc998245c05cf0b",
+    "karta/src/claude/model-catalog.ts": "580adde5646a1f454ce62275390751558b8ab93bb141b4d1e569f199af406da7",
+    "karta/src/claude/usage.ts": "762e866defd1c2ea2a05de694f639d082215d50a3d3dacae1cfa65f6d442ebc2",
+    "karta/src/claude/connected-provider.ts": "082bea4f015963b8f44fa627ebf8d92be7137034efd37939a22f6671a94589bf",
+    "karta/src/claude/native-provider-http.ts": "78bf46b51b53645818dd5ac2426def883d5ad1fad3ab4c1151c84a5e2f2dd946",
+    "karta/migrations/038_native_model_usage.sql": "2e023065b0238d7f6005bdf101c19f1fd95d018da0d6d3ec2292769ee1a68939",
+    "karta/test/consultationHost.test.ts": "1917e5946a304ffeb9d9eadeb15f3a4d58f07fa491af09a2671a06e63c0f1527",
+    "karta/test/connectedModelCatalog.test.ts": "d85b79c1b8adaca89131c497cc5e384243a0268ad06bddf126f9ccd907cae830",
+    "karta/test/connectedProvider.test.ts": "166edb45bd7818aca701dbbfa031004f107c954b1fd40d5f9928632d33c689aa",
+    "karta/test/nativeProviderHttp.test.ts": "a11ca12fad1d24ec5d9e2fdeab8ec24d56bfce88f9873a43c1f49658e8a3c4e9",
+    "karta/test/nativeModelUsage.test.ts": "eaeabb6c7b59e03c9e28a52e456d89d26977771b3b6b9b3a75c5c89878119c02",
+    "karta/test/nativeModelUsageMigration.test.ts": "afa4db5e8f4c0254e8fe9bf36afe240cfed3d9ec69ac5770bdb19c693892a15d",
+    "src/components/ConsultationPanel.tsx": "3cb3328f85f770aeed70525e2ccd81eaac96ca0a93bc297b8417765f01c05665",
+    "src/components/ConsultationPanel.test.tsx": "6abaf071bcc68c2704ea57a15ea3e4191533a5c4b6f62895f107c676cb84b27e"
+  },
+  "verification": {
+    "targetedKarta": {
+      "status": "PASS",
+      "suites": 23,
+      "tests": 770
+    },
+    "postReviewAffectedSubset": {
+      "status": "PASS",
+      "suites": 3,
+      "tests": 83,
+      "subsetOfTargeted": true
+    },
+    "reactPanel": {
+      "status": "PASS",
+      "tests": 29
+    },
+    "typescriptFrontend": "PASS",
+    "typescriptKarta": "PASS",
+    "buildFrontend": "PASS",
+    "buildKarta": "PASS",
+    "sqlMigration": {
+      "status": "PASS",
+      "engine": "PostgreSQL/PGlite",
+      "foundation": "20260407000000_creator_agent.sql",
+      "priorMigrations": "001..037",
+      "migration": "038_native_model_usage.sql",
+      "appliedTwice": true
+    },
+    "fullKartaInitial": {
+      "status": "PARTIEL",
+      "suites": 242,
+      "tests": 6112,
+      "passed": 6076,
+      "failed": 36,
+      "unixSocketEnvironmentFailures": 35,
+      "catalogueFailureSubsequentlyResolved": 1
+    },
+    "browser": {
+      "status": "BLOQUE",
+      "scenariosNotExecuted": 26,
+      "reason": "Chromium binary absent; Playwright download HTTP403"
+    },
+    "unixSockets": {
+      "status": "BLOQUE",
+      "reason": "listen EPERM; reproduced by independent Node probe before product code"
+    }
+  },
+  "accountCatalogues": {
+    "anthropic": {
+      "status": 200,
+      "listedModels": 15
+    },
+    "openai": {
+      "status": 200,
+      "listedModels": 103
+    },
+    "google": {
+      "status": 200,
+      "listedModels": 65,
+      "credentialVariable": "GOOGLE_AI_API_KEY"
+    },
+    "xai": {
+      "status": 403,
+      "category": "billing_or_credit"
+    }
+  },
+  "inferenceReal": "NON_TESTE",
+  "productionDeployment": "NON_TESTE",
+  "remoteMigrationApplied": false,
+  "secretsWritten": false,
+  "otherPullRequestsPreserved": [
+    121,
+    125
+  ],
+  "impactAnalysis": {
+    "engine": "GitNexus 1.6.12",
+    "index": {
+      "nodes": 37972,
+      "edges": 114702,
+      "flows": 757
+    },
+    "staged": {
+      "files": 18,
+      "symbols": 37,
+      "reportedAffectedFlows": 743,
+      "reportedRisk": "critical"
+    },
+    "compareToOriginMain": {
+      "files": 3570,
+      "symbols": 6481,
+      "scope": "entire preexisting consolidation lineage"
+    },
+    "limitations": [
+      "FTS/BM25 unavailable",
+      "SQL functions not resolved",
+      "Homonymous private invalid accesses linked across unrelated modules/languages; no reliable upper impact bound inferred"
+    ],
+    "decision": "Draft review only; exact Git file scope and targeted regressions checked; no production deployment"
+  }
+}

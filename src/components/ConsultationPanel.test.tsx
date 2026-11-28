@@ -142,6 +142,27 @@ describe('Public IAO council', () => {
 });
 
 describe('ConsultationPanel — actual controls and lifecycle', () => {
+  it('shows provider identities in the existing technical controls and submits the exact selected model', async () => {
+    const catalog = catalogFixture();
+    catalog.models[0].provider = 'anthropic';
+    catalog.models[1].provider = 'openai';
+    catalog.models[2].provider = 'google';
+    catalog.models[3].provider = 'xai';
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render(OWNER, 'first-token', true);
+    const options = [...field('Modèle principal').querySelectorAll('option')];
+    expect(options.map(option => option.textContent)).toEqual(expect.arrayContaining([
+      'primary-model · Anthropic', 'reviewer-model · OpenAI', 'third-model · Google', 'fourth-model · xAI',
+    ]));
+    await fill('Modèle principal', 'reviewer-model');
+    expect(host.textContent).toContain('Fournisseur : OpenAI.');
+    await fill('Question de consultation', 'Une question précise.');
+    await click('Lancer la consultation');
+    expect(api.consult).toHaveBeenCalledOnce();
+    expect(api.consult.mock.calls[0][0].preferences.model).toBe('reviewer-model');
+    expect(api.consult.mock.calls[0][0]).not.toHaveProperty('provider');
+  });
+
   it('sends the chosen model, reflection, speed and opt-in public research exactly once', async () => {
     const pending = deferred<ConsultationOperation>(); api.consult.mockReturnValueOnce(pending.promise);
     await render(OWNER, 'first-token', true);
