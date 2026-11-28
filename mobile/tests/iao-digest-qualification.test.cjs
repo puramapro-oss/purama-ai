@@ -212,6 +212,12 @@ for (const [options, code] of [
   [{ scriptURL: 'https://example.invalid/main.jsbundle' }, 'embedded-bundle-required'],
   [{ scriptURL: 'file:///Documents/main.jsbundle' }, 'embedded-bundle-required'],
   [{ scriptURL: 'file:///PuramaAI.app/main.jsbundle?remote=1' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///PuramaAI.app/main.jsbundle#fragment' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///invalid\0/PuramaAI.app/main.jsbundle' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///invalid\r/PuramaAI.app/main.jsbundle' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///invalid\n/PuramaAI.app/main.jsbundle' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///PuramaAI.app/main.jsbundle\r' }, 'embedded-bundle-required'],
+  [{ scriptURL: 'file:///PuramaAI.app/main.jsbundle\n' }, 'embedded-bundle-required'],
   [{ absentNative: true }, 'native-digest-required'],
 ]) test(`missing real-runtime prerequisite becomes a diagnostic FAIL: ${code} ${JSON.stringify(options)}`, async () => {
   const loaded = loadHarness(options), receipt = await loaded.api.runIaoDigestQualification();

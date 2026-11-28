@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-28T02:10:18.355054+00:00",
+  "baseCommit": "00c4a1f05e7ba56792f404b04157222954f12cb3",
+  "problem": {
+    "workflow": 46095129196,
+    "job": 140824625619,
+    "step": "Run npm run lint",
+    "rule": "no-control-regex",
+    "diagnostic": "Unexpected control character(s) in regular expression: \\x00."
+  },
+  "change": "Reject NUL through a string check; keep the URL shape, CR/LF, query and fragment guards. No lint rule or validation condition is disabled.",
+  "regressions": [
+    "fragment",
+    "NUL in path",
+    "CR in path",
+    "LF in path",
+    "CR at end",
+    "LF at end"
+  ],
+  "verification": {
+    "fixtureTests": 47,
+    "allQualificationGuards": 118,
+    "failed": 0,
+    "skipped": 0,
+    "targetedEslint": {
+      "version": "9.39.5",
+      "rootRulesUnchanged": true,
+      "beforeErrors": 1,
+      "afterErrors": 0,
+      "afterWarnings": 0
+    },
+    "wholeApplicationAndNative": "Awaiting CI on the published corrected candidate"
+  },
+  "gitNexus": {
+    "impactExit": 124,
+    "detectChangesExit": 124,
+    "status": "NON_TESTE",
+    "scope": "Same qualification fixture and tests; candidate index unavailable. Manual diff and existing call-site scope reviewed."
+  },
+  "sourceSha256": {
+    "mobile/lib/iao-digest-qualification.ts": "931d806bf365e149690b26730a2b8586d5c3eefad1789e06cb16ac1fd04cf7f5",
+    "mobile/tests/iao-digest-qualification.test.cjs": "6e562aa388f304f1e77a6ff0b90410fdbf1e354b617219b6696759ac4ca41379"
+  },
+  "evidenceSha256": {
+    "lint-reproduction.json": "5ae35ae17d3d53d13ff7fccaf13b3d832b3de19d94f25795156adba1aee86aaf",
+    "digest-lint-fix-all-guards.log": "6205a2865e127638e6f8b9667fd19f26347186dad6fdc9e3c0b0875deae9de9e"
+  },
+  "limits": [
+    "The before/after lint reproduction and Node guards do not prove native iOS execution.",
+    "The initial publication and its failed lint receipt remain part of the history."
+  ]
+}

@@ -87,7 +87,8 @@ async function qualifyDigest(runId: string, commit: string, onStatus?: (status: 
     const sourceCode = TurboModuleRegistry.get<SourceCodeModule>("SourceCode") ?? NativeModules.SourceCode;
     const scriptURL: unknown = typeof sourceCode?.getConstants === "function"
       ? sourceCode.getConstants().scriptURL : sourceCode?.scriptURL;
-    requireCheck(typeof scriptURL === "string" && /^file:\/\/\/[^?#\u0000\r\n]+\.app\/main\.jsbundle$/.test(scriptURL),
+    requireCheck(typeof scriptURL === "string" && !scriptURL.includes("\0")
+      && /^file:\/\/\/[^?#\r\n]+\.app\/main\.jsbundle$/.test(scriptURL),
       "embedded-bundle-required");
     bundleSource = "embedded";
     onStatus?.("Vérification du module SHA-256 natif dans Hermes sur iOS…");
