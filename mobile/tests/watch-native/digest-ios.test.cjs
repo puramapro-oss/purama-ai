@@ -19,6 +19,28 @@ function receipt() {
     completedAt: new Date().toISOString(), errorCode: null };
 }
 function inventory(devices) { return { devices: { 'com.apple.CoreSimulator.SimRuntime.iOS-18-5': devices } }; }
+const compiledSdk = { DTPlatformName: 'iphonesimulator', DTPlatformVersion: '18.5', DTSDKName: 'iphonesimulator18.5' };
+
+// Compact projection of the observed 00c4a1f runner inventory: values are retained,
+// unrelated devices omitted. Its selected 26.2 runtime differed from the built SDK.
+function simulatorInventory() {
+  const iphone16e = { identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-16e', productFamily: 'iPhone',
+    minRuntimeVersion: 1_180_416, maxRuntimeVersion: 4_294_967_295 };
+  const iphone17 = { identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-17', productFamily: 'iPhone',
+    minRuntimeVersion: 1_703_936, maxRuntimeVersion: 4_294_967_295 };
+  const member = device => ({ identifier: device.identifier, productFamily: device.productFamily });
+  return {
+    runtimes: { runtimes: [
+      { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5', version: '18.5', isAvailable: true,
+        supportedDeviceTypes: [member(iphone16e)] },
+      { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-6', version: '18.6', isAvailable: true,
+        supportedDeviceTypes: [member(iphone16e)] },
+      { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-26-2', version: '26.2', isAvailable: true,
+        supportedDeviceTypes: [member(iphone17), member(iphone16e)] },
+    ] },
+    devices: { devicetypes: [iphone17, iphone16e] },
+  };
+}
 
 test('accepts only the complete observed receipt for the current bundle and campaign', () => {
   const value = receipt();
@@ -69,19 +91,12 @@ test('rejects malformed expected identities before accepting a receipt', () => {
   }
 });
 
-test('selects an available iOS runtime and a compatible iPhone without downloading a runtime', () => {
-  const runtimes = { runtimes: [
-    { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-19-0', version: '19.0', isAvailable: false },
-    { identifier: 'com.apple.CoreSimulator.SimRuntime.watchOS-11-0', version: '11.0', isAvailable: true },
-    { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5', version: '18.5', isAvailable: true },
-  ] };
-  const device = { identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro', productFamily: 'iPhone',
-    minRuntimeVersion: host.versionNumber('18.0'), maxRuntimeVersion: 4_294_967_295 };
-  const selected = host.selectSimulator(runtimes, { devicetypes: [
-    { ...device, identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-Future', minRuntimeVersion: host.versionNumber('20.0') },
-    device,
-  ] });
-  assert.equal(selected.runtime.version, '18.5'); assert.equal(selected.deviceType, device);
+test('matches the compiled SDK 18.5 exactly despite available 18.6 and 26.2 runtimes', () => {
+  const { runtimes, devices } = simulatorInventory();
+  const selected = host.selectSimulator(runtimes, devices, compiledSdk);
+  assert.equal(selected.runtime.identifier, 'com.apple.CoreSimulator.SimRuntime.iOS-18-5');
+  assert.equal(selected.runtime.version, '18.5');
+  assert.equal(selected.deviceType.identifier, 'com.apple.CoreSimulator.SimDeviceType.iPhone-16e');
 });
 
 test('refuses missing, unknown, incompatible and non-iPhone runtimes', () => {
@@ -90,16 +105,51 @@ test('refuses missing, unknown, incompatible and non-iPhone runtimes', () => {
     { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5', version: '18.5', isAvailable: 'true' },
     { identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-5', version: 'unknown', isAvailable: true },
     { identifier: 'com.apple.CoreSimulator.SimRuntime.watchOS-11-0', version: '11.0', isAvailable: true },
-  ]) assert.throws(() => host.selectSimulator({ runtimes: [runtime] }, { devicetypes: [] }), { code: 'compatible-ios-runtime-missing' });
+  ]) assert.throws(() => host.selectSimulator({ runtimes: [runtime] }, { devicetypes: [] }, compiledSdk), { code: 'compatible-ios-runtime-missing' });
   assert.equal(host.versionNumber('65536.1'), -1);
   assert.equal(host.versionNumber('18.256'), -1);
   assert.equal(host.versionNumber('18.5.256'), -1);
 });
 
+test('refuses missing, malformed or inconsistent compiled SDK metadata', () => {
+  const { runtimes, devices } = simulatorInventory();
+  for (const sdk of [undefined, {}, { ...compiledSdk, DTPlatformName: 'iphoneos' },
+    { ...compiledSdk, DTPlatformVersion: undefined }, { ...compiledSdk, DTPlatformVersion: 18.5 },
+    { ...compiledSdk, DTPlatformVersion: 'unknown' }, { ...compiledSdk, DTSDKName: 'iphonesimulator26.2' }]) {
+    assert.throws(() => host.selectSimulator(runtimes, devices, sdk), { code: 'invalid-compiled-ios-sdk' });
+  }
+});
+
+test('does not fall back to another iOS version when the compiled SDK runtime is absent or unavailable', () => {
+  for (const missing of [true, false]) {
+    const { runtimes, devices } = simulatorInventory();
+    if (missing) runtimes.runtimes.shift();
+    else runtimes.runtimes[0].isAvailable = false;
+    assert.throws(() => host.selectSimulator(runtimes, devices, compiledSdk), { code: 'compatible-ios-runtime-missing' });
+  }
+});
+
+test('refuses an unlisted device even when its version range would allow the selected runtime', () => {
+  for (const supportedDeviceTypes of [undefined, [], [{ identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-17', productFamily: 'iPhone' }]]) {
+    const { runtimes, devices } = simulatorInventory();
+    runtimes.runtimes[0].supportedDeviceTypes = supportedDeviceTypes;
+    assert.throws(() => host.selectSimulator(runtimes, devices, compiledSdk), { code: 'compatible-ios-runtime-missing' });
+  }
+});
+
+test('runtime membership does not override device family or version compatibility', () => {
+  for (const change of [{ productFamily: 'iPad' }, { minRuntimeVersion: host.versionNumber('19.0') },
+    { maxRuntimeVersion: host.versionNumber('18.4') }, { minRuntimeVersion: '18.0' }]) {
+    const { runtimes, devices } = simulatorInventory();
+    Object.assign(devices.devicetypes[1], change);
+    assert.throws(() => host.selectSimulator(runtimes, devices, compiledSdk), { code: 'compatible-ios-runtime-missing' });
+  }
+});
+
 test('cleans only the simulator created by this run and verifies its disappearance', () => {
   const calls = [];
-  const run = (label, executable, args) => {
-    calls.push({ label, executable, args });
+  const run = (label, executable, args, options) => {
+    calls.push({ label, executable, args, options });
     if (label === 'cleanup-list-before') return JSON.stringify(inventory([{ udid: runId, state: 'Booted' }, { udid: otherId, state: 'Booted' }]));
     if (label === 'cleanup-list-after') return JSON.stringify(inventory([{ udid: otherId, state: 'Booted' }]));
     return '';
@@ -109,6 +159,7 @@ test('cleans only the simulator created by this run and verifies its disappearan
   assert.deepEqual(calls.filter(call => ['shutdown', 'delete'].includes(call.args[1])).map(call => call.args),
     [['simctl', 'shutdown', runId], ['simctl', 'delete', runId]]);
   assert.ok(calls.every(call => !call.args.includes('booted') && !call.args.includes('all') && !call.args.includes(otherId)));
+  assert.ok(calls.every(call => call.options.timeout === 60_000));
 });
 
 test('does not shut down an already stopped simulator and never deletes an arbitrary selector', () => {
@@ -139,14 +190,31 @@ test('retains shutdown and deletion failures while attempting the remaining owne
   assert.ok(calls.includes('cleanup-list-after'));
 });
 
-test('unknown cleanup inventory remains a failure even if targeted deletion then succeeds', () => {
+test('unknown cleanup inventory still shuts down the owned UUID before deletion and remains a failure', () => {
   let deleted = false;
-  const result = host.cleanupOwnedSimulator(label => {
+  const calls = [];
+  const result = host.cleanupOwnedSimulator((label, executable, args, options) => {
+    calls.push({ label, executable, args, options });
     if (label === 'cleanup-list-before') throw new Error('synthetic unavailable inventory');
     if (label === 'cleanup-delete') { deleted = true; return ''; }
     return JSON.stringify(inventory([]));
   }, runId);
   assert.equal(deleted, true); assert.equal(result.status, 'FAIL'); assert.equal(result.absent, true);
+  assert.deepEqual(calls.map(call => call.label), ['cleanup-list-before', 'cleanup-shutdown', 'cleanup-delete', 'cleanup-list-after']);
+  assert.deepEqual(result.errors, ['cleanup-inventory-failed']);
+  assert.deepEqual(calls.filter(call => ['shutdown', 'delete'].includes(call.args[1])).map(call => call.args),
+    [['simctl', 'shutdown', runId], ['simctl', 'delete', runId]]);
+  assert.ok(calls.every(call => call.options.timeout === 60_000));
+});
+
+test('a successful inventory proving absence performs no shutdown or deletion', () => {
+  const calls = [];
+  const result = host.cleanupOwnedSimulator((label, executable, args) => {
+    calls.push({ label, executable, args });
+    return JSON.stringify(inventory([{ udid: otherId, state: 'Booted' }]));
+  }, runId);
+  assert.equal(result.status, 'PASS'); assert.equal(result.absent, true);
+  assert.deepEqual(calls.map(call => call.label), ['cleanup-list-before', 'cleanup-list-after']);
 });
 
 test('detects ambiguous owned-device identities', () => {

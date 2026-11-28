@@ -56,18 +56,25 @@ function versionNumber(version) {
   return major <= 65_535 && minor <= 255 && patch <= 255 ? major * 65_536 + minor * 256 + patch : -1;
 }
 
-function selectSimulator(runtimes, deviceTypes) {
+function selectSimulator(runtimes, deviceTypes, appInfo) {
   requireCondition(Array.isArray(runtimes?.runtimes) && Array.isArray(deviceTypes?.devicetypes),
     'invalid-simulator-inventory');
-  const available = runtimes.runtimes.filter(item => item.isAvailable === true
+  requireCondition(appInfo?.DTPlatformName === 'iphonesimulator'
+    && typeof appInfo.DTPlatformVersion === 'string' && versionNumber(appInfo.DTPlatformVersion) >= 0
+    && appInfo.DTSDKName === 'iphonesimulator' + appInfo.DTPlatformVersion, 'invalid-compiled-ios-sdk');
+  const sdkVersion = versionNumber(appInfo.DTPlatformVersion);
+  const available = runtimes.runtimes.filter(item => item?.isAvailable === true
     && typeof item.identifier === 'string' && item.identifier.startsWith('com.apple.CoreSimulator.SimRuntime.iOS-')
-    && versionNumber(item.version) >= 0).sort((a, b) => versionNumber(b.version) - versionNumber(a.version));
+    && typeof item.version === 'string' && versionNumber(item.version) === sdkVersion
+    && Array.isArray(item.supportedDeviceTypes));
   for (const runtime of available) {
     const version = versionNumber(runtime.version);
-    const devices = deviceTypes.devicetypes.filter(item => item.productFamily === 'iPhone'
+    const devices = deviceTypes.devicetypes.filter(item => item?.productFamily === 'iPhone'
       && typeof item.identifier === 'string' && item.identifier.startsWith('com.apple.CoreSimulator.SimDeviceType.iPhone-')
       && Number.isSafeInteger(item.minRuntimeVersion) && item.minRuntimeVersion <= version
-      && Number.isSafeInteger(item.maxRuntimeVersion) && item.maxRuntimeVersion >= version)
+      && Number.isSafeInteger(item.maxRuntimeVersion) && item.maxRuntimeVersion >= version
+      && runtime.supportedDeviceTypes.some(supported => supported?.identifier === item.identifier
+        && supported.productFamily === 'iPhone'))
       .sort((a, b) => b.minRuntimeVersion - a.minRuntimeVersion || a.identifier.localeCompare(b.identifier));
     if (devices.length) return { runtime, deviceType: devices[0] };
   }
@@ -87,19 +94,29 @@ function cleanupOwnedSimulator(run, udid) {
   requireCondition(UUID.test(udid), 'invalid-owned-simulator');
   const errors = [];
   let device;
-  try { device = findDevice(JSON.parse(run('cleanup-list-before', 'xcrun', ['simctl', 'list', 'devices', '--json'])), udid); }
+  let inventoryKnown = false;
+  try {
+    device = findDevice(JSON.parse(run('cleanup-list-before', 'xcrun', ['simctl', 'list', 'devices', '--json'],
+      { timeout: 60_000 })), udid);
+    inventoryKnown = true;
+  }
   catch { errors.push('cleanup-inventory-failed'); }
-  if (device && device.state !== 'Shutdown') {
+  // A failed inventory does not revoke ownership of the UUID created by this run.
+  // Attempt its shutdown before deletion; never address another simulator.
+  if (!inventoryKnown || (device && device.state !== 'Shutdown')) {
     try { run('cleanup-shutdown', 'xcrun', ['simctl', 'shutdown', udid], { timeout: 60_000 }); }
     catch { errors.push('cleanup-shutdown-failed'); }
   }
   // Delete only the UUID returned by this run's successful create command.
-  if (device || errors.length) {
-    try { run('cleanup-delete', 'xcrun', ['simctl', 'delete', udid], { timeout: 30_000 }); }
+  if (device || !inventoryKnown) {
+    try { run('cleanup-delete', 'xcrun', ['simctl', 'delete', udid], { timeout: 60_000 }); }
     catch { errors.push('cleanup-delete-failed'); }
   }
   let absent = false;
-  try { absent = !findDevice(JSON.parse(run('cleanup-list-after', 'xcrun', ['simctl', 'list', 'devices', '--json'])), udid); }
+  try {
+    absent = !findDevice(JSON.parse(run('cleanup-list-after', 'xcrun', ['simctl', 'list', 'devices', '--json'],
+      { timeout: 60_000 })), udid);
+  }
   catch { errors.push('cleanup-verification-failed'); }
   if (!absent) errors.push('owned-simulator-still-present');
   return { status: errors.length ? 'FAIL' : 'PASS', udid, absent, errors };
@@ -196,6 +213,8 @@ async function main() {
     requireCondition(typeof info.CFBundleExecutable === 'string' && path.basename(info.CFBundleExecutable) === info.CFBundleExecutable,
       'invalid-app-executable');
     report.bundleId = bundleId;
+    report.compiledSdk = { platform: info.DTPlatformName, version: info.DTPlatformVersion, name: info.DTSDKName,
+      runtimeSelection: 'exact-compiled-sdk-version' };
     report.executableSha256 = fileHash(path.join(app, info.CFBundleExecutable));
 
     const delegates = fs.readdirSync(path.join(mobile, 'ios'), { withFileTypes: true })
@@ -241,7 +260,7 @@ async function main() {
 
     const runtimes = JSON.parse(run('simulator-runtimes', 'xcrun', ['simctl', 'list', 'runtimes', '--json']));
     const types = JSON.parse(run('simulator-types', 'xcrun', ['simctl', 'list', 'devicetypes', '--json']));
-    const selected = selectSimulator(runtimes, types);
+    const selected = selectSimulator(runtimes, types, info);
     report.simulator = selected;
     run('container-command-help', 'xcrun', ['simctl', 'help', 'get_app_container']);
     udid = run('simulator-create', 'xcrun', ['simctl', 'create', 'PURAMA Digest ' + runId,
@@ -251,11 +270,13 @@ async function main() {
     run('simulator-boot', 'xcrun', ['simctl', 'boot', udid]);
     run('simulator-boot-status', 'xcrun', ['simctl', 'bootstatus', udid, '-b'], { timeout: 180_000 });
     run('simulator-install', 'xcrun', ['simctl', 'install', udid, app], { timeout: 90_000 });
-    const installed = assertOwnedContainer(run('installed-app-container', 'xcrun', ['simctl', 'get_app_container', udid, bundleId, 'app']), udid);
+    const installed = assertOwnedContainer(run('installed-app-container', 'xcrun',
+      ['simctl', 'get_app_container', udid, bundleId, 'app'], { timeout: 90_000 }), udid);
     const installedHash = fileHash(path.join(installed, 'main.jsbundle'));
     requireCondition(installedHash === report.bundle.sha256, 'installed-bundle-mismatch');
     report.bundle.installedSha256 = installedHash;
-    const data = assertOwnedContainer(run('installed-data-container', 'xcrun', ['simctl', 'get_app_container', udid, bundleId, 'data']), udid);
+    const data = assertOwnedContainer(run('installed-data-container', 'xcrun',
+      ['simctl', 'get_app_container', udid, bundleId, 'data'], { timeout: 90_000 }), udid);
     const receiptPath = path.join(data, 'Documents', contract.receiptFile);
     requireCondition(!fs.existsSync(receiptPath), 'receipt-existed-before-launch');
     await assertNoMetro();

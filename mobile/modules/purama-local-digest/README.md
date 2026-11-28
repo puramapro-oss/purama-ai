@@ -80,7 +80,12 @@ contrôle également l'adaptateur réellement utilisé par le vérificateur de p
 Le contrat JSON `mobile/lib/iao-digest-qualification-contract.json` définit le fichier
 de reçu et les quinze contrôles obligatoires. Le script hôte reçoit le fichier dans le
 conteneur du simulateur jetable et rapproche la campagne et le commit du bundle
-construit. La fixture écrit et relit un temporaire dans le même dossier avant son
+construit. Il sélectionne le runtime correspondant au SDK inscrit dans l'application
+compilée, puis un iPhone déclaré compatible par ce runtime. L'absence de cette cible
+fait échouer la qualification. Les lectures des conteneurs et le nettoyage sont bornés ;
+une lecture d'inventaire défaillante conserve sa première erreur et permet encore une
+tentative d'arrêt du seul UUID créé par la campagne, avant suppression et vérification.
+La fixture écrit et relit un temporaire dans le même dossier avant son
 déplacement vers le nom final ; elle refuse d'écraser un reçu existant. Un résultat
 de compilation, un reçu ancien, une exécution Metro ou un résultat
 partiel ne valent pas qualification native. Les tests Node du harnais simulent les
