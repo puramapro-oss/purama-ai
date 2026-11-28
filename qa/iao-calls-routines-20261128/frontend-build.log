@@ -1,0 +1,54 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> vite_react_shadcn_ts@0.0.0 build
+> npm run check:offline-assets && vite build
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> vite_react_shadcn_ts@0.0.0 check:offline-assets
+> node scripts/check-offline-assets.mjs
+
+PASS — 4 offline assets match their exact release sizes and SHA-256 hashes for purama-offline-v10.
+vite v6.4.6 building for production...
+transforming...
+✓ 4297 modules transformed.
+node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+rendering chunks...
+
+<--- Last few GCs --->
+
+[43:0x1cf5f000]    12436 ms: Scavenge 737.1 (773.4) -> 726.7 (806.9) MB, pooled: 0 MB, 5.39 / 0.00 ms  (average mu = 0.842, current mu = 0.738) allocation failure; 
+[43:0x1cf5f000]    12854 ms: Mark-Compact (reduce) 770.8 (828.9) -> 750.4 (772.6) MB, pooled: 0 MB, 102.95 / 0.01 ms  (+ 162.7 ms in 3234 steps since start of marking, biggest step 0.7 ms, walltime since start of marking 418 ms) (average mu = 0.759, curre
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0x91df90  [node]
+ 2: 0x75bb9f node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]
+ 3: 0xc77280  [node]
+ 4: 0xc7737f  [node]
+ 5: 0xf272b5  [node]
+ 6: 0xf39d2c  [node]
+ 7: 0xf3e58d  [node]
+ 8: 0x9ca53f  [node]
+ 9: 0x9cd2cf node::PerIsolatePlatformData::FlushForegroundTasksInternal() [node]
+10: 0x1a8a463  [node]
+11: 0x1aa173a  [node]
+12: 0x1a8b717 uv_run [node]
+13: 0x7ea8f8 node::SpinEventLoopInternal(node::Environment*) [node]
+14: 0x982eec node::NodeMainInstance::Run() [node]
+15: 0x8be33b node::Start(int, char**) [node]
+16: 0x7f27fc76aca8  [/lib/x86_64-linux-gnu/libc.so.6]
+17: 0x7f27fc76ad65 __libc_start_main [/lib/x86_64-linux-gnu/libc.so.6]
+18: 0x7d10ae _start [node]
+Aborted

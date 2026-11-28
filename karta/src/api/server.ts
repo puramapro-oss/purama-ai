@@ -15,6 +15,9 @@ import type { StaticAgentType } from "../engine/types.js";
 import { handleConsultationRequest } from "./consultation.js";
 import type { ConsultationHost } from "./consultation-contract.js";
 import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
+import { handleRoutinePhoneRoute } from "../routines/http.js";
+import { createRoutineService } from "../routines/service.js";
+import { RoutineError } from "../routines/store.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
@@ -81,6 +84,7 @@ export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, opti
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
       else if (error instanceof WorkshopError) json(res, error.status, { ok: false, code: error.code, error: error.message });
       else if (error instanceof BriefSubmissionError) json(res, error.status, { error: error.message, code: error.code });
+      else if (error instanceof RoutineError) json(res, error.status, { ok: false, error: error.message, code: error.code });
       else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
@@ -122,6 +126,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
 
   const readyForWork = async () => !readiness || (await readiness().catch(() => ({ ready: false }))).ready;
 
+  if (await handleRoutinePhoneRoute(req, res, url, () => !lifetime?.aborted)) return;
+
   if (isIaoPath(req.method, url.pathname)) {
     const host = iaoRuntime && readiness && !lifetime?.aborted ? iaoRuntime : undefined;
     await handleIaoRoute(req, res, host, readBody, json, {
@@ -148,6 +154,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     }
     return true;
   };
+
+  const routinesMatch = url.pathname.match(/^\/routines\/([0-9a-f-]{36})$/i);
+  if (req.method === "POST" && routinesMatch) {
+    if (url.search) throw new RequestError(400, "Paramètres de routine invalides");
+    res.setHeader("Cache-Control", "no-store");
+    const body = await readBody(req);
+    if (body.action === "run-now" && !await requireReady()) return;
+    json(res, 200, await createRoutineService({ isActive: () => !lifetime?.aborted }).handle(routinesMatch[1]!, body));
+    return;
+  }
 
   if (req.method === "POST" && url.pathname === "/kill-switch/global") {
     const body = await readBody(req);

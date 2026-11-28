@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator';
 import { useNotificationPreferences, type NotificationPreferencePatch } from '@/hooks/useNotifications';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { Skeleton } from '@/components/ui/skeleton';
+import { IaoRoutinesSettings } from '@/components/notifications/IaoRoutinesSettings';
 
 export default function NotificationSettings() {
   const { preferences, isLoading, isError, isFetching, refetch, updatePreferences } = useNotificationPreferences();
@@ -215,6 +216,9 @@ export default function NotificationSettings() {
             </Card>
           </motion.div>
         )}
+        <section className="mt-8" aria-label="Appels et bilans IAO">
+          <IaoRoutinesSettings />
+        </section>
       </div>
     </div>
   );

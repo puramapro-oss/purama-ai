@@ -1,0 +1,19 @@
+/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/@ladybugdb/core/lbug_native.js:16
+  process.dlopen(
+          ^
+
+Error: /home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/@ladybugdb/core/lbugjs.node: cannot open shared object file: No such file or directory
+    at Object.<anonymous> (/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/@ladybugdb/core/lbug_native.js:16:11)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at Object.<anonymous> (/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/@ladybugdb/core/connection.js:3:20)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14) {
+  code: 'ERR_DLOPEN_FAILED'
+}
+
+Node.js v24.22.3

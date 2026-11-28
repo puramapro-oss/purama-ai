@@ -1,0 +1,16 @@
+
+/workspace/scratch/3eae3578944a/purama-ai/karta/src/routines/contracts.ts
+  62:32  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+  62:84  error  Unexpected control character(s) in regular expression: \x00, \x1f                          no-control-regex
+
+/workspace/scratch/3eae3578944a/purama-ai/karta/src/routines/http.ts
+  58:12  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+
+/workspace/scratch/3eae3578944a/purama-ai/karta/src/routines/report.ts
+  50:22  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+
+/workspace/scratch/3eae3578944a/purama-ai/karta/src/routines/service.ts
+  95:6  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+
+✖ 5 problems (5 errors, 0 warnings)
+

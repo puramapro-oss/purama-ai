@@ -13,6 +13,17 @@ jobs:
   karta-iao:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      routines-postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: local-routines-fixture-only
+          POSTGRES_DB: iao_routines_test_ci
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U postgres -d iao_routines_test_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     defaults:
       run:
         working-directory: karta
@@ -31,6 +42,19 @@ jobs:
         run: npx tsc --noEmit --incremental false --pretty false -p tsconfig.json
       - name: Full KARTA tests (identity, facade, health and local transport)
         run: npm test
+      - name: Routine admissions across independent PostgreSQL connections
+        env:
+          IAO_ROUTINES_NATIVE_DATABASE_URL: postgresql://postgres:local-routines-fixture-only@127.0.0.1:${{ job.services.routines-postgres.ports[5432] }}/iao_routines_test_ci
+        run: |
+          set -euo pipefail
+          node --test test/routineDatabase.native.mjs 2>&1 | tee "$RUNNER_TEMP/routines-native.log"
+      - name: Preserve native routine concurrency evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-routines-native-${{ github.sha }}
+          path: ${{ runner.temp }}/routines-native.log
+          if-no-files-found: warn
       - name: Check out the Sunday reference for the reconciliation
         if: github.head_ref == 'audit/iao-session-consolidation-20261120'
         uses: actions/checkout@v4

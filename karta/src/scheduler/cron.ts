@@ -4,6 +4,7 @@ import { listActiveUserIds } from "../agents/index.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { runDailyReport } from "./dailyReport.js";
 import type { AgentType } from "../engine/types.js";
+import { routineRuntimeConfig } from "../routines/runtime.js";
 
 /** Cadences alignées sur les workflows n8n existants qu'elles remplacent (cf AUDIT-AGENTS.md). */
 const CORE_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: string }> = [
@@ -94,7 +95,13 @@ export function startSchedulers(): SchedulerController[] {
       tasks.push(startGuardedSchedule(cronExpr, label, (context, isActive) =>
         runScheduledCycle(agentType, label, context, isActive)));
     }
-    tasks.push(startGuardedSchedule(config.dailyReportCron, "Rapport quotidien", () => runDailyReport()));
+    tasks.push(startGuardedSchedule(config.dailyReportCron, "Rapport quotidien", (_context, isActive) => runDailyReport(isActive)));
+    if (routineRuntimeConfig().enabled) {
+      tasks.push(startGuardedSchedule("*/10 * * * * *", "Routines IAO", async (context, isActive) => {
+        const { runRoutineTick } = await import("../routines/worker.js");
+        if (isActive()) await runRoutineTick(context.date, isActive);
+      }));
+    }
     return tasks;
   } catch {
     // The runtime never receives a partially constructed list. Invalidate all

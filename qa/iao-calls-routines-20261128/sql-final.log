@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /workspace/scratch/3eae3578944a/purama-ai/karta
+
+
+ Test Files  1 passed (1)
+      Tests  38 passed (38)
+   Start at  03:03:48
+   Duration  7.10s (tests 96%, transform 3%, import 1%)
+

@@ -1,0 +1,90 @@
+
+ RUN  v4.1.12 /workspace/scratch/3eae3578944a/purama-ai/karta
+
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses Supabase getUser with the exact bearer for both mutation checks 76ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > answers an allowed preflight without accessing authentication or KARTA 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects foreign origin https://attacker.example.invalid before reading identity 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects foreign origin null before reading identity 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects foreign origin https://iao.example.invalid.attacker.example.invalid before reading identity 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > requires bearer authentication even without an Origin header 3ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > fails closed on an invalid allowed origin: * 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > fails closed on an invalid allowed origin: http://iao.example.invalid 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > fails closed on an invalid allowed origin: https://iao.example.invalid/ 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > fails closed on an invalid allowed origin: https://user:pass@iao.example.invalid 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > fails closed on an invalid allowed origin: https://iao.example.invalid,https://elsewhere.invalid 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > reuses the configured app origin when no CORS override is provided 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects unsupported methods and preflight methods before service access 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects malformed credentials 0 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects malformed credentials 1 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects malformed credentials 2 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects malformed credentials 3 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > requires a verified non-anonymous UUID owner 0 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > requires a verified non-anonymous UUID owner 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > requires a verified non-anonymous UUID owner 2 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > derives the route from authentication, normalizes the body and excludes browser credentials 3ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 2 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 3 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 4 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 5 5ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 6 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 7 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 8 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 9 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 10 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > rejects absent, extra and invalid operation fields before relay 11 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 1 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 2 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 3 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 4 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 5 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > uses the canonical routine schema instead of a permissive copy 6 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses a mutation when revalidation no longer confirms the original account 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses a mutation when revalidation no longer confirms the original account 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses a mutation when revalidation no longer confirms the original account 2 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > performs one identity check for a read and a second check for every mutation 4ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > does not let a busy execution bucket consume cancellation or listing 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses unsafe relay configuration  1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses unsafe relay configuration ftp://internal.example.invalid 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses unsafe relay configuration https://user:secret@internal.example.invalid 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses unsafe relay configuration https://internal.example.invalid?redirect=x 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > refuses unsafe relay configuration https://internal.example.invalid#fragment 0ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > does not forward unparseable JSON, invalid UTF-8 or oversized bytes 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > cancels a request stream that does not finish, without ever relaying a mutation 4ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > times out non-cooperative authentication and rejects its late result 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines authenticated proxy > cancels before relay if the browser aborts during revalidation 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > projects only public account data, report text and delivery status 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 2 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 3 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 4 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses foreign or unsupported public claims 5 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > accepts identical saves and pauses without inventing a revision increment 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > rejects a creation receipt inconsistent with the request 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > rejects a creation receipt inconsistent with the request 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > rejects a creation receipt inconsistent with the request 2 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses a no-op acknowledgement when the requested pause did not apply 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses invalid or unordered preview dates 0 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses invalid or unordered preview dates 1 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > refuses invalid or unordered preview dates 2 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > preserves pending execution and explains the limit of cancellation 2ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (400) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (403) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (404) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (409) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (413) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (429) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > maps an upstream rejection without exposing its body (503) 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > never retries an uncertain mutation with another identity 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > rejects redirects even if a non-compliant fetch implementation returns them 1ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > cancels a response stream above the byte ceiling 3ms
+ ✓ test/iaoRoutinesEdge.test.ts > IAO routines public receipts and uncertain transport > enforces a total deadline including authentication and closes a late response 10ms
+
+ Test Files  1 passed (1)
+      Tests  81 passed (81)
+   Start at  02:58:32
+   Duration  743ms (transform 210ms, setup 32ms, import 397ms, tests 171ms, environment 0ms)
+

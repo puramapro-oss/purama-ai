@@ -1,0 +1,998 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795832388168,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Function:karta/src/routines/contracts.ts:text",
+    "name": "text",
+    "type": "Function",
+    "filePath": "karta/src/routines/contracts.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 31,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 16,
+    "modules_affected": 4
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 11,
+    "3": 19
+  },
+  "affected_processes": [
+    {
+      "name": "requestNow",
+      "type": "Function",
+      "filePath": "karta/src/routines/worker.ts",
+      "affected_process_count": 5,
+      "total_hits": 12,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "tick",
+      "type": "Function",
+      "filePath": "karta/src/routines/worker.ts",
+      "affected_process_count": 6,
+      "total_hits": 12,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "handle",
+      "type": "Function",
+      "filePath": "karta/src/routines/service.ts",
+      "affected_process_count": 4,
+      "total_hits": 10,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "preview",
+      "type": "Function",
+      "filePath": "src/hooks/useIaoRoutines.ts",
+      "affected_process_count": 4,
+      "total_hits": 8,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "activePage",
+      "type": "Function",
+      "filePath": "karta/src/routines/store.ts",
+      "affected_process_count": 3,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "get",
+      "type": "Function",
+      "filePath": "karta/src/routines/store.ts",
+      "affected_process_count": 3,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "listResult",
+      "type": "Function",
+      "filePath": "src/lib/iao-routines-client.ts",
+      "affected_process_count": 4,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "command",
+      "type": "Function",
+      "filePath": "karta/src/routines/http.ts",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "buildRoutineReport",
+      "type": "Function",
+      "filePath": "karta/src/routines/report.ts",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "processOccurrence",
+      "type": "Function",
+      "filePath": "karta/src/routines/worker.ts",
+      "affected_process_count": 1,
+      "total_hits": 3,
+      "earliest_broken_step": 4
+    },
+    {
+      "name": "startSchedulers",
+      "type": "Function",
+      "filePath": "karta/src/scheduler/cron.ts",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "RoutinesPanel",
+      "type": "Function",
+      "filePath": "src/components/notifications/IaoRoutinesSettings.tsx",
+      "affected_process_count": 1,
+      "total_hits": 3,
+      "earliest_broken_step": 5
+    },
+    {
+      "name": "useIaoRoutines",
+      "type": "Function",
+      "filePath": "src/hooks/useIaoRoutines.ts",
+      "affected_process_count": 1,
+      "total_hits": 3,
+      "earliest_broken_step": 4
+    },
+    {
+      "name": "NotificationSettings",
+      "type": "Function",
+      "filePath": "src/pages/NotificationSettings.tsx",
+      "affected_process_count": 2,
+      "total_hits": 3,
+      "earliest_broken_step": 7
+    },
+    {
+      "name": "runDailyReport",
+      "type": "Function",
+      "filePath": "karta/src/scheduler/dailyReport.ts",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "publicResult",
+      "type": "Function",
+      "filePath": "supabase/functions/iao-routines/handler.ts",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Routines",
+      "hits": 20,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_33",
+      "hits": 4,
+      "impact": "indirect"
+    },
+    {
+      "name": "Iao-routines",
+      "hits": 4,
+      "impact": "indirect"
+    },
+    {
+      "name": "Notifications",
+      "hits": 3,
+      "impact": "indirect"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/routines/contracts.ts:normalizeRoutineInput",
+        "name": "normalizeRoutineInput",
+        "filePath": "karta/src/routines/contracts.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_2_tick",
+            "label": "Tick → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 7
+          },
+          {
+            "id": "proc_32_routinespanel",
+            "label": "RoutinesPanel → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 7
+          },
+          {
+            "id": "proc_46_processoccurrence",
+            "label": "ProcessOccurrence → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 6
+          },
+          {
+            "id": "proc_53_useiaoroutines",
+            "label": "UseIaoRoutines → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 6
+          },
+          {
+            "id": "proc_56_preview",
+            "label": "Preview → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_59_requestnow",
+            "label": "RequestNow → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_62_handle",
+            "label": "Handle → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_68_listresult",
+            "label": "ListResult → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_71_activepage",
+            "label": "ActivePage → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_77_get",
+            "label": "Get → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/report.ts:buildRoutineReport",
+        "name": "buildRoutineReport",
+        "filePath": "karta/src/routines/report.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_7_buildroutinereport",
+            "label": "BuildRoutineReport → RoutineReportError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_19_buildroutinereport",
+            "label": "BuildRoutineReport → IsRecord",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_37_requestnow",
+            "label": "RequestNow → RoutineReportError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_59_requestnow",
+            "label": "RequestNow → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_65_buildroutinereport",
+            "label": "BuildRoutineReport → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/schedule.ts:calculateNextOccurrences",
+        "name": "calculateNextOccurrences",
+        "filePath": "karta/src/routines/schedule.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/schedule.ts:routineMayDeliverAt",
+        "name": "routineMayDeliverAt",
+        "filePath": "karta/src/routines/schedule.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_16_requestnow",
+            "label": "RequestNow → Formatter",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_20_requestnow",
+            "label": "RequestNow → IsQuiet",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/service.ts:parseConfig",
+        "name": "parseConfig",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_38_handle",
+            "label": "Handle → RoutineError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_62_handle",
+            "label": "Handle → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/service.ts:publicRoutine",
+        "name": "publicRoutine",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/routines/store.ts:decodeRoutine",
+        "name": "decodeRoutine",
+        "filePath": "karta/src/routines/store.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_57_activepage",
+            "label": "ActivePage → RoutineError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_71_activepage",
+            "label": "ActivePage → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_72_get",
+            "label": "Get → RoutineError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_77_get",
+            "label": "Get → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:src/components/notifications/IaoRoutinesSettings.tsx:RoutinesPanel.normalized@106:2",
+        "name": "normalized",
+        "filePath": "src/components/notifications/IaoRoutinesSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:src/lib/iao-routines-client.ts:ownedRoutine",
+        "name": "ownedRoutine",
+        "filePath": "src/lib/iao-routines-client.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_68_listresult",
+            "label": "ListResult → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:src/lib/iao-routines-client.ts:requestBody",
+        "name": "requestBody",
+        "filePath": "src/lib/iao-routines-client.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_2_tick",
+            "label": "Tick → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 6
+          },
+          {
+            "id": "proc_3_notificationsettings",
+            "label": "NotificationSettings → RoutineClientError",
+            "processType": "cross_community",
+            "step": 8
+          },
+          {
+            "id": "proc_10_preview",
+            "label": "Preview → Object",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_32_routinespanel",
+            "label": "RoutinesPanel → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 6
+          },
+          {
+            "id": "proc_33_tick",
+            "label": "Tick → RoutineClientError",
+            "processType": "cross_community",
+            "step": 6
+          },
+          {
+            "id": "proc_46_processoccurrence",
+            "label": "ProcessOccurrence → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_47_preview",
+            "label": "Preview → RoutineClientError",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_53_useiaoroutines",
+            "label": "UseIaoRoutines → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_56_preview",
+            "label": "Preview → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 4
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Function:supabase/functions/iao-routines/handler.ts:parseInput",
+        "name": "parseInput",
+        "filePath": "supabase/functions/iao-routines/handler.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:supabase/functions/iao-routines/handler.ts:publicRoutine",
+        "name": "publicRoutine",
+        "filePath": "supabase/functions/iao-routines/handler.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/service.ts:createRoutineService.current@162:2",
+        "name": "current",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/service.ts:createRoutineService.saved@167:2",
+        "name": "saved",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/service.ts:parseRequest",
+        "name": "parseRequest",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_38_handle",
+            "label": "Handle → RoutineError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_62_handle",
+            "label": "Handle → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_70_handle",
+            "label": "Handle → Record",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/worker.ts:createRoutineProcessor.processOccurrence@52:2.send@67:4",
+        "name": "send",
+        "filePath": "karta/src/routines/worker.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/worker.ts:createRoutineProcessor.report@28:2",
+        "name": "report",
+        "filePath": "karta/src/routines/worker.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_37_requestnow",
+            "label": "RequestNow → RoutineReportError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_59_requestnow",
+            "label": "RequestNow → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/worker.ts:createRoutineProcessor.requestNow@117:2",
+        "name": "requestNow",
+        "filePath": "karta/src/routines/worker.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_16_requestnow",
+            "label": "RequestNow → Formatter",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_20_requestnow",
+            "label": "RequestNow → IsQuiet",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_37_requestnow",
+            "label": "RequestNow → RoutineReportError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_59_requestnow",
+            "label": "RequestNow → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_93_requestnow",
+            "label": "RequestNow → RoutineError",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/routines/worker.ts:createRoutineProcessor.tick@134:2",
+        "name": "tick",
+        "filePath": "karta/src/routines/worker.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_2_tick",
+            "label": "Tick → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_21_tick",
+            "label": "Tick → ReconcileCall",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_33_tick",
+            "label": "Tick → RoutineClientError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_34_tick",
+            "label": "Tick → Current",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_35_tick",
+            "label": "Tick → Current",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_36_tick",
+            "label": "Tick → CaptureOwner",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:src/components/notifications/IaoRoutinesSettings.tsx:RoutinesPanel.preview@112:2",
+        "name": "preview",
+        "filePath": "src/components/notifications/IaoRoutinesSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:src/components/notifications/IaoRoutinesSettings.tsx:RoutinesPanel.save@119:2",
+        "name": "save",
+        "filePath": "src/components/notifications/IaoRoutinesSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:src/lib/iao-routines-client.ts:listResult",
+        "name": "listResult",
+        "filePath": "src/lib/iao-routines-client.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_23_listresult",
+            "label": "ListResult → Timestamp",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_24_listresult",
+            "label": "ListResult → Uuid",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_40_listresult",
+            "label": "ListResult → Object",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_68_listresult",
+            "label": "ListResult → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:src/lib/iao-routines-client.ts:requestIaoRoutines",
+        "name": "requestIaoRoutines",
+        "filePath": "src/lib/iao-routines-client.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_2_tick",
+            "label": "Tick → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_3_notificationsettings",
+            "label": "NotificationSettings → RoutineClientError",
+            "processType": "cross_community",
+            "step": 7
+          },
+          {
+            "id": "proc_4_notificationsettings",
+            "label": "NotificationSettings → Current",
+            "processType": "cross_community",
+            "step": 7
+          },
+          {
+            "id": "proc_10_preview",
+            "label": "Preview → Object",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_32_routinespanel",
+            "label": "RoutinesPanel → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_33_tick",
+            "label": "Tick → RoutineClientError",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_34_tick",
+            "label": "Tick → Current",
+            "processType": "cross_community",
+            "step": 5
+          },
+          {
+            "id": "proc_46_processoccurrence",
+            "label": "ProcessOccurrence → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_47_preview",
+            "label": "Preview → RoutineClientError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_48_preview",
+            "label": "Preview → Current",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_53_useiaoroutines",
+            "label": "UseIaoRoutines → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 4
+          },
+          {
+            "id": "proc_56_preview",
+            "label": "Preview → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Function:supabase/functions/iao-routines/handler.ts:createIaoRoutinesHandler",
+        "name": "createIaoRoutinesHandler",
+        "filePath": "supabase/functions/iao-routines/handler.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:supabase/functions/iao-routines/handler.ts:publicResult",
+        "name": "publicResult",
+        "filePath": "supabase/functions/iao-routines/handler.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_42_publicresult",
+            "label": "PublicResult → Invalid",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/http.ts:createRoutinePhoneHandlers.command@51:4#3",
+        "name": "command",
+        "filePath": "karta/src/routines/http.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_26_command",
+            "label": "Command → PhoneCommandToken",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_27_command",
+            "label": "Command → Now",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_28_command",
+            "label": "Command → Hash",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_64_command",
+            "label": "Command → Record",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_95_command",
+            "label": "Command → RoutineError",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/service.ts:createRoutineService.handle@175:4#2",
+        "name": "handle",
+        "filePath": "karta/src/routines/service.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_31_handle",
+            "label": "Handle → PhoneConfigured",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_38_handle",
+            "label": "Handle → RoutineError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_62_handle",
+            "label": "Handle → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_70_handle",
+            "label": "Handle → Record",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/store.ts:routineStore.activePage#1",
+        "name": "activePage",
+        "filePath": "karta/src/routines/store.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_57_activepage",
+            "label": "ActivePage → RoutineError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_71_activepage",
+            "label": "ActivePage → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_73_activepage",
+            "label": "ActivePage → Record",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/store.ts:routineStore.get#2",
+        "name": "get",
+        "filePath": "karta/src/routines/store.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_72_get",
+            "label": "Get → RoutineError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_77_get",
+            "label": "Get → RoutineValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_79_get",
+            "label": "Get → Record",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/store.ts:routineStore.list#1",
+        "name": "list",
+        "filePath": "karta/src/routines/store.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_0_startschedulers",
+            "label": "StartSchedulers → List",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_8_startschedulers",
+            "label": "StartSchedulers → RoutineError",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_9_startschedulers",
+            "label": "StartSchedulers → Record",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_54_rundailyreport",
+            "label": "RunDailyReport → RoutineError",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/routines/store.ts:routineStore.save#4",
+        "name": "save",
+        "filePath": "karta/src/routines/store.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,1525 @@
+✔ chat refuses another user’s public agent before history, writes or provider access (8.561991ms)
+✔ chat refuses another user’s private agent before history, writes or provider access (1.383577ms)
+✔ chat refuses an ownerless public official template before history, writes or provider access (1.645571ms)
+✔ chat refuses an ownerless private official template before history, writes or provider access (1.261562ms)
+✔ chat refuses a missing session before reading an agent (1.097775ms)
+✔ chat refuses an invalid session before reading an agent (0.90198ms)
+✔ the real validation rejects a missing agent ID before database reads or effects (1.791322ms)
+✔ the real validation rejects an invalid agent UUID before database reads or effects (1.314472ms)
+✔ the real validation rejects a message exceeding 4000 characters before database reads or effects (2.199867ms)
+✔ the owner can chat with a private agent using only their own session history (8.630664ms)
+✔ the owner can chat with a public agent using only their own session history (1.847697ms)
+✔ an unavailable history returns 503 before writes or provider access (1.47893ms)
+✔ the provider receives the latest 20 owned turns in chronological order (2.232156ms)
+✔ the actual completion helper refuses a reply stopped by the token limit without recording assistant success (1.473823ms)
+✔ the actual completion helper refuses a reply without a completion reason without recording assistant success (1.168512ms)
+✔ the actual completion helper refuses an unhandled tool request without recording assistant success (1.252439ms)
+✔ the actual completion helper refuses an empty completed answer without recording assistant success (1.313822ms)
+✔ an aborted request after history loading starts no provider and saves no message (1.138177ms)
+✔ a provider reply arriving after cancellation is never recorded as completed (1.673704ms)
+✔ no selected results (omitted) preserves the ordinary single-call chat (1.607204ms)
+✔ no selected results (empty) preserves the ordinary single-call chat (1.580894ms)
+✔ selected server results reach exactly one model call in requested order with provenance and no raw detail persistence (3.30233ms)
+✔ selected-result validation rejects a scalar before any database access (1.127961ms)
+✔ selected-result validation rejects an invalid UUID before any database access (1.109594ms)
+✔ selected-result validation rejects more than three IDs before any database access (0.958595ms)
+✔ selected-result validation rejects duplicate IDs before any database access (1.400632ms)
+✔ selected-result validation rejects duplicates differing only by case before any database access (0.985746ms)
+✔ selected results from another account never reach chat history, writes or the provider (1.097766ms)
+✔ selected results from another agent never reach chat history, writes or the provider (1.056784ms)
+✔ selected results from a deleted or nonexistent result never reach chat history, writes or the provider (0.977424ms)
+✔ selected results from a partially missing selection never reach chat history, writes or the provider (1.050584ms)
+✔ the shared view validator rejects a foreign row from a faulty adapter even if the database adapter returns it (1.09437ms)
+✔ the shared view validator rejects a different requested result even if the database adapter returns it (1.072738ms)
+✔ the shared view validator rejects a malformed payload even if the database adapter returns it (1.076594ms)
+✔ the shared view validator rejects an unsafe provenance URL even if the database adapter returns it (1.385259ms)
+✔ the shared view validator rejects an oversized summary even if the database adapter returns it (1.099739ms)
+✔ the shared view validator rejects a duplicate response row even if the database adapter returns it (1.057885ms)
+✔ a private-result database error is hidden and does not trigger a paid call (1.122272ms)
+✔ an ownership transfer observed during result loading refuses model disclosure (1.412319ms)
+✔ cancellation during private-result loading performs no subsequent history read or effect (1.376836ms)
+✔ cancellation while recording the submitted turn does not start the provider (1.33929ms)
+✔ failure to record the submitted turn does not start the provider or claim completion (1.190005ms)
+✔ an upstream 429 body that echoes private content is never logged, returned or retried (1.609978ms)
+✔ an upstream 500 body that echoes private content is never logged, returned or retried (1.341773ms)
+✔ a thrown transport error containing private input is not disclosed or retried (1.492441ms)
+✔ three large Unicode results remain bounded valid JSON with explicit omissions and escaped delimiters (10.134714ms)
+✔ a complete selected report enters the existing chat as a marked model-generated excerpt (3.754392ms)
+✔ a selected programmatic report with byte overflow fails before the paid chat call (1.463347ms)
+✔ a selected programmatic report with text overflow fails before the paid chat call (1.340902ms)
+✔ a selected programmatic report with forged citations fails before the paid chat call (1.39927ms)
+✔ a selected programmatic report with verified provenance fails before the paid chat call (2.397365ms)
+✔ a selected programmatic report with clipped report fails before the paid chat call (2.030311ms)
+✔ a selected resolution retains the supplied snapshot and six facets as unverified qualification data (4.457943ms)
+✔ three large resolution snapshots keep every facet under the chat budget with balanced excerpts and explicit omissions (66.862969ms)
+✔ a selected resolution with a purported authorization is rejected before any paid call (1.96927ms)
+✔ a selected resolution with purported external verification is rejected before any paid call (2.010842ms)
+✔ a selected resolution with an external action claim is rejected before any paid call (1.426131ms)
+✔ a selected resolution with a missing facet is rejected before any paid call (1.686243ms)
+✔ a selected resolution with an unreported rejected reference is rejected before any paid call (1.729839ms)
+✖ lost acknowledgement retries the same canonical delivery; a new intention gets another delivery (136.100398ms)
+✖ simultaneous deliveries of the same intention retain one canonical queue entry (2.676215ms)
+✖ the same key is independently scoped by account and agent by the real API/queue (2.543495ms)
+✖ only POST can admit work; preflight advertises the bounded interface (2.289943ms)
+✖ invalid or unkeyed intention is rejected before forwarding: null (2.315321ms)
+✖ invalid or unkeyed intention is rejected before forwarding: [] (2.191845ms)
+✖ invalid or unkeyed intention is rejected before forwarding: {} (2.375783ms)
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001"} (2.399689ms)
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001","requestId":"----"} (2.823528ms)
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"------------------------------------","requestId":"83000000-0000-4000-8000-000000000001"} (3.600009ms)
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001","requestId":"83000000-0000-4000-8000-000000000001","userId":"81000000-0000-4000-8000-000000000002"} (4.576791ms)
+✖ invalid or unkeyed intention is rejected before forwarding: "{invalid" (4.550102ms)
+✖ authorization/admission stays closed for foreign owner (3.768602ms)
+✖ authorization/admission stays closed for disabled agent (2.499038ms)
+✖ authorization/admission stays closed for missing agent (3.217061ms)
+✖ authorization/admission stays closed for database failure (4.591484ms)
+✖ authorization/admission stays closed for invalid auth (4.121185ms)
+✖ authorization/admission stays closed for rate limit (4.347517ms)
+✖ the verified token, schema, row and configured server URL bind the dispatch (4.524373ms)
+✖ invalid internal URL cannot dispatch: ftp://example.invalid (2.90455ms)
+✖ invalid internal URL cannot dispatch: https://private-user:PRIVATE_PASSWORD@example.invalid (2.373008ms)
+✖ invalid internal URL cannot dispatch: https://example.invalid?token=PRIVATE_SECRET (2.634152ms)
+✖ invalid internal URL cannot dispatch: https://example.invalid/#private (6.956731ms)
+✖ invalid internal URL cannot dispatch: not a url (3.984729ms)
+✖ invalid internal URL cannot dispatch: undefined (3.89282ms)
+✖ internal HTTP 200 never becomes a successful or leaking acknowledgement (4.206243ms)
+✖ internal HTTP 301 never becomes a successful or leaking acknowledgement (4.225893ms)
+✖ internal HTTP 302 never becomes a successful or leaking acknowledgement (4.029557ms)
+✖ internal HTTP 307 never becomes a successful or leaking acknowledgement (4.494076ms)
+✖ internal HTTP 308 never becomes a successful or leaking acknowledgement (3.955935ms)
+✖ internal HTTP 400 never becomes a successful or leaking acknowledgement (4.152932ms)
+✖ internal HTTP 401 never becomes a successful or leaking acknowledgement (3.856786ms)
+✖ internal HTTP 403 never becomes a successful or leaking acknowledgement (3.89276ms)
+✖ internal HTTP 404 never becomes a successful or leaking acknowledgement (4.457742ms)
+✖ internal HTTP 409 never becomes a successful or leaking acknowledgement (4.432745ms)
+✖ internal HTTP 429 never becomes a successful or leaking acknowledgement (4.471743ms)
+✖ internal HTTP 500 never becomes a successful or leaking acknowledgement (4.446425ms)
+✖ internal HTTP 503 never becomes a successful or leaking acknowledgement (4.286935ms)
+✖ a valid canonical receipt projects only known metadata (4.56937ms)
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true} (4.598253ms)
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":false,"queued":true} (3.93257ms)
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":false} (4.364011ms)
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":true,"jobId":"legacy-job","executionKey":"queue:old"} (4.676682ms)
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":true,"jobId":"karta-v2-dedupe-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","executionKey":"wrong"} (4.440376ms)
+✖ streamed and declared excessive input is refused before any internal call (4.689242ms)
+✖ decoded response bytes are bounded even with a small encoded Content-Length (4.340506ms)
+✖ the total deadline bounds a stalled auth, even when cancellation is ignored (4.554608ms)
+✖ the total deadline bounds a stalled ownership, even when cancellation is ignored (4.371802ms)
+✖ the total deadline bounds a stalled input, even when cancellation is ignored (3.830947ms)
+✖ the total deadline bounds a stalled fetch, even when cancellation is ignored (3.069719ms)
+✖ the total deadline bounds a stalled response, even when cancellation is ignored (4.530422ms)
+✖ cancellation at before never authorizes a new dispatch (4.643542ms)
+✖ cancellation at auth never authorizes a new dispatch (4.733308ms)
+✖ cancellation at ownership never authorizes a new dispatch (4.221696ms)
+✖ cancellation at fetch never authorizes a new dispatch (3.162489ms)
+✖ cancellation at response never authorizes a new dispatch (2.458757ms)
+ℹ tests 115
+ℹ suites 0
+ℹ pass 59
+ℹ fail 56
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1597.603506
+
+✖ failing tests:
+
+test at tests/karta-trigger-custom.test.mjs:14:1
+✖ lost acknowledgement retries the same canonical delivery; a new intention gets another delivery (136.100398ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:16:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:38:1
+✖ simultaneous deliveries of the same intention retain one canonical queue entry (2.676215ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:39:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:47:1
+✖ the same key is independently scoped by account and agent by the real API/queue (2.543495ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:48:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:58:1
+✖ only POST can admit work; preflight advertises the bounded interface (2.289943ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:59:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: null (2.315321ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: [] (2.191845ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: {} (2.375783ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001"} (2.399689ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001","requestId":"----"} (2.823528ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"------------------------------------","requestId":"83000000-0000-4000-8000-000000000001"} (3.600009ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: {"agentId":"82000000-0000-4000-8000-000000000001","requestId":"83000000-0000-4000-8000-000000000001","userId":"81000000-0000-4000-8000-000000000002"} (4.576791ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:72:3
+✖ invalid or unkeyed intention is rejected before forwarding: "{invalid" (4.550102ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:73:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for foreign owner (3.768602ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for disabled agent (2.499038ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for missing agent (3.217061ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for database failure (4.591484ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for invalid auth (4.121185ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:87:3
+✖ authorization/admission stays closed for rate limit (4.347517ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:88:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:96:1
+✖ the verified token, schema, row and configured server URL bind the dispatch (4.524373ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:98:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: ftp://example.invalid (2.90455ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: https://private-user:PRIVATE_PASSWORD@example.invalid (2.373008ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: https://example.invalid?token=PRIVATE_SECRET (2.634152ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: https://example.invalid/#private (6.956731ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: not a url (3.984729ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:115:3
+✖ invalid internal URL cannot dispatch: undefined (3.89282ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:116:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 200 never becomes a successful or leaking acknowledgement (4.206243ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 301 never becomes a successful or leaking acknowledgement (4.225893ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 302 never becomes a successful or leaking acknowledgement (4.029557ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 307 never becomes a successful or leaking acknowledgement (4.494076ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 308 never becomes a successful or leaking acknowledgement (3.955935ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 400 never becomes a successful or leaking acknowledgement (4.152932ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 401 never becomes a successful or leaking acknowledgement (3.856786ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 403 never becomes a successful or leaking acknowledgement (3.89276ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 404 never becomes a successful or leaking acknowledgement (4.457742ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 409 never becomes a successful or leaking acknowledgement (4.432745ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 429 never becomes a successful or leaking acknowledgement (4.471743ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 500 never becomes a successful or leaking acknowledgement (4.446425ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:125:3
+✖ internal HTTP 503 never becomes a successful or leaking acknowledgement (4.286935ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:126:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:138:1
+✖ a valid canonical receipt projects only known metadata (4.56937ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:139:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:152:3
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true} (4.598253ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:153:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:152:3
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":false,"queued":true} (3.93257ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:153:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:152:3
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":false} (4.364011ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:153:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:152:3
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":true,"jobId":"legacy-job","executionKey":"queue:old"} (4.676682ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:153:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:152:3
+✖ incomplete or conflicting receipt cannot confirm admission: {"ok":true,"queued":true,"jobId":"karta-v2-dedupe-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","executionKey":"wrong"} (4.440376ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:153:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:158:1
+✖ streamed and declared excessive input is refused before any internal call (4.689242ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:160:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:167:1
+✖ decoded response bytes are bounded even with a small encoded Content-Length (4.340506ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:168:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:175:3
+✖ the total deadline bounds a stalled auth, even when cancellation is ignored (4.554608ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:184:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:175:3
+✖ the total deadline bounds a stalled ownership, even when cancellation is ignored (4.371802ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:184:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:175:3
+✖ the total deadline bounds a stalled input, even when cancellation is ignored (3.830947ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:184:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:175:3
+✖ the total deadline bounds a stalled fetch, even when cancellation is ignored (3.069719ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:184:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:175:3
+✖ the total deadline bounds a stalled response, even when cancellation is ignored (4.530422ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:184:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:205:3
+✖ cancellation at before never authorizes a new dispatch (4.643542ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:214:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:205:3
+✖ cancellation at auth never authorizes a new dispatch (4.733308ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:214:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:205:3
+✖ cancellation at ownership never authorizes a new dispatch (4.221696ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:214:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:205:3
+✖ cancellation at fetch never authorizes a new dispatch (3.162489ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:214:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/karta-trigger-custom.test.mjs:205:3
+✖ cancellation at response never authorizes a new dispatch (2.458757ms)
+  node:internal/assert/utils:77
+      throw err;
+      ^
+  
+  AssertionError [ERR_ASSERTION]: Unexpected import ../routines/http.js from karta/src/api/server.ts
+      at require (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:32:14)
+      at /workspace/scratch/3eae3578944a/purama-ai/karta/src/api/server.ts:18:19
+      at Script.runInContext (node:vm:149:12)
+      at execute (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:26:10)
+      at customTriggerHarness (file:///workspace/scratch/3eae3578944a/purama-ai/tests/helpers/custom-trigger-harness.mjs:97:22)
+      at TestContext.<anonymous> (file:///workspace/scratch/3eae3578944a/purama-ai/tests/karta-trigger-custom.test.mjs:214:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

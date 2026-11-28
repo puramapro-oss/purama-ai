@@ -1,0 +1,32 @@
+PASS Create, preview, activate, pause and inspect the same routine
+PASS Mobile editor exposes real choices without activating an unavailable phone
+PASS Changing settings invalidates an earlier preview
+PASS An ambiguous request is not automatically repeated and keeps its identity
+FAIL Account changes discard private drafts and late save responses: expect(locator).toBeVisible() failed
+
+Locator: getByText('Bilan privé B', { exact: true })
+Expected: visible
+Error: strict mode violation: getByText('Bilan privé B', { exact: true }) resolved to 3 elements:
+    1) <h3 class="font-medium break-words">Bilan privé B</h3> aka getByRole('heading', { name: 'Bilan privé B' })
+    2) <span class="sr-only"> Bilan privé B</span> aka getByRole('button', { name: 'Modifier Bilan privé B' })
+    3) <span class="sr-only"> Bilan privé B</span> aka getByRole('button', { name: 'Mettre en pause Bilan privé B' })
+
+Call log:
+  - Expect "toBeVisible" getByText('Bilan privé B', { exact: true }) with timeout 5000ms
+  - waiting for getByText('Bilan privé B', { exact: true })
+
+FAIL Loading failure is visible and retry restores the actual list: expect(locator).toBeVisible() failed
+
+Locator: getByText('Bilan privé A', { exact: true })
+Expected: visible
+Error: strict mode violation: getByText('Bilan privé A', { exact: true }) resolved to 3 elements:
+    1) <h3 class="font-medium break-words">Bilan privé A</h3> aka getByRole('heading', { name: 'Bilan privé A' })
+    2) <span class="sr-only"> Bilan privé A</span> aka getByRole('button', { name: 'Modifier Bilan privé A' })
+    3) <span class="sr-only"> Bilan privé A</span> aka getByRole('button', { name: 'Mettre en pause Bilan privé A' })
+
+Call log:
+  - Expect "toBeVisible" getByText('Bilan privé A', { exact: true }) with timeout 5000ms
+  - waiting for getByText('Bilan privé A', { exact: true })
+
+PASS Event schedules and voice requests remain truthful
+PASS One-time schedules interpret local input in the selected timezone

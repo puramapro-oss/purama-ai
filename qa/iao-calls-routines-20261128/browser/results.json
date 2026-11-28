@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "startedAt": "2026-11-28T02:05:59.769Z",
+  "node": "v24.22.3",
+  "sources": {
+    "src/lib/iao-routines-client.ts": "4d1e1372b06166bdfbe107e2587296867215f54486581de010c042e62b5f40ed",
+    "src/hooks/useIaoRoutines.ts": "f97d3694c8b2ad3ff3e8aaf74b9aa7a947e60bd5c3ebb5223981f88d7b18b016",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "src/components/notifications/IaoRoutinesSettings.tsx": "c40b017ada1943c484d8ba36d481f078384cc3d68f05e70237a73963a47b8e22",
+    "karta/src/routines/contracts.ts": "0f7101855ae6f0a71c6e681c56d8205290e7c34fe16b22146a8fabf34bafb25e",
+    "karta/src/routines/schedule.ts": "a556b69d061bec0ea717830820856570271028a74d6a9698006a8dc1bb216aba"
+  },
+  "backend": "Synthetic authenticated routine service; no database, provider or telephone qualification",
+  "tests": [
+    {
+      "name": "Create, preview, activate, pause and inspect the same routine",
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile editor exposes real choices without activating an unavailable phone",
+      "status": "PASS"
+    },
+    {
+      "name": "Changing settings invalidates an earlier preview",
+      "status": "PASS"
+    },
+    {
+      "name": "An ambiguous request is not automatically repeated and keeps its identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Account changes discard private drafts and late save responses",
+      "status": "PASS"
+    },
+    {
+      "name": "Loading failure is visible and retry restores the actual list",
+      "status": "PASS"
+    },
+    {
+      "name": "Event schedules and voice requests remain truthful",
+      "status": "PASS"
+    },
+    {
+      "name": "One-time schedules interpret local input in the selected timezone",
+      "status": "PASS"
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "screenshots": [
+    "desktop-routine-paused.png",
+    "mobile-routine-editor.png",
+    "mobile-routine-editor-light.png",
+    "desktop-delivery-history.png"
+  ],
+  "bundleSha256": "fe88623f20fc97003eea111cd7d1fffe3d97abb25d9bc81296cf63a30c0a9f65",
+  "styleSha256": "8ad13dbf631c9d739e71ac2ea9b6d6853411127cce3d715f001cc18873297378",
+  "browser": "152.0.7977.0",
+  "finishedAt": "2026-11-28T02:06:05.846Z"
+}

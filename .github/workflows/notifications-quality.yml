@@ -10,6 +10,10 @@ on:
       - 'supabase/functions/_shared/request-deadline.ts'
       - 'supabase/functions/_shared/webhook-security*.ts'
       - 'src/hooks/useNotifications*'
+      - 'src/hooks/useIaoRoutines*'
+      - 'src/lib/iao-routines-client*'
+      - 'karta/src/routines/**'
+      - 'supabase/functions/iao-routines/**'
       - 'src/hooks/useRequestScope.ts'
       - 'src/hooks/useAuth.ts'
       - 'src/hooks/useProfile.ts'
@@ -26,6 +30,7 @@ on:
       - 'src/fonts.css'
       - 'src/assets/fonts/**'
       - 'tests/notifications/**'
+      - 'tests/routines/**'
       - 'package.json'
       - 'package-lock.json'
       - '.npmrc'
@@ -129,8 +134,13 @@ jobs:
         run: |
           set -euo pipefail
           node node_modules/vitest/vitest.mjs run src/hooks/useNotifications.test.tsx \
+            src/hooks/useIaoRoutines.test.tsx src/lib/iao-routines-client.test.ts \
             --reporter=default --reporter=json --outputFile.json="$EVIDENCE_DIR/hooks.json" \
             2>&1 | tee "$EVIDENCE_DIR/hooks.log"
+
+      - name: Check the routines Edge handler with web platform types
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: node node_modules/typescript/bin/tsc -p tests/routines/edge-tsconfig.json
 
       - name: Reuse the installed Chrome or provision the locked browser
         id: browser_setup
@@ -158,6 +168,15 @@ jobs:
           set -euo pipefail
           node tests/notifications/browser/run.mjs 2>&1 | tee "$EVIDENCE_DIR/browser.log"
 
+      - name: Verify the IAO routines UI in the browser
+        id: routines_browser
+        if: ${{ !cancelled() && steps.browser_setup.outcome == 'success' }}
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          ROUTINES_BROWSER_EVIDENCE="$EVIDENCE_DIR/routines-browser" \
+            node tests/routines/browser/run.mjs 2>&1 | tee "$EVIDENCE_DIR/routines-browser.log"
+
       - name: Record every outcome and evidence digest
         if: always()
         env:
@@ -171,6 +190,7 @@ jobs:
           HOOKS_OUTCOME: ${{ steps.hooks.outcome }}
           BROWSER_SETUP_OUTCOME: ${{ steps.browser_setup.outcome }}
           BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+          ROUTINES_BROWSER_OUTCOME: ${{ steps.routines_browser.outcome }}
         run: |
           set -euo pipefail
           export EVIDENCE_DIR="${EVIDENCE_DIR:-$RUNNER_TEMP/notifications-quality}"
@@ -178,7 +198,7 @@ jobs:
           python3 - <<'PY'
           import hashlib, json, os, pathlib
           evidence = pathlib.Path(os.environ['EVIDENCE_DIR'])
-          names = ['checkout', 'evidence', 'node', 'deno', 'dependencies', 'server', 'native', 'hooks', 'browser_setup', 'browser']
+          names = ['checkout', 'evidence', 'node', 'deno', 'dependencies', 'server', 'native', 'hooks', 'browser_setup', 'browser', 'routines_browser']
           result = {
               'repository': os.environ['GITHUB_REPOSITORY'],
               'event_sha': os.environ['GITHUB_SHA'],

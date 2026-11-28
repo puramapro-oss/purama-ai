@@ -1,0 +1,115 @@
+{
+  "status": "PASS",
+  "startedAt": "2026-11-28T02:06:42.323Z",
+  "source": "/workspace/scratch/3eae3578944a/purama-ai",
+  "sourceSha256": {
+    "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/lib/safeNavigation.ts": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0",
+    "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+    "src/pages/NotificationSettings.tsx": "9097db5f679fbb2b82287c4332389c735301702305a7d3d54b8f55d515dd8dff",
+    "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "executionMode": "bundle built from current source files",
+  "artifactManifest": null,
+  "node": "v24.22.3",
+  "backend": "controlled in-memory Supabase and authentication fixtures",
+  "reactQueryAndSonner": "real installed packages",
+  "checks": [
+    {
+      "name": "real list renders owned notification and safe link on desktop and mobile",
+      "status": "PASS",
+      "viewport": [
+        "1365x900",
+        "390x844"
+      ],
+      "productionComponents": [
+        "Notifications",
+        "DashboardHeader",
+        "NotificationCenter"
+      ]
+    },
+    {
+      "name": "list failure is distinct from empty and retry filters non-owned rows",
+      "status": "PASS"
+    },
+    {
+      "name": "unsafe historical navigation is removed from real rendered links",
+      "status": "PASS"
+    },
+    {
+      "name": "real notification popover distinguishes errors and recovers with safe content",
+      "status": "PASS"
+    },
+    {
+      "name": "real Sonner notification is dismissed when the account changes",
+      "status": "PASS",
+      "schema": "purama_ai",
+      "uniqueChannels": 4
+    },
+    {
+      "name": "logout dismisses visible private notification toasts",
+      "status": "PASS"
+    },
+    {
+      "name": "late A callback remains rejected after an A-B-A account cycle",
+      "status": "PASS"
+    },
+    {
+      "name": "Realtime rejects foreign rows and removes unsafe toast action",
+      "status": "PASS"
+    },
+    {
+      "name": "real preference switches show confirmed false and persist a requested change",
+      "status": "PASS"
+    },
+    {
+      "name": "failed preference save preserves confirmed state and a later retry succeeds",
+      "status": "PASS"
+    },
+    {
+      "name": "preference load failure does not present enabled defaults and can recover",
+      "status": "PASS",
+      "recovered": true,
+      "misleadingEnabledControlsDuringFailure": 0
+    },
+    {
+      "name": "a late list response for A never replaces the visible B list",
+      "status": "PASS"
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "screenshots": [
+    "desktop-notifications.png",
+    "mobile-notifications.png",
+    "desktop-preferences.png",
+    "mobile-preferences.png",
+    "preferences-load-error.png"
+  ],
+  "bundleSha256": "faebcf37617efe97d495591d553676a49cdfdc8f7c2e8bb42683086f75a72879",
+  "cssSha256": "c5bb0fc9f91ebe4efabbbb99ac7c90ac825d6d1b38cbc98a323d65f9802b24d3",
+  "browserPackage": "1.65.1",
+  "executablePath": "/workspace/scratch/4374c4227430/midas-chromium-152/chromium",
+  "browserVersion": "152.0.7977.0",
+  "finishedAt": "2026-11-28T02:06:51.270Z",
+  "sourceSha256After": {
+    "src/hooks/useNotifications.ts": "3576b9e1fe3091a081b204cd0c74bbf7522449250ec7d34585190e3b1bcb0cbd",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/functions/_shared/notification-action-url.ts": "0dfee1d92eb62685c716091b6215e5ea57ab43c00d758f12cc489ff159c934a0",
+    "src/lib/safeNavigation.ts": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0",
+    "src/pages/Notifications.tsx": "0eb52c38611244a47e2c4d319375e2cc2fefe99da62fa3e9c9998329d95d8b2c",
+    "src/pages/NotificationSettings.tsx": "9097db5f679fbb2b82287c4332389c735301702305a7d3d54b8f55d515dd8dff",
+    "src/components/notifications/NotificationCenter.tsx": "94c5e4b318ee0ad933988f8e95bf5ba365860c8330ea27481cad63145164fc81",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/index.css": "a5841126fb99ea7ac3ae7fc919cefb99167dc76be7daae62406d14429723e92d",
+    "src/fonts.css": "8c6c7a6120b065e99f8b66ca7ad21e56e7af6063dea5c4f2ba8697e793e7b581",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e"
+  },
+  "sourceUnchanged": true
+}
