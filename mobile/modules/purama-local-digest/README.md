@@ -59,6 +59,60 @@ dans Hermes. La réception native doit vérifier séparément le module lié à 
 les vues `Uint8Array.subarray()`, le refus des autres TypedArray, la libération réelle,
 le hachage du modèle épinglé et la durée des blocs sur appareil.
 
+### Qualification du digest dans Hermes sur simulateur iOS
+
+Le harnais `mobile/lib/iao-digest-qualification.ts` réutilise la route de qualification
+existante et le module de production. Il requiert le flag de build exact
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION=1`, un UUID de campagne sous
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION_RUN_ID` et le commit complet sous
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION_COMMIT`. L'activation simultanée du harnais
+hors ligne Android est refusée. Un build normal n'importe pas cette fixture depuis
+la route, et le harnais refuse les flags ou identités invalides avant tout import natif
+ou fichier.
+
+La fixture exige iOS, Hermes et un bundle `main.jsbundle` embarqué dans l'application.
+Elle vérifie les vecteurs vide, `abc`, bloc maximal et million d'octets, les vues décalées,
+la consommation synchrone des données, les transitions d'état et les nettoyages.
+Les types incompatibles sont soumis directement à la méthode native `update()` : le garde de
+l'adaptateur JavaScript ne peut pas masquer un défaut de conversion Expo. Le harnais
+contrôle également l'adaptateur réellement utilisé par le vérificateur de pack.
+
+Le contrat JSON `mobile/lib/iao-digest-qualification-contract.json` définit le fichier
+de reçu et les quinze contrôles obligatoires. Le script hôte reçoit le fichier dans le
+conteneur du simulateur jetable et rapproche la campagne et le commit du bundle
+construit. Il sélectionne le runtime correspondant au SDK inscrit dans l'application
+compilée, puis un iPhone déclaré compatible par ce runtime. L'absence de cette cible
+fait échouer la qualification. Les lectures des conteneurs et le nettoyage sont bornés ;
+une lecture d'inventaire défaillante conserve sa première erreur et permet encore une
+tentative d'arrêt du seul UUID créé par la campagne, avant suppression et vérification.
+La fixture écrit et relit un temporaire dans le même dossier avant son
+déplacement vers le nom final ; elle refuse d'écraser un reçu existant. Un résultat
+de compilation, un reçu ancien, une exécution Metro ou un résultat
+partiel ne valent pas qualification native. Les tests Node du harnais simulent les
+frontières natives et de fichiers ; leurs résultats restent distincts du reçu réel iOS.
+
+Le build de qualification iOS entre dans la route existante par une redirection
+interne depuis l'accueil, réservée au flag digest exact et refusée si le mode hors
+ligne est actif. L'accueil ordinaire, Android et le web gardent leur parcours.
+Le harnais lance l'application une fois, sans ouvrir d'URL externe : la confirmation
+iOS d'un lien ne doit pas retenir une qualification du module SHA-256. Ce parcours
+ne constitue pas un test des liens externes et conserve les contrôles d'identité de
+la fixture, le reçu strict et le délai de 120 secondes.
+
+Le lancement conserve les sorties de l'application. En cas d'échec, le harnais recueille
+avant nettoyage une capture et un journal borné au simulateur possédé et au processus
+de l'application. Ces diagnostics ne remplacent jamais la première erreur ni le reçu
+strict. La route de qualification iOS signale son montage, ses étapes et les codes de
+rejet bornés ; les messages d'erreur complets et leur contenu ne sont pas journalisés.
+Un motif reconnu dans l'AppDelegate généré reste un contrôle statique : seul le reçu
+runtime peut prouver le chargement du bundle embarqué dans Hermes.
+
+Cette qualification porte sur le module digest et son adaptateur dans le simulateur.
+Elle n'exécute ni le modèle, ni SMARANA, ni l'appairage watchOS, et ne mesure pas les
+performances d'un appareil physique. La libération explicite est exercée, sans appel
+natif après `release()` ; elle ne prouve pas l'absence de fuite mémoire ou le calendrier
+du ramasse-miettes.
+
 ## API de référence
 
 La compatibilité vise Expo SDK 54 : `Class`, `SharedObject`, `sharedObjectDidRelease`,

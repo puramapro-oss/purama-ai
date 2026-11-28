@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "observedAt": "2026-11-28T01:49:32.543888+00:00",
+  "scope": "Qualify the existing PuramaLocalDigest module in Hermes on an iOS simulator using the existing native-watch Apple build.",
+  "baseCommit": "272074017383c9a8f8c817d3bdea945cf692b3bc",
+  "baseTree": "c37b51e061b7357b8b97fbdca57f183c34f220b1",
+  "localGuards": {
+    "status": "PASS",
+    "passed": 112,
+    "failed": 0,
+    "skipped": 0,
+    "node": "v24.22.3",
+    "typescript": "5.9.3",
+    "react": "19.1.0",
+    "reactTestRenderer": "19.1.0",
+    "logSha256": "62e635d0821f8a9bb516a974fc581d310892b0ec12e513e65a0c219f3983b8ca",
+    "command": "node --test --test-concurrency=1 mobile/tests/iao-digest-qualification.test.cjs mobile/tests/iao-digest-qualification-screen.test.cjs mobile/tests/iao-native-qualification.test.cjs mobile/tests/watch-native/digest-ios.test.cjs",
+    "limitation": "Synthetic native/file boundaries and host guards; not evidence of iOS native execution."
+  },
+  "independentReview": {
+    "status": "PASS",
+    "reviewedTests": 99,
+    "findingsResolved": [
+      "Preserve first failure if final host receipt cannot be written",
+      "Describe direct calls to native update(), not constructor arguments"
+    ]
+  },
+  "checks": {
+    "javascriptSyntax": "PASS",
+    "workflowYaml": "PASS",
+    "appleGuardsBeforePrebuild": "PASS",
+    "onlyOwnVercelBranchAdded": "PASS",
+    "whitespace": "PASS"
+  },
+  "nativeRuntime": {
+    "status": "NON_TESTE",
+    "acceptance": "Actual iOS Hermes receipt tied to run UUID and checked-out commit; all 15 checks true; packaged and installed HBC hashes equal; owned simulator cleanup PASS."
+  },
+  "gitNexus": {
+    "status": "PARTIEL",
+    "version": "1.6.12",
+    "impactAttemptedBeforeScreenEdit": true,
+    "analysis": "Linux install exited 137; Mac initial native abort, bounded native analysis worker-start failure, then 150-second analysis timeout. No completed candidate index.",
+    "impact": "Screen, adapter and native module queries failed or timed out. Newly added host main query timed out. No automatic risk level obtained.",
+    "detectChanges": {
+      "status": "NON_TESTE",
+      "stagedExit": 124,
+      "compareMainExit": 124,
+      "timeoutSecondsPerCall": 15,
+      "stagedLogSha256": "8be3c7557eb6d74f0f60ffeb8c3a1c8cfc17d4cd903ddc063db64b35976c13ee",
+      "compareLogSha256": "8be3c7557eb6d74f0f60ffeb8c3a1c8cfc17d4cd903ddc063db64b35976c13ee",
+      "scope": "Ten candidate files staged in the owned analysis clone; no completed index; no risk classification inferred."
+    },
+    "manualScope": "Reviewed qualification screen, qualification deeplink, existing local-route classification, unchanged native module and adapter, fixture and host guards. No production runtime, account, model download or memory authority changes."
+  },
+  "unchanged": [
+    "mobile/lib/iao-native-qualification.ts",
+    "mobile/lib/iao-local-digest.ts",
+    "mobile/modules/purama-local-digest/apple/PuramaLocalDigestModule.swift",
+    "mobile/lib/local-communication.ts",
+    "mobile/package.json",
+    "mobile/package-lock.json",
+    "mobile/scripts/verify-watch-native-apple-build.cjs"
+  ],
+  "limitations": [
+    "No claim of iOS inference or SQLCipher runtime qualification.",
+    "No physical device, pairing, haptic, garbage collection or production qualification.",
+    "Local Mac has no complete Xcode/simctl and insufficient space for an unplanned native setup. Hosted existing CI supplies the native environment.",
+    "The new branch disables Vercel deployment. No main merge or production enablement."
+  ],
+  "sourceSha256": {
+    ".github/workflows/mobile-native-watch.yml": "afd03e34436a64907c849e01aa0da96295dd2e36b9e5832cd2410019fab2f118",
+    "mobile/app/iao-qualification.tsx": "5052de55f7cee8ae857a2d0e8ffda4ba51eb40438210f7aba712a03d1b6de4f5",
+    "mobile/modules/purama-local-digest/README.md": "fe9464bd6b15a7897bb5418e3b394b64859ce1b5a7c0d3daa9bc9ba804789265",
+    "vercel.json": "b0afbf979c68d08e7fb3cbe1edf0512debc2bce49c8761924b75c2c9b6de73f8",
+    "mobile/lib/iao-digest-qualification-contract.json": "7c827ba881397dc1e04419f3068673c396656e952a1176973a388b7843f51e67",
+    "mobile/lib/iao-digest-qualification.ts": "fc872122232cdb8f08b0bbe864b54cccb65bccc1462b0e335e53558632768aad",
+    "mobile/scripts/qualify-digest-ios.cjs": "69e3515af49ffaec4dd52ec37ff8f40339b522c7ee38f12b1b31d0a6372901d0",
+    "mobile/tests/iao-digest-qualification-screen.test.cjs": "41f8ed934d9e2ce2e357d54e1d7b0ace003d7681ac492ecf032e893eb7b94917",
+    "mobile/tests/iao-digest-qualification.test.cjs": "7f9cc762d1e92b76d77ef8a3d3e5669cc0161f2f58c3a4cc0a5440da4f7a9ab3",
+    "mobile/tests/watch-native/digest-ios.test.cjs": "3b33acbed993a4d2bf8c736f513076a0cf92dc99921ce16befe5dbb95d876d1a"
+  }
+}

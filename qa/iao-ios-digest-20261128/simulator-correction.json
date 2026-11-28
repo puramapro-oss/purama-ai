@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-28T02:32:18.051806+00:00",
+  "baseCommit": "099ad453f6967e3fa41dc10f08bed60291f629de",
+  "observedFailure": {
+    "commit": "00c4a1f05e7ba56792f404b04157222954f12cb3",
+    "run": 46095129109,
+    "job": 140824625275,
+    "artifact": 15243767712,
+    "artifactSha256": "a5447ae0368537028574a328fef5976853fc4d8bbaf99fcba5c46626144029f4",
+    "compiledSdk": "iphonesimulator18.5",
+    "chosenRuntime": "iOS26.2",
+    "firstError": "command-error-installed-app-container",
+    "nativeRuntime": "NON_TESTE",
+    "cleanup": "FAIL"
+  },
+  "corrections": [
+    "Exact compiled SDK metadata governs runtime selection; device must be declared supported",
+    "Unknown cleanup inventory still permits one bounded shutdown of the owned UUID before deletion",
+    "Two container reads bounded at90seconds; cleanup inventory and deletion bounded at60seconds",
+    "Failure history, first error, strict receipt and verified absence gates preserved"
+  ],
+  "verification": {
+    "nodeGuardsPassed": 123,
+    "failed": 0,
+    "skipped": 0,
+    "counterexamples": "Two guard failures reproduced on00c and passed on corrected source",
+    "syntax": "PASS",
+    "whitespace": "PASS",
+    "nativeAfterCorrection": "NON_TESTE until new CI receipt"
+  },
+  "causality": "SDK/runtime mismatch is observed. Its causal role in CoreSimulator timeout is unproven; new native execution remains required. Skipped shutdown after failed inventory is established by code, receipt and counterexample.",
+  "gitNexus": {
+    "impactTargets": [
+      "selectSimulator",
+      "cleanupOwnedSimulator",
+      "main"
+    ],
+    "impactExitEach": 1,
+    "status": "PARTIEL",
+    "reason": "Candidate index unavailable; manual source/call-site diff reviewed. detect_changes attempted before publication."
+  },
+  "sourceSha256": {
+    "mobile/scripts/qualify-digest-ios.cjs": "fe313aa1a823e008dc281bdad690f256429c4abff106a7b4f0aff4ef17377663",
+    "mobile/tests/watch-native/digest-ios.test.cjs": "59e2a7c913fef0dc0e72af4fa21dc7b099e0b1e036efbc409095e24437e8d6a7",
+    "mobile/modules/purama-local-digest/README.md": "61253cc76b8d0460062875961525f17bbc00bab2af8e094f51e72c0b5e22ee64"
+  },
+  "evidenceSha256": {
+    "ios-host-correction-123.tap": "84a571335a1954ac83bdbdc65ad723707864883980e1e92a7d482e9f46213026",
+    "ios-host-counterexamples.json": "8add9042adc432168e0b7b2acdec8eb50b3182b5616a0835ae30f5e95a3fc49d"
+  },
+  "limits": [
+    "No production deployment or runtime composition",
+    "No iOS26.2/device/model/memory qualification claim",
+    "Export and native SHA-256 implementation are unchanged"
+  ]
+}
