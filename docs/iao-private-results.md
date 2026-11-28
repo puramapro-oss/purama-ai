@@ -1,5 +1,29 @@
 # Résultats privés de recherche, de synthèse, de dossier et de simulation
 
+## Réception complémentaire du 28 novembre : propriétaire du déclenchement
+
+Le déclenchement manuel transmis par `karta-trigger-custom` porte maintenant le
+propriétaire authentifié dans la route interne
+`/trigger-custom/<agentId>/owner/<userId>`. Le client ne fournit pas ce propriétaire :
+l’Edge le déduit de `auth.getUser`. L’API vérifie les UUID et la correspondance du
+propriétaire avant l’admission. Une ligne sans propriétaire reconnu est refusée.
+La clé d’intention, la déduplication, la queue et le reçu restent ceux du parcours
+existant. La route interne administrateur sans suffixe conserve son contrat.
+
+Livrer le moteur compatible avant toutes les instances Edge corrigées. Une API
+ancienne refuse le chemin avec suffixe avant toute admission ; l’Edge ne revient
+jamais automatiquement au chemin historique. La nouvelle liaison ne s’applique
+pas aux requêtes d’une ancienne Edge tant que celle-ci n’est pas mise à jour.
+Elle porte sur l’admission et ne crée aucune transaction supplémentaire entre
+la lecture de l’agent et une modification ultérieure des données. Le worker
+conserve sa vérification existante du propriétaire avant exécution.
+
+Ce renforcement est préventif, fondé sur la revue des sources. Le scénario de
+changement concurrent de propriétaire n’a pas été reproduit. Les contrôles de
+contrat utilisent un propriétaire fixe, les routes compatibles et les refus
+de données invalides ; les résultats figurent dans
+`qa/resolution-qualification-20261125/owner-scope-20261128.json`.
+
 ## Ce que ce changement rend utilisable
 
 Les agents créés par un utilisateur peuvent déjà exécuter `knowledge_search` et

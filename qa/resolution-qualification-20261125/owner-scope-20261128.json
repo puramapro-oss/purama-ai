@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-28",
+  "status": "PARTIEL",
+  "base": "a18e6a0ed78a891827b2fb76ce44b97fb110a854",
+  "branch": "fix/iao-trigger-owner-scope-20261128",
+  "owner": "/root",
+  "authority": "Continuation of the user-authorized IAO private resolution and manual-trigger corrections; current request to improve and make the existing delivery fully functional.",
+  "scope": "Preventive binding of the existing manual custom-agent admission to the owner authenticated by the Edge, preserving the existing queue identity and administrative route.",
+  "intended_files": [
+    "karta/src/api/server.ts",
+    "supabase/functions/karta-trigger-custom/index.ts",
+    "tests/karta-trigger-custom.test.mjs",
+    "karta/test/apiDeliveryIdentity.test.ts",
+    "docs/iao-private-results.md",
+    "qa/resolution-qualification-20261125/owner-scope-20261128.json"
+  ],
+  "acceptance": [
+    "Existing manual flow retains its canonical queue receipt and requestId",
+    "Owner-aware address is checked before enqueue",
+    "Existing administrative route remains compatible",
+    "An old API refuses the new address before enqueue; no automatic fallback",
+    "No new storage, runtime, identity issuer, worker or migration",
+    "Relevant API and Edge non-regressions receive the exact changed sources"
+  ],
+  "limits": [
+    "The concurrent owner-change scenario was denied by automatic sub-agent security review and is not reproduced or rerouted",
+    "The proposed safeguard is based on static source review, not a demonstrated production exploit",
+    "Production source adoption and general IAO runtime composition remain separate prerequisites"
+  ],
+  "simulations": {
+    "old_api_fixed_owner_capability_refusal": {
+      "status": "PASS",
+      "edge_status": 502,
+      "queue_admissions": 0,
+      "internal_attempts": 1,
+      "concurrent_owner_change": false
+    },
+    "previous_edge_suite": {
+      "status": "PASS",
+      "tests": 56,
+      "source": "unmodified baseline a18e6a0",
+      "historical": false
+    }
+  },
+  "previous_27_files_preserved_at_start": true,
+  "qualified_at_utc": "2026-11-28T02:01:02.943668+00:00",
+  "qualification_kind": "LOCAL_SOURCE_AND_TARGETED_TESTS_NOT_PRODUCTION",
+  "source_sha256": {
+    "karta/src/api/server.ts": "89467b8c37568e0ed5a3a4f6e93270804a168d3769d8520daedc5c68a13874c9",
+    "supabase/functions/karta-trigger-custom/index.ts": "e1975b2204d78e6124a861d922887ae2e046bde8c1be98bc3c125a04e5405c96",
+    "tests/karta-trigger-custom.test.mjs": "58436a466f84e3eadf056db05efcf8b0f05cda6602aa19f365edde39b147cc59",
+    "karta/test/apiDeliveryIdentity.test.ts": "9c9f6086b8b9d953d13848e3f0a9fa7143a0fbf3679609d502a124ea58eec4e5",
+    "docs/iao-private-results.md": "b647509d73956e305315b09fc5deca0f2e8e1ab3492bec68132d970169c9cac0"
+  },
+  "verification": {
+    "edge_targeted": {
+      "status": "PASS",
+      "tests": 56,
+      "failures": 0,
+      "skipped": 0,
+      "test_file": "tests/karta-trigger-custom.test.mjs"
+    },
+    "api_targeted": {
+      "status": "PASS",
+      "tests": 27,
+      "files": [
+        "test/apiDeliveryIdentity.test.ts",
+        "test/apiSafety.test.ts",
+        "test/runtimeApiReadiness.test.ts"
+      ],
+      "failures": 0
+    },
+    "typecheck_local": {
+      "status": "NON TESTE",
+      "result": "Interrupted with exit 137 before a compiler result; including a sequential 768 MiB old-space bound. No successful typecheck claimed."
+    },
+    "build_local": {
+      "status": "NON TESTE",
+      "result": "Interrupted with exit 137 before a compiler result."
+    },
+    "independent_static_review": {
+      "status": "PASS",
+      "scope": "Exact five changed source/document files, no other lot modified; no dynamic test by reviewer."
+    },
+    "git_diff_check": {
+      "status": "PASS"
+    },
+    "ci": {
+      "status": "NON TESTE",
+      "evidence_location": "Pull request checks at the exact published commit; no CI result is inferred in this local receipt."
+    },
+    "static_edge_package": {
+      "status": "PASS",
+      "exit": 0,
+      "started": "2026-11-28T01:59:23.543635+00:00",
+      "checks": [
+        {
+          "name": "Every local dependency exists and stays inside the two canonical source roots",
+          "status": "PASS"
+        },
+        {
+          "name": "Only the two expected canonical modules leave functions, and both are import-free leaves",
+          "status": "PASS"
+        },
+        {
+          "name": "Every local import resolves to its exact source under the two proposed virtual mounts",
+          "status": "PASS"
+        },
+        {
+          "name": "Functions-only mounting rejects chat and generation for the exact missing sources; custom trigger remains closed",
+          "status": "PASS"
+        },
+        {
+          "name": "All module and checker SHA-256 fingerprints remain unchanged across the inspection",
+          "status": "PASS"
+        }
+      ],
+      "modules": 13,
+      "source_fingerprints": {
+        "qa/resolution-qualification-20261125/edge-package-check.mjs": "76b27acfb45b3116c7457239f90132301b87e453d6cf1fb039b776499c2b5f52",
+        "supabase/functions/creator-agent-chat/index.ts": "557f2538ea3cbdbba81e8ac9410e6bc38a46d365f55c2f12844fe2a71a5d3dfa",
+        "supabase/functions/_shared/response.ts": "c9858646a6e6fc9ac037175229c49977ebc8a9c53aa89ba625c8bb734c71ff0a",
+        "supabase/functions/_shared/rate-limit.ts": "493a6740b995811637ca0a4e9bc497c575cafd91d0374bb34387c03c0118d757",
+        "supabase/functions/_shared/validation.ts": "e796b7853b6dd2bb9fcc6b6b3234014744b8b604739033464cd797d203ab41fe",
+        "supabase/functions/_shared/private-tool-results.ts": "eb44aaa019b8efbb312e7db12f06fb78d1a9552bb5e1b245cfccd0df60e8a05a",
+        "karta/src/knowledge/private-result-view.ts": "b28d1610b341a19fc02be713812b9b60db97a7edaae1ac2949ff9447ed6e0848",
+        "supabase/functions/_shared/assistant-policy.ts": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb",
+        "karta/src/claude/assistant-policy.ts": "96007c92a42467b963e9e2766fc0540dab5f1c8e2030c3e74eef504b2feaeecd",
+        "supabase/functions/_shared/assistant-response.ts": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714",
+        "supabase/functions/creator-agent-generate/index.ts": "026dc88c03bec83d7f778938af70c8a1a097b624392bd90c5a529c80b89a7bc8",
+        "supabase/functions/karta-trigger-custom/index.ts": "e1975b2204d78e6124a861d922887ae2e046bde8c1be98bc3c125a04e5405c96",
+        "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+        "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+      },
+      "limits": "Static source package check only; not an executed Deno container or deployment."
+    }
+  },
+  "interrupted_attempts": [
+    {
+      "step": "npm typecheck launcher",
+      "result": "ENOSPC before compiler execution; not a product test failure."
+    },
+    {
+      "step": "direct typecheck/build",
+      "exit": 137,
+      "status": "NON TESTE"
+    },
+    {
+      "step": "first static package wrapper",
+      "exit": -9,
+      "status": "NON TESTE",
+      "result": "An existing historical JSON was observed after termination and rejected as current evidence. A fresh receipt subsequently completed with exit 0 and verified current Edge SHA-256. The historical file was restored byte for byte."
+    }
+  ],
+  "graph_analysis": {
+    "status": "PARTIEL",
+    "pre_edit_impact": {
+      "server_handleRequest": "LOW on historical graph; one direct caller",
+      "edge_entry": "UNKNOWN on historical graph; absence of edges is not proof of no use"
+    },
+    "fresh_index": "Not qualified: initial timeout, worker readiness failure, then bounded retry with the diagnostic timeout setting also timed out. No full graph PASS.",
+    "independent_current_source_trace": "Edge to API admission to existing queue identity/receipt verified statically."
+  },
+  "deployment_order": [
+    "Compatible KARTA API first",
+    "All corrected Edge instances second",
+    "Verify authenticated manual flow before production readiness claim"
+  ],
+  "production_status": "BLOQUE"
+}
