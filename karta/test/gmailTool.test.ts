@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const today = new Date().toISOString().slice(0, 10);
 let reserved = 0;
 const rpc = vi.fn(async (name: string, params: Record<string, unknown>) => {
+  if (name === "partner_direct_send_guard") return { data: { status: "allowed", reason: null }, error: null };
   if (name !== "karta_reserve_daily_counter") return { data: null, error: { message: "unexpected rpc" } };
   if (params.p_day !== today || params.p_counter_key !== "gmail_send") {
     return { data: null, error: { message: "invalid counter request" } };
@@ -19,11 +20,15 @@ vi.mock("../src/lib/gmail-token-crypto.js", () => ({
 
 vi.mock("../src/db/supabase.js", () => ({
   supabase: {
-    rpc,
+    rpc: (...args: Parameters<typeof rpc>) => {
+      const request = rpc(...args);
+      return Object.assign(request, { abortSignal: () => request });
+    },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
+      abortSignal: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn(async () => ({
         data: {
           gmail_refresh_token: "refresh-token",
@@ -41,7 +46,9 @@ vi.mock("../src/config.js", () => ({
 }));
 
 const { buildRawEmail, gmailSendTool } = await import("../src/tools/gmail.js");
-const ctx = { userId: "user-1", agentType: "email" as const, mode: "live" as const };
+// Standalone messages remain available to a separately authorized custom role.
+// The inbox reply roles must now provide parent identities (covered in gmailReply.test.ts).
+const ctx = { userId: "user-1", agentType: "custom:standalone-mail" as const, mode: "live" as const };
 
 beforeEach(() => {
   reserved = 0;
@@ -61,7 +68,8 @@ describe("gmail_send hardening", () => {
       messageId: "message-1",
     });
     expect(reserved).toBe(6);
-    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc.mock.calls.filter(([name]) => name === "karta_reserve_daily_counter")).toHaveLength(1);
+    expect(rpc.mock.calls.filter(([name]) => name === "partner_direct_send_guard")).toHaveLength(2);
   });
 
   it("bloque lorsque la réservation atomique n'accorde plus de place", async () => {

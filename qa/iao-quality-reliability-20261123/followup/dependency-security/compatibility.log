@@ -1,0 +1,20 @@
+
+> vite_react_shadcn_ts@0.0.0 test:dependencies
+> node --test tests/dependency-compat.cjs
+
+(node:26) [DEP0128] DeprecationWarning: Invalid 'main' field in '/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/node_modules/opentimestamps/package.json' of 'open-timestamps.js'. Please either fix that or report it to the module author
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✔ OpenTimestamps can load with its HTTP dependencies (338.198225ms)
+✔ calendar whitelist accepts known hosts and rejects lookalikes (2.280651ms)
+✔ pending proof round-trips without losing its digest or calendar (2.748045ms)
+✔ Bitcore retains exact integer arithmetic and byte conversion (0.649437ms)
+✔ HTTP fork preserves promise, binary body, cookies and rejection contracts (39.515184ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 485.737142
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.

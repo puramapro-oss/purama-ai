@@ -1,0 +1,32 @@
+[
+  {
+    "file": "qa/iao-provider-boundaries-20261123/tts-red.txt",
+    "formattingOnly": "Trailing spaces/tabs removed from log lines for versioned diff hygiene; outcomes and diagnostics unchanged.",
+    "beforeSha256": "4a6cac79f67d8cd20de0ddce9dcf6355aa20189e0c01218a779720f627811a33",
+    "afterSha256": "d412442ba242f4bc4274023b192b3cafee48503cbde543e6eb5adf51bbab9026"
+  },
+  {
+    "file": "qa/iao-provider-boundaries-20261123/apollo-green.log",
+    "formattingOnly": "Trailing spaces/tabs and surplus blank EOF lines removed; outcomes and diagnostics unchanged.",
+    "beforeSha256": "767512651166fa985111688a78414ef91ba1eb4e22797d230d5128390d7e6d20",
+    "afterSha256": "3bf87cf2c38fe3cde84529a46d5d89a9c7e78704ef3aeb906ff85b09a3d08eb7"
+  },
+  {
+    "file": "qa/iao-provider-boundaries-20261123/apollo-karta-typecheck-512m.log",
+    "formattingOnly": "Trailing spaces/tabs and surplus blank EOF lines removed; outcomes and diagnostics unchanged.",
+    "beforeSha256": "4359f08d6e7bc17bf4c8f31b341bcad8cd47163d0db7b430109ed3ace51418e1",
+    "afterSha256": "5faebf64268ed0e1da02a2e0399a999bf2b2e8b47efce66f33a142a69596c716"
+  },
+  {
+    "file": "qa/iao-provider-boundaries-20261123/apollo-red.log",
+    "formattingOnly": "Trailing spaces/tabs and surplus blank EOF lines removed; outcomes and diagnostics unchanged.",
+    "beforeSha256": "a67632d587eb4093f79d4e802761ca5c83b59794b4e3c09f35b70627aa506bf8",
+    "afterSha256": "f9e449fe686ee9373d3b6b6cb7e93cf3ee1369a76a0945645c5f9fe94d1c972b"
+  },
+  {
+    "file": "qa/iao-provider-boundaries-20261123/auth-identity-red.txt",
+    "formattingOnly": "Trailing spaces/tabs or extra final blank lines only; outcomes unchanged.",
+    "beforeSha256": "bf044ae8ae437138522f51427be5c4ca66faea06ba24b944ac99282efc5e20d2",
+    "afterSha256": "a1b18d81e70b26923dbcc278c4cf74bfa336f64b7a8b8fda7b55773ff9be7f9c"
+  }
+]

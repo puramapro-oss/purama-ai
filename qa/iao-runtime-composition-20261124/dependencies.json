@@ -1,0 +1,14 @@
+[
+  {
+    "target": "/workspace/scratch/6431e6d17379/iao-runtime-composition-20261124/node_modules",
+    "type": "directory link"
+  },
+  {
+    "target": "/workspace/scratch/6431e6d17379/iao-runtime-composition-20261124/karta/node_modules",
+    "type": "missing children linked",
+    "added": 163,
+    "preserved": [
+      ".vite"
+    ]
+  }
+]

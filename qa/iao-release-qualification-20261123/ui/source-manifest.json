@@ -1,0 +1,9 @@
+{
+  "base": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "files": {
+    "src/lib/consultation-client.ts": "eb2401c65fc7d370afb45aeb72c1fe9a187295f1d8c98c165be9c753e43018fe",
+    "src/lib/consultation-client.test.ts": "bf6ed93f03f6706e785966a505e4155427b51f4902954687281196258dddf82d",
+    "tests/chat/consultation.spec.ts": "02fa254969a5c9e79471a747edb08f5d96cdacf8db6b03aa64750692f70bfc43",
+    "tests/chat/README.md": "6a9505a763c67361f3fb20ab4774e06d7c19dfdcbea311637c464c4874ea66f3"
+  }
+}

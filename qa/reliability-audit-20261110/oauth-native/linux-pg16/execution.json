@@ -1,0 +1,21 @@
+{
+  "command": [
+    "bash",
+    "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/reliability-audit-20261110/oauth-native/run-native.sh",
+    "--migration",
+    "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/supabase/migrations/20261110233000_oauth_connection_states.sql",
+    "--helper",
+    "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/supabase/functions/_shared/oauth-state.ts",
+    "--fixture-root",
+    "/workspace/scratch/1d67ec79327f/oauth-native-linux-portability-clusters",
+    "--output",
+    "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/reliability-audit-20261110/oauth-native/linux-pg16"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+  "env": {
+    "PG_BIN": "/workspace/scratch/682d6789af78/sutra-runtime-20261110/postgres16/usr/lib/postgresql/16/bin"
+  },
+  "uid": 1000,
+  "exit_code": 0,
+  "seconds": 5.724
+}

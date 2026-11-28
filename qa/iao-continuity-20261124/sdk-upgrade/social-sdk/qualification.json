@@ -1,0 +1,50 @@
+{
+  "status": "PASS local correction and independent review; final CI pending",
+  "sourceBase": "732f77445a24172c11a5be77fa9564d2779e6700",
+  "modifiedProductFiles": 0,
+  "modifiedTestFixtures": 2,
+  "originalScenariosPreserved": 14,
+  "additionalMultirowRefusals": 2,
+  "before": {
+    "pass": 11,
+    "fail": 3
+  },
+  "after": {
+    "pass": 16,
+    "fail": 0,
+    "ignored": 0
+  },
+  "independentSdkProbe": {
+    "methods": [
+      "GET",
+      "PATCH",
+      "POST"
+    ],
+    "rowCounts": [
+      0,
+      1,
+      2
+    ],
+    "pass": 9,
+    "requestsEach": 1
+  },
+  "privateExactReceipt": {
+    "head": "732f77445a24172c11a5be77fa9564d2779e6700",
+    "publicHashesMatched": 131,
+    "denoRoutesPass": 4,
+    "sdkTestsPass": 8,
+    "canonicalFilesUnchanged": 9,
+    "includedInArchive": "ci-social-sdk-attempt.zip"
+  },
+  "graph": {
+    "staged": "8 changed files, no indexed symbol overlap; test files absent from limited graph, UNKNOWN is not zero impact",
+    "compareMain": "Complete consolidation divergence; see compare-main.txt",
+    "attemptFailure": "Unqualified local main ref absent, preserved in compare-main-ref-failure.txt; successful comparison uses observed refs/remotes/origin/main",
+    "indexLimit": "FTS unavailable, targeted index only"
+  },
+  "limits": [
+    "Final public CI and matching private receipt required before merge",
+    "Real SDK with synthetic HTTP; no hosted social provider or publication qualified",
+    "Only consolidation branch is eligible; no main merge or deployment"
+  ]
+}

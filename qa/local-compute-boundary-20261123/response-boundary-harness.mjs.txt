@@ -1,0 +1,143 @@
+// Focused local acceptance tests. HTTP transport is intercepted; no sockets or provider calls.
+// Native integration cases remain in karta/test/localComputeFabricResponseBoundary.test.ts.
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import { EventEmitter } from 'node:events';
+import { PassThrough } from 'node:stream';
+import { afterEach, mock, test } from 'node:test';
+import { pathToFileURL } from 'node:url';
+import { join } from 'node:path';
+
+const { LocalComputeFabricProvider } = await import(pathToFileURL(join(
+  process.env.IAO_REVIEW_ROOT, 'karta/src/integrations/localComputeFabricProvider.ts',
+)).href);
+const FAILURE = 'memory-unavailable:compute-fabric';
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+const input = (signal) => ({
+  requestId: '11111111-1111-4111-8111-111111111111',
+  idempotencyKey: `iao:${'a'.repeat(64)}`, payloadDigest: 'b'.repeat(64),
+  message: 'Bonjour', context: { sources: [] }, signal,
+});
+const receipt = (text = 'local answer') => ({
+  text, engine: 'fixture', model: 'local', protocol_version: 2,
+  idempotency_key: input().idempotencyKey, payload_digest: input().payloadDigest,
+  execution: { locality: 'local_only', paid_fallback_used: false, accepted_max_tokens: 1024, accepted_concurrency: 1 },
+});
+
+afterEach(() => mock.restoreAll());
+
+function transport(write) {
+  const calls = [];
+  mock.method(http, 'request', (options, receive) => {
+    calls.push(options);
+    const request = new EventEmitter();
+    let response;
+    request.destroy = (error) => {
+      response?.destroy(error);
+      queueMicrotask(() => request.emit('error', error));
+      return request;
+    };
+    request.end = () => {
+      queueMicrotask(() => {
+        response = new PassThrough();
+        response.statusCode = 200;
+        receive(response);
+        write(response);
+      });
+      return request;
+    };
+    return request;
+  });
+  return calls;
+}
+
+function complete(signal, timeoutMs = 5_000) {
+  return new LocalComputeFabricProvider({ socketPath: '/no-real-socket/fixture.sock', timeoutMs }).complete(input(signal));
+}
+
+for (const [name, invalid] of [['isolated continuation', [0x80]], ['truncated sequence', [0xc3]], ['overlong sequence', [0xc0, 0xaf]]]) {
+  test(`rejects ${name} UTF-8 instead of silently replacing it`, async () => {
+    const encoded = JSON.stringify(receipt('before|after'));
+    const separator = encoded.indexOf('|');
+    const malformed = Buffer.concat([
+      Buffer.from(encoded.slice(0, separator)), Buffer.from(invalid), Buffer.from(encoded.slice(separator + 1)),
+    ]);
+    const calls = transport((response) => response.end(malformed));
+    await assert.rejects(complete(), { message: FAILURE });
+    assert.equal(calls.length, 1);
+  });
+}
+
+test('accepts valid Unicode split inside a multibyte sequence', async () => {
+  const text = 'Bonjour 🌍 — très bien';
+  const encoded = Buffer.from(JSON.stringify(receipt(text)));
+  const split = encoded.indexOf(Buffer.from('🌍')) + 2;
+  transport((response) => {
+    response.write(encoded.subarray(0, split));
+    queueMicrotask(() => response.end(encoded.subarray(split)));
+  });
+  assert.deepEqual(await complete(), { text, modelVersion: 'fixture/local' });
+});
+
+for (const extra of [0, 1]) {
+  test(`preserves exact byte cap at maximum + ${extra}`, async () => {
+    const overhead = Buffer.byteLength(JSON.stringify(receipt('')));
+    const text = 'x'.repeat(MAX_RESPONSE_BYTES - overhead + extra);
+    const encoded = Buffer.from(JSON.stringify(receipt(text)));
+    assert.equal(encoded.length, MAX_RESPONSE_BYTES + extra);
+    transport((response) => response.end(encoded));
+    if (extra) await assert.rejects(complete(), { message: FAILURE });
+    else assert.equal((await complete()).text.length, text.length);
+  });
+}
+
+for (const receivedAt of [99, 100]) {
+  test(`absolute receipt boundary at ${receivedAt} milliseconds`, async () => {
+    let now = 0;
+    mock.method(performance, 'now', () => now);
+    transport((response) => { now = receivedAt; response.end(JSON.stringify(receipt())); });
+    if (receivedAt === 100) await assert.rejects(complete(undefined, 100), { message: FAILURE });
+    else assert.deepEqual(await complete(undefined, 100), { text: 'local answer', modelVersion: 'fixture/local' });
+  });
+}
+
+test('expiry during JSON validation never confirms the receipt', async () => {
+  let now = 0;
+  mock.method(performance, 'now', () => now);
+  const encoded = JSON.stringify(receipt());
+  const parse = JSON.parse;
+  mock.method(JSON, 'parse', (text, reviver) => {
+    const result = parse(text, reviver);
+    if (text === encoded) now = 100;
+    return result;
+  });
+  transport((response) => response.end(encoded));
+  await assert.rejects(complete(undefined, 100), { message: FAILURE });
+});
+
+test('expiry across parsed-response promise handoff never confirms the receipt', async () => {
+  let now = 0;
+  mock.method(performance, 'now', () => now);
+  const encoded = JSON.stringify(receipt());
+  const parse = JSON.parse;
+  mock.method(JSON, 'parse', (text, reviver) => {
+    const result = parse(text, reviver);
+    if (text === encoded) queueMicrotask(() => { now = 100; });
+    return result;
+  });
+  transport((response) => response.end(encoded));
+  await assert.rejects(complete(undefined, 100), { message: FAILURE });
+});
+
+test('cancellation across parsed-response promise handoff remains private and terminal', async () => {
+  const controller = new AbortController();
+  const encoded = JSON.stringify(receipt());
+  const parse = JSON.parse;
+  mock.method(JSON, 'parse', (text, reviver) => {
+    const result = parse(text, reviver);
+    if (text === encoded) queueMicrotask(() => controller.abort(new Error('private-cancellation-reason')));
+    return result;
+  });
+  transport((response) => response.end(encoded));
+  await assert.rejects(complete(controller.signal), { message: 'memory-unavailable:cancelled' });
+});

@@ -1,0 +1,11 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+
+ Test Files  5 passed (5)
+      Tests  87 passed (87)
+   Start at  20:55:37
+   Duration  4.88s (tests 86%, transform 7%, import 5%, setup 1%)
+
+    Isolate  5 workers spawned · ~193ms startup each (spawn + environment, per file)
+             at least ~289ms faster with isolate: false — reuses workers across files instead of one per file

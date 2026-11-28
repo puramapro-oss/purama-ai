@@ -13,7 +13,7 @@ export default function PolitiqueConfidentialite() {
       </header>
       <main className="container mx-auto px-4 py-16 max-w-3xl prose prose-invert">
         <h1 className="text-3xl font-bold mb-8 gradient-text-cyan-purple">Politique de Confidentialité</h1>
-        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : février 2025</p>
+        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : 11 novembre 2026</p>
 
         <h2>1. Responsable de traitement</h2>
         <p><strong>[À COMPLÉTER - Raison sociale]</strong>, dont le siège social est situé au <strong>[À COMPLÉTER - Adresse]</strong>, est responsable du traitement de vos données personnelles.</p>
@@ -46,7 +46,7 @@ export default function PolitiqueConfidentialite() {
           <li>Données de compte : durée de la relation contractuelle + 3 ans</li>
           <li>Données de paiement : 10 ans (obligations comptables)</li>
           <li>Données de connexion : 12 mois</li>
-          <li>Cookies : 13 mois maximum</li>
+          <li>Cookies et autres traceurs : la durée dépend du traceur et de sa finalité. Consultez notre <Link to="/politique-cookies" className="text-primary hover:underline">Politique de Cookies</Link> pour les informations disponibles.</li>
         </ul>
 
         <h2>5. Destinataires des données</h2>
@@ -58,7 +58,9 @@ export default function PolitiqueConfidentialite() {
         </ul>
 
         <h2>6. Transferts hors UE</h2>
-        <p>Certaines données peuvent être transférées vers les États-Unis. Ces transferts sont encadrés par les Clauses Contractuelles Types approuvées par la Commission Européenne, garantissant un niveau de protection adéquat.</p>
+        <p>Un transfert de données personnelles vers un pays situé hors de l'Espace économique européen doit reposer sur un mécanisme autorisé par le chapitre V du RGPD. Une décision d'adéquation et des clauses contractuelles types constituent des mécanismes distincts.</p>
+        <p>Lorsqu'un transfert repose sur des clauses contractuelles types, leur champ, les parties concernées et les circonstances du transfert doivent être examinés ; des mesures supplémentaires peuvent être nécessaires. L'utilisation de ces clauses ne constitue pas, à elle seule, une garantie automatique d'adéquation du pays de destination.</p>
+        <p><strong>[À COMPLÉTER - Transferts réellement effectués : destinataires, pays, garanties applicables et modalités pour en obtenir une copie]</strong></p>
 
         <h2>7. Vos droits</h2>
         <p>Conformément au RGPD (articles 15 à 22), vous disposez des droits suivants :</p>

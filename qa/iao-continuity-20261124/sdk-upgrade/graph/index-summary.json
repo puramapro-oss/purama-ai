@@ -1,0 +1,16 @@
+{
+  "nodes": 1068,
+  "edges": 2627,
+  "clusters": 62,
+  "flows": 39,
+  "scope": "targeted; index-scope.txt",
+  "fts": false,
+  "processesTruncated": true,
+  "finalSourceIncludes": [
+    "auth-client.spec.ts",
+    "sdk-init.ts",
+    "lifecycle.spec.ts",
+    "transport.ts"
+  ],
+  "manualSdkImportRisk": "HIGH (69 product importers)"
+}

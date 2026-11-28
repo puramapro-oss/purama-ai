@@ -1,0 +1,170 @@
+{
+  "captured_at_utc": "2026-11-24T20:43:51.831919+00:00",
+  "logs": [
+    {
+      "path": "build-container-832.log.gz",
+      "decoded_sha256": "06e0b2e766bfcee71f11f9810329ac4b0348e587a54b08467d43dc1d13e2bb7c",
+      "decoded_bytes": 1588
+    },
+    {
+      "path": "build-final.log.gz",
+      "decoded_sha256": "10ae003b01bad981ccdbeb7aee3c376a9b217a1cd3620a34224e2f201ac9111d",
+      "decoded_bytes": 1608
+    },
+    {
+      "path": "build-jitless-final.log.gz",
+      "decoded_sha256": "977a5432b9a276149051fb56313299e83e8c0e8c2cea92851d4c9a3340f99d80",
+      "decoded_bytes": 15391
+    },
+    {
+      "path": "build.log.gz",
+      "decoded_sha256": "9eaf02acd894e25517227981b8a735ace88c4fb75fbc4f52abf1a1cc0c518da9",
+      "decoded_bytes": 1471
+    },
+    {
+      "path": "gitnexus-context-find.stderr.log.gz",
+      "decoded_sha256": "fdaa1dc1d8c11afd778385bfe6237fba28f57dfedc5fd426f89730efb823c29b",
+      "decoded_bytes": 339
+    },
+    {
+      "path": "gitnexus-final-compare-main.log.gz",
+      "decoded_sha256": "3e389892b6e2436c21df610304250a255e1c3d7d4178787b7a7f48bf19f18121",
+      "decoded_bytes": 2664
+    },
+    {
+      "path": "gitnexus-final-index.log.gz",
+      "decoded_sha256": "fef0adcf58b3234bf92ef1428b84efa7a845b653820348c769f906b7dbd5f3bc",
+      "decoded_bytes": 1528
+    },
+    {
+      "path": "gitnexus-final-staged.log.gz",
+      "decoded_sha256": "01b0235f6f8877526689f9b0906d38cada4cd356f0e7a2f5e6059c8ffb02d3a3",
+      "decoded_bytes": 2408
+    },
+    {
+      "path": "gitnexus-impact-edge.stderr.log.gz",
+      "decoded_sha256": "e4882d00758a922e08153160c3cb97b3805a265dba539bcad07e45f8979b672e",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-impact-entry.stderr.log.gz",
+      "decoded_sha256": "c5861b946233e12baee2c4044723ef740de1ca0c18f40d656679ca2eefcc2efb",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-impact-find.stderr.log.gz",
+      "decoded_sha256": "7002dd449561536b0a24e71a4dbec5f1f2783c680a57c346110d636b2e63ca27",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-impact-ui.stderr.log.gz",
+      "decoded_sha256": "410d398a5f3c15a3378ad4f0275fc6395eeec20023dc7d12f9a34379a907a1ae",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-query.stderr.log.gz",
+      "decoded_sha256": "67cd2024557e8e7da7b99d7c7b284e403ce07ca47c0f8fa8a8db6f98c81ea4b1",
+      "decoded_bytes": 337
+    },
+    {
+      "path": "gitnexus-review-impact-client.stderr.log.gz",
+      "decoded_sha256": "13604932010fad6ef6ea2127c63b340a148e4d37bf85c9ca6f28d89710d8cbb8",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-entry.stderr.log.gz",
+      "decoded_sha256": "8246d54d61be2b5546f4256186c5b1003c9ca675d81659b9efa0fb2fbef30975",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-extraction.stderr.log.gz",
+      "decoded_sha256": "ac6a3f7088fcec416164a193717f961ae0100cbcf3c5262e5725100f51f64ecb",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-policy-fixture.stderr.log.gz",
+      "decoded_sha256": "b24e8279c01cd4c020d0227e3953e501e2a914c096df74ae0748b430dfcc1eb0",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-search-sources.stderr.log.gz",
+      "decoded_sha256": "c43cc2d1d5212e87b0b66778d4f1481e0f7b47cfaf6342e5092b783026e409f0",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-source-emails.stderr.log.gz",
+      "decoded_sha256": "5fbaf3b69da9bdc608d733a931ac590a9e4068654f90f8b0470e9d25f2a8e65e",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "gitnexus-review-impact-source-prospects.stderr.log.gz",
+      "decoded_sha256": "d5bcda0a9df4c5a6ae5e3311beb16271d0a27b6548546f2b3a19654c4d820be3",
+      "decoded_bytes": 338
+    },
+    {
+      "path": "native-typecheck-final-linux.log.gz",
+      "decoded_sha256": "49aba8b0ea597bfaa954e685cd5e8e5a678d4a003e8c8f8d7d4fa9af36f6c870",
+      "decoded_bytes": 3531
+    },
+    {
+      "path": "native-typecheck.log.gz",
+      "decoded_sha256": "09a4fdada896923cb5b9bb63b837b7f75a2c26b573cc70c01d2fa8b4535776f6",
+      "decoded_bytes": 4116
+    },
+    {
+      "path": "typecheck-client-initial.log.gz",
+      "decoded_sha256": "33fdf021398d62f4ef2a2d384f6f49c728df7a23f0edbcf49501f23848fa1d7c",
+      "decoded_bytes": 638
+    },
+    {
+      "path": "typecheck-final.log.gz",
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decoded_bytes": 0
+    },
+    {
+      "path": "typecheck-sequential.log.gz",
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decoded_bytes": 0
+    },
+    {
+      "path": "typecheck.log.gz",
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decoded_bytes": 0
+    },
+    {
+      "path": "ui-discovery-before.log.gz",
+      "decoded_sha256": "441e1ad32134ec1776fe75b185dbf2877addc7ffeb0ec3f8555061c95dfffdc0",
+      "decoded_bytes": 198062
+    },
+    {
+      "path": "ui-discovery-commit-before.log.gz",
+      "decoded_sha256": "b5781e372a9dfd898729dcf0b1440f572a861c1f0d71ee5c3cba3c470ff03ba6",
+      "decoded_bytes": 4852
+    },
+    {
+      "path": "ui-discovery-final.log.gz",
+      "decoded_sha256": "bfbef32a8906e4e9bba642d98e509a11b19cc9e2f2be49997626011ccdab9489",
+      "decoded_bytes": 12616
+    },
+    {
+      "path": "ui-discovery-lint.log.gz",
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decoded_bytes": 0
+    },
+    {
+      "path": "ui-discovery-owned-form-lint.log.gz",
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decoded_bytes": 0
+    },
+    {
+      "path": "ui-discovery-owned-form.log.gz",
+      "decoded_sha256": "34f1218189d2533baf120337f724a2f8c2f574de2bb036dd07fa8a3e6b69a3bd",
+      "decoded_bytes": 12834
+    },
+    {
+      "path": "ui-discovery-select-only.log.gz",
+      "decoded_sha256": "16c87567af1cc0f6bb7f0a4e956df7ad791edcab5d51b4274253ae01a5acf653",
+      "decoded_bytes": 27559
+    }
+  ]
+}

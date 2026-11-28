@@ -1,0 +1,50 @@
+{
+  "status": "PASS private reception; final public CI and exact-final-head private readback pending",
+  "canonicalMatchingSHA256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+  "canonicalSourceFilesUnchanged": 9,
+  "publicInputHashesVerified": 131,
+  "sourceBase": "58536f32f01dd912a1ab0472cc48efec59bf2742",
+  "oneExpectedTestChange": "71f0d3e5985e382e5fd65d7addda5312a1be024b305e2c4a8230cbefaf76e301",
+  "privateDenoRoutes": 4,
+  "privateDenoExit": 0,
+  "sdkBefore": {
+    "pass": 7,
+    "fail": 1
+  },
+  "sdkAfter": {
+    "pass": 8,
+    "fail": 0
+  },
+  "generatedImplementationIgnored": true,
+  "noPrivateImplementationIncludedInRepository": true,
+  "ciBoundary": {
+    "publicAlignedSdkImports": 19,
+    "privateAlignedSdkImports": 2,
+    "mainPublicCheckInputs": 27,
+    "privateReceiptAutomatedByGitHub": false
+  },
+  "priorCiEvidence": {
+    "file": "ci-private-prerequisite.zip",
+    "sha256": "c5628981783d52e1a609b8068a6ddf42e093486f2376314c7945d87bfa4e165f",
+    "bytes": 62054,
+    "members": 19
+  },
+  "limits": [
+    "Deno checks types and import resolution; the eight SDK tests use synthetic HTTP responses",
+    "No live Supabase, real account, production deployment or matching-quality benchmark is qualified",
+    "Public CI does not execute the private canonical package; each change requires a matching private receipt before integration"
+  ],
+  "independentReview": {
+    "status": "PASS",
+    "sourceHashesChecked": 131,
+    "workflow": "Only two private inputs move to real private reception; remaining 27 inputs and distinct consultation check preserved",
+    "privateSourceDisclosure": "No implementation source in before/after/test logs",
+    "tests": "Exactly two version strings changed; all business assertions preserved",
+    "finalGate": "Exact-final-head private replay plus all public workflow results required"
+  },
+  "graph": {
+    "staged": "12 touched files; no indexed symbol overlap does not imply no change",
+    "compareMain": "CRITICAL: entire consolidation divergence (2841 files,847 symbols,39 flows)",
+    "scopeLimit": "Original targeted graph and private test file not indexed; manual change review retained"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "project": "IAO / purama-ai",
+  "date": "2026-11-23",
+  "state": "PRET_A_CODER",
+  "baseline": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "baseline_tree": "616d7525ad5befa75b569295b04e493ddfe23841",
+  "authorization": "Validation collective du 21 novembre 2026 pour IAO existante ; demande du 23 novembre de poursuivre audits, corrections, performance et coûts.",
+  "preserve": [
+    "Profils FLASH/EXPERT/APEX et RAPIDE/APPROFONDI/MAXIMUM",
+    "Mode un seul modèle, autorisations, limites et isolation de compte",
+    "PR99 mobile/SMARANA hors périmètre ; sessions et copies natives préservées"
+  ],
+  "assignments": [
+    {
+      "owner": "audit_cost_latency",
+      "scope": "karta/src/claude/consultation-host.ts, catalogue/cache, tests correspondants",
+      "acceptance": "Identifier requêtes redondantes, reproduire avant correction, conserver autorisation par utilisateur et qualité des modèles, mesurer appels et concurrence."
+    },
+    {
+      "owner": "audit_consultation_persistence",
+      "scope": "karta/src/claude/consultation-store.ts, migrations/tests de consultation ; aucun changement SQL sans revue racine",
+      "acceptance": "Examiner gates manquants, exécuter tests natifs disponibles, vérifier reprise/isolation/idempotence et enregistrer preuves réelles."
+    },
+    {
+      "owner": "audit_dependency_security",
+      "scope": "Manifestes/verrous et contrôles sécurité en lecture ; deux étapes npm audit dans .github/workflows/purama-chef-hardening.yml",
+      "acceptance": "Audit réel des dépendances disponibles, advisories vérifiés à la source, tests/gates manquants identifiés sans réduction de protections.",
+      "decision": "Contrôles npm audit du verrou complet autorisés sur PR, seuil high conservé, aucune modification des dépendances ou permissions."
+    },
+    {
+      "owner": "root",
+      "scope": "coordination, graphes, revue indépendante, preuves, gates composés, CI et intégration",
+      "acceptance": "Sources et versions réelles, statut explicite pour chaque gate, diff contrôlé et version publiée identique à la version qualifiée."
+    }
+  ],
+  "status": "LOCAL_QUALIFIED",
+  "limits": [
+    "Aucun déploiement production ni appel modèle payant prévu dans cet audit.",
+    "Les tests ne valent pas garantie universelle de performance ou absence de bugs."
+  ],
+  "baseline_verified": {
+    "remote_ref": "audit/reliability-oauth-20261110",
+    "sha": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+    "pr99": "open/draft, head6db3a1ef6df8f0124707663dafb87620ac9996ff, aucune mutation"
+  },
+  "qualified_product_sha256": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a",
+  "outcomes": {
+    "catalogue": {
+      "requests_before": 32,
+      "requests_after": 1,
+      "independent_grant_checks": 32,
+      "model_or_token_limit_reduced": false
+    },
+    "new_tests": {
+      "host": 13,
+      "sql_recovery": 6
+    },
+    "local_tests": {
+      "host_and_profiles": 87,
+      "composed_transport_and_persistence": 108
+    },
+    "new_ci_gates": "Audit complet npm KARTA et site sur pull_request, à attester sur commit publié",
+    "reviews": "PASS, cache/autorisations et persistance",
+    "dependency_advisory": "Un avis low ouvert, trois entrées transitives, aucune alerte moderate/high/critical",
+    "production": "NOT_DEPLOYED",
+    "mac_runtime_installation": "NOT_VERIFIED"
+  }
+}

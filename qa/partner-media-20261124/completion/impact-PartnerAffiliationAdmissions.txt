@@ -1,0 +1,12 @@
+{
+  "error": "Target 'PartnerAffiliationAdmissions' not found",
+  "target": {
+    "name": "PartnerAffiliationAdmissions"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795557847769,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

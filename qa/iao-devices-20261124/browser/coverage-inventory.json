@@ -1,0 +1,144 @@
+{
+  "baseCommit": "3a8d39c9927c461a7300712b719ef0aa6cc1f173",
+  "phase": "QA configurations typechecked and 113 executions collected; browser execution awaits official CI",
+  "confirmedChromiumOnly": [
+    "public (all three viewport projects)",
+    "chat",
+    "offline workspace",
+    "quality",
+    "mobile-auth",
+    "async-ui",
+    "ui-state",
+    "workshop-state",
+    "voice-consent",
+    "wellbeing"
+  ],
+  "descriptorResolutionPending": [],
+  "targetedNewCoverage": [
+    {
+      "surface": "chat",
+      "cases": [
+        "guest request without private persistence",
+        "stop stream restores request",
+        "same-task duplicate submit",
+        "late response across conversation change",
+        "account change during conversation creation",
+        "retry after stored user turn"
+      ]
+    },
+    {
+      "surface": "offline",
+      "cases": [
+        "real service worker offline reload",
+        "IndexedDB autosave and reload",
+        "cross-tab conflicting edits",
+        "390px import and search",
+        "real download and restore into independent context",
+        "denied storage remains unsaved"
+      ]
+    },
+    {
+      "surface": "public",
+      "cases": [
+        "six public paths without horizontal overflow",
+        "landing heading remains visible",
+        "login form within viewport",
+        "signup navigation",
+        "unauthenticated dashboard redirect"
+      ]
+    },
+    {
+      "surface": "emulated touch",
+      "cases": [
+        "tap open/send/stop/close, portrait to landscape and back, preserve draft and abort one synthetic model response"
+      ]
+    }
+  ],
+  "proposedProfiles": [
+    "chromium-small-touch-320x568",
+    "firefox-desktop-1280x800",
+    "webkit-desktop-1280x800",
+    "webkit-mobile-touch-390x844",
+    "webkit-tablet-touch-768x1024"
+  ],
+  "constraints": [
+    "No production provider/account actions",
+    "No paid browser service",
+    "Preserve existing network fixtures and assertions",
+    "Do not pass Chromium launch flags to Firefox/WebKit",
+    "Mobile viewport and touch emulation do not qualify physical devices",
+    "OS media codecs and actual keyboard/AR require separate device qualification"
+  ],
+  "localBrowserAvailability": {
+    "playwrightPackageInWorktree": true,
+    "usualBrowserCacheHasBinaries": false,
+    "exactBrowserDownload": "Official download failed with HTTP 403 (root evidence: qa/iao-devices-20261124/playwright-install.log); matching engines will be supplied by the pinned CI image."
+  },
+  "officialSources": [
+    "https://playwright.dev/docs/browsers",
+    "https://playwright.dev/docs/emulation",
+    "https://playwright.dev/docs/service-workers"
+  ],
+  "sourceSha256": {
+    "playwright.config.ts": "396252c0e2916a7177ec237fbfee482b1739b5caf29937441fb115348f6bf0b2",
+    "playwright.distribution.config.ts": "1956238924ae0910d312b5c2293862c12caef460fac7a23dd746b561f075e41b",
+    "playwright.offline.config.ts": "a4385d5d37f5d1db06c57d34e3b1d42f579d5d1b34b264b84562c4883d9e3479",
+    "tests/chat/playwright.config.ts": "fc6e6b4e6340a31f0784b0af50775e287a293cbdadcfb4757fc7630ead073c69",
+    "tests/quality/playwright.config.ts": "80a6d1394c46f398690324141a9885996351683e26871a518d6687e779752220",
+    "tests/mobile-auth/playwright.config.ts": "9f21778d15ccdee208f5f244b3d3c2396d1bb39b52dc851a92269f9da1efb715",
+    "scripts/ci/run-site-browser.sh": "0d6ca86e15f382d766effc2946b94428d4f56471b0f43545c8eec5257b82bbb4"
+  },
+  "matrixConfigurations": {
+    "chat.playwright.config.ts": {
+      "existingCases": 6,
+      "profiles": 5,
+      "plannedExecutions": 30
+    },
+    "public.playwright.config.ts": {
+      "existingCases": 10,
+      "profiles": 5,
+      "plannedExecutions": 50
+    },
+    "offline.playwright.config.ts": {
+      "existingCases": 6,
+      "profiles": 5,
+      "plannedExecutions": 30
+    },
+    "touch.playwright.config.ts": {
+      "newCases": 1,
+      "profiles": 3,
+      "plannedExecutions": 3
+    }
+  },
+  "testsExecuted": 0,
+  "qualificationLimits": [
+    "Reused scenarios use click/fill. The separate touch scenario uses Playwright tap events on emulated contexts, not hardware touch input.",
+    "The existing offline import/search scenario explicitly sets 390x844 regardless of project viewport.",
+    "The export-and-restore scenario creates a fresh browser context without carrying the mobile viewport settings into the restore context.",
+    "The service-worker fallback scenario retains fromServiceWorker assertions; engine instrumentation limitations must be distinguished from product failures.",
+    "Physical devices, native virtual keyboards, physical orientation events, OS codecs, camera and AR are not qualified by these scenarios. The touch scenario changes viewport dimensions only.",
+    "No keyboard-focus-navigation scenario was selected; it remains a separate coverage gap."
+  ],
+  "existingOtherEngineConfiguration": {
+    "distribution": {
+      "desktop": "chromium",
+      "tablet": "webkit",
+      "mobile": "webkit",
+      "evidence": "Installed playwright fixture browserName defaults to defaultBrowserType; installed device descriptors resolve iPad Pro 11 and iPhone 14 to webkit. Static configuration review only; no claim about prior execution."
+    },
+    "KARTA": "Uses the same descriptors; live production suite excluded from this task."
+  },
+  "installedPlaywrightVersionsStatic": {
+    "@playwright/test": "1.64.1",
+    "playwright": "1.64.1",
+    "playwright-core": "1.64.1"
+  },
+  "validation": {
+    "typecheck": "PASS",
+    "collection": "PASS",
+    "collectedExecutions": 113,
+    "testsExecutedLocally": 0,
+    "browserRuntime": "NON TESTÉ locally; pending official CI",
+    "physicalDevices": "NON TESTÉ"
+  }
+}

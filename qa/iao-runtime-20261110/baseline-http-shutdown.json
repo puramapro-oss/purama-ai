@@ -1,0 +1,15 @@
+{
+  "baseline": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "source": "karta/src/index.ts",
+  "sourceSha256": "62b63f361daaf9d3d251a4387e05a5173f609ec342474e596e1b58dd94820c6f",
+  "scenario": "real loopback HTTP request remains open when baseline calls process.exit(0)",
+  "reproduced": true,
+  "exits": [
+    {
+      "exitCode": 0,
+      "httpDrained": false,
+      "requestFinished": false
+    }
+  ],
+  "limits": "Worker and schedulers are inert doubles; no Redis, Supabase or external provider."
+}

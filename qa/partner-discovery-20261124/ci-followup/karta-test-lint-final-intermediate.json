@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/eslint/bin/eslint.js",
+    "karta/test/partnerDiscovery.test.ts"
+  ],
+  "working_directory": "repository root",
+  "exit_code": 0,
+  "elapsed_seconds": 5.367
+}

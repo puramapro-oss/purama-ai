@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=768",
+    "--max-semi-space-size=8",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.json"
+  ],
+  "started_at_utc": "2026-11-24T23:51:01.471526+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 9.648
+}

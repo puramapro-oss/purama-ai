@@ -12,6 +12,11 @@ verify_jwt = false
 [functions.oauth-google]
 verify_jwt = false
 
+# Google redirects without an application JWT. GET only returns to the fixed
+# frontend; both POST actions verify the initiating user inside the handler.
+[functions.email-agent-gmail-oauth]
+verify_jwt = false
+
 [functions.process-influencer-payments]
 verify_jwt = false
 
@@ -22,6 +27,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.escalate-chat]
+verify_jwt = false
+
+# The handler verifies the current user with auth.getUser before every action.
+[functions.iao-consultation]
 verify_jwt = false
 
 [functions.social-callback]
@@ -40,4 +49,13 @@ verify_jwt = true
 # DocuSeal presents its dedicated shared secret, not a Supabase JWT.
 # The handler fails closed if the secret is absent or does not match.
 [functions.contracts-webhook]
+verify_jwt = false
+
+# User identity is verified with auth.getUser; scheduler delegation requires the
+# exact service secret inside the handler. No caller-selected user is trusted.
+[functions.partner-sync-replies]
+verify_jwt = false
+
+# Preparation authenticates the real account and only creates a local draft.
+[functions.partner-prepare-reply]
 verify_jwt = false

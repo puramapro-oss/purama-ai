@@ -1,0 +1,39 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795387824345,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 1993 files, 20274 symbols
+Affected processes: 529
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 20259 more
+
+Affected execution flows:
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • HandleRequest → Identity (5 steps) — changed: authenticateIdentity, handleIaoRoute, handleRequest, authenticate, identity
+  • HandleRequest → IaoAuthenticationError (4 steps) — changed: authenticateIdentity, handleIaoRoute, handleRequest, IaoAuthenticationError
+  • HandleRequest → IsJson (4 steps) — changed: isJson, authenticateIdentity, handleIaoRoute, handleRequest
+  • HandleRequest → Authenticate (4 steps) — changed: authenticateIdentity, handleIaoRoute, handleRequest, authenticate
+  • HandleRequest → IaoValidationError (4 steps) — changed: parseRequest, handleIaoRoute, handleRequest, IaoValidationError
+  • HandleRequest → Json (4 steps) — changed: sendError, handleIaoRoute, handleRequest
+  • Evaluate → Choice (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, choice
+  • Evaluate → Id (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, id
+  • HandleRequest → IsIaoPath (3 steps) — changed: handleIaoRoute, isIaoPath, handleRequest
+... and 519 more

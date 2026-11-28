@@ -1,0 +1,536 @@
+Check tests/commerce/payout-handler.test.ts
+Check tests/commerce/subscription-handler.test.ts
+Check tests/commerce/subscription-state.test.ts
+Check tests/commerce/webhook-handler.test.ts
+running 9 tests from ./tests/commerce/payout-handler.test.ts
+payout: CORS preflight does not access money or external services ... ok (22ms)
+payout: GET cannot invoke a payout ... ok (1ms)
+payout: PUT cannot invoke a payout ... ok (503µs)
+payout: DELETE cannot invoke a payout ... ok (417µs)
+payout: missing server secret fails closed ...
+------- output -------
+[PROCESS-INFLUENCER-PAYMENTS] WEBHOOK_SECRET is not configured
+----- output end -----
+payout: missing server secret fails closed ... ok (3ms)
+payout: invalid credential undefined is rejected ... ok (539µs)
+payout: invalid credential "" is rejected ... ok (318µs)
+payout: invalid credential "incorrect" is rejected ... ok (463µs)
+payout: an authenticated cron cannot mark paid or announce a transfer without a provider ...
+------- output -------
+[PROCESS-INFLUENCER-PAYMENTS] Aucun prestataire de virement configuré; aucune commission modifiée
+----- output end -----
+payout: an authenticated cron cannot mark paid or announce a transfer without a provider ... ok (2ms)
+running 10 tests from ./tests/commerce/subscription-handler.test.ts
+subscription edge: real handler accepts a Basil payload without top-level period ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+----- post-test output end -----
+subscription edge: real handler accepts a Basil payload without top-level period ... ok (19ms)
+subscription edge: unknown product returns a reconciliation error, never Premium ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+[CHECK-SUBSCRIPTION] Subscription requires reconciliation - {"reason":"unknown_product"}
+----- post-test output end -----
+subscription edge: unknown product returns a reconciliation error, never Premium ... ok (569µs)
+subscription edge: duplicate active subscriptions remain visible to reconciliation ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+[CHECK-SUBSCRIPTION] Subscription requires reconciliation - {"reason":"multiple_subscriptions"}
+----- post-test output end -----
+subscription edge: duplicate active subscriptions remain visible to reconciliation ... ok (626µs)
+subscription edge: no paid subscription returns free ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+----- post-test output end -----
+subscription edge: no paid subscription returns free ... ok (765µs)
+subscription edge: paginated subscription items require reconciliation ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+[CHECK-SUBSCRIPTION] Subscription requires reconciliation - {"reason":"paginated_items"}
+----- post-test output end -----
+subscription edge: paginated subscription items require reconciliation ... ok (431µs)
+subscription edge: multiple customer records cannot be reduced to the first ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Multiple Stripe customers require reconciliation
+----- post-test output end -----
+subscription edge: multiple customer records cannot be reduced to the first ... ok (434µs)
+subscription edge: paginated customer records require reconciliation ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Multiple Stripe customers require reconciliation
+----- post-test output end -----
+subscription edge: paginated customer records require reconciliation ... ok (442µs)
+subscription edge: no customer does not grant paid rights ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] No customer found, returning unsubscribed state
+----- post-test output end -----
+subscription edge: no customer does not grant paid rights ... ok (1ms)
+subscription edge: paginated active subscription pages cannot grant a paid entitlement ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+[CHECK-SUBSCRIPTION] Paginated subscriptions require reconciliation
+----- post-test output end -----
+subscription edge: paginated active subscription pages cannot grant a paid entitlement ... ok (571µs)
+subscription edge: paginated trialing subscription pages cannot grant a paid entitlement ...
+------- post-test output -------
+[CHECK-SUBSCRIPTION] Function started
+[CHECK-SUBSCRIPTION] Stripe key verified
+[CHECK-SUBSCRIPTION] Authorization header found
+[CHECK-SUBSCRIPTION] Authenticating user with token
+[CHECK-SUBSCRIPTION] User authenticated - {"userId":"fixture-user","email":"fixture@example.invalid"}
+[CHECK-SUBSCRIPTION] Found Stripe customer - {"customerId":"cus_fixture"}
+[CHECK-SUBSCRIPTION] Paginated subscriptions require reconciliation
+----- post-test output end -----
+subscription edge: paginated trialing subscription pages cannot grant a paid entitlement ... ok (811µs)
+running 23 tests from ./tests/commerce/subscription-state.test.ts
+subscription: Basil item period maps starter ... ok (1ms)
+subscription: Basil item period maps pro ... ok (110µs)
+subscription: Basil item period maps ultime ... ok (71µs)
+subscription: an expanded product and trialing subscription are supported ... ok (272µs)
+subscription: pre-Basil period remains compatible ... ok (252µs)
+subscription: the item period takes precedence over the legacy field ... ok (174µs)
+subscription: unknown/deleted product "prod_unknown" never grants Premium ... ok (113µs)
+subscription: unknown/deleted product "__proto__" never grants Premium ... ok (77µs)
+subscription: unknown/deleted product "constructor" never grants Premium ... ok (92µs)
+subscription: unknown/deleted product {"id":"prod_UHwPSU2o4DW6Ej","deleted":true} never grants Premium ... ok (304µs)
+subscription: invalid period null requires reconciliation ... ok (206µs)
+subscription: invalid period 0 requires reconciliation ... ok (121µs)
+subscription: invalid period -1 requires reconciliation ... ok (80µs)
+subscription: invalid period 1800000000 requires reconciliation ... ok (70µs)
+subscription: invalid period NaN requires reconciliation ... ok (52µs)
+subscription: invalid period Infinity requires reconciliation ... ok (69µs)
+subscription: invalid period 1.5 requires reconciliation ... ok (45µs)
+subscription: invalid period 9007199254740991 requires reconciliation ... ok (26µs)
+subscription: multiple subscriptions are not silently reduced to the first ... ok (56µs)
+subscription: multiple plan items require reconciliation ... ok (42µs)
+subscription: a paginated items response cannot conceal another plan ... ok (44µs)
+subscription: an additional non-plan item does not select its period ... ok (61µs)
+subscription: no active subscription means no paid entitlement ... ok (56µs)
+running 40 tests from ./tests/commerce/webhook-handler.test.ts
+webhook harness has no network or process execution permission ... ok (1ms)
+webhook: known paid products preserve the three IAO plan IDs ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"starter"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"ultime"}
+----- post-test output end -----
+webhook: known paid products preserve the three IAO plan IDs ... ok (22ms)
+webhook: unpaid or missing payment status cannot grant a subscription or commission ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"referral_code":"INERT","influencer_id":"fixture-influencer"}}
+[STRIPE-WEBHOOK] Subscription checkout awaiting payment - {"sessionId":"cs_fixture"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"referral_code":"INERT","influencer_id":"fixture-influencer"}}
+[STRIPE-WEBHOOK] Subscription checkout awaiting payment - {"sessionId":"cs_fixture"}
+----- post-test output end -----
+webhook: unpaid or missing payment status cannot grant a subscription or commission ... ok (1ms)
+webhook: unknown and prototype-like checkout products never fall back to pro ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription product requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription product requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription product requires reconciliation"}
+----- post-test output end -----
+webhook: unknown and prototype-like checkout products never fall back to pro ... ok (3ms)
+webhook: unknown subscription-update products never fall back to pro ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription product requires reconciliation"}
+----- post-test output end -----
+webhook: unknown subscription-update products never fall back to pro ... ok (1ms)
+webhook: a known expanded product and customer preserve exact identity ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":{"id":"cus_fixture"},"customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"ultime"}
+----- post-test output end -----
+webhook: a known expanded product and customer preserve exact identity ... ok (1ms)
+webhook: deleted products and ambiguous or paginated items require reconciliation ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription product requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription plan requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription plan requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription plan requires reconciliation"}
+----- post-test output end -----
+webhook: deleted products and ambiguous or paginated items require reconciliation ... ok (1ms)
+webhook: open and expired checkout sessions cannot activate access ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription checkout requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription checkout requires reconciliation"}
+----- post-test output end -----
+webhook: open and expired checkout sessions cannot activate access ... ok (975µs)
+webhook: a paid checkout does not turn a non-active subscription active ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout not eligible for activation - {"sessionId":"cs_fixture","status":"incomplete"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout not eligible for activation - {"sessionId":"cs_fixture","status":"past_due"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout not eligible for activation - {"sessionId":"cs_fixture","status":"canceled"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout not eligible for activation - {"sessionId":"cs_fixture","status":"unpaid"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout not eligible for activation - {"sessionId":"cs_fixture","status":"paused"}
+----- post-test output end -----
+webhook: a paid checkout does not turn a non-active subscription active ... ok (1ms)
+webhook: an active subscription still requires its current paid invoice ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription payment requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription payment requires reconciliation"}
+----- post-test output end -----
+webhook: an active subscription still requires its current paid invoice ... ok (3ms)
+webhook: a missing or unrelated invoice cannot confirm paid access ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription payment requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription payment requires reconciliation"}
+----- post-test output end -----
+webhook: a missing or unrelated invoice cannot confirm paid access ... ok (1ms)
+webhook: checkout and subscription must identify the same customer ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription customer requires reconciliation"}
+----- post-test output end -----
+webhook: checkout and subscription must identify the same customer ... ok (458µs)
+webhook: existing Stripe trials retain trialing and the provider deadline ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: existing Stripe trials retain trialing and the provider deadline ... ok (1ms)
+webhook: trial-update replay cannot restart or extend the provider deadline ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"trialing"}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"trialing"}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: trial-update replay cannot restart or extend the provider deadline ... ok (1ms)
+webhook: an expired or unproven legacy trial cannot grant access ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription trial requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription trial requires reconciliation"}
+----- post-test output end -----
+webhook: an expired or unproven legacy trial cannot grant access ... ok (984µs)
+webhook: no-payment-required is not inferred to be a paid active subscription ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout has no confirmed payment - {"sessionId":"cs_fixture"}
+----- post-test output end -----
+webhook: no-payment-required is not inferred to be a paid active subscription ... ok (402µs)
+webhook: confirmed delayed subscription payment reaches the real handler ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription checkout awaiting payment - {"sessionId":"cs_fixture"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.async_payment_succeeded","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: confirmed delayed subscription payment reaches the real handler ... ok (854µs)
+webhook: an old active update cannot undo the current Stripe cancellation ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"canceled"}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: an old active update cannot undo the current Stripe cancellation ... ok (304µs)
+webhook: paid subscription update preserves exact known plan and trial history ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPcnEEVEDf4K","planType":"starter","status":"active"}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"starter"}
+----- post-test output end -----
+webhook: paid subscription update preserves exact known plan and trial history ... ok (341µs)
+webhook: a bad or absent signature cannot reach any entitlement write ...
+------- post-test output -------
+[STRIPE-WEBHOOK] ERROR: No Stripe signature found
+[STRIPE-WEBHOOK] ERROR: Webhook signature verification failed - {"error":"fixture signature rejected"}
+----- post-test output end -----
+webhook: a bad or absent signature cannot reach any entitlement write ... ok (326µs)
+webhook: the paid 19EUR/2000-action pack keeps stable credit identities on redelivery ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701","type":"overage_pack"}}
+[STRIPE-WEBHOOK] Overage payment processed - {"sessionId":"cs_fixture","status":"credited","periodStart":"2026-11-01"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701","type":"overage_pack"}}
+[STRIPE-WEBHOOK] Overage payment processed - {"sessionId":"cs_fixture","status":"duplicate","periodStart":"2026-11-01"}
+----- post-test output end -----
+webhook: the paid 19EUR/2000-action pack keeps stable credit identities on redelivery ... ok (2ms)
+webhook: delayed overage remains isolated from subscription activation ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701","type":"overage_pack"}}
+[STRIPE-WEBHOOK] Overage payment processed - {"sessionId":"cs_fixture","status":"awaiting_payment"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.async_payment_succeeded","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701","type":"overage_pack"}}
+[STRIPE-WEBHOOK] Overage payment processed - {"sessionId":"cs_fixture","status":"credited","periodStart":"2026-11-01"}
+----- post-test output end -----
+webhook: delayed overage remains isolated from subscription activation ... ok (839µs)
+webhook: an unconfirmed async pack is rejected without any credit ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.async_payment_succeeded","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701","type":"overage_pack"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"overage_payment_not_confirmed"}
+----- post-test output end -----
+webhook: an unconfirmed async pack is rejected without any credit ... ok (768µs)
+webhook: an unrelated one-time payment never grants a subscription ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+----- post-test output end -----
+webhook: an unrelated one-time payment never grants a subscription ... ok (388µs)
+webhook: deletion never clears the consumed-trial marker ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.deleted","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription deleted - {"customerId":"cus_fixture"}
+[STRIPE-WEBHOOK] Subscription reverted to free - {"userId":"00000000-0000-4000-8000-000000002701"}
+----- post-test output end -----
+webhook: deletion never clears the consumed-trial marker ... ok (580µs)
+webhook: persisted customer binding works without display email or metadata authority ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":null,"metadata":{"user_id":"untrusted-other-user"}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: persisted customer binding works without display email or metadata authority ... ok (684µs)
+webhook: stored binding wins over a different account with the same display email ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: stored binding wins over a different account with the same display email ... ok (284µs)
+webhook: legacy exact lookup reaches users after the first 20000 accounts ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+----- post-test output end -----
+webhook: legacy exact lookup reaches users after the first 20000 accounts ... ok (22ms)
+webhook: a later duplicate exact email is rejected before the first match can grant ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription email is ambiguous"}
+----- post-test output end -----
+webhook: a later duplicate exact email is rejected before the first match can grant ... ok (4ms)
+webhook: legacy pagination errors after a match never authorize partial results ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription user lookup failed; retry or reconcile"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription user lookup failed; retry or reconcile"}
+----- post-test output end -----
+webhook: legacy pagination errors after a match never authorize partial results ... ok (711µs)
+webhook: repeated pages and bounded catalog exhaustion fail closed ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription pagination requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription user lookup limit reached; reconciliation required"}
+----- post-test output end -----
+webhook: repeated pages and bounded catalog exhaustion fail closed ... ok (87ms)
+webhook: absent legacy user or missing email cannot be replaced by metadata.user_id ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"absent@example.invalid","metadata":{"user_id":"00000000-0000-4000-8000-000000002701"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription user or local subscription requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":null,"metadata":{"user_id":"00000000-0000-4000-8000-000000002701"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Unbound subscription customer requires reconciliation"}
+----- post-test output end -----
+webhook: absent legacy user or missing email cannot be replaced by metadata.user_id ... ok (4ms)
+webhook: exact legacy matching neither folds case nor invents a local subscription ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"FIXTURE@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription user or local subscription requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription user or local subscription requires reconciliation"}
+----- post-test output end -----
+webhook: exact legacy matching neither folds case nor invents a local subscription ... ok (1ms)
+webhook: legacy fallback cannot replace another persisted customer binding ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Legacy subscription customer binding conflicts"}
+----- post-test output end -----
+webhook: legacy fallback cannot replace another persisted customer binding ... ok (4ms)
+webhook: ambiguous customer bindings and lookup failures never fall back to email ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription identity lookup failed; retry or reconcile"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription identity lookup failed; retry or reconcile"}
+----- post-test output end -----
+webhook: ambiguous customer bindings and lookup failures never fall back to email ... ok (1ms)
+webhook: a customer binding changed during persistence cannot be overwritten ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"influencer_id":"fixture-influencer","referral_code":"FIXTURE","user_id":"untrusted-metadata-user"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+----- post-test output end -----
+webhook: a customer binding changed during persistence cannot be overwritten ... ok (949µs)
+webhook: all four subscription writes fail retryably before later effects ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"influencer_id":"fixture-influencer","referral_code":"FIXTURE","user_id":"untrusted-metadata-user"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"active"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.deleted","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription deleted - {"customerId":"cus_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+[STRIPE-WEBHOOK] Event received - {"type":"invoice.payment_failed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Payment failed - {"customerId":"cus_fixture","invoiceId":"in_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+----- post-test output end -----
+webhook: all four subscription writes fail retryably before later effects ... ok (2ms)
+webhook: missing write receipt stops before commission even when the row was changed ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"influencer_id":"fixture-influencer","referral_code":"FIXTURE","user_id":"untrusted-metadata-user"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+----- post-test output end -----
+webhook: missing write receipt stops before commission even when the row was changed ... ok (758µs)
+webhook: retry after a failed subscription write reaches commission only once ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"influencer_id":"fixture-influencer","referral_code":"FIXTURE","user_id":"untrusted-metadata-user"}}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription persistence failed; retry before further effects"}
+[STRIPE-WEBHOOK] Event received - {"type":"checkout.session.completed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Checkout session completed - {"sessionId":"cs_fixture","customerId":"cus_fixture","customerEmail":"fixture@example.invalid","metadata":{"influencer_id":"fixture-influencer","referral_code":"FIXTURE","user_id":"untrusted-metadata-user"}}
+[STRIPE-WEBHOOK] Subscription updated successfully - {"userId":"00000000-0000-4000-8000-000000002701","planType":"pro"}
+[STRIPE-WEBHOOK] Processing influencer commission - {"influencerId":"fixture-influencer","referralCode":"FIXTURE"}
+[STRIPE-WEBHOOK] Commission calculation - {"monthlyPrice":99,"annualValue":1188,"commissionRate":0.3,"commissionAmount":356.4}
+[STRIPE-WEBHOOK] Commission created successfully - {"commissionAmount":356.4}
+[STRIPE-WEBHOOK] Influencer stats updated - {"newTotalRevenue":356.4,"newTotalSales":1}
+[STRIPE-WEBHOOK] Notification sent to influencer
+----- post-test output end -----
+webhook: retry after a failed subscription write reaches commission only once ... ok (1ms)
+webhook: missing or ambiguous bindings for updates, deletion and invoice failure require reconciliation ...
+------- post-test output -------
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"active"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription customer binding requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.updated","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription updated - {"customerId":"cus_fixture","productId":"prod_UHwPSU2o4DW6Ej","planType":"pro","status":"active"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription identity lookup failed; retry or reconcile"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.deleted","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription deleted - {"customerId":"cus_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription customer binding requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"customer.subscription.deleted","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Subscription deleted - {"customerId":"cus_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription identity lookup failed; retry or reconcile"}
+[STRIPE-WEBHOOK] Event received - {"type":"invoice.payment_failed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Payment failed - {"customerId":"cus_fixture","invoiceId":"in_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription customer binding requires reconciliation"}
+[STRIPE-WEBHOOK] Event received - {"type":"invoice.payment_failed","id":"evt_fixture"}
+[STRIPE-WEBHOOK] Payment failed - {"customerId":"cus_fixture","invoiceId":"in_fixture"}
+[STRIPE-WEBHOOK] ERROR in stripe-webhook - {"message":"Subscription identity lookup failed; retry or reconcile"}
+----- post-test output end -----
+webhook: missing or ambiguous bindings for updates, deletion and invoice failure require reconciliation ... ok (2ms)
+
+ok | 82 passed | 0 failed (663ms)

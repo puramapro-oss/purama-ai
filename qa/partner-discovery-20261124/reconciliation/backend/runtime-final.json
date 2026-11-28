@@ -1,0 +1,24 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/partnerDiscovery.test.ts",
+    "test/assistantPolicy.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "working_directory": "karta",
+  "exit_code": 0,
+  "seconds": 6.557,
+  "hashes": {
+    "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+    "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+    "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+    "karta/test/assistantPolicy.test.ts": "4c95de34f95af42da015da5bae8224c7a434d2149deb14c07d4bd65932fcc80a",
+    "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+  }
+}

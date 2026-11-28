@@ -1,0 +1,16 @@
+import { test } from 'node:test';
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
+
+// Local compatibility check only. Native Deno and the real SDK are CI gates.
+globalThis.fetch = async () => { throw new Error('Unexpected network access in social composition review'); };
+globalThis.Deno = { test, env: { get: () => undefined } };
+const root = '/workspace/scratch/2c704d52ca75/work/purama-social-fairness';
+for (const file of [
+  'tests/social-publish/client-intent.test.ts',
+  'tests/social-publish/provider.test.ts',
+  'tests/social-publish/publish.test.ts',
+  'tests/social-publish/scheduled.test.ts',
+  'tests/social-connection/connection.test.ts',
+  'tests/social-management/handlers.test.ts',
+]) await import(pathToFileURL(resolve(root, file)).href);

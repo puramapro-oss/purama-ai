@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-12T06:15:24.059590+00:00",
+  "timezone": "Europe/Paris",
+  "status": "PARTIEL",
+  "scope": "Provider usage receipts on existing KARTA run journal; software change awaiting CI, not provider billing or production",
+  "base_commit": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "branch": "audit/api-usage-20261112-4eb2",
+  "acceptance": [
+    {
+      "gate": "baseline client and loop",
+      "command": "npm test -- --maxWorkers=1 test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts",
+      "cwd": "karta",
+      "expected": "Reproduce missing receipt propagation",
+      "exit_code": 1,
+      "passed": 5,
+      "failed": 14,
+      "log": "baseline.txt"
+    },
+    {
+      "gate": "baseline readiness",
+      "command": "npm test -- --maxWorkers=1 test/runtimeUsageReadiness.test.ts",
+      "cwd": "karta",
+      "expected": "Previous schema incorrectly accepted before guard",
+      "exit_code": 1,
+      "failed": 2,
+      "log": "readiness-baseline.txt"
+    },
+    {
+      "gate": "baseline replay without key",
+      "command": "npm test -- --maxWorkers=1 test/loopModelUsage.test.ts -t 'without a durable key'",
+      "cwd": "karta",
+      "expected": "Known receipt still offers retry before guard",
+      "exit_code": 1,
+      "failed": 1,
+      "skipped": 13,
+      "log": "replay-baseline.txt"
+    },
+    {
+      "gate": "targeted non-SQL regression",
+      "command": "npm test -- --maxWorkers=1 test/modelUsage.test.ts test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/runtimeUsageReadiness.test.ts test/runtimeProbe.test.ts test/claudeTransportCost.test.ts test/claudeDecisionCompleteness.test.ts test/real-claude.test.ts test/loop.test.ts test/loopTracePrivacy.test.ts test/loopJevTracePrivacy.test.ts test/logger.test.ts test/loggerCycleFinalization.test.ts test/runtimeApiReadiness.test.ts",
+      "cwd": "karta",
+      "expected": "All selected regression tests pass",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 212,
+      "files": 14,
+      "log": "verified-non-sql.txt"
+    },
+    {
+      "gate": "first targeted PostgreSQL run",
+      "command": "npm test -- --maxWorkers=1 test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/modelUsage.test.ts test/claudeTransportCost.test.ts test/loggerFinalization.test.ts test/logger.test.ts",
+      "cwd": "karta",
+      "exit_code": 1,
+      "status": "PARTIEL",
+      "passed": 104,
+      "reported_total": 115,
+      "error": "loggerFinalization worker SIGKILL; cause not established",
+      "log": "targeted.txt"
+    },
+    {
+      "gate": "final local typecheck",
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 137,
+      "status": "PARTIEL",
+      "error": "Process killed, including sequential retry; cause not established",
+      "log": "typecheck.txt"
+    },
+    {
+      "gate": "final local build",
+      "command": "npm run build",
+      "cwd": "karta",
+      "exit_code": 137,
+      "status": "PARTIEL",
+      "error": "Process killed during parallel attempt; no success claimed",
+      "log": "build-parallel-interrupted.txt"
+    },
+    {
+      "gate": "new PostgreSQL migration and expanded logger tests",
+      "status": "NON TESTÉ",
+      "next": "Execute in GitHub Actions environment",
+      "phase": "before_first_publication",
+      "superseded_by": "remote_first_candidate, remote_second_candidate and composition_with_pr63"
+    },
+    {
+      "gate": "remote candidate CI",
+      "status": "NON TESTÉ",
+      "next": "Publish draft candidate then read complete jobs on its immutable tree",
+      "phase": "before_first_publication",
+      "superseded_by": "remote_first_candidate, remote_second_candidate and composition_with_pr63"
+    }
+  ],
+  "independent_review": {
+    "status": "PASS",
+    "finding_fixed": "Probe must require model_usage before startup; reproducer 2FAIL before and PASS after.",
+    "additional_cases": "Cancellation after receipt; lost/unconfirmed journal without repeated inference; no-key replay guard.",
+    "sql_qualification": "19/19 migration tests and 17/17 logger tests PASS in second CI; combined candidate with PR63 still requires fresh CI."
+  },
+  "limitations": [
+    "Token counters are not a price estimate or reconciled invoice",
+    "Missing receipt or missing counter is unknown, not zero",
+    "Crash before close may lose receipt",
+    "Physical provider calls, per-user invoices, load and production are not tested",
+    "Cache TTL buckets are not added again to cache creation totals",
+    "GitNexus graph is stale and dynamic dispatch remains partially resolved"
+  ],
+  "source_logs": [
+    {
+      "file": "baseline.txt",
+      "bytes": 10022,
+      "sha256": "78fe61810d4d268035a116c1d3157ced231af663148e8760aa118e9c785a38ae",
+      "original_bytes": 10023,
+      "original_sha256": "18ce0a2ba3d9326ae697ab7680882a85bc9d25918d155f5373e3c1104db9f6dd",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "build-parallel-interrupted.txt",
+      "bytes": 164,
+      "sha256": "67cdcbc4592567c4bf52a9fdff7277f8c8d734f806d64ed8c4c727ac6a48883e"
+    },
+    {
+      "file": "index-attempt.txt",
+      "bytes": 401,
+      "sha256": "5f6d9caaed7f9bc132f01d1bcffefb6c4b2853eda86205f688c19a11cadf3a9f"
+    },
+    {
+      "file": "readiness-baseline.txt",
+      "bytes": 2598,
+      "sha256": "4059788b11cc662a85ffe4f1cdb8e5a97a959ae67318a770fe2d754906dd39ac",
+      "original_bytes": 2599,
+      "original_sha256": "8470a15d2eb01e1db275a47cd4e262733eac19d5f1c53bbf525deffdccb7c1f2",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "replay-baseline.txt",
+      "bytes": 1884,
+      "sha256": "b62f3d061124f61b0e296821839b7f3dcefb05937fdefd649e3df2b1de2574c2",
+      "original_bytes": 1885,
+      "original_sha256": "9e68c285cf892e6929b1c5ee121cb245ced60374ec8925be8619bb1e69226f34",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "targeted.txt",
+      "bytes": 2014,
+      "sha256": "049ce0cf4d3bf2101def391be44ebd1f8b672765063cd3d1695d1d6cd6e66fb9",
+      "original_bytes": 2015,
+      "original_sha256": "06cd825d7b1e9eecc239632e221a694b633ee37d81e519c38440b60b13cb3110",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "typecheck-parallel-interrupted.txt",
+      "bytes": 171,
+      "sha256": "f59576b612d418c669f28cf1fd4e825f77ee56d6d9107abe5b0754a0b30b13d7"
+    },
+    {
+      "file": "typecheck.txt",
+      "bytes": 171,
+      "sha256": "f59576b612d418c669f28cf1fd4e825f77ee56d6d9107abe5b0754a0b30b13d7"
+    },
+    {
+      "file": "verified-non-sql.txt",
+      "bytes": 1009,
+      "sha256": "aeb4ef9b0c1c6ac703dbc02b31c061fcef307deb6b22a722ca1ddb181bf55c38",
+      "original_bytes": 1010,
+      "original_sha256": "cea2a5dfe877aeaec46e22cc848a90caf21d25d1d3306b4135bb32627627c4bc",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "composition-fixture-baseline.txt",
+      "bytes": 6211,
+      "sha256": "9e786326b24a89954c19733ff1bdda7379017fe6a00c3afc7a6be64f34d1926b"
+    },
+    {
+      "file": "composition-targeted.txt",
+      "bytes": 1144,
+      "sha256": "7d47cd592f2bba1a0476f01b09b02472ec9d08e7754edde6c54f5f1e1a29cf63"
+    },
+    {
+      "file": "private-results-composition-targeted.txt",
+      "bytes": 1340,
+      "sha256": "759337b17b39385cd99a184c25e9318d306e5c3fba1fb4574dc3ee1564b8c0da"
+    }
+  ],
+  "gitnexus_change_detection": {
+    "checks": [
+      {
+        "scope": "staged",
+        "exit_code": 0,
+        "files": 26,
+        "symbols": 11,
+        "processes": 5,
+        "risk": "medium",
+        "text_sha256": "e9076a3235274f17274853c4cfecb7f267eb554177767aa30e334e7df42d9527"
+      },
+      {
+        "scope": "compare",
+        "exit_code": 0,
+        "files": 1399,
+        "symbols": 12236,
+        "processes": 584,
+        "risk": "critical",
+        "text_sha256": "5be5daf63ecac396f0dfde3495410578a31351ede7a131ecb1b932d433a141a5"
+      }
+    ],
+    "command": "node <installed-gitnexus-1.6.12>/dist/cli/index.js detect-changes --scope staged|compare --repo <original-registered-repo> [--base-ref main] --limit 50",
+    "git_directory": "New worktree Git directory and working tree supplied through standard GIT_DIR/GIT_WORK_TREE environment; shared Git objects, original registered graph unchanged.",
+    "limits": "Index stale; new symbols absent and line positions may be approximate. Changed source paths reviewed directly; graph counts are reported observations, not full coverage.",
+    "warning_reported": "Medium scope risk and critical main-comparison risk reported before commit."
+  },
+  "remote_first_candidate": {
+    "status": "FAIL",
+    "head": "65ff9fc01d01f438e26cf51b4d9d9fc0f2450568",
+    "run_id": 43167231086,
+    "passed": 2288,
+    "failed": 39,
+    "total": 2327,
+    "receipt": "ci-first.json",
+    "migration_tests": "19/19 PASS",
+    "correction": "Current-runtime schema fixtures require028; logger test adapter must preserve SQLSTATE23505. Assertions and production guards retained."
+  },
+  "acceptance_scope": "Historical local snapshot before first publication, observed at 2026-11-12T06:15:24.059590+00:00; remote receptions below supersede pending CI/SQL entries.",
+  "remote_second_candidate": {
+    "status": "PARTIEL",
+    "head": "820e34d63d3b74b3c1efcac09287e9c01739050b",
+    "run_id": 43168416008,
+    "checkout": "099fd8a6b69814020a6af2a10842962a1442276d",
+    "tree": "1cdae5930ca90e1183bac0781d87045a7ed522fa",
+    "karta": {
+      "status": "PASS",
+      "passed": 2327,
+      "files": 128,
+      "typecheck": "PASS",
+      "build": "PASS"
+    },
+    "subscription_concurrency": {
+      "status": "PASS",
+      "passed": 7
+    },
+    "site": "Still running at composition snapshot; not a completed full CI claim",
+    "receipt": "ci-second-before-composition.json"
+  },
+  "composition_with_pr63": {
+    "status": "PASS",
+    "merged_upstream": "58baecb7f63d23ede5a2318078cbe8bac9807e78",
+    "conflicts": [
+      "karta/src/claude/real.ts",
+      "karta/src/claude/types.ts"
+    ],
+    "resolution": "Select model within bounded admission, return selected model and complete response together; retain signal, timeout, maxRetries0, logLeveloff and onUsage after bounded result, before decision validation.",
+    "fixture_baseline": {
+      "failed": 9,
+      "total": 9,
+      "cause": "New timeout config omitted in usage-only test fixture",
+      "log": "composition-fixture-baseline.txt"
+    },
+    "current_acceptance": "Historical completed PR63 composition: full remote CI PASS. See private_results_composition for the next candidate.",
+    "targeted": {
+      "status": "PASS",
+      "passed": 331,
+      "files": 18,
+      "exit_code": 0,
+      "log": "composition-targeted.txt"
+    },
+    "preservation": {
+      "upstream_non_composition_files_exact": 33,
+      "previous_receipt_files_exact": 25,
+      "vercel_union_exact": true
+    },
+    "independent_review": "Selection must remain inside bounded admission; received and implemented. Deadline cases strengthened for late responses, caller cancellation, concurrent attribution, private synchronous errors and single receipts.",
+    "qualified_by": "remote_third_candidate"
+  },
+  "remote_third_candidate": {
+    "status": "PASS",
+    "head": "65e96225fafcf39719890af65f5c2c8346b6ef61",
+    "tree": "df22a2947cbdc102a5a5d82ae22799a1997e4566",
+    "ci_checkout": "7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+    "run_id": 43170366699,
+    "karta_tests": 2391,
+    "karta_files": 131,
+    "jobs_passed": 3,
+    "types": "PASS",
+    "build": "PASS",
+    "site": "PASS",
+    "subscription_concurrency": "PASS",
+    "receipt": "ci-third-before-private-results.json"
+  },
+  "private_results_composition": {
+    "status": "PARTIEL",
+    "upstream": "42410d7f433323a78c53eafbf069192b7e8a0f6e",
+    "reason": "Target integrated private tool results during CI; loop composition and a duplicate migration prefix require explicit reception.",
+    "migration_old_name": "028_model_usage_receipts.sql",
+    "migration_current_name": "029_model_usage_receipts.sql",
+    "migration_content_unchanged": true,
+    "unique_migration_numbers": 29,
+    "deployment_of_previous_name_in_this_work": false,
+    "loop_merge": "Automatic clean merge; private sink failure remains after effectStarted and closure retains the receipt.",
+    "current_acceptance": "436/436 targeted non-SQL tests PASS; native PostgreSQL, PGlite and full CI pending on the new candidate.",
+    "targeted": {
+      "status": "PASS",
+      "passed": 436,
+      "files": 21,
+      "exit_code": 0,
+      "log": "private-results-composition-targeted.txt"
+    },
+    "native_test_scope": "Both migrations coexist; preserve receipt after private-result reconciliation; reject five invalid receipt forms with SQLSTATE23514 and the named CHECK."
+  }
+}

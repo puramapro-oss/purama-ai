@@ -1,0 +1,221 @@
+{
+  "recorded_at_utc": "2026-11-23T22:23:59.870303+00:00",
+  "base_commit": "6db3a1ef6df8f0124707663dafb87620ac9996ff",
+  "status": "LOCAL_CODE_VERIFIED_NATIVE_CI_PENDING",
+  "source_sha256": {
+    "mobile/lib/iao-local-engine.ts": "cfad7b3ce42dc8cdf8765d3ee620c24482377c588eb69475220601395799b6ce",
+    "mobile/lib/iao-native-qualification.ts": "e1e63e3992cde1ae453c0d8f1edc6e9b9d3ae9da9988eb3563179564ca51d1c3",
+    "mobile/scripts/qualify-offline-android.sh": "e1f37120807352d04009b573eb24f20028961253753b0b20d609df52af2dd5f6",
+    "mobile/tests/iao-local-engine.test.cjs": "5673fb3c807f6ed135b3e23db4e8ddeca1a99abdd0c01c412beb04a8986556a3",
+    "mobile/tests/iao-native-qualification.test.cjs": "3bf32dbb08394dae557b0de809bb84bec6839cb39b57128f50a390827c213b57"
+  },
+  "gates": [
+    {
+      "command": "node --test --test-concurrency=1 tests/iao-local-engine.test.cjs tests/iao-local-pack.test.cjs tests/iao-native-qualification.test.cjs",
+      "cwd": "mobile",
+      "phase": "baseline",
+      "exit_code": 0,
+      "passed": 43,
+      "failed": 0
+    },
+    {
+      "command": "node --test --test-concurrency=1 tests/iao-local-engine.test.cjs",
+      "cwd": "mobile",
+      "phase": "red before budget correction",
+      "exit_code": 1,
+      "passed": 24,
+      "failed": 2
+    },
+    {
+      "command": "node --test --test-concurrency=1 tests/iao-native-qualification.test.cjs",
+      "cwd": "mobile",
+      "phase": "red before diagnostic correction",
+      "exit_code": 1,
+      "passed": 6,
+      "failed": 1
+    },
+    {
+      "command": "node --test --test-name-pattern='late timer delivery' tests/iao-local-engine.test.cjs",
+      "cwd": "mobile",
+      "phase": "red before monotonic deadline check; actual name pattern was the literal spaced phrase late timer delivery",
+      "exit_code": 1,
+      "passed": 0,
+      "failed": 1
+    },
+    {
+      "command": "npm run test:offline",
+      "cwd": "mobile",
+      "phase": "final",
+      "exit_code": 0,
+      "passed": 164,
+      "failed": 0,
+      "skipped": 0,
+      "duration_ms": 11489.43026
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "mobile",
+      "phase": "final isolated retry",
+      "exit_code": 0
+    },
+    {
+      "command": "./node_modules/.bin/eslint mobile/lib/iao-local-engine.ts mobile/lib/iao-native-qualification.ts",
+      "cwd": ".",
+      "phase": "final",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -n scripts/qualify-offline-android.sh",
+      "cwd": "mobile",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run export:android",
+      "cwd": "mobile",
+      "env": {
+        "EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION": "1"
+      },
+      "exit_code": 0,
+      "modules": 1648
+    },
+    {
+      "command": "npm run export:ios",
+      "cwd": "mobile",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit_code": 0
+    }
+  ],
+  "prior_environment_attempts": [
+    {
+      "command": "npm run export:android",
+      "exit_code": 1,
+      "reason": "Metro could not resolve compatibility package via dependencies symlink outside isolated checkout; same existing dependencies copied locally, no manifests/configuration changed."
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 137,
+      "reason": "Process killed while other work ran. Exact host cause unknown; isolated retry passed."
+    }
+  ],
+  "gitnexus": {
+    "mobile_baseline_index_exit_code": 0,
+    "index_scope": "mobile only, before edits",
+    "risk": "HIGH",
+    "direct_callers": [
+      "inspect",
+      "prepare",
+      "complete"
+    ],
+    "whole_repo_analyze_exit_codes": [
+      1,
+      1
+    ],
+    "final_mobile_refresh_exit_code": 1,
+    "final_detect_changes_exit_code": 0,
+    "diff_alignment": "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.relative GIT_CONFIG_VALUE_0=true for this invocation only; no git config file changed",
+    "limits": [
+      "FTS unavailable",
+      "Cross-language/member resolution and process traces incomplete",
+      "Final diff gate uses the initial mobile graph; source-level review supplements graph overlap"
+    ],
+    "baseline_impact": {
+      "runExclusive": "HIGH",
+      "createIaoLocalEngine": "LOW",
+      "runPhase": "LOW"
+    },
+    "compare_main": "detect-changes-main.json.gz"
+  },
+  "native_after_correction": "NOT_RUN_LOCAL; existing Android workflow must produce complete PASS receipt on published SHA",
+  "independent_review": "independent-review.json",
+  "logs": {
+    "baseline.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 4600,
+      "raw_sha256": "bcc5fc739358745f7dde94a25f9006a49e3879bcda4e1469261bd534c5fae05c",
+      "entry": "baseline.log"
+    },
+    "engine-deadlines-red.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 4302,
+      "raw_sha256": "55e7442f6ee009da70d63e0218f92b60b1ec6aeb35aa4c736a0e6d83318d4363",
+      "entry": "engine-deadlines-red.log"
+    },
+    "qualification-diagnostics-red.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 1707,
+      "raw_sha256": "af468d81cd22dbdca5d2a32dfe118218171a9768994696e1ffb1948611d4bc51",
+      "entry": "qualification-diagnostics-red.log"
+    },
+    "late-timer-red.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 908,
+      "raw_sha256": "83815b7a4ffb27e099a16bd9fa2fdead7b0469034693e2503c5a782c51368a40",
+      "entry": "late-timer-red.log"
+    },
+    "offline-final-green.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 20436,
+      "raw_sha256": "dd892b23cb04d262c17225da5ac26b331f155977e141e863535bcde47b01e54b",
+      "entry": "offline-final-green.log"
+    },
+    "typecheck-isolated-final.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 212,
+      "raw_sha256": "ecf0c02f31ed85673dbe9e6c08284aca5c482c7bcedf9f73af1c291f22eddb52",
+      "entry": "typecheck-isolated-final.log"
+    },
+    "android-bundle-isolated.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 5209,
+      "raw_sha256": "d9fb63c70db93ced8f3f4b80387d0091954de11b7f815d70ce05e025b6e0b9f7",
+      "entry": "android-bundle-isolated.log"
+    },
+    "ios-bundle.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 5259,
+      "raw_sha256": "48d00955de6c1437b700f2afec29d5e833fbb1e3edf6b281bc79a1ebdd8da8f3",
+      "entry": "ios-bundle.log"
+    },
+    "android-bundle.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 3754,
+      "raw_sha256": "a68c6ec493bf74be7daf8b1941107be4237ce909538c736f2ba82396f7cf4953",
+      "entry": "android-bundle.log"
+    },
+    "typecheck-final.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 219,
+      "raw_sha256": "f2ed5e48e3e33498d52a69acd59f94d8efd7803d08cdd9c23fb452bc24d46783",
+      "entry": "typecheck-final.log"
+    },
+    "gitnexus-analyze.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 548,
+      "raw_sha256": "93dd81f9928559e01bf5297c46f688e5ae814e2c022eb71b27b8445809f42ad8",
+      "entry": "gitnexus-analyze.log"
+    },
+    "gitnexus-analyze-retry.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 17267,
+      "raw_sha256": "946e21bfead68f6af872c81b644b4ce1407d2ca148be7abcbfd72eae99977d98",
+      "entry": "gitnexus-analyze-retry.log"
+    },
+    "gitnexus-analyze-mobile.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 2147,
+      "raw_sha256": "2dcd2983167d9d6c15d22146c42c86a905d22a51d42a001da2d931ae2d2d405e",
+      "entry": "gitnexus-analyze-mobile.log"
+    },
+    "gitnexus-final-mobile.log": {
+      "archive": "evidence-logs.tar.gz",
+      "raw_bytes": 2342,
+      "raw_sha256": "48522e91dfe17a1597da64f366554f7ee6341caf52b27fb8ceba46da6baee590",
+      "entry": "gitnexus-final-mobile.log"
+    }
+  },
+  "evidence_archive_sha256": "99e33ff14af3239d91461336da5bccb16707a0ee7115367be787b1d79e141868"
+}

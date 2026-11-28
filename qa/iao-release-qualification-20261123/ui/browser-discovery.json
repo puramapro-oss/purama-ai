@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "tests/chat/playwright.config.ts",
+    "--list"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "seconds": 1.307,
+  "log": "browser-discovery.log"
+}

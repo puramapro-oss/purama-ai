@@ -1,0 +1,164 @@
+{
+  "target": {
+    "id": "Function:src/api/iaoRoutes.ts:handleIaoRoute",
+    "name": "handleIaoRoute",
+    "type": "Function",
+    "filePath": "src/api/iaoRoutes.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 7,
+  "risk": "MEDIUM",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 6,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 6,
+    "2": 1
+  },
+  "affected_processes": [
+    {
+      "name": "handleRequest",
+      "type": "Function",
+      "filePath": "src/api/server.ts",
+      "affected_process_count": 8,
+      "total_hits": 8,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Test",
+      "hits": 3,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:test/iao-facade.test.ts",
+        "name": "iao-facade.test.ts",
+        "filePath": "test/iao-facade.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/iaoAdmissionDeadline.test.ts",
+        "name": "iaoAdmissionDeadline.test.ts",
+        "filePath": "test/iaoAdmissionDeadline.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/iaoAdmissionRevalidation.test.ts",
+        "name": "iaoAdmissionRevalidation.test.ts",
+        "filePath": "test/iaoAdmissionRevalidation.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/iaoIdentityBoundary.test.ts",
+        "name": "iaoIdentityBoundary.test.ts",
+        "filePath": "test/iaoIdentityBoundary.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/api/server.ts:handleRequest",
+        "name": "handleRequest",
+        "filePath": "src/api/server.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_48_handlerequest",
+            "label": "HandleRequest → IaoAuthenticationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_49_handlerequest",
+            "label": "HandleRequest → IsJson",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_51_handlerequest",
+            "label": "HandleRequest → IaoValidationError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_76_handlerequest",
+            "label": "HandleRequest → Digest",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_26_handlerequest",
+            "label": "HandleRequest → Identity",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_75_handlerequest",
+            "label": "HandleRequest → IsIaoPath",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_50_handlerequest",
+            "label": "HandleRequest → Authenticate",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_52_handlerequest",
+            "label": "HandleRequest → Json",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:test/iaoIdentityBoundary.test.ts:call",
+        "name": "call",
+        "filePath": "test/iaoIdentityBoundary.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:src/api/server.ts:startApiServer.server@77:2",
+        "name": "server",
+        "filePath": "src/api/server.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795483248858,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

@@ -1,0 +1,56 @@
+{
+  "finishedAt": "2026-11-22T23:12:32.699817+00:00",
+  "base": "5a01da79e810c8f4a900ebc95ae544006b9333d6",
+  "ownedFiles": [
+    "supabase/functions/_shared/zernio.ts",
+    "tests/social-publish/provider.test.ts"
+  ],
+  "unchangedSharedFiles": [
+    "supabase/functions/_shared/request-deadline.ts",
+    "supabase/functions/_shared/request-body.ts"
+  ],
+  "sha256": {
+    "supabase/functions/_shared/zernio.ts": "ac5de6d77263950cf1a8f357abe33a4decd66ffcc11f67b3bd9843ce57e9ded7",
+    "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  "diffCheckExit": 0,
+  "patchSha256": "41bf43024d39bb652902af4d7176e3e2680a4833963bf1e004d742a4d07d541f",
+  "baseline": {
+    "runtime": "Node24 compatibility runner for Deno.test",
+    "total": 21,
+    "pass": 8,
+    "fail": 13,
+    "exitCode": 1,
+    "receipt": "baseline-complete-node-receipt.json"
+  },
+  "candidate": {
+    "runtime": "Node24 compatibility runner for Deno.test",
+    "total": 21,
+    "pass": 21,
+    "fail": 0,
+    "exitCode": 0,
+    "receipt": "green-node-receipt.json"
+  },
+  "nativeDeno": "Not run in this pass: former /tmp binary disappeared after environment reset",
+  "realNetwork": "Not used; global fetch rejected by fixture harness",
+  "review": {
+    "status": "PASS \u2014 no blocking defect found",
+    "reviewer": "/root/recherche_social_meta_tiktok",
+    "completedAt": "2026-11-22T23:13:23.465354+00:00",
+    "scope": "Actual zernio/provider test diff and unchanged shared helpers, source hashes matched green receipt",
+    "checks": [
+      "late response and unclaimed response cleanup",
+      "in-flight body cancellation",
+      "absolute deadline before and after parse, handoff, normalization and public return",
+      "DELETE 200/404 nonblocking cleanup",
+      "HTTP 207 normalization unchanged",
+      "no path to a second request"
+    ],
+    "testRerun": false,
+    "limits": "Native Deno and type compilation were not established by this review"
+  },
+  "detectChanges": "Owned by parent, required before commit",
+  "commit": "Not created"
+}

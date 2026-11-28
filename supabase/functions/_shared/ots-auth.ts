@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 
 export class OtsHttpError extends Error {
   constructor(public readonly status: number, message: string) { super(message); }

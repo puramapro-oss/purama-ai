@@ -1,7 +1,7 @@
 
 type Result = { data: unknown; error: null | { message: string } };
 type Pending = {
-  table: string; filters: Record<string, string>; done: boolean;
+  table: string; filters: Record<string, string | null>; done: boolean;
   resolve: (result: Result) => void;
 };
 type Reply = {
@@ -19,7 +19,7 @@ export const harness = {
   pending: [] as Pending[], replies: [] as Reply[], initialAuth: [] as InitialAuth[],
   authListener: (_event: string, _session: AuthSession | null) => {},
   setIdentity: (_id: string | null) => {}, setAgentType: (_type: string) => {},
-  defer(table: string, filters: Record<string, string>): Promise<Result> {
+  defer(table: string, filters: Record<string, string | null>): Promise<Result> {
     return new Promise(resolve => harness.pending.push({ table, filters: { ...filters }, done: false, resolve }));
   },
   resolveQuery(index: number, data: unknown, error?: string) {
@@ -48,13 +48,14 @@ export const harness = {
 };
 
 class Query implements PromiseLike<Result> {
-  filters: Record<string, string> = {};
+  filters: Record<string, string | null> = {};
   result?: Promise<Result>;
   constructor(readonly table: string) {}
   select() { return this; }
   update() { return this; }
   delete() { return this; }
   eq(key: string, value: string) { this.filters[key] = value; return this; }
+  is(key: string, value: null) { this.filters[key] = value; return this; }
   order() { return this; }
   limit() { return this; }
   maybeSingle() { return this.run(); }

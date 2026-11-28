@@ -1,0 +1,459 @@
+# IAO : modèle choisi, réflexion, vitesse et recherche connectée
+
+Réception initiale du 12 novembre, raccordement R2 du 13 novembre 2026.
+**PASS pour le code et la qualification locale décrite ci-dessous ; PARTIEL pour la mise en service.**
+Cette contribution prolonge la sélection de compétences CHEF de la PR68, elle-même
+basée sur la consolidation PR45. Elle ne remplace ni KARTA, ni son registre de
+capacités, ni SMARANA, ni les autorisations et budgets existants.
+
+## Besoin et continuité
+
+La vidéo fournie présente Perplexity, Firecrawl et Bloxks. Elle exprime le besoin
+de recherche, de lecture de pages et de création d'applications ; ses affirmations
+commerciales ne sont pas une mesure de performance. Le canon PURAMA v109 a été
+rapproché : comparaison de modèles du 20 octobre, choix de compétences PR68,
+séparation des ressources personnelles/client et réception technique R5.
+
+La sélection de compétences et les outils Tavily/Crossref/Wikidata existent déjà.
+Le client Messages, les mécanismes d'annulation et les reçus d'usage sont réutilisés.
+La PR71 LM Studio reste un candidat distinct, non recopié ici.
+
+## Correction intégrée à l'exécution des agents
+
+Le choix `creator_agents.model` était enregistré et utilisé par le chat de l'agent,
+mais pas chargé dans sa définition KARTA. KARTA pouvait donc choisir son modèle
+principal, même si la personne en avait choisi un autre. Le chargement récupère
+désormais ce choix et le revalide avec la définition autorisée avant l'inférence.
+Les données métier et les textes reçus ne deviennent pas des préférences serveur.
+
+Les préférences `execution_preferences` sont conservées dans la même ligne d'agent,
+avec une contrainte SQL. Les contrôles de sa page de réglages concernent l'exécution
+de ses tâches. **Ils ne modifient pas le chat textuel Edge ni le chat principal.**
+La migration et le runtime doivent être livrés ensemble ; la migration n'est pas
+appliquée en production par cette contribution. `temperature` et `max_tokens`
+historiques ne sont pas réinterprétés comme des autorisations.
+
+## Trois choix séparés
+
+| Choix | Effet réel dans ce code |
+|---|---|
+| Modèle | Identifiant exact qualifié par l'hôte ; aucune substitution silencieuse. |
+| Réflexion | Standard, approfondie ou maximum du modèle qualifié ; Auto utilise actuellement Standard. |
+| Vitesse | Limite le temps d'attente et, pour la consultation, l'étendue des recherches et des avis. |
+
+La vitesse ne remplace pas le modèle et ne diminue pas un effort explicitement
+choisi. « Maximum + ultra rapide » conserve l'effort maximum avec un délai plus
+court : cela peut se terminer sans réponse exploitable. Aucun temps de réponse,
+classement de modèles, absence de bug ou qualité universelle n'est promis.
+
+Le plan indique le modèle, l'effort effectif, le plafond de sortie, le délai et les
+plafonds de consultation. Maximum signifie le plus haut effort **qualifié pour
+ce modèle**, pas systématiquement le paramètre fournisseur `max`. Le budget manuel
+laisse au moins 1024 tokens de sortie et respecte le plafond de sortie de l'hôte.
+Un modèle sans réflexion approfondie qualifiée refuse ce réglage.
+
+Le client copie le catalogue à sa construction et la notification de plan ne peut
+pas modifier sa requête. Une réponse déclarant un autre modèle que celui demandé
+est rejetée avant toute action ; son reçu d'usage est conservé. Les alias doivent
+donc être qualifiés avec les identifiants effectivement renvoyés par le fournisseur.
+
+## Catalogue de l'hôte
+
+Sans `KARTA_MODEL_PROFILES_JSON`, seuls les identifiants MAIN/FAST déjà configurés
+sont admis, avec le plafond historique de 1024 tokens et sans nouveau mode de
+réflexion. Une configuration explicite fournit les capacités exactes du transport :
+
+```json
+[
+  {
+    "model": "identifiant-exact-qualifie",
+    "reasoning": "adaptive",
+    "maxOutputTokens": 16384,
+    "effortLevels": ["low", "medium", "high"]
+  }
+]
+```
+
+Exemple de forme uniquement, pas une configuration active. Modes disponibles :
+`none`, `budget` et `adaptive`. La qualification doit vérifier le contrat, le
+modèle renvoyé, la qualité, les coûts et la compatibilité de l'instance. Le choix
+historique Sonnet 4 de l'interface n'est pas ajouté implicitement au catalogue
+MAIN actuel : le qualifier ou proposer un modèle disponible. Aucun alias ancien
+n'est remplacé silencieusement.
+
+Le catalogue n'est ni un contrat d'abonnement, ni une réservation de dépense, ni
+une autorisation de partage. Les quotas de période et l'absence de dégradation
+artificielle par abonnement restent inchangés. Les contrôles réels de ressources
+et de budget par compte doivent être qualifiés avant ouverture des nouveaux modes.
+
+## Connexions de recherche
+
+`createConnectedResearchClient` ajoute deux transports facultatifs : Search API
+Perplexity et Scrape API Firecrawl. Origines fixes, clés distinctes fournies par
+l'hôte, absence de relance automatique, délais et corps bornés, contrôle des URL,
+réponses malformées refusées et erreurs minimisées. Un transport encore actif
+après expiration garde son verrou local jusqu'à sa fin. Ce verrou n'est pas une
+limite globale entre processus.
+
+Les extraits de recherche et les pages markdown sont distingués. Les résultats
+gardent leurs références et dates de récupération ; ils sont non vérifiés et leur
+coût facturé reste inconnu. Aucun secret n'est placé dans les prompts ou résultats.
+Le contrôle d'URL est syntaxique. Il ne confine ni les résolutions DNS ni les
+redirections opérées à distance par Firecrawl. Un changement d'URL déclaré est
+détecté après récupération ; ce n'est pas une prévention distante garantie.
+
+Aucun compte ni clé réelle n’a été créé. Lors de R2, un test réel minimal du compte
+Anthropic existant a été tenté : requête refusée pour crédit insuffisant, sans relance.
+Les deux services de recherche restent NON TESTÉS sur des comptes réels. Bloxks reste une référence de produit : sa documentation examinée
+décrit des intégrations dans les applications créées, sans fournir dans ces pages
+un contrat vérifié permettant à IAO de piloter son créateur. Aucun faux connecteur
+Bloxks n'est déclaré disponible.
+
+## Consultation entre modèles
+
+`runModelConsultation` exécute une tâche bornée : recherches publiques explicitement
+demandées, propositions indépendantes, critiques si le profil l'autorise, puis
+synthèse par le modèle principal choisi. Les modèles consultés forment une liste
+exacte ; aucun compte ou modèle supplémentaire n'est sélectionné à l'insu du demandeur.
+Des implémentations de `ClaudeClient` peuvent fournir les routes compatibles ;
+cela ne livre pas des adaptateurs natifs OpenAI/Gemini ni ne qualifie leurs comptes.
+
+Chaque appel a une réservation et un reçu distinct, y compris en cas d'échec ou
+d'incertitude. Le client exige trois ports serveur : `claim`, `reserve`, `settle`.
+Ils doivent utiliser le registre durable existant, avec identité réelle, unicité,
+permissions, destinations, droits de partage, budget complet et rapprochement.
+Une fonction retournant simplement `true` ne constitue pas une implémentation de
+production. Aucune autorisation n'est tirée du texte d'un modèle.
+
+Les modèles ne reçoivent aucun outil exécutable dans cette consultation. Les avis
+ne sont pas des décisions d'action. La synthèse est un objet validé : réponse,
+références de sources présentes, désaccords et incertitudes. Des références
+inventées sont rejetées ; cela ne prouve pas que les sources étayent chaque phrase.
+Un accord entre modèles n'est jamais promu en preuve.
+
+Les sources sont projetées par liste de champs, les titres/extraits sont bornés,
+le texte total des extraits est limité à 32000 caractères et le contexte JSON
+complet à 256 Kio. Les abrégements sont indiqués. Ces limites ne remplacent pas
+la mesure du tokenizer ou du contexte du modèle. Une requête modifiée pendant
+l'attente n'altère pas la copie acceptée. L'annulation bloque les appels suivants ;
+les coûts d'une requête déjà partie ne sont pas présumés nuls. Le résultat retourné
+est une copie stable et la reprise automatique n'est pas effectuée.
+
+## Raccordement R2 au chat et au registre durable
+
+Le widget global conserve sa conversation publique. Un panneau **Consultation IA**
+est ajouté pour les comptes authentifiés non anonymes. Il charge le catalogue du
+serveur et propose seulement les combinaisons modèle/réflexion/vitesse réellement
+qualifiées. Le changement de profil ne retire aucun avis ou recherche à l’insu de
+l’utilisateur : les sélections incompatibles sont signalées avant l’envoi.
+
+Le proxy Edge `iao-consultation` vérifie le JWT avec `auth.getUser`, impose l’identité
+obtenue, puis appelle l’API interne KARTA avec son jeton serveur. Aucun identifiant
+de propriétaire, montant, clé ou URL de fournisseur ne vient du navigateur. Les
+quatre actions sont `catalog`, `consult`, `status`, `cancel`. La requête est limitée
+à 64 Kio et la réponse à 512 Kio UTF-8 avant décodage. Les résultats privés portent
+`Cache-Control: no-store, private` et ne contiennent pas les reçus ni les paramètres
+fournisseur. Les délais couvrent le corps complet, les erreurs sont minimisées.
+
+Le catalogue est l’intersection entre la politique opérateur et les modèles actifs
+renvoyés par le compte Anthropic. Les capacités de réflexion sont lues dans cette
+réponse, sans les déduire du nom. Le SDK de consultation est attaché à la même clé
+et à l’origine native Anthropic ; une variable de passerelle ambiante ne peut pas
+changer cette destination. Les autres usages du client compatible restent inchangés.
+Un catalogue accessible ne prouve pas que le crédit d’inférence est suffisant.
+
+La migration **032** (031 dans la branche initiale, renumérotée après l’atelier) étend les ressources CHEF existantes avec des missions de type
+`consultation`, sans dépôt ni identifiant de brief fictif. La clôture des missions
+de code ne peut pas fermer une allocation de consultation encore vide. Les tâches
+correspondantes ne peuvent pas entrer
+dans les workers de développement. Les réservations et les usages restent dans
+`chef_budget_reservations` et `chef_usage_events` ; les nouvelles tables privées
+conservent demandes, résultats, annulations et reçus, sans second portefeuille.
+L’ancien parcours de mission de code est testé après application de cette migration.
+
+L’allocation est explicite, finie, datée et réservée au rôle de service via
+`model_consultation_provision`. Un changement de montant ou de période ne réinitialise
+pas une allocation existante. Aucun forfait, paiement ou quota client n’est inventé.
+Chaque opération réserve son enveloppe complète sous verrou ; chaque sous-appel
+vérifie son unicité, son estimation, l’arrêt global et l’annulation avant de partir.
+Les verrous sérialisent aussi annulation et création quand ces demandes se croisent.
+
+La réponse reste disponible quand le coût facturé est encore inconnu. Les compteurs
+reçus sont rapprochés avec les totaux CHEF ; le coût inconnu garde sa réservation.
+`model_consultation_reconcile`, réservé au service, permet ensuite un rapprochement
+opérateur/fournisseur avec preuve et identifiant idempotent. Une estimation ne devient
+jamais une facture. Une dépense constatée supérieure au budget suspend les admissions.
+
+Le navigateur conserve seulement l’UUID de l’opération par compte dans la session.
+La reprise demande son état sans retransmettre la question ni relancer une inférence.
+Un changement de compte invalide les requêtes d’affichage. L’annulation est durable,
+y compris avant une création retardée ; une perte réseau ne vaut pas confirmation
+que rien n’a été consommé. Une opération interrompue après expiration reste à
+rapprocher et n’est pas automatiquement réexécutée.
+
+Les extraits persistés sont bornés en octets JSON avant sauvegarde : texte cumulé
+16 Kio, maximum 2 Kio par source, titre 128 octets encodés. Les abrégements sont
+signalés. La réponse complète, les identifiants cités, les URL canoniques et les
+reçus privés sont conservés. Les liens restent limités à 8192 caractères après
+canonicalisation. Les modèles reçoivent au plus 32 000 caractères d’extraits, dans
+un contexte également borné par l’enveloppe opérateur ; ces plafonds sont distincts.
+
+## Configuration et conditions de mise en service
+
+L’hôte attend `KARTA_CONSULTATION_POLICY_JSON`, objet strict contenant `version`,
+`expiresAt` et `models`. Chaque modèle contient son identifiant exact, `maxInputTokens`,
+`maxOutputTokens` et `maxCostMicros`. Les deux plafonds facultatifs de recherche sont
+`research.searchMaxCostMicros` et `research.scrapeMaxCostMicros`. Les estimations par
+appel doivent être qualifiées pour le compte et la période ; aucun prix ni budget
+par défaut n’est généré par ce lot. Une politique expirée ferme les nouvelles admissions.
+
+L’Edge réutilise `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `KARTA_INTERNAL_URL` et
+`KARTA_ADMIN_TOKEN`. KARTA utilise sa connexion Supabase de service, le compte
+Anthropic existant et, seulement lorsqu’elles sont configurées, les clés distinctes
+`PERPLEXITY_API_KEY` et `FIRECRAWL_API_KEY`. Une clé de recherche sans plafond
+qualifié ne rend pas le service disponible. Aucun secret ne passe dans le catalogue.
+
+L’ouverture demande la livraison coordonnée de la migration, de l’API, de l’Edge et
+du site, une allocation opérateur réelle par compte et un fournisseur financé. Le
+mode global `KARTA_MOCK_CLAUDE=true` bloque ce nouveau parcours réel ; il n’a pas été
+modifié sur le Mac. Son éventuel basculement doit tenir compte des tâches déjà actives.
+Les essais de qualification ne provisionnent aucune ressource de production.
+
+## Qualification et limites
+
+Les résultats frais, commandes et versions figurent dans
+`qa/adaptive-intelligence-20261112/verification.json` pour R1 et
+`qa/consultation-integration-20261113/verification.json` pour R2. Les essais utilisent les
+implémentations produit avec réseau, identité ou SQL de test selon leur portée.
+Les essais HTTP natifs utilisent des sockets locaux, pas les services externes.
+Les assertions du SDK vérifient les requêtes sérialisées, pas la prise en charge
+effective des paramètres par un compte fournisseur.
+
+Les deux appels de statut MacDevBridge ont échoué à la lecture initiale. Un autre
+accès a ensuite permis une inspection en lecture seule du Mac : le dépôt
+`purama-ai` est sur `main` et ne contient pas ce nouveau profil. Les noms de clés
+Anthropic sont présents dans `karta/.env` ; aucun nom de clé Perplexity/Firecrawl
+n'est déclaré dans les deux fichiers `.env` examinés. Cela ne prouve pas l’absence de clés ailleurs. Lors de R2,
+la liste officielle des modèles Anthropic a répondu HTTP 200 ; les modèles MAIN/FAST
+configurés sont actifs. Une inférence minimale sur FAST (16 tokens de sortie maximum,
+texte public) a répondu HTTP 400 pour crédit insuffisant. La clé est reconnue mais
+l’inférence réelle reste BLOQUÉE ; ni achat de crédit ni relance n’a été effectué. Aucun secret n'a été affiché.
+Aucun déploiement Hostinger, basculement de données ou changement de configuration
+personnelle n'est revendiqué. La branche désactive son déploiement Vercel.
+La publication en PR ne signifie pas fusion ou service actif.
+
+## Sources officielles examinées
+
+- [Perplexity Search API](https://docs.perplexity.ai/api-reference/search-post)
+- [Perplexity MCP](https://docs.perplexity.ai/guides/mcp-server)
+- [Firecrawl Scrape](https://docs.firecrawl.dev/api-reference/endpoint/scrape)
+- [Firecrawl MCP](https://docs.firecrawl.dev/mcp-server)
+- [Claude : catalogue et capacités des modèles](https://platform.claude.com/docs/en/api/models)
+- [Claude : compatibilité des modes de réflexion](https://platform.claude.com/docs/en/build-with-claude/thinking-troubleshooting)
+- [Claude : réflexion avec budget](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)
+- [Bloxks : documentation des intégrations](https://bloxks.app/docs/integrations)
+
+Ces sources décrivent leurs contrats, pas la qualification de l'intégration PURAMA.
+
+## Réconciliation du 25 novembre 2026 : continuité et transition personnelle
+
+**Base examinée :** [dd59dae6](https://github.com/puramapro-oss/purama-ai/commit/dd59dae670db7d3fca0d0b7173ad55aec5d10891),
+arbre `dcf21bb64af2d10d6a8b2f24030c3f5a157378ac`, branche de revue PR40.
+Cette section décrit une lecture des sources ; elle ne revendique aucun nouveau
+test, raccordement distant ou déploiement. Les réceptions R1/R2 ci-dessus gardent
+leurs dates et périmètres. La présence d'un composant ne prouve pas sa mise en service.
+
+### Réutilisation de l'existant
+
+| Besoin | Source à réutiliser | Portée observée et limite |
+| --- | --- | --- |
+| Essayer une tâche | `src/components/IaoTrialPanel.tsx`, `src/lib/iao-trial-entry.ts` | Raccordés au chat et à la page d'essais ; panier, médias et atelier seulement. Aucun bilan d'abonnements n'est établi. |
+| Mémoire et continuité | `shared/smarana.ts`, `mobile/lib/smarana-store.ts`, `mobile/lib/smarana-sync.ts` | Réplique de conversations raccordée à `usePuramaConversation` ; pas d'importeur d'historiques IA externes identifié. |
+| Import/export local | `public/offline-workspace.js`, `public/offline-library-backup.js` | Textes, sauvegarde versionnée, prévisualisation et ajout préservant l'éditeur ; pas une migration universelle de mémoire. |
+| Choix et confrontation | `src/components/ConsultationPanel.tsx`, `karta/src/claude/consultation.ts` et son registre durable | Catalogue, consultation, reprise par identifiant, annulation et reçus ; comptes et transports réels à qualifier. |
+| Réaliser et vérifier | `src/pages/Workshop.tsx`, `karta/WORKSHOP.md`, `docs/iao-observed-verification.md` | Passage chat → atelier, artefacts et observations configurées ; les observateurs doivent être qualifiés pour leur modalité. |
+| Partager une méthode | `docs/distribution/README.md`, parcours `/modeles/:id` | Copie privée explicite d'une configuration d'agent ; aucun apprentissage automatique de toutes les réussites n'en découle. |
+
+`src/components/AgentComparator.tsx` conserve un comparateur statique d'agents,
+avec chiffres codés en dur ; aucun raccordement dans `src` n'a été retrouvé lors
+de cette lecture. Il ne fournit ni mesure concurrentielle ni preuve de remplacement.
+L'absence d'un parcours dans cet arbre ne démontre pas son absence dans tous les projets.
+
+### Assemblage natif encore requis
+
+`karta/src/index.ts` appelle `startApiServer(readiness, { lifetime })` sans
+`iaoRuntime`. Le contrat [IAO](iao/IAO-INTERFACE-CONTRACT.md) exige une autorité de
+session/espace, un `SmaranaIaoPort` concret avec reçus et déduplication durables,
+ainsi qu'un port Fabric qualifié pour le rejeu après redémarrage. Les routes sans
+runtime répondent `503` par contrat. L'adaptateur `KartaRuntimeIaoPort` ne fournit
+pas ces dépendances. Ce constat de source ne constitue pas un relevé de production.
+La transition décrite ci-dessous ne doit pas contourner cette admission ni créer
+un second magasin mémoire, ordonnanceur, portefeuille ou moteur d'exécution.
+
+### Reprise sélective de contexte : conception ouverte
+
+**État : `CONCEPTION_EN_COURS`.** Le parcours encore proposé concerne la reprise
+sélective de contexte dans l'interface IAO existante. La décision utilisateur de
+retirer le « comparateur d'IA » est conservée : le nouveau comparateur et le bilan
+comparatif d'abonnements proposés dans la première réconciliation ne sont pas
+retenus. L'historique de cette proposition reste dans Git. Les essais locaux
+existants et la qualification interne SATYA/PRAMANA restent des contrôles de travail.
+La validation de conception reste distincte de la disponibilité du code et de sa
+qualification. Les corrections des composants existants déjà autorisés continuent
+indépendamment ; ce document ne les bloque pas et n'annonce aucune implémentation.
+
+**Import choisi et traçable.** La personne choisit un fichier, puis les conversations,
+projets ou éléments de contexte à reprendre. Un format non reconnu est refusé avec
+explication ; aucun accès implicite au compte d'un autre fournisseur n'est ajouté.
+Les plafonds de taille, de nombre d'éléments et de durée sont obligatoires avant
+admission. Un dépassement est annoncé avant écriture, sans troncature silencieuse ;
+une borne absente ou une structure invalide ferme l'import concerné.
+Chaque élément conserve sa source, son identifiant d'origine s'il existe, son auteur
+(`user`, `assistant` ou autre rôle explicite), ses dates connues, son empreinte et la
+version du lecteur. Une date inconnue reste inconnue. Une affirmation d'assistant
+reste une production d'assistant, et ne devient ni fait confirmé ni préférence utilisateur.
+Les messages et instructions importés sont des données ; ils n'accordent aucun droit,
+ne déclenchent aucun outil et ne modifient pas les règles de l'agent.
+
+**Prévisualisation et conflits.** Avant écriture, montrer les éléments retenus,
+exclus, invalides, déjà présents ou contradictoires, ainsi que la destination privée.
+Les originaux restent conservés. L'annulation de l'aperçu n'écrit rien ; le changement
+de compte ou d'espace invalide la sélection. Une divergence avec une donnée existante
+conserve les deux provenances et demande un choix, sans écrasement ni fusion silencieuse.
+Les éléments non sélectionnés ne partent pas vers un modèle. Tout partage ultérieur
+avec un fournisseur suit les autorisations et budgets existants de la mission.
+
+**Idempotence et réversibilité.** L'identité d'import associe l'espace autorisé,
+la source, l'élément et sa version/empreinte. Rejouer la même opération retrouve son
+reçu ; un contenu divergent sous la même identité est refusé avant effet. Deux
+sources distinctes au texte égal restent distinguables. Une édition locale après
+import n'autorise ni son écrasement ni une duplication lors du rejeu. La réception
+doit être atomique dans le périmètre annoncé, ou exposer précisément les éléments
+reçus et leur reprise stable ; une interruption ne déclenche pas une réimportation aveugle.
+Un export choisi restitue contenu, provenance, versions et conflits dans un format
+documenté, sans secrets ni permissions. Sa relecture doit être vérifiée. Retirer un
+élément du contexte actif ne supprime ni l'original ni les travaux qui en dépendent.
+
+**Usages indispensables.** Définir avant l'essai les tâches importantes, fonctions
+incontournables, formats, outils, confidentialité, délai et qualité attendue.
+Un manque critique empêche de déclarer l'usage qualifié, même si une moyenne
+globale est favorable. Le catalogue doit distinguer capacité disponible, configurée
+et effectivement éprouvée ; l'accès API à un modèle n'équivaut pas à toute son application.
+
+**Épreuves représentatives et sans double effet.** Choisir les cas et critères avant
+de connaître les résultats, inclure cas difficiles, données incomplètes et échecs,
+et conserver des cas réservés à l'évaluation interne. Vérifier avec une référence
+identifiée, un contexte pertinent et des budgets/temps explicités. Séparer préparation simulée
+et exécution réelle. Une seule voie peut effectuer un envoi, achat ou réservation ;
+l'autre reste en lecture, copie isolée ou préparation. Avant toute reprise d'une
+action incertaine, rapprocher l'état externe et son identifiant d'opération.
+
+**Coûts et restitution.** Rapprocher les reçus existants : modèles, outils, échecs,
+reprises, vérification et assistance. Pour l'utilisateur, inclure abonnement,
+dépassements, services encore nécessaires et temps de correction, mesuré séparément
+d'une valorisation monétaire éventuelle. Distinguer estimation, montant constaté
+et coût inconnu ; un inconnu ne devient jamais zéro. Un budget partagé borné et un
+arrêt de mission s'appliquent à tous les sous-appels, avec les mécanismes existants.
+Afficher `PASS` seulement pour un usage et une version dont tous les critères requis
+ont été reçus ; `PARTIEL` pour une couverture incomplète, `BLOQUÉ` pour une dépendance
+identifiée, `NON TESTÉ` pour une épreuve absente.
+
+### Réception et décisions préalables à l'implémentation
+
+La recette devra couvrir import fidèle avec rôles/provenances, aperçu annulé sans
+écriture, conflit préservé, isolation des espaces, rejeu après interruption, édition
+locale conservée, export relu, dépassement des bornes, coût inconnu et absence de
+double action. Chaque preuve indiquera version, entrées, méthode, résultat et limites.
+La préférence durable et les économies exigent des usages réels suivis ; elles ne
+sont déduites ni d'une simulation ni d'un accord entre modèles.
+**Première version proposée pour validation :** fichiers texte/Markdown déjà pris
+en charge par l'espace hors ligne, avec provenance choisie et rôle inconnu conservé
+quand il n'est pas explicitement structuré. Les exports propres à un fournisseur
+exigent un lecteur identifié et des fichiers de référence autorisés avant admission ;
+ils ne sont pas annoncés compatibles sur la seule extension JSON ou ZIP.
+Plafonds proposés : 10 Mio par import, 100 conversations, 5 000 éléments et
+50 000 caractères par élément ; dépassement refusé avant écriture, prévisualisation
+bornée à 30 secondes et reprise d'écriture par lots d'au plus 100 éléments avec
+reçus. Ces valeurs sont des choix de conception, pas des performances mesurées.
+Destination : espace privé explicitement sélectionné, sous l'autorité SMARANA et
+sa politique de mémoire existantes ; aucune nouvelle rétention globale n'est ajoutée.
+Premier périmètre d'évaluation : documents, création de contenus et missions
+récurrentes autorisées ; la personne définit les fonctions indispensables de chaque
+usage, et une fonction critique manquante interdit son statut de qualification complète.
+
+Avant passage à `PRET_A_CODER`, valider ce périmètre de première version ; les
+lecteurs supplémentaires seront qualifiés séparément sur leurs formats réels.
+Réutiliser les reçus et suivis existants ; aucun registre parallèle n'est créé.
+La validation de cette évolution et l'assemblage natif restent ouverts.
+
+### Reprise de qualité : sources et écarts vérifiés le 25 novembre
+
+La reprise part du commit `e04369c79c6395347b66557c0566dc913dc5613d`, arbre
+`fe3506e8682cd5cd0a4ad9784fe041438475013d`. Les PR121 et PR123 restent des travaux
+distincts à préserver. Les ajouts ci-dessous concernent la qualification existante,
+sans valider implicitement un nouveau produit ou une nouvelle mémoire.
+
+| Objectif | Mécanisme déjà présent à conserver | Preuve supplémentaire nécessaire |
+| --- | --- | --- |
+| Réduire les attentes inutiles | Catalogue mutualisé, cache de 60 secondes, annulations indépendantes et exclusion d'un chargement abandonné dans `consultation-host.ts`. | Mesurer la latence sur les transports et modèles réellement utilisés. |
+| Préserver la qualité choisie | Modèle exact et profil de réflexion compatibles dans `execution-profile.ts` et le client de consultation. | Vérifier le fond des réponses ; la conformité du format ne démontre pas leur vérité. |
+| Traiter les demandes complexes | Propositions indépendantes, critiques bornées et synthèse unique dans `consultation.ts`. | Une concordance entre modèles doit être confrontée aux sources, calculs ou observations adaptés. |
+| Éviter les doublons d'exécution | Identité et stockage de consultation, reprise sans nouvelle inférence, gestion des résultats incertains. | La durabilité propre à chaque service, notamment Fabric après redémarrage, doit être qualifiée séparément. |
+| Contrôler ressources et arrêt | Réservations avant les sous-appels, concurrence limitée, vérification de politique et propagation de l'annulation. | Le budget collectif d'une mission ne doit pas être annoncé complet sur la seule présence de budgets par appel. |
+| Préserver le contexte autorisé | Validation et filtrage des paquets mémoire, déduplication des textes strictement identiques, Unicode conservé et abrégements signalés. | Qualification du port mémoire durable et de l'autorité de session effectivement raccordés. |
+
+Cette table résume une revue ciblée des sources et tests existants. Elle ne constitue
+ni une nouvelle exécution des suites ni une mesure comparative de puissance.
+
+**Mac et Fabric.** L'accès Desktop Commander est revenu. Les huit terminaux Codex,
+les travaux Grok et les modifications du checkout principal sont préservés. Le
+serveur existant a été retrouvé dans le worktree `local-oss-router-20261003`, sous
+`.coord/local-oss/` ; ses trois sources concordent avec le reçu canonique du lot
+`CHATGPT-AUDIT-20261125-B9BAF60C`. Les journaux des 60 tests et leurs empreintes ont
+été relus, sans relancer ces tests. `fabric_gateway_v2.py` conserve toutefois son
+registre de rejeu en mémoire et exclut explicitement une garantie après redémarrage.
+Le socket par défaut, ancien et sans propriétaire observé, ne répond pas au GET
+`/health` du 25 novembre à 22:01:18 UTC. Aucun daemon n'a été démarré pour ce relevé.
+
+**Mémoire et session.** Le worktree T04 contient un montage ancien
+`configuredMemoryRuntime.ts` et un `SmaranaAkashaMemoryPort` implémentant
+`AkashaMemoryPort`. Ces composants sont à réutiliser, mais ne satisfont pas directement
+le `SmaranaIaoPort` courant : signatures, reçus durables et autorité de session sont
+différents. Le bearer fixe de cet ancien montage n'établit pas une session utilisateur
+révocable. Les recherches ciblées ne démontrent pas l'absence d'autres travaux ailleurs.
+
+La référence SMARANA consommée par T04 a ensuite été retrouvée et vérifiée :
+`file:vendor/purama-smarana-0.1.0.tgz`, 106 809 octets, SHA-256
+`72daccecac6a921ebd2d4aa485a205afbd2ac75edd6ef87474b04bd04a4cad32`,
+identique dans le HEAD T04 `ab237aeb5d12c6b1c470a3dd69d047f0ea1b0b65`.
+Son reçu désigne la source SMARANA `04b62c70a1abbe0f6dee9856a969dd39457180e6`.
+L'archive inclut les primitives PostgreSQL de contexte persistant, de reprise
+opaque, d'export durable et de purge : ces composants existent et sont à réutiliser.
+Le numéro `0.1.0` seul n'identifie pas cette archive, car d'autres checkouts portent
+le même numéro avec des exports antérieurs.
+
+Cette identification ne qualifie pas encore leur raccordement aux signatures
+actuelles de `SmaranaIaoPort`. Le reçu T04 conserve un échec de purge lié à
+`source_object_ids IS NULL`, et le worktree portant le correctif en cours comporte sept fichiers
+suivis modifiés ; aucun test SQL récent de ce correctif n'a été exécuté dans cette
+reprise. Ce travail propriétaire est préservé. Le contrat IAO courant ne désigne
+toujours pas d'émetteur de session ; les sessions de compte Supabase existantes
+ne fournissent pas automatiquement la relation autorisée entre tenant, acteur et
+session IAO. La lecture ciblée des sources et reçus natifs n'a pas retrouvé de
+décision d'autorité plus récente. Le rejeu Fabric durable après redémarrage reste
+une qualification séparée.
+
+**Qualification Android.** Sur `e04369c`, sept workflows GitHub ont réussi ; le job
+Android du run `45699636288` a échoué avant le redémarrage hors ligne. Les 42 relevés
+conservent `mobile_data=1`, alors que les 41 derniers montrent un ensemble de réseaux
+actifs vide. Les reçus ne permettent pas d'identifier la cause du réglage. Les sources
+[Android SDK35](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/internal/telephony/GlobalSettingsHelper.java)
+montrent que cette clé peut être spécifique à une souscription ; cette possibilité
+n'est pas assimilée à la configuration réellement observée.
+
+La correction en cours réutilise un préparateur commun et place le contrôle réseau
+avant la compilation native longue. Les états téléphone/souscriptions, l'image et
+les commandes sont reçus séparément. L'observateur hors ligne conserve ses critères
+et ses trois observations stables. Un contrôle réseau seul ne qualifie ni le modèle,
+ni SQLCipher, ni la reprise complète. Le suivi du lot reste dans
+`qa/offline-native-timeout-20261123/network-preparation-20261125/`.

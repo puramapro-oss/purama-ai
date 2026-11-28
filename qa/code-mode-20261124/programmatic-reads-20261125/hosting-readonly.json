@@ -1,0 +1,97 @@
+{
+  "schema": "purama.hosting-readonly-public-summary.v1",
+  "observedAt": "2026-11-24T22:24:04Z",
+  "scope": "Inspection ciblée et en lecture seule de l'hébergement existant. Aucune modification, remise en service, migration, inférence ou action métier.",
+  "connection": {
+    "status": "PASS",
+    "macCommandExitCode": 0,
+    "existingSshConnectionSucceeded": true,
+    "transport": "Intermittent; appels différés réconciliés sans rejouer les commandes."
+  },
+  "hosting": {
+    "provider": "Hostinger",
+    "disk": {
+      "totalGiBApprox": 387,
+      "usedGiBApprox": 263,
+      "availableGiBApprox": 124,
+      "usedPercent": 68
+    },
+    "observedLocalPersistence": [
+      "Données PostgreSQL historiques de Supabase",
+      "Fichiers historiques de Supabase Storage",
+      "Données N8N",
+      "Données Docuseal",
+      "Base de l'environnement de qualification"
+    ],
+    "limits": "La présence de montages locaux ne qualifie ni les politiques d'accès, ni le contenu, ni la restauration des sauvegardes."
+  },
+  "legacyBackend": {
+    "state": "Arrêté",
+    "stoppedSince": "2026-10-03",
+    "components": [
+      "KARTA",
+      "Redis associé à KARTA",
+      "Base Supabase historique",
+      "Supabase Storage historique",
+      "Passerelle Supabase historique"
+    ],
+    "qualification": "L'absence de backend alternatif dans le périmètre inspecté ne prouve pas son absence dans toutes les infrastructures.",
+    "startupRisk": "Le point d'entrée historique lance immédiatement les workers et deux ordonnanceurs avant l'API. Il n'a pas été exécuté."
+  },
+  "existingIaoPreview": {
+    "publication": "Boucle locale uniquement",
+    "backendQualified": false,
+    "authQualified": false,
+    "postgresQualified": false,
+    "workersStarted": false,
+    "rootHttpStatus": 200,
+    "apiHealthHttpStatus": 503,
+    "api503": "Réponse configurée explicitement; la prévisualisation ne revendique pas de backend opérationnel.",
+    "preservation": "Source et propriétaire de la prévisualisation existante conservés."
+  },
+  "publicAuthentication": {
+    "healthHttpStatus": 502,
+    "authHealthHttpStatus": 502,
+    "routingObservation": "La route existante cible la passerelle Supabase historique arrêtée.",
+    "status": "BLOQUÉ"
+  },
+  "otherReadOnlyProbes": {
+    "privateOneRootHttpStatuses": [
+      200,
+      200
+    ],
+    "n8nHealthHttpStatus": 200,
+    "qualificationAuthHealthHttpStatus": 200,
+    "limits": "Une réponse HTTP ne démontre pas le fonctionnement métier, l'authentification utilisateur ou la génération IA."
+  },
+  "legacyDeploymentPrerequisites": {
+    "nodeBase": "node:22-alpine",
+    "redisBase": "redis:7-alpine",
+    "anthropicSdkDeclared": "^0.65.0",
+    "supabaseSdkDeclared": "^2.91.0",
+    "migrationFilesPresent": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005"
+    ],
+    "appliedMigrations": "NON TESTÉ",
+    "credentialValidity": "NON TESTÉ",
+    "nextSteps": [
+      "Qualifier l'état des données et dépendances existantes avant reprise.",
+      "Sélectionner et vérifier la version applicative attendue et ses migrations.",
+      "Rétablir et tester la route d'authentification.",
+      "Configurer explicitement le démarrage des workers pour éviter la reprise involontaire de traitements.",
+      "Vérifier les parcours utilisateur sur la version effectivement déployée."
+    ]
+  },
+  "notTested": [
+    "Contenu et confidentialité des buckets",
+    "Restauration des sauvegardes",
+    "Actions métier authentifiées",
+    "Inférence IA",
+    "Qualité/coût/latence générative",
+    "Charge réelle"
+  ]
+}

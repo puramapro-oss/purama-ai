@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "started_at_utc": "2026-11-24T20:36:42.413648+00:00",
+  "ended_at_utc": "2026-11-24T20:36:49.068904+00:00",
+  "elapsed_seconds": 6.655239889994846,
+  "exit_code": 0,
+  "timed_out": false,
+  "runtime": {
+    "source_url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-unknown-linux-gnu.zip",
+    "checksum_url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-unknown-linux-gnu.zip.sha256sum",
+    "archive_sha256": "c6527f24f4b16031d3ae4fa9f658d5f11534c8d84ce7dc8502420280919c3490",
+    "archive_bytes": 41596794,
+    "binary_sha256": "ce6a052beb97c2b92de67077e3f3924ba7c9661ede0d8dc2f66a116a3c841f21",
+    "version": "deno 2.9.7 (stable, release, x86_64-unknown-linux-gnu)\nv8 15.0.245.2-rusty\ntypescript 6.0.3"
+  },
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "deno",
+    "check",
+    "--no-config",
+    "--no-lock",
+    "--node-modules-dir=none",
+    "supabase/functions/partner-find-prospects/index.ts"
+  ],
+  "inputs": [
+    {
+      "path": "supabase/functions/partner-find-prospects/index.ts",
+      "bytes": 20990,
+      "sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9"
+    },
+    {
+      "path": "supabase/functions/_shared/assistant-policy.ts",
+      "bytes": 342,
+      "sha256": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb"
+    },
+    {
+      "path": "supabase/functions/_shared/assistant-response.ts",
+      "bytes": 1336,
+      "sha256": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714"
+    },
+    {
+      "path": "supabase/functions/_shared/request-body.ts",
+      "bytes": 7567,
+      "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+    },
+    {
+      "path": "supabase/functions/_shared/request-deadline.ts",
+      "bytes": 3571,
+      "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+    },
+    {
+      "path": "karta/src/claude/assistant-policy.ts",
+      "bytes": 7890,
+      "sha256": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3"
+    }
+  ],
+  "inputs_unchanged_after": true,
+  "repository_inputs_match": true,
+  "log_file": "native-typecheck-final-linux.log",
+  "log_sha256": "49aba8b0ea597bfaa954e685cd5e8e5a678d4a003e8c8f8d7d4fa9af36f6c870",
+  "log_redactions": [
+    "Absolute isolated source directory replaced with <isolated-source>."
+  ],
+  "scope": "Native TypeScript validation of the complete entry and its actual dependency graph, in an isolated six-file copy. No stubs, no no-check flags, no HTTP server, no provider/database/business calls, no deployment. Public imports fetched into a dedicated cache; original repository configuration and dependencies unchanged."
+}

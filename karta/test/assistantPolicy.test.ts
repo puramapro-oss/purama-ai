@@ -3,9 +3,11 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
+import * as utilTypes from 'node:util/types';
 import ts from 'typescript';
 import * as zod from 'zod';
 import * as nodePolicy from '../src/claude/assistant-policy.js';
+import { configuredModelCatalog, resolveModelExecutionPlan } from '../src/claude/execution-profile.js';
 
 // These tests execute production modules with real Zod schemas. Only the runtime,
 // database and provider transports are simulated; no network or user data is used.
@@ -52,6 +54,7 @@ function fixtureRows(): Record<string, Row[]> {
       activity_description: 'Données de test', expertise_areas: [], city: 'Ville fictive' }],
     partner_agent_config: [{ user_id: principal, company_name: 'Fiction', sender_name: 'Test Sender',
       sender_email: 'sender@example.invalid', sender_title: 'Test', outreach_tone: 'courtois',
+      target_countries: ['CH'], target_languages: ['de'],
       commission_first_payment: 10, commission_recurring: 5, require_approval_outreach: true }],
     partner_prospects: [{ id: prospectId, user_id: principal, name: 'Fictitious Prospect',
       email: 'prospect@example.invalid', type: 'association', niche: 'test', relance_count: 0 }],
@@ -119,6 +122,17 @@ function database(failHistory?: string) {
   // failure may settle its durable claim; it must never dispatch an email.
   const rpc = vi.fn(async (name: string, args: Row): Promise<DbResult> => {
     rpcCalls.push({ name, args: { ...args } });
+    if (name === 'partner_contract_reserve') {
+      return { data: {
+        contract_id: outreachActionId, status: 'preparing', claimed: true, approval_version: outreachClaimToken,
+        snapshot: { recipient_name: 'Test Prospect', recipient_email: 'prospect@example.invalid',
+          company_name: 'Fiction', sender_name: 'Test Sender', sender_email: 'sender@example.invalid',
+          commission_first_payment: 10, commission_recurring: 5 },
+      }, error: null };
+    }
+    if (name === 'partner_contract_finish') {
+      return { data: { contract_id: outreachActionId, status: args.p_outcome }, error: null };
+    }
     if (name === 'partner_outreach_reserve') {
       return { data: {
         action_id: outreachActionId, status: 'preparing', claimed: true,
@@ -170,17 +184,18 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     } };
   }
   const cache = new Map<string, Record<string, unknown>>();
-  function load(relative: string, exposeCaption = false): Record<string, unknown> {
+  function load(relative: string): Record<string, unknown> {
     const path = resolve(repo, relative).replace(/\.js$/, '.ts');
     const cached = cache.get(path);
     if (cached) return cached;
-    const source = readFileSync(path, 'utf8') + (exposeCaption ? '\nexport { generateCaption as __testGenerateCaption };\n' : '');
+    const source = readFileSync(path, 'utf8');
     const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.CommonJS, esModuleInterop: true } }).outputText;
     const module = { exports: {} as Record<string, unknown> };
     cache.set(path, module.exports);
-    const blocked = (name: string) => () => { throw new Error(`Unexpected external action: ${name}`); };
+    const blocked = (name: string) => () => { unexpected.push(name); throw new Error(`Unexpected external action: ${name}`); };
     const requireModule = (specifier: string): unknown => {
+      if (specifier === 'node:util/types') return utilTypes;
       if (specifier.startsWith('npm:zod@')) return zod;
       if (specifier.includes('@supabase/supabase-js')) return { createClient: () => db.client };
       if (specifier.includes('@anthropic-ai/sdk')) return FakeAnthropic;
@@ -189,6 +204,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
       const target = resolve(dirname(path), specifier).replace(/\.js$/, '.ts');
       if (target === resolve(repo, 'karta/src/config.ts')) return { config: {
         anthropicApiKey: 'test-only-not-a-secret', anthropicModelFast: 'test-fast', anthropicModelMain: 'test-main',
+        anthropicTimeoutMs: 60_000,
       } };
       if (target === resolve(repo, 'supabase/functions/_shared/zernio.ts'))
         return { corsHeaders: {}, publishPost: blocked('social publish') };
@@ -197,13 +213,16 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     };
     runInNewContext(compiled, {
       module, exports: module.exports, require: requireModule,
+      process: { env: {} },
       Deno: { serve: register, env: { get: (name: string) => {
         if (options.env && Object.hasOwn(options.env, name)) return options.env[name];
         return name.endsWith('_URL') ? 'https://example.invalid' : 'test-only-not-a-secret';
       } } },
-      fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
+      fetch: (input: string | URL | Request, init?: RequestInit) =>
+        transport(input instanceof Request ? input.url : String(input), init),
+      Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
-      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout,
+      ReadableStream, TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },
     }, { filename: path });
     return module.exports;
@@ -225,6 +244,8 @@ function request(body: unknown, signal?: AbortSignal) {
 function chatBody() { return { session_id: session, agent_id: agentId, agent_type: 'email', message: 'Continue avec une aide concrète.' }; }
 function policyIs(system: string, kind: 'conversation' | 'task') {
   expect(system.split(nodePolicy.ASSISTANT_CORE_POLICY).length - 1).toBe(1);
+  expect(system.split(nodePolicy.OBSERVED_VERIFICATION_POLICY).length - 1).toBe(1);
+  expect(system.indexOf(nodePolicy.OBSERVED_VERIFICATION_POLICY)).toBeLessThan(system.indexOf('<role_json>'));
   expect(system.match(/CADRE COMMUN PURAMA/g)?.length).toBe(1);
   expect(system.split(nodePolicy.WELLBEING_CONVERSATION_POLICY).length - 1).toBe(kind === 'conversation' ? 1 : 0);
   expect(system).toContain('<role_json>');
@@ -234,6 +255,53 @@ function deferred<T>() {
   const promise = new Promise<T>(accept => { resolve = accept; });
   return { promise, resolve };
 }
+
+describe('Creator Agent generation model contract', () => {
+  const main = 'claude-sonnet-4-6';
+  const fast = 'claude-haiku-4-5-20251001';
+  const catalog = configuredModelCatalog(main, fast);
+
+  it.each([
+    { label: 'unset', configured: undefined, requested: main },
+    { label: 'configured', configured: 'server-configured-model', requested: 'server-configured-model' },
+  ])('uses the $label server generation model while keeping agent suggestions in the UI list', async item => {
+    const h = edge('creator-agent-generate', { env: { ANTHROPIC_MODEL_MAIN: item.configured },
+      provider: async () => providerResult(JSON.stringify({ name: 'Test agent', suggested_model: 'unqualified-model' })) });
+    const response = await h.handler(request({ description: 'An assistant for a fictitious task.', model: 'client-override' }));
+    expect(response.status).toBe(200);
+    expect(h.modelBodies).toHaveLength(1);
+    expect(h.modelBodies[0]!.model).toBe(item.requested);
+    policyIs(h.modelBodies[0]!.system, 'task');
+    expect(h.modelBodies[0]!.system).toContain(main);
+    expect(h.modelBodies[0]!.system).not.toContain('claude-sonnet-4-20250514');
+    const result = await response.json() as { suggested_model: string };
+    expect(result.suggested_model).toBe(main);
+    if (item.configured === undefined) {
+      expect(resolveModelExecutionPlan({ model: result.suggested_model }, catalog).model).toBe(main);
+    } else {
+      // Generation transport configuration does not grant execution admission.
+      // The static UI choices still require explicit host qualification when
+      // KARTA uses a custom catalogue that excludes the default Sonnet ID.
+      const customCatalog = configuredModelCatalog(item.configured, fast);
+      expect(() => resolveModelExecutionPlan({ model: result.suggested_model }, customCatalog)).toThrow(/non qualifié/);
+      expect(customCatalog.some(capability => capability.model === result.suggested_model)).toBe(false);
+    }
+    expect(h.unexpected).toEqual([]);
+    expect(h.db.writes).toEqual([]);
+  });
+
+  it.each([main, fast, 'claude-sonnet-4-20250514', undefined])('returns a model admitted by the default KARTA catalogue for suggestion %j', async suggestion => {
+    const h = edge('creator-agent-generate', { env: { ANTHROPIC_MODEL_MAIN: undefined },
+      provider: async () => providerResult(JSON.stringify({ suggested_model: suggestion })) });
+    const response = await h.handler(request({ description: 'A fictitious task.' }));
+    expect(response.status).toBe(200);
+    const result = await response.json() as { suggested_model: string };
+    const expected = suggestion === fast ? fast : main;
+    expect(result.suggested_model).toBe(expected);
+    expect(resolveModelExecutionPlan({ model: result.suggested_model }, catalog).model).toBe(expected);
+    expect(h.unexpected).toEqual([]);
+  });
+});
 
 describe('canonical policy assembly', () => {
   it('resolves the actual Deno re-export to the one canonical Node source', () => {
@@ -329,7 +397,6 @@ describe.each(['agent-chat', 'chat'])('%s server model selection', name => {
 describe.each(chatNames)('%s real handler', name => {
   it('sends the most recent 20 own messages in chronological order and preserves the latest refusal', async () => {
     const h = edge(name);
-    if (name === 'creator-agent-chat') h.db.tables.creator_agents![0]!.user_id = stranger;
     const expected = h.db.tables[historyTable[name]]!.filter(row => row.user_id === principal).slice(-20)
       .map(row => ({ role: row.role, content: row.content }));
     const response = await h.handler(request(chatBody()));
@@ -440,12 +507,25 @@ const taskCases: { name: string; body: unknown; search?: boolean }[] = [
   { name: 'legal-build-case', body: { title: 'Dossier fictif', type: 'autre', facts: 'Uniquement des faits fictifs pour ce test.' } },
   { name: 'legal-generate-document', body: { type: 'custom', brief: 'Projet fictif à vérifier.' } },
   { name: 'partner-find-prospects', body: { query: 'Fictitious professional entity' }, search: true },
-  { name: 'partner-generate-contract', body: { prospect_id: prospectId } },
+  { name: 'partner-generate-contract', body: { action: 'prepare', prospect_id: prospectId } },
+  { name: 'partner-contract-action', body: { action: 'prepare', prospect_id: prospectId } },
   { name: 'partner-send-outreach', body: { prospect_id: prospectId } },
 ];
 describe('task endpoints', () => {
+  it('the versioned contract route refuses the legacy command before any provider or storage effect', async () => {
+    const h = edge('partner-contract-action');
+    const response = await h.handler(request({ prospect_id: prospectId }));
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ reason: 'approval_required' });
+    expect(h.modelBodies).toEqual([]);
+    expect(h.transport).not.toHaveBeenCalled();
+    expect(h.db.rpcCalls).toEqual([]);
+    expect(h.db.writes).toEqual([]);
+    expect(h.unexpected).toEqual([]);
+  });
   it.each(taskCases)('$name sends its actual task prompt and stops at simulated provider failure', async item => {
     const h = edge(item.name, { allowTavily: item.search,
+      ...(item.search ? { env: { ANTHROPIC_MODEL_MAIN: 'discovery-policy-model' } } : {}),
       provider: async () => new Response('simulated provider unavailable', { status: 503 }) });
     const response = await h.handler(request(item.body));
     expect(response.status).toBeGreaterThanOrEqual(500);
@@ -454,6 +534,18 @@ describe('task endpoints', () => {
     expect(h.unexpected).toEqual([]);
     expect(h.transport.mock.calls.map(call => call[0])).toEqual(item.search
       ? ['https://api.tavily.com/search', anthropicUrl] : [anthropicUrl]);
+    if (item.name === 'partner-find-prospects') {
+      expect(response.status).toBe(502);
+      expect(await response.json()).toEqual({ error: 'discovery_provider_failed', code: 'discovery_provider_failed',
+        status: 'failed', inserted: 0, confirmed_inserted: 0, prospects: [] });
+      expect(h.modelBodies[0]!.model).toBe('discovery-policy-model');
+      expect(JSON.parse(h.modelBodies[0]!.messages[0]!.content)).toMatchObject({
+        target_countries: ['CH'], target_languages: ['de'],
+      });
+      expect(h.db.queries.find(query => query.table === 'partner_agent_config')?.filters)
+        .toContainEqual(['user_id', principal]);
+      expect(h.db.rpcCalls).toEqual([]);
+    }
     if (item.name === 'partner-send-outreach') {
       expect(h.db.rpcCalls).toEqual([
         { name: 'partner_outreach_reserve', args: {
@@ -469,16 +561,21 @@ describe('task endpoints', () => {
     }
     expect(h.db.writes.some(write => ['partner_emails', 'partner_prospects', 'legal_documents', 'legal_cases'].includes(write.table))).toBe(false);
   });
-  it('social caption generation uses the actual task request without invoking publication', async () => {
-    const h = runtime({ provider: async () => new Response('simulated provider unavailable', { status: 503 }) });
-    // Export the existing private function in the in-memory compilation only.
-    const mod = h.load('supabase/functions/social-publish/index.ts', true);
-    const generate = mod.__testGenerateCaption as (input: unknown) => Promise<unknown>;
-    await expect(generate({ content: 'Contenu fictif', contentType: 'text' })).rejects.toThrow(/503/);
-    expect(h.modelBodies).toHaveLength(1);
-    policyIs(h.modelBodies[0]!.system, 'task');
-    expect(h.modelBodies[0]!.system).toContain('STRICTEMENT en JSON');
+  it('social publication rejects caption generation before storage, model or publication effects', async () => {
+    const h = edge('social-publish', { env: { SOCIAL_DB_SCHEMA: 'purama_ai' } });
+    const response = await h.handler(request({
+      clientRequestId: 'caption-request-0001', content: 'Contenu fictif',
+      contentType: 'text', forceCaption: true,
+    }));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: "La génération de légende n'est pas disponible dans ce parcours. Utilisez un texte préparé.",
+    });
+    expect(h.modelBodies).toEqual([]);
+    expect(h.transport).not.toHaveBeenCalled();
+    expect(h.db.queries).toEqual([]);
     expect(h.db.writes).toEqual([]);
+    expect(h.db.rpcCalls).toEqual([]);
     expect(h.unexpected).toEqual([]);
   });
   it('forces the saved legal success probability to null even when the model returns 99', async () => {

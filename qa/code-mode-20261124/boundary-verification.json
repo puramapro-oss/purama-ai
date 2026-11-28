@@ -1,0 +1,263 @@
+{
+  "project": "puramapro-oss/purama-ai",
+  "branch": "feat/iao-tool-context-efficiency-20261124",
+  "base_head": "55ce9a279890b17e692426d76e9d1622b32e179c",
+  "merged_upstream": "04ff79cf8c5d1061e04cf631efac21601978433e",
+  "authorization": "User continuation of 24 November 2026: complete compatible fixes without duplicates, degraded capability or unverified claims.",
+  "product_files": [
+    "karta/src/engine/tool-input.ts",
+    "karta/src/tools/pdf.ts"
+  ],
+  "source_hashes": {
+    "karta/src/engine/tool-input.ts": "14841157b9f863fa8b49eb3df0d95c03043a735d23cf96bdac25ccbb88cbea27",
+    "karta/src/tools/pdf.ts": "0d68c8e7832d63cfda8327e9b4f9eabaa17e05ca5d4471e1a470e17569dd3d00",
+    "karta/test/toolInputBoundary.test.ts": "c16add180313e3171b6fe1b91c3ba2d2f2362b49e336b47f2c38b1d517fad4f9",
+    "karta/test/pdfToolBoundary.test.ts": "59182b63607b922fa9dfdc9eb5da17320d18ed91bf74cd9f82f4fc451d4c4293",
+    "karta/test/claudeDecisionCompleteness.test.ts": "e030fbcdfe6f04621d7839b4d75f03e07013508facb3d8732f57a83a3fc019a7"
+  },
+  "gates": {
+    "validator_red": {
+      "status": "PASS defect demonstrated",
+      "passed": 44,
+      "failed": 32,
+      "total": 76,
+      "exit_code": 1
+    },
+    "validator_green": {
+      "status": "PASS",
+      "passed": 76,
+      "total": 76,
+      "exit_code": 0
+    },
+    "pdf_red": {
+      "status": "PASS defect demonstrated",
+      "passed": 5,
+      "failed": 34,
+      "total": 39,
+      "exit_code": 1
+    },
+    "pdf_green": {
+      "status": "PASS",
+      "passed": 39,
+      "total": 39,
+      "exit_code": 0
+    },
+    "expanded_tests": {
+      "status": "PARTIEL",
+      "passed": 351,
+      "unexecuted": 90,
+      "files_passed": 16,
+      "files_interrupted": [
+        "approvalContinuation.test.ts",
+        "approvalParentGuard.test.ts"
+      ],
+      "exit_code": 1,
+      "cause_observed": "Two workers exited with SIGKILL; exact cause not established. Reporter success:true is not accepted as a green gate."
+    },
+    "local_typecheck": {
+      "status": "BLOQUE localement",
+      "exit_code": 137,
+      "cause_observed": "Process killed; semantic check not completed. To receive from CI."
+    },
+    "local_build": {
+      "status": "PASS",
+      "exit_code": 0
+    },
+    "local_lint": {
+      "status": "NON TESTE",
+      "attempt_exit_code": 1,
+      "cause_observed": "Root node_modules/eslint missing. To receive from CI."
+    },
+    "gitnexus": {
+      "status": "PASS within declared graph",
+      "baseline_files": 14,
+      "validator_impact": "CRITICAL; warning sent before edit",
+      "pdf_impact": "UNKNOWN; dynamic registrations reviewed in source",
+      "final_index_exit_code": 0,
+      "staged_detect_exit_code": 0,
+      "staged_symbols": 8,
+      "staged_flows": 9,
+      "staged_risk": "HIGH",
+      "compare_main_exit_code": 0,
+      "compare_main_files": 2951,
+      "compare_main_symbols": 334,
+      "compare_main_risk": "CRITICAL; includes previous consolidation, graph scoped to 14 files"
+    },
+    "independent_review": {
+      "status": "PASS within reviewed scope",
+      "reviewer": "/root/hosting_primary_research"
+    },
+    "production": {
+      "status": "BLOQUE",
+      "cause_observed": "Remote Mac execution timed out, both MacDevBridge connections return internal errors. No deployment or live infrastructure change."
+    },
+    "final_ci": {
+      "status": "PENDING PUBLICATION",
+      "record": "Final immutable commit result will be received in PR109 body without modifying product files."
+    }
+  },
+  "non_additive_counts": true,
+  "archive": {
+    "path": "qa/code-mode-20261124/boundary-evidence.zip",
+    "bytes": 61701,
+    "sha256": "f9ff124558ebf40d68b784a0935c024d15bb409c06139c334252649f4e20ee4b",
+    "members": {
+      "build-receipt.json": {
+        "bytes": 232,
+        "sha256": "60e9f59490ce2752ba5e3b2c8dcf239c9c89051aea891530be06484686d5a415"
+      },
+      "build.log": {
+        "bytes": 208,
+        "sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd"
+      },
+      "detect-main-receipt.json": {
+        "bytes": 514,
+        "sha256": "65c80b0a896ff50d24476b377108112b1400f7833b0c430099d2a9fb9984d5f8"
+      },
+      "detect-main.stderr.log": {
+        "bytes": 346,
+        "sha256": "11c3ea7a321f4c13a8228cf9f3263dc8c541d96137c037ec192585eae01e20e7"
+      },
+      "detect-main.txt": {
+        "bytes": 1970,
+        "sha256": "8f8aaf5acc312e84e86f6b0ae0688f4c796cbf10d3d009bf2dc3fbab0e626711"
+      },
+      "detect-staged-receipt.json": {
+        "bytes": 483,
+        "sha256": "af28efd6e1d90bdcc3f59db7c8bfac058345262d9e27c2a82daf9ddaed0c6c2e"
+      },
+      "detect-staged.stderr.log": {
+        "bytes": 346,
+        "sha256": "75d38d7a2ce9e2e2d612355cb9b09f80386d3e020b79b15b9077432e0d1e28e6"
+      },
+      "detect-staged.txt": {
+        "bytes": 1212,
+        "sha256": "cc62a6994b2b4d9ab3d6fa4f632ec51b1408b48fc774cc0dbbf0decb4b3a9f74"
+      },
+      "expanded-tests-receipt.json": {
+        "bytes": 1517,
+        "sha256": "7a583c4ef291da4aa737da7118438017d5f9993f15c0392c7cc41468ca1728fa"
+      },
+      "expanded-tests.json": {
+        "bytes": 169406,
+        "sha256": "a64402718995514897e9c7dc7bdd349ac870cf6d1d968cce40622a4184b7ed0e"
+      },
+      "expanded-tests.log": {
+        "bytes": 61924,
+        "sha256": "c079699c82da31fe6383a872d189faa11719583151347c537e81cba73c7bff28"
+      },
+      "impact-pdf-execute.json": {
+        "bytes": 907,
+        "sha256": "cc838e66a6eca3d462e4955f10895a023aca3370ad7f10e2f48ade983f1be403"
+      },
+      "impact-pdf-execute.stderr.log": {
+        "bytes": 338,
+        "sha256": "f87824cf7ab9cd40c805410c9b285ed603f43fdeb8910256ed536d068cf207c3"
+      },
+      "impact-pdf-tool.json": {
+        "bytes": 903,
+        "sha256": "a2c4e48481c717417b5eb95fc5ea700b991725146a7d705d0e38b6eab15ca4aa"
+      },
+      "impact-pdf-tool.stderr.log": {
+        "bytes": 338,
+        "sha256": "b47320d16324f6364dedf66590084cd7f8d1a645a244c066a217a2982e769162"
+      },
+      "impact-validate.json": {
+        "bytes": 9793,
+        "sha256": "764c53e3865326aadda5d10c3953f59cc6ced265d91da815d7655d88cdcc98e8"
+      },
+      "impact-validate.stderr.log": {
+        "bytes": 338,
+        "sha256": "fe463c5496c564c339bfa567607bf4967f98f2a80a97e410dd6ba81fb4248f89"
+      },
+      "independent-review.json": {
+        "bytes": 1235,
+        "sha256": "1035ced78ccd500446486d538a62c50d816aca57e00165367bd52b4ffcd40198"
+      },
+      "index-baseline.json": {
+        "bytes": 3288,
+        "sha256": "635138f7038cccc04b4e6036db8e4fd9a8ff5780e4a61dde284cbb0590d9f9b0"
+      },
+      "index-baseline.log": {
+        "bytes": 509,
+        "sha256": "6ea36443052fa98fafe1fc19d7c2d441bdd7db74155a4216a436298b78ec1fd0"
+      },
+      "index-final.json": {
+        "bytes": 3288,
+        "sha256": "f2bcf21ca8642140b1cd7a3db4440408a13bc0b06b91d85411270aa3a35ae68b"
+      },
+      "index-final.log": {
+        "bytes": 727,
+        "sha256": "e4dbd7fa6bf8d5225f165bd4c28a5bacc31c4f6174acceb58cf37536eee008ca"
+      },
+      "index-final.py": {
+        "bytes": 2855,
+        "sha256": "ee49b673622c702a518d28394c6e2a2803a0c6f582795a3b91b1f8d21abbc800"
+      },
+      "index.py": {
+        "bytes": 2861,
+        "sha256": "5f804d972a0d72077d6197e01b594d7fff24c3d0105533d3cf5fa2d8a08fdb56"
+      },
+      "pdf-tool-boundary-green-receipt.json": {
+        "bytes": 368,
+        "sha256": "28f62334ae55f2f541f34043bab6c5b68d9ebcc2bacb1bed30c1422e8fd7f19b"
+      },
+      "pdf-tool-boundary-green.json": {
+        "bytes": 15116,
+        "sha256": "0468bc2a1fb7ec24f1e9b2701f94dffc4deecbab30893e2849bb90feb33bab3f"
+      },
+      "pdf-tool-boundary-green.log": {
+        "bytes": 6597,
+        "sha256": "660909ad8ea848bd6e0b85f2c8fa64a08b7a4ce74e8c04f3b218b83058bd27ad"
+      },
+      "pdf-tool-boundary-red.command.txt": {
+        "bytes": 238,
+        "sha256": "d640f2b985dbe0dc089cdc8b85b51898e0152759ef4c3489810fddc6a9efc6b4"
+      },
+      "pdf-tool-boundary-red.log": {
+        "bytes": 104,
+        "sha256": "fff6018bc6c28c65904a5406eee60f2824bcfd43209a7e5577124be045e516ba"
+      },
+      "pdf-tool-boundary-red.status.json": {
+        "bytes": 878,
+        "sha256": "90266d6d0b20099fcbafb34efcf558b07d5892391fd8573fcab93f576a703120"
+      },
+      "pdf-tool-boundary-red.vitest.json": {
+        "bytes": 44329,
+        "sha256": "8c150aec69b0d2c43242d96c9437037534a5e262addb7babc19632aeaebb786f"
+      },
+      "tool-input-after-receipt.json": {
+        "bytes": 410,
+        "sha256": "68794874824f361e5743e9826d4456b3b17266cb3d938be4b8361ccd641c07b7"
+      },
+      "tool-input-after.json": {
+        "bytes": 28667,
+        "sha256": "929481040d655741e658f3de1eaf8410717de5966ab1954a508041d0f87e9102"
+      },
+      "tool-input-after.log": {
+        "bytes": 12822,
+        "sha256": "d60a2e7000133ee989ec45bbb9e4bc18017f41cc576aaf163af3d6fc3cd2d934"
+      },
+      "tool-input-before-receipt.json": {
+        "bytes": 669,
+        "sha256": "b2c8d329f9c3ad1704071bd174d6fcce9cf3a8fc8cf8348029bf7f1977ad98d1"
+      },
+      "tool-input-before.json": {
+        "bytes": 68706,
+        "sha256": "355da45ce3d5a0e9950bd6a2ddf65d25e4f00f7551ff5a3a03829f37d431d225"
+      },
+      "tool-input-before.log": {
+        "bytes": 35190,
+        "sha256": "893fb72af97a6e4565036fc04598c53e2aba522f74b984aeb36acc597968a15a"
+      },
+      "typecheck-receipt.json": {
+        "bytes": 239,
+        "sha256": "c6c2797e8df7fd2fe86b6e85559e9c5a6343c3b5a7d28cb96db6cf87a357b77f"
+      },
+      "typecheck.log": {
+        "bytes": 222,
+        "sha256": "e54c9365fa4b12ec438184af218d8e06eacaebb379639c20e6f1b8022eccae6e"
+      }
+    }
+  }
+}

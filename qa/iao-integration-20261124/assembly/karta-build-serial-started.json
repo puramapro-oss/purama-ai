@@ -1,0 +1,13 @@
+{
+  "stage": "karta-build-serial",
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "pid": 4293,
+  "ownedProcessGroup": 4293,
+  "startedEpochSeconds": 1795484640.674312,
+  "NODE_OPTIONS": "--max-old-space-size=512"
+}

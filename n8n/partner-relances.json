@@ -3,41 +3,83 @@
   "nodes": [
     {
       "parameters": {
-        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 10 * * *" }] }
-      },
-      "id": "cron",
-      "name": "Daily 10am",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.1,
-      "position": [240, 320]
-    },
-    {
-      "parameters": {
-        "url": "=https://auth.purama.dev/rest/v1/partner_prospects?has_replied=eq.false&next_action_at=lte.{{ new Date().toISOString() }}&status=in.(contacted,relance_1,relance_2)&select=id,user_id,relance_count",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Accept-Profile", "value": "purama_ai" }
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/5 * * * *"
+            }
           ]
         }
       },
-      "id": "fetch",
-      "name": "Fetch due relances",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [460, 320]
+      "id": "cron",
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        320
+      ]
     },
     {
       "parameters": {
-        "jsCode": "const rows = Array.isArray($json) ? $json : [];\nreturn rows.map((r) => ({ json: { ...r, _next_relance: `relance_${r.relance_count + 1}` } }));"
+        "url": "https://auth.purama.dev/rest/v1/rpc/partner_outreach_due",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "purama_ai"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "purama_ai"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_kind\": \"followup\", \"p_limit\": 100}",
+        "options": {
+          "timeout": 30000
+        }
       },
-      "id": "explode",
-      "name": "Explode",
+      "id": "due",
+      "name": "Fetch admitted candidates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        320
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Empty or malformed results emit no item, so no send node runs.\nconst uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst steps = new Set([\"relance_1\", \"relance_2\", \"relance_3\"]);\nconst rows = $input.all().flatMap(item => Array.isArray(item.json) ? item.json : [item.json]);\nreturn rows.filter(row => row && typeof row.user_id === 'string' && uuid.test(row.user_id)\n  && typeof row.prospect_id === 'string' && uuid.test(row.prospect_id) && steps.has(row.step))\n  .map(row => ({ json: { user_id: row.user_id, prospect_id: row.prospect_id, type: row.step } }));"
+      },
+      "id": "normalize",
+      "name": "Valid candidates only",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [680, 320]
+      "position": [
+        680,
+        320
+      ]
     },
     {
       "parameters": {
@@ -46,24 +88,75 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Impersonate-User-Id",
+              "value": "={{ $json.user_id }}"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prospect_id\": \"{{ $json.id }}\",\n  \"type\": \"{{ $json._next_relance }}\"\n}"
+        "jsonBody": "={{ JSON.stringify({ prospect_id: $json.prospect_id, type: $json.type }) }}",
+        "options": {
+          "timeout": 65000
+        }
       },
       "id": "send",
       "name": "Trigger relance",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [900, 320]
+      "position": [
+        900,
+        320
+      ],
+      "retryOnFail": false
     }
   ],
   "connections": {
-    "Daily 10am": { "main": [[{ "node": "Fetch due relances", "type": "main", "index": 0 }]] },
-    "Fetch due relances": { "main": [[{ "node": "Explode", "type": "main", "index": 0 }]] },
-    "Explode": { "main": [[{ "node": "Trigger relance", "type": "main", "index": 0 }]] }
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch admitted candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch admitted candidates": {
+      "main": [
+        [
+          {
+            "node": "Valid candidates only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid candidates only": {
+      "main": [
+        [
+          {
+            "node": "Trigger relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
   }
 }

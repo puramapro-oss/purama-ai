@@ -1,0 +1,22 @@
+{
+  "initialBase": "8259b84e65ca89b01bd1b1fc46576cb60bb8a1ec",
+  "reconciledBase": "cbd60006552f27771ef0f8b67623087c296fcf67",
+  "upstreamPaths": [
+    "src/components/voice/AgentChatTab.tsx",
+    "src/components/voice/VoiceMode.accessibility.test.tsx",
+    "tests/billing/billing.test.mjs",
+    "tests/voice-consent/accessibility.spec.ts",
+    "vercel.json"
+  ],
+  "kartaDiffEmpty": true,
+  "ourChangedHashesPreserved": {
+    "karta/.env.example": "e3469a43d64f15cc793790966f7a19f4aef5608b79cd38ee66d1dbff7e8d2186",
+    "karta/src/config.ts": "c3e1397ef29c451d7be6e42343c62fc1dc51980ecea42d312780052eb841016a",
+    "karta/src/claude/real.ts": "17ee0262028400735bf9ffbc35c4d7518555bd55495dcb2ec3aa5ed57a421722",
+    "karta/src/claude/types.ts": "c5948a90ea8fd833168eed096945f2d3bef10c2124e551308406f3a07f909427",
+    "karta/src/agents/legalAgent.ts": "b039331f570b4999a194abc687b36b4a879d704c6fd6c434ce22b11458fb9783",
+    "karta/src/agents/comptaAgent.ts": "c0bed4d30277eff1f6f515d4a3c3828243da9936c1802205a69e8c8dcb716d94",
+    "karta/src/agents/partnerAgent.ts": "b6dd32992188a88a0766cbb9fc632ffb9271a67a33226deda43759cf0795d823"
+  },
+  "vercelBaseRulesPreserved": 21
+}

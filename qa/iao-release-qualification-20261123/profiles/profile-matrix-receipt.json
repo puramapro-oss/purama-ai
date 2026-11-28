@@ -1,0 +1,43 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--run",
+    "test/consultationProfileMatrix.test.ts",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile=../qa/iao-release-qualification-20261123/profiles/profile-matrix.json"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "started_at": "2026-11-23T20:51:34.876754+00:00",
+  "finished_at": "2026-11-23T20:51:43.008007+00:00",
+  "elapsed_seconds": 8.131,
+  "exit_code": 0,
+  "test_sha256": "b6b260850f6e088eafba8aa8aa42a73896561508aabe5e15cbe8542532bae728",
+  "source_unchanged_during_run": true,
+  "log": "qa/iao-release-qualification-20261123/profiles/profile-matrix.log",
+  "report": "qa/iao-release-qualification-20261123/profiles/profile-matrix.json",
+  "real_io": [
+    "loopback HTTP request and response",
+    "production host/catalogue parser/installed SDK",
+    "PostgreSQL SQL engine in PGlite with production migrations"
+  ],
+  "simulated": [
+    "provider catalogue and inference replies",
+    "provider usage counters",
+    "test-only accounts and credentials"
+  ],
+  "native_postgresql": false,
+  "external_provider_call": false,
+  "paid_api_call": false,
+  "after_run_comment_correction": {
+    "reason": "Independent review clarified same-process fresh host instance; no executable statement or assertion changed.",
+    "tested_sha256": "b6b260850f6e088eafba8aa8aa42a73896561508aabe5e15cbe8542532bae728",
+    "final_source_sha256": "3ecf41d3b9253c0e691c07a7d5aebd449c54583d6abac2a3ae790267e4f0d67d",
+    "only_change": {
+      "before": "A process-level host restart must recover persisted identity, not repeat inference.",
+      "after": "A fresh host instance must recover persisted identity, not repeat inference."
+    }
+  }
+}

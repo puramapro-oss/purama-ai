@@ -138,6 +138,22 @@ describe("real Claude decision completeness", () => {
     expect(caught).toBeInstanceOf(Error);
     expect(String(caught)).not.toContain(marker);
   });
+
+  it.each(["constructor", "__proto__", "toString"])(
+    "rejects an undeclared %s without exposing private argument values", async key => {
+      const marker = "private-reserved-argument-do-not-log";
+      h.create.mockResolvedValue(message("tool_use", [
+        tool(), { ...tool("toolu_2"), input: Object.fromEntries([["label", marker], [key, null]]) },
+      ]));
+      let caught: unknown;
+      try { await decide(); } catch (error) { caught = error; }
+      expect(caught).toBeInstanceOf(Error);
+      expect(String(caught)).toContain("paramètres d'outil non conformes");
+      expect(String(caught)).not.toContain(marker);
+      expect(String(caught)).not.toContain(key);
+      expect(h.create).toHaveBeenCalledOnce();
+    },
+  );
 });
 
 describe("real client through the KARTA loop, with a mocked provider transport", () => {
@@ -161,6 +177,25 @@ describe("real client through the KARTA loop, with a mocked provider transport",
     expect(result.status).toBe("error");
     expect(result.toolsUsed).toEqual([]);
     expect(h.pending).not.toHaveBeenCalled();
+  });
+
+  it.each(["constructor", "__proto__", "toString"].flatMap(key => [
+    { key, kind: "null", value: null },
+    { key, kind: "undefined", value: undefined },
+  ]))("executes and queues no action when a later tool has undeclared $key ($kind)", async ({ key, value }) => {
+    const marker = "private-later-action-do-not-log";
+    h.create.mockResolvedValue(message("tool_use", [
+      tool(), { ...tool("toolu_2"), input: Object.fromEntries([["label", marker], [key, value]]) },
+    ]));
+    const result = await run();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.pending).not.toHaveBeenCalled();
+    expect(h.create).toHaveBeenCalledOnce();
+    expect(result.status).toBe("error");
+    expect(result.toolsUsed).toEqual([]);
+    expect(h.finish).toHaveBeenCalledWith(expect.objectContaining({ status: "error", toolsUsed: [] }));
+    expect(JSON.stringify(result)).not.toContain(marker);
+    expect(JSON.stringify(h.finish.mock.calls)).not.toContain(marker);
   });
 
   it("keeps the valid tool path functional and executes it once", async () => {

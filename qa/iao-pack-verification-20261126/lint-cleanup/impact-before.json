@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-11-26T05:29:49.572415+00:00",
+  "results": [
+    {
+      "symbol": "createIaoLocalDigest",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "createIaoLocalDigest",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--limit",
+        "10"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'createIaoLocalDigest' not found\",\n  \"target\": {\n    \"name\": \"createIaoLocalDigest\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795670987367,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "symbol": "verifyAsset",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "verifyAsset",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--limit",
+        "10"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"target\": {\n    \"name\": \"verifyAsset\",\n    \"type\": \"\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 1,\n    \"hint\": \"⚠️ Index is 1 commit behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795670988364,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "symbol": "runIaoNativeQualification",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "runIaoNativeQualification",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--limit",
+        "10"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"target\": {\n    \"id\": \"File:src/pages/Notifications.tsx\",\n    \"name\": \"runIaoNativeQualification\",\n    \"type\": \"File\",\n    \"filePath\": \"src/pages/Notifications.tsx\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 2,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"epistemic\": \"lower-bound\",\n  \"boundaries\": [\n    \"2 call sites invoking `runIaoNativeQualification` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher.\"\n  ],\n  \"causes\": {\n    \"scopeExtractionFiles\": 0,\n    \"receiverTyping\": 2,\n    \"dispatchBoundary\": 0,\n    \"externalBoundary\": 0,\n    \"undecidedSatisfaction\": 0,\n    \"callableValueReferences\": 0\n  },\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {\n    \"1\": 1,\n    \"2\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:src/App.tsx\",\n        \"name\": \"App.tsx\",\n        \"filePath\": \"src/App.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/main.tsx\",\n        \"name\": \"main.tsx\",\n        \"filePath\": \"src/main.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      }\n    ]\n  },\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 1,\n    \"hint\": \"⚠️ Index is 1 commit behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795670989327,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    }
+  ]
+}

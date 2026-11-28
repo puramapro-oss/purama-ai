@@ -1,0 +1,157 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/socialStatusCycle.test.ts (14 tests | 6 failed) 70ms
+   ❯ social metadata reaches the single decision before an action (14)
+     × passes real scoped reader output into the real model SDK and derives an action from it 28ms
+     × preserves the first-page limit and incompleteness without dispatching another read after the decision 4ms
+     × marks an unavailable capability without inventing an empty account list or leaking its error 5ms
+     × distinguishes a complete database outage from successfully empty pages 3ms
+     × does not send a foreign sentinel to the model or use it as evidence 4ms
+     × does not accept trigger fields as replacements for the authenticated owner's live data 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > passes real scoped reader output into the real model SDK and derives an action from it
+AssertionError: expected undefined to match object { availability: 'available', …(8) }
+
+- Expected:
+{
+  "accounts": {
+    "items": [
+      {
+        "accountId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "associationRecordedAt": null,
+      },
+    ],
+    "status": "read",
+  },
+  "atomicSnapshot": false,
+  "availability": "available",
+  "coverage": "bounded_first_pages_by_id",
+  "limits": {
+    "accounts": 14,
+    "posts": 10,
+  },
+  "liveProviderCheckPerformed": false,
+  "posts": {
+    "items": [
+      {
+        "postId": "bbbbbbbb-bbbb-4bbb-8bbb-000000000001",
+        "providerPostId": "social_provider_receipt_private_reference",
+        "status": "publish_unconfirmed",
+      },
+    ],
+    "status": "read",
+  },
+  "providerHealth": "not_checked",
+  "publicationPerformed": false,
+}
+
++ Received:
+undefined
+
+ ❯ test/socialStatusCycle.test.ts:160:34
+    158|     const { context, body } = modelRequest();
+    159|     expect(context.items).toEqual([{ brief: BRIEF }]);
+    160|     expect(context.socialStatus).toMatchObject({ availability: "availa…
+       |                                  ^
+    161|       atomicSnapshot: false, limits: { accounts: 14, posts: 10 }, prov…
+    162|       liveProviderCheckPerformed: false, publicationPerformed: false,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > preserves the first-page limit and incompleteness without dispatching another read after the decision
+TypeError: Cannot read properties of undefined (reading 'posts')
+ ❯ test/socialStatusCycle.test.ts:183:21
+    181|     await run();
+    182|     const snapshot = modelRequest().context.socialStatus!;
+    183|     expect(snapshot.posts).toMatchObject({ status: "read", page: { lim…
+       |                     ^
+    184|     if (snapshot.posts.status !== "read") throw new Error("Expected a …
+    185|     expect(snapshot.posts.items).toHaveLength(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > marks an unavailable capability without inventing an empty account list or leaking its error
+AssertionError: expected undefined to match object { availability: 'partial', …(2) }
+
+- Expected:
+{
+  "accounts": {
+    "resource": "accounts",
+    "status": "unavailable",
+  },
+  "availability": "partial",
+  "posts": {
+    "status": "read",
+  },
+}
+
++ Received:
+undefined
+
+ ❯ test/socialStatusCycle.test.ts:250:34
+    248|     const result = await run();
+    249|     const context = modelRequest().context;
+    250|     expect(context.socialStatus).toMatchObject({ availability: "partia…
+       |                                  ^
+    251|     expect(context.socialStatus!.accounts).not.toHaveProperty("items");
+    252|     expect(JSON.stringify(context)).not.toContain(PRIVATE);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > distinguishes a complete database outage from successfully empty pages
+TypeError: Cannot read properties of undefined (reading 'availability')
+ ❯ test/socialStatusCycle.test.ts:261:21
+    259|     const result = await run();
+    260|     const snapshot = modelRequest().context.socialStatus!;
+    261|     expect(snapshot.availability).toBe("unavailable");
+       |                     ^
+    262|     expect(snapshot.accounts).toEqual({ status: "unavailable", resourc…
+    263|     expect(snapshot.posts).toEqual({ status: "unavailable", resource: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > does not send a foreign sentinel to the model or use it as evidence
+AssertionError: expected undefined to match object { availability: 'partial', …(1) }
+
+- Expected:
+{
+  "availability": "partial",
+  "posts": {
+    "resource": "posts",
+    "status": "unavailable",
+  },
+}
+
++ Received:
+undefined
+
+ ❯ test/socialStatusCycle.test.ts:275:34
+    273|     const result = await run();
+    274|     const context = modelRequest().context;
+    275|     expect(context.socialStatus).toMatchObject({ availability: "partia…
+       |                                  ^
+    276|     expect(context.socialStatus!.posts).not.toHaveProperty("items");
+    277|     for (const id of [OTHER, postId(1), postId(11)]) expect(JSON.strin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  test/socialStatusCycle.test.ts > social metadata reaches the single decision before an action > does not accept trigger fields as replacements for the authenticated owner's live data
+TypeError: Cannot read properties of undefined (reading 'availability')
+ ❯ test/socialStatusCycle.test.ts:283:35
+    281|   it("does not accept trigger fields as replacements for the authentic…
+    282|     await run({ userId: OTHER, socialStatus: { accounts: [{ user_id: O…
+    283|     expect(modelRequest().context.socialStatus!.availability).toBe("av…
+       |                                   ^
+    284|     for (const [input] of h.dbFetch.mock.calls) {
+    285|       expect(new URL(String(input)).searchParams.get("user_id")).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 8 passed (14)
+   Start at  23:33:06
+   Duration  854ms (transform 46%, import 43%, tests 10%, setup 1%, worker 1%)

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "--experimental-transform-types",
+    "--test",
+    "run-scheduled-review.mjs"
+  ],
+  "cwd": "/workspace/scratch/2c704d52ca75/work/social-review",
+  "source": "/workspace/scratch/2c704d52ca75/work/purama-social-fairness",
+  "exit_code": 0,
+  "handler_sha256": "1e8ecf245cd1f71168ede7c510e7fbdd47457dc1b4505507786c4f2cd93899c9",
+  "tests_sha256": "4bfc95e133b433c54ae4640a4b401b104ae1fc819d3cf9fb9158652ac017dcc8"
+}

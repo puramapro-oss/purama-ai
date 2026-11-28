@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=192",
+    "karta/node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--project",
+    "qa/local-compute-boundary-20261123/tsconfig.json"
+  ],
+  "cwd": "/tmp/iao-review-3525",
+  "started_at_utc": "2026-11-23T01:32:53.293555+00:00",
+  "ended_at_utc": "2026-11-23T01:32:54.262686+00:00",
+  "exit_code": 2,
+  "scope": "Changed provider and new native test, strict KARTA compiler options inherited; transitive imported IAO source types checked",
+  "not_a_full_karta_typecheck": true
+}

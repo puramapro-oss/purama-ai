@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--max-old-space-size=768",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "--index-only",
+    "--skip-fts",
+    "--workers",
+    "1",
+    "--name",
+    "purama-social-reliability-20261123"
+  ],
+  "cwd": "/workspace/scratch/2c704d52ca75/work/purama-social-fairness",
+  "started_at": "2026-11-22T23:06:25.405825+00:00",
+  "ended_at": "2026-11-22T23:08:00.901924+00:00",
+  "exit_code": 0,
+  "index_path": "/workspace/scratch/2c704d52ca75/work/gitnexus-social-index"
+}

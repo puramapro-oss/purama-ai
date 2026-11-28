@@ -1,0 +1,55 @@
+{
+  "target": {
+    "id": "Function:src/lib/email-agent.ts:getGmailOAuthUrl",
+    "name": "getGmailOAuthUrl",
+    "type": "Function",
+    "filePath": "src/lib/email-agent.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 2,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Pages",
+      "hits": 2,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:src/pages/EmailAgent.tsx:EmailAgent.handleConnectGmail@105:2",
+        "name": "handleConnectGmail",
+        "filePath": "src/pages/EmailAgent.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/EmailAgentSettings.tsx:EmailAgentSettings.handleConnectGmail@96:2",
+        "name": "handleConnectGmail",
+        "filePath": "src/pages/EmailAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

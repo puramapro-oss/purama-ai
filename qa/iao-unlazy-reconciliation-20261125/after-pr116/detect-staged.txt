@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795635518235,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 71 files, 170 symbols
+Affected processes: 49
+Risk level: critical
+
+Changed symbols:
+  Interface ModelExecutionCapability → karta/src/claude/execution-profile.ts
+  Property programmaticToolCalling → karta/src/claude/execution-profile.ts
+  Function normalizeModelCatalog → karta/src/claude/execution-profile.ts
+  Function loadAnthropicModelCatalog → karta/src/claude/model-catalog.ts
+  Const PROGRAMMATIC_CODE_VERSION → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_CALLS → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_TOTAL_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_HISTORY_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_RESPONSE_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_CONTENT_BLOCKS → karta/src/claude/programmatic.ts
+  Const IDENTIFIER → karta/src/claude/programmatic.ts
+  TypeAlias RecordValue → karta/src/claude/programmatic.ts
+  TypeAlias Bridge → karta/src/claude/programmatic.ts
+  Property id → karta/src/claude/programmatic.ts
+... and 155 more
+
+Affected execution flows:
+  • FinishOutcome → SendEmail (4 steps) — changed: finishOutcome
+  • FinishOutcome → Deliver (3 steps) — changed: finishOutcome
+  • Worker → Invalid (6 steps) — changed: normalizeModelCatalog
+  • Worker → Plain (6 steps) — changed: normalizeModelCatalog
+  • FinishOutcome → HasReceipt (5 steps) — changed: finishOutcome
+  • FinishOutcome → AssertActive (5 steps) — changed: finishOutcome
+  • PersistPrivateToolResult → Invalid (5 steps) — changed: persistPrivateToolResult, projectPrivateToolResult
+  • BeforeReadRequest → ReadError (4 steps) — changed: beforeReadRequest, verifyReadDefinition, assertReadActive, readError
+  • BeforeReadRequest → QualifiedRead (4 steps) — changed: beforeReadRequest, verifyReadDefinition, assertReadDefinition, qualifiedRead
+  • BeforeReadRequest → CustomAgentAuthorizationError (4 steps) — changed: beforeReadRequest, verifyReadDefinition
+... and 39 more

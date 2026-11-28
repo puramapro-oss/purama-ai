@@ -1,0 +1,774 @@
+{
+  "status": "PASS",
+  "startedAt": "2026-11-26T04:21:13.404Z",
+  "sourceSha256": {
+    "karta/src/lib/resolution-qualification.ts": "4e1589a9ee041ca7577a793c9b91b7615e9df52f21fb0e55c406ec68bac2ac1f",
+    "karta/src/tools/resolution-qualification.ts": "15fd9bb72f4c6d005441fce68093b54ec86555db0de36976ff1eb93ba0d27136",
+    "karta/src/engine/private-tool-results.ts": "6bc9233d002539f68812dea76a8ca4a081e0e663b2207d56a153bc95ae5dd3c1",
+    "karta/src/engine/resolution-result-projection.ts": "5c8b010dbca0c91513b2e6c1391646797f622234c6d8fe8fca70e4c55ffc8a63",
+    "karta/src/knowledge/private-result-view.ts": "b28d1610b341a19fc02be713812b9b60db97a7edaae1ac2949ff9447ed6e0848",
+    "supabase/functions/_shared/private-tool-results.ts": "eb44aaa019b8efbb312e7db12f06fb78d1a9552bb5e1b245cfccd0df60e8a05a",
+    "karta/migrations/001_karta_core.sql": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d",
+    "karta/migrations/005_karta_pending_actions.sql": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e",
+    "karta/migrations/028_private_tool_results.sql": "e6eb16b19a3addc89e7597ed9966b1960c60915a59c22a47362baba2a3172d6e",
+    "karta/migrations/029_model_usage_receipts.sql": "ae75060c2e30eca8bfacd478163683e70a8457ab59bb1c36021b504123057b01",
+    "karta/migrations/033_programmatic_model_usage.sql": "18575b5d7c8c33871c0ae65fadf91e8fbf5fb820287a29aec024e9c7bf5f1e41",
+    "karta/migrations/034_programmatic_private_reports.sql": "f8a5d9049ba340b9d0f1a10d1f9da49b5ee2e76aca266eaa4d202e0c47c6067c",
+    "karta/migrations/036_resolution_private_results.sql": "99edebad0f7ccfc34ef5c3318aea64d3874334f2fa64176aae125ca16d75b66c",
+    "karta/migrations/037_resolution_unicode_lengths.sql": "dc3e00ddb6e889b940949bd516849cfda15d9d0f256b8567facd49c1b3f30602"
+  },
+  "checks": [
+    {
+      "name": "real qualifier preserves the six distinct assessments, supplied sources and unknown effects",
+      "status": "PASS"
+    },
+    {
+      "name": "real private projection retains every section and supplied reference within its UTF-8 budget",
+      "status": "PASS"
+    },
+    {
+      "name": "real SQL stores once and the owner parser preserves the structured private result",
+      "status": "PASS"
+    },
+    {
+      "name": "Unicode scalar limits survive real qualification, SQL storage, private reading and chat context",
+      "status": "PASS"
+    },
+    {
+      "name": "all six absent facets remain unknown after qualification, SQL storage and owner reading",
+      "status": "PASS"
+    },
+    {
+      "name": "conflicts, unknown windows, pause, uncertain replay and blocked handoff remain consultable",
+      "status": "PASS"
+    },
+    {
+      "name": "another account cannot read the row, even with the original owner ID in its request",
+      "status": "PASS"
+    },
+    {
+      "name": "another agent of the same owner cannot select this dossier result",
+      "status": "PASS"
+    },
+    {
+      "name": "the real selected-result loader and chat formatter retain snapshot and bounded unverified context",
+      "status": "PASS"
+    },
+    {
+      "name": "identical delivery reconciles to one row while a divergent payload cannot overwrite it",
+      "status": "PASS"
+    },
+    {
+      "name": "closure allows owner deletion and prevents replay from recreating the deleted result",
+      "status": "PASS"
+    },
+    {
+      "name": "no network was used and every exercised source stayed identical during reception",
+      "status": "PASS"
+    }
+  ],
+  "networkAttempts": 0,
+  "environment": "Disposable in-process PostgreSQL PGlite; synthetic identities and dossier",
+  "limits": [
+    "No provider or production database",
+    "No browser rendering in this script",
+    "No external fact, mandate or field-service verification"
+  ],
+  "payloadBytes": {
+    "compactUtf8": 9703,
+    "postgresJsonb": 9950
+  },
+  "browserFixture": {
+    "ownerId": "00000000-0000-4000-8000-000000000621",
+    "agentId": "00000000-0000-4000-8000-000000000623",
+    "storedRow": {
+      "id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+      "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
+      "creator_agent_id": "00000000-0000-4000-8000-000000000623",
+      "user_id": "00000000-0000-4000-8000-000000000621",
+      "tool_name": "qualify_resolution",
+      "payload": {
+        "status": "complete",
+        "details": {
+          "sections": [
+            {
+              "id": "dependencies",
+              "items": [
+                "Groupe de prérequis interdépendants initialement : \"exigence-a\", \"exigence-b\". Ce groupe ne décrit pas un ordre d’exécution.",
+                "Prérequis \"exigence-a\" : état inconnu ; base déclarée : règle déclarée attestée ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                "Prérequis \"exigence-b\" : état inconnu ; base déclarée : demande d’un interlocuteur ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                "Alternative \"alternative-a\", pour \"exigence-a\" et le prérequis \"exigence-b\" : candidate au regard des références fournies, sans validation externe.",
+                "Prochaines candidates à examiner : \"exigence-a\". Aucun plan d’exécution créé."
+              ],
+              "title": "Prérequis",
+              "summary": "2 prérequis, 1 alternatives ; 1 groupe(s) interdépendant(s) initialement, 0 restant(s). Les affirmations et références restent non vérifiées.",
+              "availability": "provided"
+            },
+            {
+              "id": "transitions",
+              "items": [
+                "Transition \"changement-aidant\" : intervalles calculés à partir des affirmations fournies ; fuseau déclaré : \"Europe/Paris\".",
+                "Interruption possible pour \"changement-aidant\" : du 2026-11-25T08:00:00.000Z au 2026-11-25T09:00:00.000Z.",
+                "Interruption possible pour \"changement-aidant\" : du 2026-11-25T11:00:00.000Z au 2026-11-25T12:00:00.000Z.",
+                "Chevauchement possible pour \"changement-aidant\" : aucun intervalle dans le calcul fourni ; la couverture réelle reste non vérifiée.",
+                "Transition \"changement-aidant\" : périodes inconnues : \"periode-inconnue\" ; périodes exclues du calcul : \"periode-inconnue\". Couverture réelle non vérifiée ; fermeture du service précédent non autorisée."
+              ],
+              "title": "Transitions",
+              "summary": "1 transition(s) fournie(s). Les lacunes et chevauchements calculés ne prouvent pas la couverture réelle et n’autorisent aucune fermeture.",
+              "availability": "provided"
+            },
+            {
+              "id": "effort",
+              "items": [
+                "Prochaine étape candidate : \"prochaine-action-courte\".",
+                "Étapes déclarées terminées : \"piece-deja-fournie\".",
+                "Étape \"prochaine-action-courte\" : aucun dépassement ou inconnu détecté pour les limites renseignées.",
+                "Étape \"deplacement-long\" : durée supérieure au choix déclaré ; nombre d’appels supérieur au choix déclaré ; nombre de déplacements supérieur au choix déclaré.",
+                "Choix déclarés par la personne ; aucune inférence de santé, aucune autorisation modifiée et aucun rappel créé."
+              ],
+              "title": "Effort choisi",
+              "summary": "2 minutes choisies ; pause non demandée. Les contraintes non renseignées restent inconnues.",
+              "availability": "provided"
+            },
+            {
+              "id": "corrections",
+              "items": [
+                "Correction \"correction-adresse\", version 1 vers 2 proposée : correction déclarée avec une référence fournie, non authentifiée.",
+                "Conséquence \"brouillon\" de \"correction-adresse\", version 1, stade déclaré brouillon : préparer une révision locale.",
+                "Conséquence \"organisme\" de \"correction-adresse\", version 1, stade déclaré transmis : préparer une rectification externe.",
+                "Correction \"correction-adresse\" : éléments sans lien établi dans le graphe fourni : \"attestation-inconnue\", \"demande-liee\". Une absence de lien fourni ne prouve pas une absence d’impact.",
+                "Dépendances non résolues pour \"attestation-inconnue\" dans \"correction-adresse\" : \"intermediaire-manquant\".",
+                "Correction \"correction-adresse\" : impact inconnu pour \"attestation-inconnue\", \"demande-liee\" ; étude d’impact incomplète. Modifications réalisées : 0 ; rectifications externes envoyées : 0 ; réparation non établie."
+              ],
+              "title": "Conséquences d’une correction",
+              "summary": "1 correction(s) examinée(s) dans le graphe fourni. Aucun document modifié, aucune rectification envoyée ; les impacts externes restent à vérifier.",
+              "availability": "provided"
+            },
+            {
+              "id": "occurrence",
+              "items": [
+                "Épisode \"nouvel-episode\" ; opération \"operation-deja-tentee\".",
+                "Différences de contexte dans les données fournies : aucune détectée ; la présence d’un épisode précédent n’est pas garantie.",
+                "Effet précédent : effet incertain déclaré ; rapprochement requis : oui.",
+                "Dossiers regroupés : 0 ; tentatives créées : 0 ; programmation créée : 0. Une candidature ne constitue aucune permission de rejouer."
+              ],
+              "title": "Récurrence et reprises",
+              "summary": "effet inconnu à rapprocher avant toute reprise. Aucune exécution autorisée et aucune tentative créée.",
+              "availability": "provided"
+            },
+            {
+              "id": "handoffs",
+              "items": [
+                "Passation \"relais-a\" : stade demandé réalisée selon les références fournies ; stade soutenu par les seules références fournies transmise selon les références fournies. Ordre des événements et réalisation externe non vérifiés.",
+                "Références déclarées pour \"relais-a\" : transmission : \"src-envoi\" ; acceptation : aucun identifiant fourni ; réalisation : aucun identifiant fourni. Les dates d’observation ne prouvent pas la chronologie des événements.",
+                "Passation \"relais-a\" : autorisation de confiance encore requise avant tout partage ; motifs : référence d’acceptation absente ou non retenue. Aucun rôle ne confère d’autorité ; aucune permission accordée, aucune transmission effectuée."
+              ],
+              "title": "Passation",
+              "summary": "1 passation(s) fournie(s). Aucun destinataire ni pouvoir authentifié ; aucune transmission réalisée par cet outil.",
+              "availability": "provided"
+            }
+          ],
+          "snapshot": {
+            "asOf": "2026-11-25T12:00:00Z",
+            "caseId": "dossier-synthetique-🌍",
+            "snapshotRevision": 4
+          },
+          "provenance": "caller_supplied_snapshot",
+          "content_kind": "resolution_qualification",
+          "report_truncated": false,
+          "source_text_trust": "untrusted_data",
+          "qualification_only": true,
+          "permissions_granted": false,
+          "rejected_source_ids": [
+            "src-autre-dossier"
+          ],
+          "supplied_references": [
+            {
+              "id": "src-a",
+              "kind": "requirement",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-a",
+              "subjectId": "exigence-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-b",
+              "kind": "requirement",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-b",
+              "subjectId": "exigence-b",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-alternative",
+              "kind": "alternative",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-alternative",
+              "subjectId": "alternative-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-acceptation",
+              "kind": "acceptance",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-acceptation",
+              "subjectId": "alternative-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-periode",
+              "kind": "activation",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-periode",
+              "subjectId": "periode-active",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-correction",
+              "kind": "correction",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-correction",
+              "subjectId": "correction-adresse",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-envoi",
+              "kind": "transmission",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce fournie <script>instruction non fiable</script> & 🌍",
+              "subjectId": "relais-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-mandat",
+              "kind": "authorization",
+              "caseId": "dossier-synthetique-🌍",
+              "reference": "Pièce déclarée src-mandat",
+              "subjectId": "relais-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            },
+            {
+              "id": "src-autre-dossier",
+              "kind": "performance",
+              "caseId": "autre-dossier",
+              "reference": "Pièce déclarée src-autre-dossier",
+              "subjectId": "relais-a",
+              "observedAt": "2026-11-25T09:00:00Z",
+              "snapshotRevision": 4
+            }
+          ],
+          "verification_status": "unverified",
+          "external_facts_verified": false,
+          "external_actions_performed": 0
+        },
+        "sources": [],
+        "summary": "Qualification terminée de l’instantané fourni ; la résolution du dossier n’est pas attestée. Faits externes non vérifiés, permissions accordées : 0, actions externes réalisées : 0.\nOrientations vers les produits existants ; disponibilité des services non qualifiée :\nA — Démarches et accès aux droits : NIDHI, Dossier sans oubli, Courrier en clair, Démarche à deux.\nB — Budget et aides : NIDHI, Ma semaine en chiffres, Coût complet, Abonnements au clair.\nC — Achats assurances et restitutions : NIDHI, marketplace, SAV, Facture expliquée.\nD — Logement et entretien : Maison documentée, Réparons, Notice retrouvée, Entretien au bon moment, Passage de vie.\nE — Soins et aidants : Relais entre aidants, Répit logistique, Accompagné au rendez-vous.\nF — Famille et transitions : Passage de vie, Maison partagée, Quotidien après un choc, Souvenirs vivants.\nG — Effort et accessibilité : Journée souple, Mon profil de confort, Parler avec des cartes, Mode téléphone partagé, Participer sans smartphone.\nH — Emploi et activité : VIDA JOB, KARYA, Formation, Mon Projet.\nI — Apprentissage création et lien : Formation, Assemblée, SUTRA, DreamForge, événements et cercles.\nJ — Accès numérique et conservation : RAKSHA, ONE ID, VAJRA, mémoire, documents et sauvegardes.\nK — Mobilité et territoire : YANA, Passage de vie, ressources locales, Country Packs.\nL — Protection et crise : RAKSHA, Faire la paix, Aide de crise coordonnée.\nM — Alimentation et besoins essentiels : Placard en repas, Repas qui arrivent, NANO, entraide et distribution.\nN — Animaux nature et ressources locales : projets animaux et nature, KARYA, NANO, ressources partagées ; responsable métier précis à identifier.",
+        "tool_name": "qualify_resolution",
+        "schema_version": 1
+      },
+      "created_at": "2026-11-26 05:21:18.277+01"
+    },
+    "parsedResult": {
+      "id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+      "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
+      "creator_agent_id": "00000000-0000-4000-8000-000000000623",
+      "user_id": "00000000-0000-4000-8000-000000000621",
+      "tool_name": "qualify_resolution",
+      "created_at": "2026-11-26 05:21:18.277+01",
+      "payload": {
+        "schema_version": 1,
+        "tool_name": "qualify_resolution",
+        "status": "complete",
+        "summary": "Qualification terminée de l’instantané fourni ; la résolution du dossier n’est pas attestée. Faits externes non vérifiés, permissions accordées : 0, actions externes réalisées : 0.\nOrientations vers les produits existants ; disponibilité des services non qualifiée :\nA — Démarches et accès aux droits : NIDHI, Dossier sans oubli, Courrier en clair, Démarche à deux.\nB — Budget et aides : NIDHI, Ma semaine en chiffres, Coût complet, Abonnements au clair.\nC — Achats assurances et restitutions : NIDHI, marketplace, SAV, Facture expliquée.\nD — Logement et entretien : Maison documentée, Réparons, Notice retrouvée, Entretien au bon moment, Passage de vie.\nE — Soins et aidants : Relais entre aidants, Répit logistique, Accompagné au rendez-vous.\nF — Famille et transitions : Passage de vie, Maison partagée, Quotidien après un choc, Souvenirs vivants.\nG — Effort et accessibilité : Journée souple, Mon profil de confort, Parler avec des cartes, Mode téléphone partagé, Participer sans smartphone.\nH — Emploi et activité : VIDA JOB, KARYA, Formation, Mon Projet.\nI — Apprentissage création et lien : Formation, Assemblée, SUTRA, DreamForge, événements et cercles.\nJ — Accès numérique et conservation : RAKSHA, ONE ID, VAJRA, mémoire, documents et sauvegardes.\nK — Mobilité et territoire : YANA, Passage de vie, ressources locales, Country Packs.\nL — Protection et crise : RAKSHA, Faire la paix, Aide de crise coordonnée.\nM — Alimentation et besoins essentiels : Placard en repas, Repas qui arrivent, NANO, entraide et distribution.\nN — Animaux nature et ressources locales : projets animaux et nature, KARYA, NANO, ressources partagées ; responsable métier précis à identifier.",
+        "sources": [],
+        "resolution": {
+          "snapshot": {
+            "caseId": "dossier-synthetique-🌍",
+            "snapshotRevision": 4,
+            "asOf": "2026-11-25T12:00:00Z"
+          },
+          "sections": [
+            {
+              "id": "dependencies",
+              "title": "Prérequis",
+              "availability": "provided",
+              "summary": "2 prérequis, 1 alternatives ; 1 groupe(s) interdépendant(s) initialement, 0 restant(s). Les affirmations et références restent non vérifiées.",
+              "items": [
+                "Groupe de prérequis interdépendants initialement : \"exigence-a\", \"exigence-b\". Ce groupe ne décrit pas un ordre d’exécution.",
+                "Prérequis \"exigence-a\" : état inconnu ; base déclarée : règle déclarée attestée ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                "Prérequis \"exigence-b\" : état inconnu ; base déclarée : demande d’un interlocuteur ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                "Alternative \"alternative-a\", pour \"exigence-a\" et le prérequis \"exigence-b\" : candidate au regard des références fournies, sans validation externe.",
+                "Prochaines candidates à examiner : \"exigence-a\". Aucun plan d’exécution créé."
+              ]
+            },
+            {
+              "id": "transitions",
+              "title": "Transitions",
+              "availability": "provided",
+              "summary": "1 transition(s) fournie(s). Les lacunes et chevauchements calculés ne prouvent pas la couverture réelle et n’autorisent aucune fermeture.",
+              "items": [
+                "Transition \"changement-aidant\" : intervalles calculés à partir des affirmations fournies ; fuseau déclaré : \"Europe/Paris\".",
+                "Interruption possible pour \"changement-aidant\" : du 2026-11-25T08:00:00.000Z au 2026-11-25T09:00:00.000Z.",
+                "Interruption possible pour \"changement-aidant\" : du 2026-11-25T11:00:00.000Z au 2026-11-25T12:00:00.000Z.",
+                "Chevauchement possible pour \"changement-aidant\" : aucun intervalle dans le calcul fourni ; la couverture réelle reste non vérifiée.",
+                "Transition \"changement-aidant\" : périodes inconnues : \"periode-inconnue\" ; périodes exclues du calcul : \"periode-inconnue\". Couverture réelle non vérifiée ; fermeture du service précédent non autorisée."
+              ]
+            },
+            {
+              "id": "effort",
+              "title": "Effort choisi",
+              "availability": "provided",
+              "summary": "2 minutes choisies ; pause non demandée. Les contraintes non renseignées restent inconnues.",
+              "items": [
+                "Prochaine étape candidate : \"prochaine-action-courte\".",
+                "Étapes déclarées terminées : \"piece-deja-fournie\".",
+                "Étape \"prochaine-action-courte\" : aucun dépassement ou inconnu détecté pour les limites renseignées.",
+                "Étape \"deplacement-long\" : durée supérieure au choix déclaré ; nombre d’appels supérieur au choix déclaré ; nombre de déplacements supérieur au choix déclaré.",
+                "Choix déclarés par la personne ; aucune inférence de santé, aucune autorisation modifiée et aucun rappel créé."
+              ]
+            },
+            {
+              "id": "corrections",
+              "title": "Conséquences d’une correction",
+              "availability": "provided",
+              "summary": "1 correction(s) examinée(s) dans le graphe fourni. Aucun document modifié, aucune rectification envoyée ; les impacts externes restent à vérifier.",
+              "items": [
+                "Correction \"correction-adresse\", version 1 vers 2 proposée : correction déclarée avec une référence fournie, non authentifiée.",
+                "Conséquence \"brouillon\" de \"correction-adresse\", version 1, stade déclaré brouillon : préparer une révision locale.",
+                "Conséquence \"organisme\" de \"correction-adresse\", version 1, stade déclaré transmis : préparer une rectification externe.",
+                "Correction \"correction-adresse\" : éléments sans lien établi dans le graphe fourni : \"attestation-inconnue\", \"demande-liee\". Une absence de lien fourni ne prouve pas une absence d’impact.",
+                "Dépendances non résolues pour \"attestation-inconnue\" dans \"correction-adresse\" : \"intermediaire-manquant\".",
+                "Correction \"correction-adresse\" : impact inconnu pour \"attestation-inconnue\", \"demande-liee\" ; étude d’impact incomplète. Modifications réalisées : 0 ; rectifications externes envoyées : 0 ; réparation non établie."
+              ]
+            },
+            {
+              "id": "occurrence",
+              "title": "Récurrence et reprises",
+              "availability": "provided",
+              "summary": "effet inconnu à rapprocher avant toute reprise. Aucune exécution autorisée et aucune tentative créée.",
+              "items": [
+                "Épisode \"nouvel-episode\" ; opération \"operation-deja-tentee\".",
+                "Différences de contexte dans les données fournies : aucune détectée ; la présence d’un épisode précédent n’est pas garantie.",
+                "Effet précédent : effet incertain déclaré ; rapprochement requis : oui.",
+                "Dossiers regroupés : 0 ; tentatives créées : 0 ; programmation créée : 0. Une candidature ne constitue aucune permission de rejouer."
+              ]
+            },
+            {
+              "id": "handoffs",
+              "title": "Passation",
+              "availability": "provided",
+              "summary": "1 passation(s) fournie(s). Aucun destinataire ni pouvoir authentifié ; aucune transmission réalisée par cet outil.",
+              "items": [
+                "Passation \"relais-a\" : stade demandé réalisée selon les références fournies ; stade soutenu par les seules références fournies transmise selon les références fournies. Ordre des événements et réalisation externe non vérifiés.",
+                "Références déclarées pour \"relais-a\" : transmission : \"src-envoi\" ; acceptation : aucun identifiant fourni ; réalisation : aucun identifiant fourni. Les dates d’observation ne prouvent pas la chronologie des événements.",
+                "Passation \"relais-a\" : autorisation de confiance encore requise avant tout partage ; motifs : référence d’acceptation absente ou non retenue. Aucun rôle ne confère d’autorité ; aucune permission accordée, aucune transmission effectuée."
+              ]
+            }
+          ],
+          "supplied_references": [
+            {
+              "id": "src-a",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "exigence-a",
+              "kind": "requirement",
+              "reference": "Pièce déclarée src-a",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-b",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "exigence-b",
+              "kind": "requirement",
+              "reference": "Pièce déclarée src-b",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-alternative",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "alternative-a",
+              "kind": "alternative",
+              "reference": "Pièce déclarée src-alternative",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-acceptation",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "alternative-a",
+              "kind": "acceptance",
+              "reference": "Pièce déclarée src-acceptation",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-periode",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "periode-active",
+              "kind": "activation",
+              "reference": "Pièce déclarée src-periode",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-correction",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "correction-adresse",
+              "kind": "correction",
+              "reference": "Pièce déclarée src-correction",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-envoi",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "relais-a",
+              "kind": "transmission",
+              "reference": "Pièce fournie <script>instruction non fiable</script> & 🌍",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-mandat",
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "subjectId": "relais-a",
+              "kind": "authorization",
+              "reference": "Pièce déclarée src-mandat",
+              "observedAt": "2026-11-25T09:00:00Z"
+            },
+            {
+              "id": "src-autre-dossier",
+              "caseId": "autre-dossier",
+              "snapshotRevision": 4,
+              "subjectId": "relais-a",
+              "kind": "performance",
+              "reference": "Pièce déclarée src-autre-dossier",
+              "observedAt": "2026-11-25T09:00:00Z"
+            }
+          ],
+          "rejected_source_ids": [
+            "src-autre-dossier"
+          ]
+        }
+      }
+    }
+  },
+  "variantCases": [
+    {
+      "name": "Unicode scalar limits survive real qualification, SQL storage, private reading and chat context",
+      "status": "PASS",
+      "sections": [
+        {
+          "id": "dependencies",
+          "availability": "not_provided"
+        },
+        {
+          "id": "transitions",
+          "availability": "not_provided"
+        },
+        {
+          "id": "effort",
+          "availability": "not_provided"
+        },
+        {
+          "id": "corrections",
+          "availability": "not_provided"
+        },
+        {
+          "id": "occurrence",
+          "availability": "not_provided"
+        },
+        {
+          "id": "handoffs",
+          "availability": "not_provided"
+        }
+      ]
+    },
+    {
+      "name": "all six absent facets remain unknown after qualification, SQL storage and owner reading",
+      "status": "PASS",
+      "sections": [
+        {
+          "id": "dependencies",
+          "availability": "not_provided"
+        },
+        {
+          "id": "transitions",
+          "availability": "not_provided"
+        },
+        {
+          "id": "effort",
+          "availability": "not_provided"
+        },
+        {
+          "id": "corrections",
+          "availability": "not_provided"
+        },
+        {
+          "id": "occurrence",
+          "availability": "not_provided"
+        },
+        {
+          "id": "handoffs",
+          "availability": "not_provided"
+        }
+      ]
+    },
+    {
+      "name": "conflicts, unknown windows, pause, uncertain replay and blocked handoff remain consultable",
+      "status": "PASS",
+      "sections": [
+        {
+          "id": "dependencies",
+          "availability": "provided"
+        },
+        {
+          "id": "transitions",
+          "availability": "provided"
+        },
+        {
+          "id": "effort",
+          "availability": "provided"
+        },
+        {
+          "id": "corrections",
+          "availability": "provided"
+        },
+        {
+          "id": "occurrence",
+          "availability": "provided"
+        },
+        {
+          "id": "handoffs",
+          "availability": "provided"
+        }
+      ]
+    }
+  ],
+  "chatContext": {
+    "bytes": 8151,
+    "value": {
+      "schema_version": 1,
+      "kind": "selected_private_tool_results",
+      "trust": "untrusted_data",
+      "results": [
+        {
+          "result_id": "79d61150-af11-4276-8c4c-d1feebfd4a2a",
+          "run_id": "a3a39155-9361-497c-8da0-e3722477b8c1",
+          "tool_name": "qualify_resolution",
+          "status": "complete",
+          "created_at": "2026-11-26 05:21:18.277+01",
+          "summary": "Qualification terminée de l’instantané fourni ; la résolution du dossier n’est pas attestée. Faits externes non vérifiés, permissions accordées : 0, actions externes réalisées : 0.\nOrientations vers les produits existants ; disponibilité des services non qualifiée :\nA — Démarches et accès aux droits : NIDHI, Dossier sans oubli, Courrier en clair, Démarche à deux.\nB — Budget et aides : NIDHI, Ma semaine en chiffres, Coût complet, Abonnements au clair.\nC — Achats assurances et restitutions : NIDHI, marketplace, SAV, Facture expliquée.\nD — Logement et entretien : Maison documentée, Réparons, Notice retrouvée, Entretien au bon moment, Passage de vie.\nE — Soins et aidants : Relais entre aidants, Répit logistique, Accompagné au rendez-vous.\nF — F…",
+          "summary_truncated": true,
+          "evidence": {
+            "content_kind": "resolution_qualification",
+            "verification_status": "unverified",
+            "source_text_trust": "untrusted_data",
+            "provenance": "caller_supplied_snapshot",
+            "qualification_only": true,
+            "external_facts_verified": false,
+            "permissions_granted": false,
+            "external_actions_performed": 0,
+            "report_truncated": false
+          },
+          "sources": [],
+          "sources_omitted": 0,
+          "resolution": {
+            "snapshot": {
+              "caseId": "dossier-synthetique-🌍",
+              "snapshotRevision": 4,
+              "asOf": "2026-11-25T12:00:00Z"
+            },
+            "sections": [
+              {
+                "id": "dependencies",
+                "title": "Prérequis",
+                "availability": "provided",
+                "summary": "2 prérequis, 1 alternatives ; 1 groupe(s) interdépendant(s) initialement, 0 restant(s). Les affirmations et références restent non vérifiées.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Groupe de prérequis interdépendants initialement : \"exigence-a\", \"exigence-b\". Ce groupe ne décrit pas un ordre d’exécution.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Prérequis \"exigence-a\" : état inconnu ; base déclarée : règle déclarée attestée ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Prérequis \"exigence-b\" : état inconnu ; base déclarée : demande d’un interlocuteur ; référence fournie correspondante : présente, non authentifiée ; prérequis inconnus : aucun identifiant fourni.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Alternative \"alternative-a\", pour \"exigence-a\" et le prérequis \"exigence-b\" : candidate au regard des références fournies, sans validation externe.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Prochaines candidates à examiner : \"exigence-a\". Aucun plan d’exécution créé.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              },
+              {
+                "id": "transitions",
+                "title": "Transitions",
+                "availability": "provided",
+                "summary": "1 transition(s) fournie(s). Les lacunes et chevauchements calculés ne prouvent pas la couverture réelle et n’autorisent aucune fermeture.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Transition \"changement-aidant\" : intervalles calculés à partir des affirmations fournies ; fuseau déclaré : \"Europe/Paris\".",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Interruption possible pour \"changement-aidant\" : du 2026-11-25T08:00:00.000Z au 2026-11-25T09:00:00.000Z.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Interruption possible pour \"changement-aidant\" : du 2026-11-25T11:00:00.000Z au 2026-11-25T12:00:00.000Z.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Chevauchement possible pour \"changement-aidant\" : aucun intervalle dans le calcul fourni ; la couverture réelle reste non vérifiée.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Transition \"changement-aidant\" : périodes inconnues : \"periode-inconnue\" ; périodes exclues du calcul : \"periode-inconnue\". Couverture réelle non vérifiée ; fermeture du service précédent non autorisée.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              },
+              {
+                "id": "effort",
+                "title": "Effort choisi",
+                "availability": "provided",
+                "summary": "2 minutes choisies ; pause non demandée. Les contraintes non renseignées restent inconnues.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Prochaine étape candidate : \"prochaine-action-courte\".",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Étapes déclarées terminées : \"piece-deja-fournie\".",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Étape \"prochaine-action-courte\" : aucun dépassement ou inconnu détecté pour les limites renseignées.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Étape \"deplacement-long\" : durée supérieure au choix déclaré ; nombre d’appels supérieur au choix déclaré ; nombre de déplacements supérieur au choix déclaré.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Choix déclarés par la personne ; aucune inférence de santé, aucune autorisation modifiée et aucun rappel créé.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              },
+              {
+                "id": "corrections",
+                "title": "Conséquences d’une correction",
+                "availability": "provided",
+                "summary": "1 correction(s) examinée(s) dans le graphe fourni. Aucun document modifié, aucune rectification envoyée ; les impacts externes restent à vérifier.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Correction \"correction-adresse\", version 1 vers 2 proposée : correction déclarée avec une référence fournie, non authentifiée.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Conséquence \"brouillon\" de \"correction-adresse\", version 1, stade déclaré brouillon : préparer une révision locale.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Conséquence \"organisme\" de \"correction-adresse\", version 1, stade déclaré transmis : préparer une rectification externe.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Correction \"correction-adresse\" : éléments sans lien établi dans le graphe fourni : \"attestation-inconnue\", \"demande-liee\". Une absence de lien fourni ne prouve pas une absence d’impact.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Dépendances non résolues pour \"attestation-inconnue\" dans \"correction-adresse\" : \"intermediaire-manquant\".",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Correction \"correction-adresse\" : impact inconnu pour \"attestation-inconnue\", \"demande-liee\" ; étude d’impact incomplète. Modifications réalisées : 0 ; rectifications externes envoyées : 0 ; réparation non établie.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              },
+              {
+                "id": "occurrence",
+                "title": "Récurrence et reprises",
+                "availability": "provided",
+                "summary": "effet inconnu à rapprocher avant toute reprise. Aucune exécution autorisée et aucune tentative créée.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Épisode \"nouvel-episode\" ; opération \"operation-deja-tentee\".",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Différences de contexte dans les données fournies : aucune détectée ; la présence d’un épisode précédent n’est pas garantie.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Effet précédent : effet incertain déclaré ; rapprochement requis : oui.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Dossiers regroupés : 0 ; tentatives créées : 0 ; programmation créée : 0. Une candidature ne constitue aucune permission de rejouer.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              },
+              {
+                "id": "handoffs",
+                "title": "Passation",
+                "availability": "provided",
+                "summary": "1 passation(s) fournie(s). Aucun destinataire ni pouvoir authentifié ; aucune transmission réalisée par cet outil.",
+                "summary_truncated": false,
+                "items": [
+                  {
+                    "text": "Passation \"relais-a\" : stade demandé réalisée selon les références fournies ; stade soutenu par les seules références fournies transmise selon les références fournies. Ordre des événements et réalisation externe non vérifiés.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Références déclarées pour \"relais-a\" : transmission : \"src-envoi\" ; acceptation : aucun identifiant fourni ; réalisation : aucun identifiant fourni. Les dates d’observation ne prouvent pas la chronologie des événements.",
+                    "truncated": false
+                  },
+                  {
+                    "text": "Passation \"relais-a\" : autorisation de confiance encore requise avant tout partage ; motifs : référence d’acceptation absente ou non retenue. Aucun rôle ne confère d’autorité ; aucune permission accordée, aucune transmission effectuée.",
+                    "truncated": false
+                  }
+                ],
+                "items_omitted": 0
+              }
+            ],
+            "supplied_references_omitted": 9,
+            "rejected_source_count": 1
+          }
+        }
+      ]
+    }
+  },
+  "finishedAt": "2026-11-26T04:21:18.400Z"
+}

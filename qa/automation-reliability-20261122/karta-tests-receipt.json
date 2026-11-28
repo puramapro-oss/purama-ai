@@ -1,0 +1,21 @@
+{
+  "observed_at_utc": "2026-11-21T23:46:52.964028+00:00",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/calendarTool.test.ts",
+    "test/actionAgentsMock.test.ts",
+    "test/customAuthorization.test.ts",
+    "test/gmailTool.test.ts",
+    "test/gmailReply.test.ts",
+    "test/gmailMessage.test.ts",
+    "--maxWorkers=1",
+    "--no-cache",
+    "--fsModuleCachePath",
+    "/workspace/scratch/529e43e3c136/composition-vitest-cache"
+  ],
+  "exit_code": 0,
+  "provider_calls": "mocked",
+  "scope": "composed Calendar and Gmail, six files"
+}

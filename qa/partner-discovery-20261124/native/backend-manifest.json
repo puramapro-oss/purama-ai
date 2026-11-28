@@ -1,0 +1,123 @@
+{
+  "status": "PARTIEL",
+  "recorded_at": "2026-11-24T22:49:58.662280+00:00",
+  "branch": "test/partner-discovery-postgres-20261124",
+  "base_commit": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "initial_local_validation_base": "48869219a22fef71edeb069a2f2b50d966edc363",
+  "compare_main_commit": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "native_runtime_status": "NON_TESTE",
+  "static_checks": "PASS: syntax, targeted ESLint, unchanged source hashes; GitNexus operations completed with bounded-graph limitations.",
+  "commit_pushed": false,
+  "scope": [
+    "karta/test/partnerDiscovery.native.mjs",
+    ".github/workflows/purama-chef-hardening.yml",
+    "vercel.json (own branch key only)",
+    "qa/partner-discovery-20261124/native/"
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "bytes": 17630,
+      "sha256": "18c4b9956b156aa5f7c1a8b45d7cb64dff5828c4d7cb6bc540c9e937517cb2ae"
+    },
+    {
+      "path": "karta/test/partnerDiscovery.native.mjs",
+      "bytes": 23128,
+      "sha256": "c826957b76bf934b876cde97c5171c7daf2640f59d00410ebd53b98208ee2719"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/README.md",
+      "bytes": 8971,
+      "sha256": "650ad439c6b86542d00f2c070046c031f1ee900d847e18943c5fec01c59db74d"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-detect-main.json",
+      "bytes": 2087,
+      "sha256": "d2890f2e41630f0c34c4742f8e004b020dabd225c65cb3e38cec6039e4761d7e"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-detect-main.log.gz",
+      "bytes": 888,
+      "sha256": "38b889972aaef12172e185e495a3a50e71cc9794ab1378f9189565b8b03a6991"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-detect-staged.json",
+      "bytes": 1947,
+      "sha256": "9c17da616288849152e7f9aa379e7b15f642cfea041193757758e1b3d5f6665b"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-detect-staged.log.gz",
+      "bytes": 502,
+      "sha256": "1d81dac0065041bac3b7a4051083be3ec591508e097cf4b30784148b1c841722"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-impact-fresh.json",
+      "bytes": 1571,
+      "sha256": "585392e5761db193a195d365bad957e325d92a43c773c44c5716933f11128caf"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-impact-fresh.log.gz",
+      "bytes": 385,
+      "sha256": "77819611798eed826a61cf6bac63d94bd8e64e07de137a66d305faeec4091c86"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-index-analyze.log.gz",
+      "bytes": 1077,
+      "sha256": "c654e29b039c1da4d833658c8af3d4de1ff4391c4c5f7a99336713f61535c91b"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-index-initial-receipt.json",
+      "bytes": 11118,
+      "sha256": "c0c016bbb4cfac781d51e0a6e0fd8e1a1c211cb9229909c505316372655b1254"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-index-initial.log.gz",
+      "bytes": 1029,
+      "sha256": "708fdefcdd511408e6c5f7e4a8011a2af28cd2f8f8575114176129865400f96b"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-index-receipt.json",
+      "bytes": 11311,
+      "sha256": "79f07a51c6c7845d45db0aa87f4b47704f737d532477dca28bc7a771f3c999be"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-index-scope.json",
+      "bytes": 2858,
+      "sha256": "ba8744750e1c7a5c92fe8a4ea6e2bd52ead67ebcabe5fe17443725e06ff4a46f"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/backend-receipt.json",
+      "bytes": 3432,
+      "sha256": "2c5da5dd39439354009ae1d694f2beba5129e23114fd0da4d6948578acdbdc52"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/impact-before.json",
+      "bytes": 910,
+      "sha256": "fdc46beee49b7f97bca71a7b64cc7ca5e8989c41dd86617d3c865e6dbd62990a"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/impact-before.log.gz",
+      "bytes": 360,
+      "sha256": "d148187be89bdaca7e99d76d5d6ab5b4655f1bb36194f7e38a39853e83d284ae"
+    },
+    {
+      "path": "qa/partner-discovery-20261124/native/scope.json",
+      "bytes": 1776,
+      "sha256": "cfd317c34ab8366698c8f37f4486f1b7c18a86340dcbf944e3cb96a0bf3362ff"
+    },
+    {
+      "path": "vercel.json",
+      "bytes": 3151,
+      "sha256": "2633027225a9a94f9b74415555de7778868f92c941e572d5e8c58358c51e68e4"
+    }
+  ],
+  "self_excluded": true,
+  "runtime_report_excluded_reason": "Must be created only by actual native execution in CI.",
+  "final_staging_note": "Detection receipts record the 15-file prepared snapshot before their own addition. Final staged detection is also executed after adding these receipts and this manifest; no product symbol changes.",
+  "limits": [
+    "SQL RPC impact UNKNOWN despite indexed SQL file hashes; FTS unavailable.",
+    "origin/main historical comparison CRITICAL, not the native patch blast radius.",
+    "No claim of native PASS, live deployment, production load or complete global graph."
+  ],
+  "excluded_local_raw_log": "impact-before.log is retained locally by root; its published compressed counterpart and uncompressed hash are already preserved in impact-before.json."
+}

@@ -1,0 +1,91 @@
+{
+  "recordedAtUtc": "2026-11-23T16:12:44.212739+00:00",
+  "scope": "Deduplicate IAO HTTP budget tests only; no product/config edits, no commit/push",
+  "repo": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+  "head": "889921991f68d9dcb744ea5af3ca0d40ad82f549",
+  "branch": "integrate/iao-http-lifecycle-20261123",
+  "status": "PASS",
+  "files": {
+    "karta/test/apiIaoTransportBudget.test.ts": {
+      "status": "modified",
+      "sha256": "a63468f5411020fbe658abddfa31adbc09489e7a11c8d7ebc58828a2bc81bc73"
+    },
+    "karta/test/iaoExecutionBudget.test.ts": {
+      "status": "modified",
+      "sha256": "026a0da8790f97ec11fabee90ffb024abe39a4d7f3a5debc5dbc1135bdbdb719"
+    },
+    "karta/test/apiIaoResponseBudget.test.ts": {
+      "status": "deleted after coverage transfer"
+    }
+  },
+  "untouchedEvidence": {
+    "karta/src/api/iaoRoutes.ts": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b",
+    "karta/test/iaoAdmissionDeadline.test.ts": "51dfb973ee0e0dde6b8c9e42d429914375873c21a4febfc55e9ad221c9109a99"
+  },
+  "gates": [
+    {
+      "name": "targeted-tests",
+      "status": "PASS",
+      "command": "node node_modules/vitest/vitest.mjs run test/apiIaoTransportBudget.test.ts test/iaoExecutionBudget.test.ts test/iaoAdmissionDeadline.test.ts",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exitCode": 0,
+      "filesPassed": 3,
+      "testsPassed": 42,
+      "durationSeconds": 32.01,
+      "log": "targeted-tests.log"
+    },
+    {
+      "name": "typecheck",
+      "status": "PASS",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "name": "diff-check",
+      "status": "PASS",
+      "command": "git diff --check -- karta/test/apiIaoTransportBudget.test.ts karta/test/iaoExecutionBudget.test.ts karta/test/apiIaoResponseBudget.test.ts",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+      "exitCode": 0,
+      "log": "diff-check.log"
+    }
+  ],
+  "suiteCounts": {
+    "apiIaoTransportBudget.test.ts": 14,
+    "iaoExecutionBudget.test.ts": 19,
+    "iaoAdmissionDeadline.test.ts": 9
+  },
+  "coverage": {
+    "nativeLongResponse": "One real loopback HTTP test, two sequential 8-second context/completion stages with a 12-second per-stage bound; socket budget 25000 ms; response 202 verified; elapsed >=16000 and <30000 ms; provider invoked once; no socket timeout.",
+    "keepAlive": "One real connection for POST IAO, GET /live, and slow-authentication GET IAO; all request-entry socket limits 15000 ms; final request ECONNRESET or exact generic 503 between 14500 and 20000 ms; no second completion.",
+    "disconnectDrain": "Admitted work keeps its un-aborted execution signal and remains draft after disconnect; drain remains pending, then resolves only after verified completion.",
+    "admission": "No extension before auth, full body or final readiness; lifetime abort during metadata return/throw refuses dispatch; malformed input never consults metadata or prepare.",
+    "uniquePr95": [
+      "Bounded provider timeout returns blocked/uncertain 503 and aborts signal",
+      "Memory-control returns a receipt once, replays across /pura and /iao aliases without duplicate control or completion",
+      "Explicit cancellation works after original socket deadline",
+      "Existing longer 45000 ms socket timeout is preserved",
+      "Throwing metadata getter and method remain private and harmless"
+    ],
+    "metadata": "19 cases centralize both operation budgets, default 120000 ms stage timeout, 100/20500/600000 ms stages, absent metadata, 12 invalid values and throwing method/getter; ordinary submit remains compatible.",
+    "deadline": "Existing nine admission-deadline tests executed unchanged."
+  },
+  "impact": {
+    "index": "iao-harmony-20261123",
+    "fileResults": "All three files: 0 direct/0 processes/0 modules; UNKNOWN risk, not LOW.",
+    "limitation": "Named helper impact cannot resolve empty name properties; explicit UID throws TypeError in unresolvedReceiverBoundaries. Parent approved file impact plus targeted caller Cypher and text-search fallback. No GitNexus repair.",
+    "locality": "Targeted helper-caller query returned seven incoming CALLS edges, all local to these test files; text search found no imports of these test filenames from src/test.",
+    "evidence": [
+      "impact-file-apiIaoTransportBudget.test.ts.json",
+      "impact-file-apiIaoResponseBudget.test.ts.json",
+      "impact-file-iaoExecutionBudget.test.ts.json",
+      "impact-named-helper-callers.txt",
+      "impact-transport-listen-resolved.stderr"
+    ]
+  },
+  "limitations": [
+    "Provider and memory ports are controlled test doubles; no paid API invocation or production deployment exercised.",
+    "Broader product regression, pipeline proof and commit are owned by the root agent."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=192",
+    "karta/node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--project",
+    "qa/local-compute-boundary-20261123/tsconfig.json"
+  ],
+  "cwd": "/tmp/iao-review-3525",
+  "started_at_utc": "2026-11-23T01:35:18.840411+00:00",
+  "ended_at_utc": "2026-11-23T01:35:20.077587+00:00",
+  "exit_code": 0,
+  "scope": "Changed provider and final native test with transitive IAO types; KARTA strict compiler options inherited",
+  "source_sha256": {
+    "karta/src/integrations/localComputeFabricProvider.ts": "1418ea6283a1b2a3578c10a91cb315b7863b38503a7f970ea96f32f451744f73",
+    "karta/test/localComputeFabricResponseBoundary.test.ts": "f1eebf9dd2982979386938f286f5f3a7a1d331a5e4af1866b63da02d65bf149f"
+  },
+  "post_review_change": "Native monotonic boundary witnesses changed from 99/100 ms to 4999/5000 ms with a matching five-second real watchdog to reduce heavily loaded CI sensitivity; no product change."
+}

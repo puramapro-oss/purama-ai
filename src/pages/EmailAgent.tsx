@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
@@ -14,6 +14,8 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope } from '@/hooks/useRequestScope';
+import { createRequestScope } from '@/lib/request-scope';
 import {
   getConfig, updateConfig, listLogs, pendingDraftsCount,
   getGmailOAuthUrl,
@@ -24,6 +26,7 @@ import { AgentChatTab } from '@/components/voice/AgentChatTab';
 
 export default function EmailAgent() {
   const { user } = useAuth();
+  const capture = useRequestScope(user?.id ?? '');
   const [config, setConfig] = useState<EmailAgentConfig | null>(null);
   const [logs, setLogs] = useState<EmailAgentLog[]>([]);
   const [pending, setPending] = useState(0);
@@ -31,33 +34,40 @@ export default function EmailAgent() {
   const [savingToggle, setSavingToggle] = useState(false);
   const [savingLevel, setSavingLevel] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [oauthRequests] = useState(createRequestScope);
+  useLayoutEffect(() => {
+    setConnecting(false);
+    return () => oauthRequests.invalidate();
+  }, [user?.id, oauthRequests]);
 
   const refresh = async () => {
     if (!user) return;
+    const current = capture();
     try {
       const [cfg, l, p] = await Promise.all([
         getConfig(user.id),
         listLogs(user.id, { limit: 12 }),
         pendingDraftsCount(user.id),
       ]);
+      if (!current()) return;
       setConfig(cfg);
       setLogs(l);
       setPending(p);
     } catch (e) {
+      if (!current()) return;
       toast.error('Erreur de chargement', {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
-      setLoading(false);
+      if (current()) setLoading(false);
     }
   };
 
   useEffect(() => {
     refresh();
-    // Surface OAuth callback result.
+    // A legacy URL flag is not a connection receipt. Keep only error feedback.
     const params = new URLSearchParams(window.location.search);
     if (params.get('gmail') === 'connected') {
-      toast.success('✅ Gmail connecté !');
       window.history.replaceState({}, '', window.location.pathname);
     } else if (params.get('gmail') === 'error') {
       toast.error('Erreur lors de la connexion Gmail');
@@ -68,6 +78,7 @@ export default function EmailAgent() {
 
   const handleToggleActive = async (next: boolean) => {
     if (!user || !config) return;
+    const current = capture();
     if (next && !config.gmail_email) {
       toast.error('Connecte Gmail avant d\'activer l\'agent');
       return;
@@ -75,44 +86,51 @@ export default function EmailAgent() {
     setSavingToggle(true);
     try {
       const updated = await updateConfig(user.id, { is_active: next });
+      if (!current()) return;
       setConfig(updated);
       toast.success(next ? '🤖 Agent activé' : 'Agent en pause');
     } catch (e) {
+      if (!current()) return;
       toast.error('Impossible de mettre à jour', {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
-      setSavingToggle(false);
+      if (current()) setSavingToggle(false);
     }
   };
 
   const handleAutonomyChange = async (vals: number[]) => {
     if (!user || !config) return;
+    const current = capture();
     const level = Math.max(1, Math.min(5, vals[0])) as AutonomyLevel;
     if (level === config.autonomy_level) return;
     setSavingLevel(true);
     try {
       const updated = await updateConfig(user.id, { autonomy_level: level });
+      if (!current()) return;
       setConfig(updated);
     } catch (e) {
+      if (!current()) return;
       toast.error('Erreur', {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
-      setSavingLevel(false);
+      if (current()) setSavingLevel(false);
     }
   };
 
   const handleConnectGmail = async () => {
+    if (!user) return;
+    const request = oauthRequests.begin('gmail-connect');
+    if (!request) return;
     setConnecting(true);
     try {
-      const url = await getGmailOAuthUrl();
-      window.location.href = url;
-    } catch (e) {
-      toast.error('Impossible de démarrer la connexion Gmail', {
-        description: e instanceof Error ? e.message : String(e),
-      });
-      setConnecting(false);
+      const url = await getGmailOAuthUrl(user.id, request.signal);
+      if (request.current()) window.location.href = url;
+    } catch {
+      if (request.current()) toast.error('Impossible de démarrer la connexion Gmail. Réessayez.');
+    } finally {
+      if (request.finish()) setConnecting(false);
     }
   };
 

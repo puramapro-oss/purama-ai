@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-11-23",
+  "device": "mac.home",
+  "mode": "read_only",
+  "tool": "Remote Desktop Commander start_process then read_process_output",
+  "exit_code": 0,
+  "runtime_seconds": 0.4,
+  "path": "PURAMA_ROOT/.worktrees/t03-iao-local-transport-20261014",
+  "head": "347ed23154cf40e70adab2142c5a91997e883c15",
+  "branch": "codex/t03-iao-local-transport-20261014",
+  "tracked_modifications": [
+    "BATON.md",
+    "docs/iao/t03-local-transport-20261014/HANDOFF-T01-T06-T08-PREPARATION-RUNTIME-20261027.md",
+    "task_plan.md"
+  ],
+  "source_sha256": {
+    "karta/src/claude/consultation-host.ts": null,
+    "karta/src/claude/consultation-store.ts": null,
+    "src/components/ChatbotWidget.tsx": "03a18bffb38cb8d69b62912f76672546e98b779bf99e1cf2b68fe2c88916551e"
+  },
+  "scope": "Copie T03 explicitement nommée par le registre consulté au lot précédent. Métadonnées Git, statut des fichiers suivis et empreintes uniquement. GIT_OPTIONAL_LOCKS=0.",
+  "conclusion": "Les modules consultation ne sont pas présents dans cette copie. Aucun reçu d’installation de26eb ou du nouveau lot. Préserver les modifications locales et identifier le runtime réellement exécuté avant toute réception native.",
+  "limitations": [
+    "Aucun parcours des autres worktrees",
+    "Aucun contrôle de modèle réel ou de runtime live",
+    "Aucune mutation Git, fichier, service, installation ou secret sur le Mac"
+  ],
+  "publication_scope": "Chemin utilisateur rendu relatif avant versionnement ; l’emplacement exact reste dans le suivi privé de la tâche."
+}

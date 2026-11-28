@@ -768,8 +768,10 @@ export type Database = {
           has_used_trial: boolean
           id: string
           plan_type: string | null
+          revision: number
           status: string | null
           stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           trial_ends_at: string | null
           updated_at: string | null
           user_id: string
@@ -779,8 +781,10 @@ export type Database = {
           has_used_trial?: boolean
           id?: string
           plan_type?: string | null
+          revision?: number
           status?: string | null
           stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           trial_ends_at?: string | null
           updated_at?: string | null
           user_id: string
@@ -790,8 +794,10 @@ export type Database = {
           has_used_trial?: boolean
           id?: string
           plan_type?: string | null
+          revision?: number
           status?: string | null
           stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           trial_ends_at?: string | null
           updated_at?: string | null
           user_id?: string

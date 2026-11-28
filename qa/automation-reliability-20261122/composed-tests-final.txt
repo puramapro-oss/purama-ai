@@ -1,0 +1,23 @@
+
+ RUN  v5.0.3 /workspace/scratch/529e43e3c136/calendar-email-20261122/repo/karta
+
+stderr | test/customAuthorization.test.ts > custom authority immediately before the provider request > reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/customAuthorization.test.ts (46 tests) 38ms
+ ✓ test/emailDraftSendOnce.test.ts (76 tests) 4551ms
+ ✓ test/gmailReply.test.ts (29 tests) 44ms
+ ✓ test/gmailMessage.test.ts (20 tests) 23ms
+ ✓ test/calendarTool.test.ts (18 tests) 21ms
+ ✓ test/gmailTool.test.ts (5 tests) 12ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 6ms
+
+ Test Files  7 passed (7)
+      Tests  198 passed (198)
+   Start at  00:57:28
+   Duration  6.21s (tests 90%, transform 6%, import 3%, setup 1%, worker 1%)
+
+    Isolate  7 workers spawned · ~133ms startup each (spawn + environment, per file)
+             at least ~797ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/529e43e3c136/composition-test-report.json

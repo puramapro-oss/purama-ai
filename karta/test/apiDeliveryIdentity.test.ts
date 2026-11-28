@@ -46,7 +46,7 @@ function post(path: string): Promise<{ status: number; body: Record<string, unkn
   });
 }
 
-it.each([`/trigger/legal/${owner}`, `/trigger-custom/${agent}`])("returns the server execution key for %s without claiming completion", async path => {
+it.each([`/trigger/legal/${owner}`, `/trigger-custom/${agent}`, `/trigger-custom/${agent}/owner/${owner}`])("returns the server execution key for %s without claiming completion", async path => {
   const response = await post(path);
   expect(response.status).toBe(202);
   expect(response.body).toMatchObject({ ok: true, queued: true });
@@ -56,6 +56,35 @@ it.each([`/trigger/legal/${owner}`, `/trigger-custom/${agent}`])("returns the se
   expect(response.body.executionKey).toMatch(/^queue:v2:karta-v2-dedupe-[0-9a-f]{64}$/);
   expect(response.body).not.toHaveProperty("status", "success");
   expect(h.enqueue).toHaveBeenCalledOnce();
+});
+
+it("keeps the same delivery identity through the owner-bound and administrative routes", async () => {
+  const legacy = await post(`/trigger-custom/${agent}`);
+  const scoped = await post(`/trigger-custom/${agent}/owner/${owner}`);
+  expect(legacy.status).toBe(202);
+  expect(scoped.status).toBe(202);
+  expect(scoped.body).toEqual(legacy.body);
+  expect(h.enqueue).toHaveBeenCalledTimes(2);
+  for (const [data] of h.enqueue.mock.calls) expect(data.userId).toBe(owner);
+});
+
+it.each([
+  `/trigger-custom/${agent}/owner/----`,
+  `/trigger-custom/----/owner/${owner}`,
+  `/trigger-custom/${agent}/owner/${owner}?unexpected=1`,
+])("refuses an invalid owner-bound route before loading a record: %s", async path => {
+  const response = await post(path);
+  expect(response.status).toBe(400);
+  expect(h.custom).not.toHaveBeenCalled();
+  expect(h.enqueue).not.toHaveBeenCalled();
+});
+
+it("refuses an owner-bound admission when the loaded record has no owner", async () => {
+  h.custom.mockResolvedValue({ id: agent, karta_enabled: true, is_active: true });
+  const response = await post(`/trigger-custom/${agent}/owner/${owner}`);
+  expect(response.status).toBe(403);
+  expect(response.body).toEqual({ error: "Accès refusé" });
+  expect(h.enqueue).not.toHaveBeenCalled();
 });
 
 it("does not manufacture a journal identity for an old or unconfirmed queue response", async () => {

@@ -1,0 +1,340 @@
+{
+  "sdk": "2.119.2",
+  "scope": "Actual PostgrestClient and QueryObserver; synthetic HTTP and window marker to select client defaults, no React or browser rendering",
+  "results": [
+    {
+      "name": "direct-server-retry-after-zero",
+      "tanstack": false,
+      "retry_after_zero": true,
+      "elapsed_ms": 15,
+      "query_groups": 1,
+      "wire_requests": 4,
+      "terminal": {
+        "status": "error"
+      },
+      "calls": [
+        {
+          "at_ms": 6,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 1
+        },
+        {
+          "at_ms": 10,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 1
+        },
+        {
+          "at_ms": 12,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 1
+        },
+        {
+          "at_ms": 14,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 1
+        }
+      ]
+    },
+    {
+      "name": "direct-default-delay",
+      "tanstack": false,
+      "retry_after_zero": false,
+      "elapsed_ms": 7021,
+      "query_groups": 1,
+      "wire_requests": 4,
+      "terminal": {
+        "status": "error"
+      },
+      "calls": [
+        {
+          "at_ms": 6,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 1
+        },
+        {
+          "at_ms": 1011,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 1
+        },
+        {
+          "at_ms": 3012,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 1
+        },
+        {
+          "at_ms": 7020,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 1
+        }
+      ]
+    },
+    {
+      "name": "tanstack-server-retry-after-zero",
+      "tanstack": true,
+      "retry_after_zero": true,
+      "elapsed_ms": 7037,
+      "query_groups": 4,
+      "wire_requests": 16,
+      "terminal": {
+        "status": "error",
+        "failure_count": 4
+      },
+      "calls": [
+        {
+          "at_ms": 4,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 1
+        },
+        {
+          "at_ms": 8,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 1
+        },
+        {
+          "at_ms": 10,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 1
+        },
+        {
+          "at_ms": 13,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 1
+        },
+        {
+          "at_ms": 1014,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 2
+        },
+        {
+          "at_ms": 1016,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 2
+        },
+        {
+          "at_ms": 1017,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 2
+        },
+        {
+          "at_ms": 1018,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 2
+        },
+        {
+          "at_ms": 3024,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 3
+        },
+        {
+          "at_ms": 3026,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 3
+        },
+        {
+          "at_ms": 3029,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 3
+        },
+        {
+          "at_ms": 3030,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 3
+        },
+        {
+          "at_ms": 7032,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 4
+        },
+        {
+          "at_ms": 7033,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 4
+        },
+        {
+          "at_ms": 7034,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 4
+        },
+        {
+          "at_ms": 7036,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 4
+        }
+      ]
+    },
+    {
+      "name": "tanstack-default-delay",
+      "tanstack": true,
+      "retry_after_zero": false,
+      "elapsed_ms": 35076,
+      "query_groups": 4,
+      "wire_requests": 16,
+      "terminal": {
+        "status": "error",
+        "failure_count": 4
+      },
+      "calls": [
+        {
+          "at_ms": 6,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 1
+        },
+        {
+          "at_ms": 1010,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 1
+        },
+        {
+          "at_ms": 3011,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 1
+        },
+        {
+          "at_ms": 7021,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 1
+        },
+        {
+          "at_ms": 8027,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 2
+        },
+        {
+          "at_ms": 9029,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 2
+        },
+        {
+          "at_ms": 11034,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 2
+        },
+        {
+          "at_ms": 15040,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 2
+        },
+        {
+          "at_ms": 17051,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 3
+        },
+        {
+          "at_ms": 18056,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 3
+        },
+        {
+          "at_ms": 20060,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 3
+        },
+        {
+          "at_ms": 24065,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 3
+        },
+        {
+          "at_ms": 28067,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 0,
+          "group": 4
+        },
+        {
+          "at_ms": 29068,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 1,
+          "group": 4
+        },
+        {
+          "at_ms": 31071,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 2,
+          "group": 4
+        },
+        {
+          "at_ms": 35075,
+          "method": "GET",
+          "url": "https://quality-retry-probe.invalid/rest/v1/subscriptions?select=plan_type&user_id=eq.fixture",
+          "retry_count": 3,
+          "group": 4
+        }
+      ]
+    }
+  ]
+}

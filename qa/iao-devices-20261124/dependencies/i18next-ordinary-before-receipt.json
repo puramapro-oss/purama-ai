@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "tests/i18next-compat.test.mjs"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+  "startedAt": "2026-11-24T03:05:54.906154+00:00",
+  "durationSeconds": 0.26,
+  "exitCode": 0,
+  "installedI18next": "26.0.4",
+  "stdout": "i18next-ordinary-before.tap",
+  "stderr": "i18next-ordinary-before.stderr.txt"
+}

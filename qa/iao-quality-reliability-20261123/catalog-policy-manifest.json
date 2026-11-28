@@ -1,0 +1,106 @@
+{
+  "scope": "Native consultation catalogue policy projection",
+  "base": "5df79859548d8732317bc89f9ca837435beaccf2",
+  "branch": "fix/iao-quality-reliability-20261123",
+  "worktree": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "files": [
+    "karta/src/claude/consultation-host.ts",
+    "karta/test/consultationHost.test.ts"
+  ],
+  "status": "PASS local; no live provider qualification",
+  "defect": "The host passed full ModelPolicy entries into the strict CatalogModelLimit normalizer. maxInputTokens and maxCostMicros caused rejection before the first provider request.",
+  "fix": "Project model and maxOutputTokens explicitly at the native-loader call site. Keep the loader validator, policy, grants and injected loader contract unchanged.",
+  "impacts": {
+    "storage": "/dev/shm/iao-quality-index-20261123",
+    "repository": "iao-quality-20261123",
+    "changedSymbol": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@134:2",
+    "risk": "HIGH",
+    "directDependents": 3,
+    "totalDependents": 15,
+    "processGroups": 3,
+    "modules": 4,
+    "epistemic": "lower-bound; one callable value reference"
+  },
+  "checks": [
+    {
+      "kind": "RED",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "command": "./node_modules/.bin/vitest run test/consultationHost.test.ts -t 'loads the native catalogue'",
+      "exit": 1,
+      "testsFailed": 2,
+      "testsSkipped": 14,
+      "log": "catalog-policy-red.log"
+    },
+    {
+      "kind": "GREEN",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "command": "./node_modules/.bin/vitest run test/consultationHost.test.ts test/modelCatalog.test.ts test/consultationIntegration.test.ts test/executionProfile.test.ts",
+      "exit": 0,
+      "testFiles": 4,
+      "testsPassed": 60,
+      "log": "catalog-policy-green.log"
+    },
+    {
+      "kind": "TYPECHECK",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "command": "npm run typecheck",
+      "exit": 0,
+      "log": "catalog-policy-typecheck.log"
+    },
+    {
+      "kind": "DIFF_CHECK",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "command": "git diff --check -- karta/src/claude/consultation-host.ts karta/test/consultationHost.test.ts",
+      "exit": 0
+    }
+  ],
+  "testBoundary": {
+    "real": [
+      "createConsultationHost",
+      "loadAnthropicModelCatalog",
+      "normalizeModelCatalog",
+      "Response body parsing"
+    ],
+    "stubbed": [
+      "global fetch, official model catalogue GET only",
+      "owner resource availability",
+      "global stop check",
+      "durable store",
+      "inference client unused"
+    ],
+    "credentials": "inert fixture test-only",
+    "realNetworkCalls": 0,
+    "inferenceCalls": 0,
+    "providerPayments": 0,
+    "outputCeilings": [
+      "host 16384 / provider 32768 -> 16384",
+      "host 16384 / provider 8192 -> 8192"
+    ],
+    "ownerGrant": [
+      true,
+      false
+    ],
+    "noProviderPolicyPayload": "GET has no body; only Anthropic API-version and inert API-key headers",
+    "existingInvalidPolicyCoverage": "Existing host tests preserve missing/expired policy and paused/simulation refusal; the parser is unchanged."
+  },
+  "notChanged": [
+    "No in-flight deduplication",
+    "No provider or model catalogue expansion",
+    "No routing/AUTO implementation",
+    "No budget or security relaxation"
+  ],
+  "logs": [
+    "catalog-policy-native-red.log",
+    "catalog-policy-impacts.log"
+  ],
+  "node": "v24.22.3",
+  "versions": {
+    "vitest": "5.0.3",
+    "typescript": "5.9.3",
+    "@anthropic-ai/sdk": "0.65.0"
+  },
+  "sha256": {
+    "src/claude/consultation-host.ts": "7e8aa5e90659c1634059b6de235251f72c92c9a9e4ab097be1c21b6cdcbe7b27",
+    "test/consultationHost.test.ts": "ed18358d073fe55dd8bbafe3c06d35551c9054779bee89707c2f3c1811fcd48b"
+  }
+}

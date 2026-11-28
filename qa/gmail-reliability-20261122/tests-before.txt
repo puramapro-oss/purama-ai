@@ -1,0 +1,110 @@
+RUN  v5.0.3 /workspace/scratch/529e43e3c136/gmail-reliability/repo/karta
+
+ ❯ test/gmailReply.test.ts (4 tests | 4 failed) 27ms
+   ❯ Gmail complete input and anchored replies (4)
+     × preserves the final question beyond the 153-character preview 17ms
+     × sets verified thread and RFC parent headers on direct replies 2ms
+     × uses the same parent checks for a draft 3ms
+     × refuses a mismatched subject before reserving or posting 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/gmailReply.test.ts > Gmail complete input and anchored replies > preserves the final question beyond the 153-character preview
+AssertionError: expected { id: 'parent1', …(4) } to match object { …(2) }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "body": "Première question : délai ?
+- Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte.
+- Dernière question : puis-je annuler ?",
+-   "bodyStatus": "complete",
++   "from": "Camille <camille@example.com>",
++   "id": "parent1",
++   "snippet": "Première question : délai ?
++ Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Contexte. Conte",
++   "subject": "Question",
++   "threadId": "thread1",
+  }
+
+ ❯ test/gmailReply.test.ts:42:21
+     40|   it("preserves the final question beyond the 153-character preview", …
+     41|     const [message] = await listNewGmailMessages("fixture-user", null);
+     42|     expect(message).toMatchObject({ body: longBody, bodyStatus: "compl…
+       |                     ^
+     43|     expect(fetchMock.mock.calls.some(([url]) => String(url).includes("…
+     44|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/gmailReply.test.ts > Gmail complete input and anchored replies > sets verified thread and RFC parent headers on direct replies
+AssertionError: expected undefined to be 'thread1' // Object.is equality
+
+- Expected:
+"thread1"
+
++ Received:
+undefined
+
+ ❯ test/gmailReply.test.ts:49:30
+     47|     const post = fetchMock.mock.calls.find(([url]) => String(url).ends…
+     48|     const payload = JSON.parse((post[1] as RequestInit).body as string…
+     49|     expect(payload.threadId).toBe("thread1");
+       |                              ^
+     50|     const raw = Buffer.from(payload.raw, "base64url").toString("utf8");
+     51|     expect(raw).toContain("In-Reply-To: <parent1@example.com>\r\n");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/gmailReply.test.ts > Gmail complete input and anchored replies > uses the same parent checks for a draft
+AssertionError: expected 'To: camille@example.com\r\nSubject: Q…' to contain 'In-Reply-To: <parent1@example.com>'
+
+- Expected
++ Received
+
+- In-Reply-To: <parent1@example.com>
++ To: camille@example.com\r
++ Subject: Question\r
++ Content-Type: text/plain; charset=utf-8\r
++ \r
++ Réponse
+
+ ❯ test/gmailReply.test.ts:58:76
+     56|     const post = fetchMock.mock.calls.find(([url]) => String(url).ends…
+     57|     const payload = JSON.parse((post[1] as RequestInit).body as string…
+     58|     expect(Buffer.from(payload.message.raw, "base64url").toString("utf…
+       |                                                                            ^
+     59|   });
+     60|   it("refuses a mismatched subject before reserving or posting", async…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  test/gmailReply.test.ts > Gmail complete input and anchored replies > refuses a mismatched subject before reserving or posting
+AssertionError: promise resolved "{ messageId: 'sent1' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "sent1",
+  }
+
+ ❯ test/gmailReply.test.ts:61:167
+     59|   });
+     60|   it("refuses a mismatched subject before reserving or posting", async…
+     61|     await expect(gmailSendTool.execute({ to: "camille@example.com", su…
+       |                                                                                                                                                                       ^
+     62|     expect(rpc).not.toHaveBeenCalled();
+     63|     expect(fetchMock.mock.calls.every(([url]) => !String(url).endsWith…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  00:34:07
+   Duration  335ms (transform 52%, tests 24%, import 14%, setup 6%, worker 4%)

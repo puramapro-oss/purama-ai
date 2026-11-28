@@ -1,0 +1,69 @@
+{
+  "target": {
+    "id": "Method:src/iao/iaoFacade.ts:IaoFacade.cancel#3",
+    "name": "cancel",
+    "type": "Method",
+    "filePath": "src/iao/iaoFacade.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 3,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "6 call sites invoking `cancel` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 6,
+    "dispatchBoundary": 0,
+    "externalBoundary": 6,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 3,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 3
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:test/iao-facade.test.ts",
+        "name": "iao-facade.test.ts",
+        "filePath": "test/iao-facade.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/iaoPendingRetention.test.ts",
+        "name": "iaoPendingRetention.test.ts",
+        "filePath": "test/iaoPendingRetention.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/localComputeFabricCancellation.test.ts",
+        "name": "localComputeFabricCancellation.test.ts",
+        "filePath": "test/localComputeFabricCancellation.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

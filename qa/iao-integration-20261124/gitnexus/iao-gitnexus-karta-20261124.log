@@ -1,0 +1,19 @@
+
+  GitNexus Analyzer (1.6.12)
+  Warning: no .git directory found — commit-tracking and incremental updates disabled.
+
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+{"level":40,"time":1795483184515,"name":"gitnexus","language":"typescript","context":"binding:test/customAuthorization.test.ts\u0000scope:test/customAuthorization.test.ts#705:82-722:3:Function\u0000buildContext","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795483184515,"name":"gitnexus","language":"typescript","context":"binding:test/customAuthorization.test.ts\u0000scope:test/customAuthorization.test.ts#742:105-753:3:Function\u0000buildContext","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795483184719,"name":"gitnexus","msg":"[scope-resolution] 703 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: denied (javascript), rows (javascript), user (javascript), additionalProperties (typescript), apiKey (typescript), arithmetic (typescript), authorization (typescript), backend_kind (typescript), baseURL (typescript), bit_order (typescript), …"}
+{"level":40,"time":1795483184865,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":294,"entryPointsUnexplored":0,"walksCutByBudget":41,"tracesDepthCapped":4,"calleesDropped":3774,"processesDropped":0},"msg":"[processes] 485 flows reported, but whole flows are MISSING: 294 of 494 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 4 trace(s) cut at maxTraceDepth, 3774 callee(s) skipped at maxBranching, 41 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KFTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+{"level":30,"time":1795483187613,"name":"gitnexus","msg":"name-fallback resolution: 1 call site (1 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 1/0)"}
+
+  Repository indexed successfully (37.4s)
+
+  10,465 nodes | 34,435 edges | 577 clusters | 485 flows
+  /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+

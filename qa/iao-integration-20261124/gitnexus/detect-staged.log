@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795485183270,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 117 files, 111 symbols
+Affected processes: 13
+Risk level: high
+
+Changed symbols:
+  Function handleIaoRoute → karta/src/api/iaoRoutes.ts
+  Class IaoFacade → karta/src/iao/iaoFacade.ts
+  Method cancel → karta/src/iao/iaoFacade.ts
+  Method #settleResult → karta/src/iao/iaoFacade.ts
+  Method #apply → karta/src/iao/iaoFacade.ts
+  Function buildMemoryPrompt → karta/src/integrations/localComputeFabricProvider.ts
+  Function prepare → karta/test/iao-facade.test.ts
+  Const ID → karta/test/iaoAdmissionRevalidation.test.ts
+  Const BODY → karta/test/iaoAdmissionRevalidation.test.ts
+  Property conversationId → karta/test/iaoAdmissionRevalidation.test.ts
+  Property prompt → karta/test/iaoAdmissionRevalidation.test.ts
+  Property requestId → karta/test/iaoAdmissionRevalidation.test.ts
+  Property type → karta/test/iaoAdmissionRevalidation.test.ts
+  Function identity → karta/test/iaoAdmissionRevalidation.test.ts
+  Property actorId → karta/test/iaoAdmissionRevalidation.test.ts
+... and 96 more
+
+Affected execution flows:
+  • HandleRequest → Identity (5 steps) — changed: handleIaoRoute
+  • HandleRequest → IaoAuthenticationError (4 steps) — changed: handleIaoRoute
+  • HandleRequest → IsJson (4 steps) — changed: handleIaoRoute
+  • HandleRequest → Authenticate (4 steps) — changed: handleIaoRoute
+  • HandleRequest → IaoValidationError (4 steps) — changed: handleIaoRoute
+  • #apply → IsUuid (4 steps) — changed: #apply
+  • #apply → IsMemoryAction (4 steps) — changed: #apply
+  • HandleRequest → IsIaoPath (3 steps) — changed: handleIaoRoute
+  • #apply → NowIso (3 steps) — changed: #apply
+  • #prepare → Trap (7 steps) — changed: buildMemoryPrompt
+... and 3 more

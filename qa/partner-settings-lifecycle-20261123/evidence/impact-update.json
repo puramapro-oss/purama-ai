@@ -1,0 +1,135 @@
+{
+  "target": {
+    "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings.update@65:2",
+    "name": "update",
+    "type": "Function",
+    "filePath": "src/pages/PartnerAgentSettings.tsx"
+  },
+  "direction": "upstream",
+  "impactedCount": 4,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "162 call sites invoking `update` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 162,
+    "dispatchBoundary": 0,
+    "externalBoundary": 2,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 4,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 4
+  },
+  "affected_processes": [
+    {
+      "name": "PartnerAgentSettings",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgentSettings.tsx",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Pages",
+      "hits": 4,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings",
+        "name": "PartnerAgentSettings",
+        "filePath": "src/pages/PartnerAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": [
+          {
+            "id": "proc_499_partneragentsettings",
+            "label": "PartnerAgentSettings → From",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_508_partneragentsettings",
+            "label": "PartnerAgentSettings → Query",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_501_partneragentsettings",
+            "label": "PartnerAgentSettings → Entries",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_509_partneragentsettings",
+            "label": "PartnerAgentSettings → From",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_545_partneragentsettings",
+            "label": "PartnerAgentSettings → Cn",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_500_partneragentsettings",
+            "label": "PartnerAgentSettings → Entries",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings.handleUpload@82:2",
+        "name": "handleUpload",
+        "filePath": "src/pages/PartnerAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings.toggleDay@100:2",
+        "name": "toggleDay",
+        "filePath": "src/pages/PartnerAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings.toggleNiche@94:2",
+        "name": "toggleNiche",
+        "filePath": "src/pages/PartnerAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      }
+    ]
+  },
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 3,
+    "hint": "⚠️ Index is 3 commits behind HEAD. Run analyze tool to update."
+  }
+}

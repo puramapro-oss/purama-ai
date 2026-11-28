@@ -1,0 +1,22 @@
+{
+  "commit": "c4297e91e30530931614878da275cb459b8bdb4b",
+  "run_id": 45469636440,
+  "job_id": 138713767745,
+  "job_name": "karta",
+  "job_conclusion": "success",
+  "test_files_passed": 206,
+  "tests_passed": 4704,
+  "approval_sql_tests_passed": 16,
+  "scope": "CI of the initial PR head, using GitHub's PR test merge. Later format-only correction and consolidation reconciliation are separately recorded.",
+  "evidence": [
+    "2026-11-24T19:23:16.7060279Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +66b7c939e5bf6abcdafc21e8d7746d7757c4d59d:refs/remotes/pull/109/merge",
+    "2026-11-24T19:23:18.3035488Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/109/merge",
+    "2026-11-24T19:23:18.5059627Z Note: switching to 'refs/remotes/pull/109/merge'.",
+    "2026-11-24T19:23:18.5063989Z HEAD is now at 66b7c93 Merge c4297e91e30530931614878da275cb459b8bdb4b into 18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+    "2026-11-24T19:23:18.5112394Z [command]/usr/bin/git log -1 --format=%H",
+    "2026-11-24T19:25:02.1481454Z  ✓ test/approval.test.ts (16 tests) 2460ms",
+    "2026-11-24T19:25:28.1473373Z  Test Files  206 passed (206)",
+    "2026-11-24T19:25:28.1501782Z       Tests  4704 passed (4704)"
+  ],
+  "log_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45469636440/job/138713767745"
+}

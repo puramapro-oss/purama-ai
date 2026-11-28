@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-11-10T22:13:47.577629+00:00",
+  "baselineHead": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "production": {
+    "src/pages/OAuthCallback.tsx": "5701e64ad335157e606ac386582d359f192c1939ab41addbaa3e13d99f7a11fd",
+    "src/hooks/useUserConnections.ts": "b7b7aa1ff6083873fff1d965015646eb97e34978267233635a237e692c255e46",
+    "src/lib/oauth-google.ts": "c869b6fc624981518a9f0a94e467be97f81e494f8dccd612d17ba8df13568a87",
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+    "supabase/migrations/20261110233000_oauth_connection_states.sql": "e0b0e94339d2f83966603bbfeeea74cfa6e1669808c06c6dfd16d6f8bc65ec67"
+  },
+  "testsAndDocumentation": {
+    "tests/oauth-google/handler-harness.mjs": "44f78e7fb7d0a71aff03d32973912cefa47309a70a32a6bf212f2f1a4a02f389",
+    "tests/oauth-google/handler.test.mjs": "b095a8c28670bf3b5c8a5c077b67a41ff7ae0da6003f8f6570c7d7edd7107a2e",
+    "tests/oauth-google/state-sql.test.mjs": "cd3a82549835493587eb6d96205b32f18aa6dea6d5041c6d6c70c21802c6353a",
+    "tests/oauth-google/browser/entry.tsx": "48376b603cc0b0aa363e214e84ac2a83b32bf54a62c35b00fc0558c405c5fd88",
+    "tests/oauth-google/browser/transport.ts": "3299043d37d1904e6d97f8cdf3ea6814967bccf9cc405cde731acf7ccd49a25a",
+    "tests/oauth-google/browser/run.mjs": "b94143df314800d0963427e282a834b5be0064f92a1645d2a0a8b25b5e725b2f",
+    "tests/oauth-google/README.md": "0ce73b3e2186c37fa21b10ecbfeb5b4707961ed7670cbe491578736c15b018d7"
+  },
+  "integratedHead": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "additionalUiSources": {
+    "src/pages/EmailAgent.tsx": "33ecdab6280ed6d952c586d4d4501779aa0e503998a964aa112003ad8cedcaa1",
+    "src/pages/EmailAgentSettings.tsx": "d99a3d2057b4a04b1b4cfe83abcef5f2b95445ab954585c969b417ebfb9e1753",
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "29c195e8cc3d918c8f3b3c922801b9b778e2bb1328ec23e114686fab3770c070",
+    "tests/ui-state/email-lifecycle.spec.ts": "7417271c70f994786c0a893c2601f45fefb75aec9aa729d139874212121c8396"
+  }
+}

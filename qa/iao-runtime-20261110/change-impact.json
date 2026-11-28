@@ -1,0 +1,26 @@
+{
+  "base": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "tool": "GitNexus 1.6.12",
+  "index": { "nodes": 14474, "edges": 37427, "clusters": 576, "flows": 542 },
+  "before_edit": [
+    { "symbol": "notify", "risk": "HIGH", "direct_callers": 3 },
+    { "symbol": "sendEmail", "risk": "HIGH", "direct_callers": 1 },
+    { "symbol": "enqueueAgentCycle", "risk": "HIGH", "direct_callers": 6 },
+    { "symbol": "resolvePendingAction", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "finalizePendingAction", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "startApiServer", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "handleRequest", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "shutdown", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "startSchedulers", "risk": "LOW", "direct_callers": 1 },
+    { "symbol": "runScheduledCycle", "risk": "LOW", "direct_callers": 1 }
+  ],
+  "detect_changes_staged": { "changed_count": 310, "affected_count": 23, "changed_files": 26, "risk_level": "critical" },
+  "detect_changes_compare_main": { "changed_count": 7181, "affected_count": 493, "changed_files": 774, "risk_level": "critical" },
+  "review": {
+    "risk_reported_to_user": true,
+    "staged_scope": "KARTA runtime, additive migration and regression tests only; QA evidence added separately.",
+    "main_scope": "Includes the entire pre-existing consolidation; it is not the delta introduced by this candidate.",
+    "manual_check": "No modifications under frontend src/ or supabase/. Name-based edges from frontend stop methods to runtime stop are not real imports; no frontend import of runtime/lifecycle or createRuntime exists.",
+    "limitations": "Graph reports bounded/truncated flow exploration and cross-language unresolved sites. SQL safety was checked separately with native PostgreSQL sessions. This is not an exhaustive dependency proof."
+  }
+}

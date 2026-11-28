@@ -94,6 +94,20 @@ export default function DashboardSettings() {
         </CardContent>
       </Card>
 
+      {/* Local workspace */}
+      <Card className="bg-card border-border">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-orbitron font-semibold text-foreground">Textes hors connexion</h3>
+          <p className="text-sm text-muted-foreground">
+            Écrivez, importez et retrouvez vos textes sans Internet après préparation.
+            Cet espace conserve les textes dans ce navigateur ; exportez ceux que vous souhaitez sauvegarder.
+          </p>
+          <Button asChild variant="outline">
+            <a href="/offline.html" data-testid="open-offline-workspace">Ouvrir mes textes hors connexion</a>
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Voice */}
       <VoiceSettingsCard />
 

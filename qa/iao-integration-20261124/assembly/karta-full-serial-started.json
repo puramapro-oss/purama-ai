@@ -1,0 +1,17 @@
+{
+  "stage": "karta-full-serial",
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/karta-full-serial-report.json"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "pid": 130,
+  "ownedProcessGroup": 130,
+  "startedEpochSeconds": 1795484387.2417266,
+  "NODE_OPTIONS": "--max-old-space-size=512"
+}

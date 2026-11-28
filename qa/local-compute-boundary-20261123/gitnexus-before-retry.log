@@ -1,0 +1,13 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  Analysis failed: Storage path is in state "foreign" but requires one of: missing, empty, owned. Storage metadata identifies a different repository or storage directory.
+StorageRequirementError: Storage path is in state "foreign" but requires one of: missing, empty, owned. Storage metadata identifies a different repository or storage directory.
+    at requireInspectedStoragePath (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/storage/storage-resolver.js:500:15)
+    at requireStoragePath (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/storage/storage-resolver.js:518:69)
+    at async resolveWriteTarget (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/core/run-analyze.js:537:25)
+    at async runFullAnalysis (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/core/run-analyze.js:618:23)
+    at async analyzeCommandImpl (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/analyze.js:1155:24)
+    at async analyzeCommand (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/analyze.js:585:9)
+    at async analyzeOrWatchCommandWithRunnerIdentity (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/analyze.js:610:5)
+    at async Command.<anonymous> (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/lazy-action.js:60:9)

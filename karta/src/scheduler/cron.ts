@@ -1,4 +1,4 @@
-import cron, { type ScheduledTask } from "node-cron";
+import cron, { type TaskContext } from "node-cron";
 import { config } from "../config.js";
 import { listActiveUserIds } from "../agents/index.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
@@ -32,33 +32,95 @@ const ACTION_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: s
 
 const SCHEDULES = [...CORE_SCHEDULES, ...ACTION_SCHEDULES];
 
-export function startSchedulers(): ScheduledTask[] {
-  const tasks = SCHEDULES.map(({ agentType, cronExpr, label }) =>
-    cron.schedule(cronExpr, () => void runScheduledCycle(agentType, label))
-  );
+/** Runtime shutdown owns these schedules; restarting a retired timer is not supported. */
+type SchedulerController = { stop(): Promise<void>; destroy(): Promise<void> };
 
-  tasks.push(
-    cron.schedule(config.dailyReportCron, () => {
-      void runDailyReport().catch((err) => console.error("[scheduler] daily report échoué:", err));
-    })
-  );
+function startGuardedSchedule(
+  cronExpr: string,
+  label: string,
+  run: (context: TaskContext, isActive: () => boolean) => Promise<void>,
+): SchedulerController {
+  let stopped = false;
+  let stopping: Promise<void> | undefined;
+  const inFlight = new Set<Promise<void>>();
+  const isActive = () => !stopped;
+  const task = cron.schedule(cronExpr, (context) => {
+    // A callback may already have been dispatched when shutdown retires its timer.
+    if (!isActive()) return;
+    // Register every dispatched callback before it can start asynchronous work.
+    const work = Promise.resolve().then(async () => {
+      if (!isActive()) return;
+      try {
+        await run(context, isActive);
+      } catch {
+        if (isActive()) console.error(`[scheduler] ${label} : exécution non confirmée`);
+      }
+    });
+    inFlight.add(work);
+    void work.then(() => { inFlight.delete(work); }, () => { inFlight.delete(work); });
+    // Let node-cron observe actual completion instead of detaching this promise.
+    return work;
+  });
 
-  return tasks;
+  const stop = (): Promise<void> => {
+    if (stopping) return stopping;
+    // Invalidate pending reads and between-user continuations before cleanup.
+    stopped = true;
+    const timerStopped = Promise.resolve().then(() => task.stop());
+    // Retire the registry entry even when stop fails. Keep the native methods:
+    // node-cron's destroy calls stop internally and must not await this drain.
+    const timerDestroyed = timerStopped.catch(() => undefined).then(() => task.destroy());
+    stopping = Promise.allSettled([timerStopped, timerDestroyed, ...inFlight]).then(results => {
+      if (results.some(result => result.status === "rejected")) {
+        console.error(`[scheduler] ${label} : arrêt du planificateur non confirmé`);
+        throw new Error("Arrêt du planificateur non confirmé");
+      }
+    });
+    // Awaiting callers still receive the rejection; legacy fire-and-forget
+    // shutdown calls must not create an unhandled rejection during cleanup.
+    void stopping.catch(() => undefined);
+    return stopping;
+  };
+  return { stop, destroy: stop };
 }
 
-async function runScheduledCycle(agentType: AgentType, label: string): Promise<void> {
+export function startSchedulers(): SchedulerController[] {
+  const tasks: SchedulerController[] = [];
   try {
-    const userIds = await listActiveUserIds(agentType);
-    // Multiple KARTA instances may fire the same cron. The minute slot makes those
-    // deliveries share one durable BullMQ job id instead of executing twice.
-    const slot = new Date().toISOString().slice(0, 16);
-    for (const userId of userIds) {
-      await enqueueAgentCycle(
-        { agentType, userId, trigger: { type: "cron", source: label, payload: { slot } } },
-        { dedupeKey: `cron|${agentType}|${userId}|${slot}` }
-      );
+    // Validate the daily expression too, before creating the first timer.
+    if (![...SCHEDULES.map(schedule => schedule.cronExpr), config.dailyReportCron]
+      .every(expression => cron.validate(expression))) throw new Error();
+    for (const { agentType, cronExpr, label } of SCHEDULES) {
+      tasks.push(startGuardedSchedule(cronExpr, label, (context, isActive) =>
+        runScheduledCycle(agentType, label, context, isActive)));
     }
-  } catch (error) {
-    console.error(`[scheduler] ${label} échoué:`, error instanceof Error ? error.message : error);
+    tasks.push(startGuardedSchedule(config.dailyReportCron, "Rapport quotidien", () => runDailyReport()));
+    return tasks;
+  } catch {
+    // The runtime never receives a partially constructed list. Invalidate all
+    // created controllers synchronously; their stop promises own the cleanup.
+    for (const task of tasks) void task.stop();
+    throw new Error("Planifications KARTA invalides ou indisponibles");
+  }
+}
+
+async function runScheduledCycle(
+  agentType: AgentType,
+  label: string,
+  context: TaskContext,
+  isActive: () => boolean,
+): Promise<void> {
+  // Freeze the scheduled minute before any async work: two instances firing the
+  // same tick must retain one delivery identity despite different lookup delays.
+  const slot = context.date.toISOString().slice(0, 16);
+  const userIds = await listActiveUserIds(agentType);
+  for (const userId of userIds) {
+    if (!isActive()) return;
+    // An already-started queue submission cannot be retracted; never begin the
+    // next user's submission after stop(), even when the previous one settles late.
+    await enqueueAgentCycle(
+      { agentType, userId, trigger: { type: "cron", source: label, payload: { slot } } },
+      { dedupeKey: `cron|${agentType}|${userId}|${slot}` }
+    );
   }
 }

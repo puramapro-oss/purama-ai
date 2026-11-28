@@ -1,0 +1,89 @@
+{
+  "status": "PASS targeted; full exact-head CI pending",
+  "reason": "Deno manual resolution expected npm Supabase2.91.0 while root lock installs2.119.2",
+  "mechanicalChange": {
+    "files": 34,
+    "occurrences": 35,
+    "edgeFiles": 21,
+    "testFixtureFiles": 13,
+    "manifest": "../../auth-sdk/edge-npm-alignment-manifest.json"
+  },
+  "behaviorScope": "SDK implementation changes are covered by qualification; no function body, auth option, permission or assertion is edited",
+  "deno": {
+    "version": "2.9.6",
+    "originalCommand": "deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/_shared/ots-auth.ts",
+    "beforeExit": 1,
+    "afterExit": 0,
+    "all21LocalCheck": {
+      "exit": 1,
+      "status": "BLOCKED by unavailable network connection before complete type checking",
+      "error": "https://esm.sh/stripe@18.5.0: Connection refused",
+      "ciRequired": true
+    }
+  },
+  "targetedTests": {
+    "nodePassed": 378,
+    "kartaPassed": 234,
+    "retries": 0,
+    "sourceReceipt": "../../auth-sdk/edge-npm-alignment-receipt.json"
+  },
+  "impact": {
+    "manualRisk": "HIGH",
+    "broadIndexExit": 137,
+    "miniIndexFiles": 12,
+    "nodes": 333,
+    "edges": 984,
+    "flows": 9,
+    "symbolQueries": 4,
+    "symbolQueriesExit": 0,
+    "limits": [
+      "Projected callgraph, not all Edge consumers",
+      "FTS unavailable; cross-language property sites unlinked"
+    ]
+  },
+  "ciGate": {
+    "all21AlignedEdgeSourcesDirectlyChecked": true,
+    "addedExplicitInputs": 13,
+    "existingDenoOptionsUnchanged": true,
+    "allOtherWorkflowStepsUnchanged": true
+  },
+  "previousCi": {
+    "head": "6ebe773d77961feeb6a1145c7e2f8ddb010a00c2",
+    "chef": 45441174173,
+    "identity": 45441173984,
+    "devicesPassed": 151,
+    "siteUnitPassed": 646,
+    "kartaPassed": 4689,
+    "blocker": "Deno old exact package resolution",
+    "siteDownstreamNotRun": true
+  },
+  "archives": {
+    "ci-sdk-attempt.zip": {
+      "sha256": "f68b5f3c62f1c7c9717de2e3a78a6fddaee4608113b8b3628dddf35ed11f45f2",
+      "bytes": 46808,
+      "members": 12
+    },
+    "impact-and-deno.zip": {
+      "sha256": "ccc3f63067f8f135b44ad4a117c486300610eb434a850bccdc9e30f07aa41501",
+      "bytes": 17424,
+      "members": 24
+    }
+  },
+  "independentMechanicalAndWorkflowReview": "PASS; mini-index/mechanical-workflow-review.json in impact-and-deno.zip",
+  "finalGraph": {
+    "staged": "44 touched files, no indexed symbols overlap hunks; NOT a clean tree or absence of impact",
+    "manualRisk": "HIGH",
+    "compareMain": "CRITICAL: 2833 files,847symbols,39flows for entire consolidation divergence",
+    "reports": [
+      "staged.txt",
+      "compare-main.txt"
+    ]
+  },
+  "diffCheck": {
+    "allSourceTestWorkflowAndDocPaths": 0,
+    "rawProofLogCheck": 2,
+    "rawProofLog": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+    "preservedArtifactBytes": true,
+    "finding": "One extra final blank line in raw test output; original recorded hash preserved"
+  }
+}

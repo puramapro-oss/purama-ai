@@ -1,0 +1,117 @@
+{
+  "count": 14,
+  "files": [
+    {
+      "path": "qa/iao-release-qualification-20261123/gitnexus-baseline-cached.log",
+      "archived_blob": "ad8d62f7ed5df3c1ec512f7b417fdeba91621483",
+      "actual_blob": "ad8d62f7ed5df3c1ec512f7b417fdeba91621483",
+      "sha256": "8aa51122e3c584be588ea7ead2f169401b9e7c9336a3dc49a2937675f746270b",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/gitnexus-final-index.log",
+      "archived_blob": "f704d737230abf3205ec196c735132820f7bbe48",
+      "actual_blob": "f704d737230abf3205ec196c735132820f7bbe48",
+      "sha256": "1fe2f04ccd7ac58f7bf25d075737c795ffec7e5efc80d20da076cd7025a2b92c",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/profiles/model-revision-before-test.txt",
+      "archived_blob": "637a399bab76a2d5b25fef99794ad24448df0ffd",
+      "actual_blob": "637a399bab76a2d5b25fef99794ad24448df0ffd",
+      "sha256": "80e76b0c31fc70ff86be5a5dfe933dd67ce26d11ac8bff8ab7fc245e14c046d1",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/profiles/model-revision-typecheck.log",
+      "archived_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "actual_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/release/cli-green.log",
+      "archived_blob": "6dbf23e38bb494e4e4acab045e8e0a081f226a08",
+      "actual_blob": "6dbf23e38bb494e4e4acab045e8e0a081f226a08",
+      "sha256": "d305de69758cfa3c45e88dd45ecb86e8b5db5d1d43fc1458db11a48afa5a0356",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/release/cli-red.log",
+      "archived_blob": "78e9a90ee0be06942c5471ca9a6d3271524f7604",
+      "actual_blob": "78e9a90ee0be06942c5471ca9a6d3271524f7604",
+      "sha256": "bac4e3a4a085a41dba63f4e3e59e23a1bc80117d729f842947755493084cc0c1",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/release/existing-readiness.log",
+      "archived_blob": "37d345c6d8063bf8214ec241f07689de18ec299e",
+      "actual_blob": "37d345c6d8063bf8214ec241f07689de18ec299e",
+      "sha256": "7fee07b0528cb13b55d7c7e084ec5e60e378f0cd28e838f2db7a236ac1e61a76",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/release/typecheck-after.log",
+      "archived_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "actual_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/release/typecheck-before.log",
+      "archived_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "actual_blob": "55246ae3da84de95a7333206ae1d9ade56c0be8f",
+      "sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/root-typecheck.log",
+      "archived_blob": "19d6618bdd08c543b5a101755910791a584b5885",
+      "actual_blob": "19d6618bdd08c543b5a101755910791a584b5885",
+      "sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/ui/browser-revision-red.log",
+      "archived_blob": "ca0f3efc7e91c3ab988d911a3d248452edf9d325",
+      "actual_blob": "ca0f3efc7e91c3ab988d911a3d248452edf9d325",
+      "sha256": "8530a47e7860df601c39c9318f004943c60e0bd6ea41f72026345b894516583b",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/ui/client-and-components-green.log",
+      "archived_blob": "0609db8e46deebfe0e9d4ca2f3680fafa6360284",
+      "actual_blob": "0609db8e46deebfe0e9d4ca2f3680fafa6360284",
+      "sha256": "3e136bc3737a7d639655d7e65339ae50790308c7558639102fcb924aecea7747",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/ui/client-revision-red.log",
+      "archived_blob": "3af933dccbb08156e6687b5e7678732a67208a7b",
+      "actual_blob": "3af933dccbb08156e6687b5e7678732a67208a7b",
+      "sha256": "4a4ad7307af42803b824d2f801ac9a575b31bbd6949e1b5dce44e6861588d71f",
+      "byte_identical": true,
+      "absent_from_base": true
+    },
+    {
+      "path": "qa/iao-release-qualification-20261123/ui/component-baseline.log",
+      "archived_blob": "b41156179fab3cc576894403cfb2a045cf6e3648",
+      "actual_blob": "b41156179fab3cc576894403cfb2a045cf6e3648",
+      "sha256": "4eb49cc84ad45c957b7d1805f566b2a4a78474797b8f678c3e13d2ca5df29de1",
+      "byte_identical": true,
+      "absent_from_base": true
+    }
+  ]
+}

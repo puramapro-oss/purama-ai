@@ -1,0 +1,27 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795538718189,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 42 files, 86 symbols
+Affected processes: 1
+Risk level: medium
+
+Changed symbols:
+  Const storageKey → tests/chat/auth-client.spec.ts
+  Const owner → tests/chat/auth-client.spec.ts
+  Const authOrigin → tests/chat/auth-client.spec.ts
+  Property fixtureAuthorization → tests/chat/auth-client.spec.ts
+  Property fixtureRefreshToken → tests/chat/auth-client.spec.ts
+  Property grant → tests/chat/auth-client.spec.ts
+  Property method → tests/chat/auth-client.spec.ts
+  Property path → tests/chat/auth-client.spec.ts
+  Property scope → tests/chat/auth-client.spec.ts
+  TypeAlias AuthCall → tests/chat/auth-client.spec.ts
+  Function sessionFixture → tests/chat/auth-client.spec.ts
+  Function encode → tests/chat/auth-client.spec.ts
+  Property access_token → tests/chat/auth-client.spec.ts
+  Property expires_in → tests/chat/auth-client.spec.ts
+  Property refresh_token → tests/chat/auth-client.spec.ts
+... and 71 more
+
+Affected execution flows:
+  • SignOut → AfterPendingTasks (3 steps) — changed: signOut, afterPendingTasks

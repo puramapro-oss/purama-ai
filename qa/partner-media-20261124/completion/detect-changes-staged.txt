@@ -1,0 +1,34 @@
+Changes: 52 files, 23 symbols
+Affected processes: 20
+Risk level: critical
+
+Changed symbols:
+  Const gmailSendTool → karta/src/tools/gmail.ts
+  Property description → karta/src/tools/gmail.ts
+  Method execute → karta/src/tools/gmail.ts
+  Function assertUnderDailySendLimit → karta/src/tools/gmail.ts
+  Function buildRawEmail → karta/src/tools/gmail.ts
+  Function listLogs → src/lib/email-agent.ts
+  Function contractFeedback → src/lib/partner-contract-result.ts
+  Property agent_inactive → src/lib/partner-contract-result.ts
+  Property prospect_not_interested → src/lib/partner-contract-result.ts
+  Const STATUS_META → src/lib/partner.ts
+  Property interested → src/lib/partner.ts
+  Property contract_sent → src/lib/partner.ts
+  Function listEmailTemplates → src/lib/partner.ts
+  Function levelFromConversions → src/lib/partner.ts
+  Function EmailAgentLogs → src/pages/EmailAgentLogs.tsx
+... and 8 more
+
+Affected execution flows:
+  • EmailAgentLogs → Sb (4 steps) — changed: EmailAgentLogs, listLogs
+  • HandleApprove → InvokeDraftEndpoint (3 steps) — changed: handleApprove
+  • HandleApprove → DraftReceipt (3 steps) — changed: handleApprove
+  • EmailAgentLogs → Limit (4 steps) — changed: EmailAgentLogs, listLogs
+  • HandleApprove → Sb (4 steps) — changed: handleApprove, listLogs
+  • Execute → AssertHeader (4 steps) — changed: execute
+  • HandleApprove → Limit (4 steps) — changed: handleApprove, listLogs
+  • HandleReconcile → Sb (4 steps) — changed: listLogs
+  • HandleReconcile → Limit (4 steps) — changed: listLogs
+  • HandleReject → Sb (4 steps) — changed: listLogs
+... and 10 more

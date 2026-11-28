@@ -1,0 +1,178 @@
+
+ RUN  v5.0.3 /tmp/iao-review-3525/karta
+
+ ❯ test/localComputeFabricResponseBoundary.test.ts (11 tests | 11 failed) 81ms
+   ❯ local compute response acceptance boundary (11)
+     × rejects isolated continuation UTF-8 inside an otherwise attested JSON response 9ms
+     × rejects truncated sequence UTF-8 inside an otherwise attested JSON response 4ms
+     × rejects overlong sequence UTF-8 inside an otherwise attested JSON response 1ms
+     × accepts valid Unicode even when the transport splits a multibyte sequence 1ms
+     × preserves the exact transport byte cap at maximum + 0 byte(s) 20ms
+     × preserves the exact transport byte cap at maximum + 1 byte(s) 31ms
+     × checks the response against one monotonic deadline at 99 milliseconds 2ms
+     × checks the response against one monotonic deadline at 100 milliseconds 1ms
+     × cannot accept JSON validation which finishes after the absolute deadline 2ms
+     × keeps the same deadline across the parsed-response promise handoff 6ms
+     × honors cancellation across the parsed-response promise handoff without exposing its reason 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > rejects isolated continuation UTF-8 inside an otherwise attested JSON response
+Error: listen EPERM: operation not permitted /tmp/iao-r-zQbVTe/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:70:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > rejects truncated sequence UTF-8 inside an otherwise attested JSON response
+Error: listen EPERM: operation not permitted /tmp/iao-r-dSgMus/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:70:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > rejects overlong sequence UTF-8 inside an otherwise attested JSON response
+Error: listen EPERM: operation not permitted /tmp/iao-r-XTRd8q/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:70:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > accepts valid Unicode even when the transport splits a multibyte sequence
+Error: listen EPERM: operation not permitted /tmp/iao-r-Kj2bdg/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:79:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > preserves the exact transport byte cap at maximum + 0 byte(s)
+Error: listen EPERM: operation not permitted /tmp/iao-r-JohzlY/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:92:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > preserves the exact transport byte cap at maximum + 1 byte(s)
+Error: listen EPERM: operation not permitted /tmp/iao-r-Z5CMHF/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:92:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > checks the response against one monotonic deadline at 99 milliseconds
+Error: listen EPERM: operation not permitted /tmp/iao-r-VeooSi/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:100:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > checks the response against one monotonic deadline at 100 milliseconds
+Error: listen EPERM: operation not permitted /tmp/iao-r-F1Cr3W/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:100:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > cannot accept JSON validation which finishes after the absolute deadline
+Error: listen EPERM: operation not permitted /tmp/iao-r-OWGDXl/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:118:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > keeps the same deadline across the parsed-response promise handoff
+Error: listen EPERM: operation not permitted /tmp/iao-r-ElFjzW/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:132:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+ FAIL  test/localComputeFabricResponseBoundary.test.ts > local compute response acceptance boundary > honors cancellation across the parsed-response promise handoff without exposing its reason
+Error: listen EPERM: operation not permitted /tmp/iao-r-Oetxt8/fabric.sock
+ ❯ test/localComputeFabricResponseBoundary.test.ts:54:12
+     52|   await new Promise<void>((resolve, reject) => {
+     53|     server.once("error", reject);
+     54|     server.listen(socketPath, resolve);
+       |            ^
+     55|   });
+     56|   return socketPath;
+ ❯ socketServer test/localComputeFabricResponseBoundary.test.ts:52:9
+ ❯ test/localComputeFabricResponseBoundary.test.ts:146:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed (11)
+   Start at  02:23:56
+   Duration  306ms (tests 52%, transform 32%, import 8%, setup 5%, worker 3%)

@@ -1,0 +1,667 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ × test/apolloTool.test.ts > Apollo request and result contract > preserves the existing endpoint and projects only the allowed business fields 20ms
+   → expected "vi.fn()" to be called once with arguments: [ …(2) ]
+
+Received:
+
+  1st vi.fn() call:
+
+  [
+    "https://api.apollo.io/api/v1/mixed_people/search",
+-   ObjectContaining {
++   {
+      "body": "{\"q_keywords\":\"synthetic prospect\",\"per_page\":10}",
+-     "credentials": "omit",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Api-Key": "test-only-apollo-key",
+      },
+      "method": "POST",
+-     "redirect": "error",
+-     "signal": Any<AbortSignal>,
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/apolloTool.test.ts > Apollo request and result contract > normalizes unavailable optional fields to null without inventing contact data 6ms
+   → expected { people: [ { …(3) }, { …(3) } ] } to deeply equal { people: [ { …(3) }, { …(3) } ] }
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > accepts an explicit empty people list 1ms
+ × test/apolloTool.test.ts > Apollo request and result contract > enforces the requested result limit even when the provider ignores it 2ms
+   → expected { people: [ { …(3) }, { …(3) } ] } to deeply equal { people: [ { …(3) } ] }
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > does not contact the provider without its configured credential 2ms
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects null input before a provider request 3ms
+   → expected [Function] to throw error including 'Paramètres de recherche Apollo invali…' but got 'Cannot read properties of null (readi…'
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects missing keywords before a provider request 2ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects blank keywords before a provider request 4ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects oversized keywords before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects non-string keywords before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects zero limit before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects oversized limit before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects fractional limit before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects null limit before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > rejects unknown field before a provider request 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > does not invoke a parameter getter before refusing the input 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses missing people without exposing provider data 1ms
+   → promise resolved "{ people: [] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses non-array people without exposing provider data 1ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got '(data.people ?? []).map is not a func…'
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses null person without exposing provider data 1ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Cannot read properties of null (readi…'
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses missing name without exposing provider data 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses blank name without exposing provider data 1ms
+   → promise resolved "{ people: [ { name: '  ', …(2) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional email without exposing provider data 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional organization without exposing provider data 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses oversized name without exposing provider data 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo request and result contract > refuses contradictory success without exposing provider data 1ms
+   → promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not read or echo an HTTP error body 2ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Apollo search échoué (503): SYNTHETIC…'
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not propagate transport diagnostics 1ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297'
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid JSON without another request 1ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Unexpected token \'S\', "SYNTHETIC_".…'
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid UTF-8 without another request 1ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Unexpected token \'\ufffd\', "\ufffd\…'
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses redirect response without another request 2ms
+   → expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Apollo search échoué (302): '
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > accepts a valid body at exactly 1 MiB and releases the deadline 20ms
+   → expected undefined to be true // Object.is equality
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses an oversized body even when Content-Length claims a smaller size 19ms
+   → promise resolved "{ people: [] }" instead of rejecting
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > bounds a fetch that ignores cancellation and cleans up its late body 2ms
+   → expected undefined to deeply equal Error: Recherche Apollo indisponible ou r…
+ × test/apolloTool.test.ts > Apollo shared provider transport boundaries > shares one 30-second budget across headers and a stalled body 4ms
+   → expected undefined to deeply equal Error: Recherche Apollo indisponible ou r…
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 32 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > preserves the existing endpoint and projects only the allowed business fields
+AssertionError: expected "vi.fn()" to be called once with arguments: [ …(2) ]
+
+Received:
+
+  1st vi.fn() call:
+
+  [
+    "https://api.apollo.io/api/v1/mixed_people/search",
+-   ObjectContaining {
++   {
+      "body": "{\"q_keywords\":\"synthetic prospect\",\"per_page\":10}",
+-     "credentials": "omit",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Api-Key": "test-only-apollo-key",
+      },
+      "method": "POST",
+-     "redirect": "error",
+-     "signal": Any<AbortSignal>,
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/apolloTool.test.ts:40:18
+     38|     expect(result).toEqual({ people: [{ name: "Exemple", email: "examp…
+     39|     expect(JSON.stringify(result)).not.toContain(marker);
+     40|     expect(send).toHaveBeenCalledExactlyOnceWith(endpoint, expect.obje…
+       |                  ^
+     41|       method: "POST", redirect: "error", credentials: "omit", signal: …
+     42|       headers: { "X-Api-Key": "test-only-apollo-key", "Content-Type": …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > normalizes unavailable optional fields to null without inventing contact data
+AssertionError: expected { people: [ { …(3) }, { …(3) } ] } to deeply equal { people: [ { …(3) }, { …(3) } ] }
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "people": [
+      {
+-       "email": null,
++       "email": undefined,
+        "name": "Exemple",
+-       "organization": null,
++       "organization": undefined,
+      },
+      {
+        "email": null,
+        "name": "Exemple",
+        "organization": null,
+
+ ❯ test/apolloTool.test.ts:50:28
+     48|   it("normalizes unavailable optional fields to null without inventing…
+     49|     send.mockResolvedValue(Response.json({ people: [{ name: "Exemple" …
+     50|     await expect(execute()).resolves.toEqual({ people: [
+       |                            ^
+     51|       { name: "Exemple", email: null, organization: null },
+     52|       { name: "Exemple", email: null, organization: null },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > enforces the requested result limit even when the provider ignores it
+AssertionError: expected { people: [ { …(3) }, { …(3) } ] } to deeply equal { people: [ { …(3) } ] }
+
+- Expected
++ Received
+
+@@ -3,7 +3,12 @@
+      {
+        "email": "example@example.test",
+        "name": "Exemple",
+        "organization": "Organisation",
+      },
++     {
++       "email": "example@example.test",
++       "name": "Au-delà de la limite",
++       "organization": "Organisation",
++     },
+    ],
+  }
+
+ ❯ test/apolloTool.test.ts:63:63
+     61|   it("enforces the requested result limit even when the provider ignor…
+     62|     send.mockResolvedValue(Response.json({ people: [person(), person({…
+     63|     await expect(execute({ keywords: "synthetic", limit: 1 })).resolve…
+       |                                                               ^
+     64|       people: [{ name: "Exemple", email: "example@example.test", organ…
+     65|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects null input before a provider request
+AssertionError: expected [Function] to throw error including 'Paramètres de recherche Apollo invali…' but got 'Cannot read properties of null (readi…'
+
+Expected: "Paramètres de recherche Apollo invalides"
+Received: "Cannot read properties of null (reading 'keywords')"
+
+ ❯ test/apolloTool.test.ts:87:33
+     85|     { label: "unknown field", value: { keywords: "synthetic", [marker]…
+     86|   ])("rejects $label before a provider request", async ({ value }) => {
+     87|     await expect(execute(value)).rejects.toThrow(invalidInput);
+       |                                 ^
+     88|     expect(send).not.toHaveBeenCalled();
+     89|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects missing keywords before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects blank keywords before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects oversized keywords before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects non-string keywords before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects zero limit before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects oversized limit before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects fractional limit before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects null limit before a provider request
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > rejects unknown field before a provider request
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "Exemple",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:87:33
+     85|     { label: "unknown field", value: { keywords: "synthetic", [marker]…
+     86|   ])("rejects $label before a provider request", async ({ value }) => {
+     87|     await expect(execute(value)).rejects.toThrow(invalidInput);
+       |                                 ^
+     88|     expect(send).not.toHaveBeenCalled();
+     89|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > does not invoke a parameter getter before refusing the input
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "Exemple",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:94:33
+     92|     const getter = vi.fn(() => "synthetic");
+     93|     const input = Object.defineProperty({}, "keywords", { enumerable: …
+     94|     await expect(execute(input)).rejects.toThrow(invalidInput);
+       |                                 ^
+     95|     expect(getter).not.toHaveBeenCalled();
+     96|     expect(send).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses missing people without exposing provider data
+AssertionError: promise resolved "{ people: [] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses non-array people without exposing provider data
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got '(data.people ?? []).map is not a func…'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "(data.people ?? []).map is not a function"
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses null person without exposing provider data
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Cannot read properties of null (readi…'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "Cannot read properties of null (reading 'name')"
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses missing name without exposing provider data
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": null,
++       "name": undefined,
++       "organization": undefined,
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses blank name without exposing provider data
+AssertionError: promise resolved "{ people: [ { name: '  ', …(2) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "  ",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional email without exposing provider data
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": {
++         "private": "SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297",
++       },
++       "name": "Exemple",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional organization without exposing provider data
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "Exemple",
++       "organization": [
++         "SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297",
++       ],
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses oversized name without exposing provider data
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo request and result contract > refuses contradictory success without exposing provider data
+AssertionError: promise resolved "{ people: [ { …(3) } ] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [
++     {
++       "email": "example@example.test",
++       "name": "Exemple",
++       "organization": "Organisation",
++     },
++   ],
+  }
+
+ ❯ test/apolloTool.test.ts:111:28
+    109|   ])("refuses $label without exposing provider data", async ({ value }…
+    110|     send.mockResolvedValue(Response.json(value));
+    111|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    112|     expect(send).toHaveBeenCalledOnce();
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not read or echo an HTTP error body
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Apollo search échoué (503): SYNTHETIC…'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "Apollo search échoué (503): SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297"
+
+ ❯ test/apolloTool.test.ts:121:28
+    119|     const read = vi.spyOn(response, "text");
+    120|     send.mockResolvedValue(response);
+    121|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    122|     expect(read).not.toHaveBeenCalled();
+    123|     expect(send).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not propagate transport diagnostics
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "SYNTHETIC_PRIVATE_APOLLO_DETAIL_6297"
+
+ ❯ test/apolloTool.test.ts:128:28
+    126|   it("does not propagate transport diagnostics", async () => {
+    127|     send.mockRejectedValue(new Error(marker));
+    128|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    129|     expect(send).toHaveBeenCalledOnce();
+    130|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid JSON without another request
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Unexpected token \'S\', "SYNTHETIC_".…'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "Unexpected token 'S', "SYNTHETIC_"... is not valid JSON"
+
+ ❯ test/apolloTool.test.ts:138:28
+    136|   ])("refuses $label without another request", async ({ response }) =>…
+    137|     send.mockResolvedValue(response());
+    138|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    139|     expect(send).toHaveBeenCalledOnce();
+    140|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid UTF-8 without another request
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Unexpected token \'\ufffd\', "\ufffd\…'
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "Unexpected token '�', "��" is not valid JSON"
+
+ ❯ test/apolloTool.test.ts:138:28
+    136|   ])("refuses $label without another request", async ({ response }) =>…
+    137|     send.mockResolvedValue(response());
+    138|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    139|     expect(send).toHaveBeenCalledOnce();
+    140|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses redirect response without another request
+AssertionError: expected [Function] to throw error including 'Recherche Apollo indisponible ou répo…' but got 'Apollo search échoué (302): '
+
+Expected: "Recherche Apollo indisponible ou réponse invalide"
+Received: "Apollo search échoué (302): "
+
+ ❯ test/apolloTool.test.ts:138:28
+    136|   ])("refuses $label without another request", async ({ response }) =>…
+    137|     send.mockResolvedValue(response());
+    138|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    139|     expect(send).toHaveBeenCalledOnce();
+    140|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > accepts a valid body at exactly 1 MiB and releases the deadline
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ test/apolloTool.test.ts:148:53
+    146|     await expect(execute()).resolves.toEqual({ people: [] });
+    147|     expect(vi.getTimerCount()).toBe(0);
+    148|     expect(send.mock.calls[0]![1]?.signal?.aborted).toBe(true);
+       |                                                     ^
+    149|   });
+    150|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses an oversized body even when Content-Length claims a smaller size
+AssertionError: promise resolved "{ people: [] }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "people": [],
+  }
+
+ ❯ test/apolloTool.test.ts:156:28
+    154|       headers: { "Content-Length": "1" },
+    155|     }));
+    156|     await expect(execute()).rejects.toThrow(failure);
+       |                            ^
+    157|     expect(send).toHaveBeenCalledOnce();
+    158|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > bounds a fetch that ignores cancellation and cleans up its late body
+AssertionError: expected undefined to deeply equal Error: Recherche Apollo indisponible ou r…
+
+- Expected:
+Error {
+  "message": "Recherche Apollo indisponible ou réponse invalide",
+}
+
++ Received:
+undefined
+
+ ❯ test/apolloTool.test.ts:167:22
+    165|     void execute().then(value => { observed = value; }, error => { obs…
+    166|     await vi.advanceTimersByTimeAsync(30_000);
+    167|     expect(observed).toEqual(new Error(failure));
+       |                      ^
+    168|     expect(send.mock.calls[0]![1]?.signal?.aborted).toBe(true);
+    169|     const cancel = vi.fn(() => new Promise<void>(() => {}));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/32]⎯
+
+ FAIL  test/apolloTool.test.ts > Apollo shared provider transport boundaries > shares one 30-second budget across headers and a stalled body
+AssertionError: expected undefined to deeply equal Error: Recherche Apollo indisponible ou r…
+
+- Expected:
+Error {
+  "message": "Recherche Apollo indisponible ou réponse invalide",
+}
+
++ Received:
+undefined
+
+ ❯ test/apolloTool.test.ts:190:22
+    188|     expect(observed).toBeUndefined();
+    189|     await vi.advanceTimersByTimeAsync(1_000);
+    190|     expect(observed).toEqual(new Error(failure));
+       |                      ^
+    191|     expect(cancel).toHaveBeenCalledOnce();
+    192|     expect(send).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/32]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  32 failed | 2 passed (34)
+   Start at  02:50:57
+   Duration  690ms (tests 48%, transform 38%, import 7%, setup 4%, worker 3%)

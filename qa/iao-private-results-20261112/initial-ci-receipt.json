@@ -1,0 +1,36 @@
+{
+  "run_id": 43166411905,
+  "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43166411905",
+  "published_commit": "78d349f39c5cd5607cf8e8fde8e4b974c231008a",
+  "tree": "6235cd142c31b54b72ed416189ca684115a129ad",
+  "checkout_commit": "96417146cf1c75d62897af95f1d11557da7d9622",
+  "karta": {
+    "status": "PASS",
+    "tests": 2318,
+    "files": 126,
+    "typecheck": true,
+    "build": true,
+    "job_id": 131009212538
+  },
+  "native_concurrency": {
+    "status": "PASS",
+    "private_result_tests": 6,
+    "subscription_tests": 7,
+    "job_id": 131009212480
+  },
+  "site": {
+    "status": "PASS",
+    "job_id": 131009212235,
+    "unit_tests": 390,
+    "unit_files": 16,
+    "edge_chat_tests": 46,
+    "browser_commands": 13,
+    "lint_errors": 0,
+    "lint_warnings": 21,
+    "typecheck": true,
+    "deno_check": true,
+    "build": true
+  },
+  "status": "completed",
+  "conclusion": "success"
+}

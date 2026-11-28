@@ -1,0 +1,113 @@
+{
+  "iao-webhook-qa-20261110-3e970b5859": {
+    "runtime": "deno 2.9.7 (stable, release, aarch64-apple-darwin)",
+    "actual_provider_calls": 0,
+    "network_permission": "explicitly denied",
+    "results": [
+      {
+        "phase": "before",
+        "exit_code": 1,
+        "duration_seconds": 1.915,
+        "command": [
+          "/opt/homebrew/bin/deno",
+          "test",
+          "--no-remote",
+          "--no-prompt",
+          "--deny-net",
+          "--deny-run",
+          "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+          "--config",
+          "tests/commerce/deno.json",
+          "tests/commerce/webhook-handler.test.ts"
+        ],
+        "cwd": "/Users/matissdornier/purama-patches/iao-webhook-qa-20261110-3e970b5859/before",
+        "source_sha256": "58f19152f9c54dd0d412cf73761279d7edbe5bd56b1803b353dd09487c27109d",
+        "log_sha256": "cb0662ad4f4bfcfe8b00197f25803134a44783b4a6c3bc593c4a1d20984ed36a",
+        "counts": {
+          "passed": 9,
+          "failed": 16
+        }
+      },
+      {
+        "phase": "after",
+        "exit_code": 0,
+        "duration_seconds": 2.115,
+        "command": [
+          "/opt/homebrew/bin/deno",
+          "test",
+          "--no-remote",
+          "--no-prompt",
+          "--deny-net",
+          "--deny-run",
+          "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+          "--config",
+          "tests/commerce/deno.json",
+          "tests/commerce/webhook-handler.test.ts"
+        ],
+        "cwd": "/Users/matissdornier/purama-patches/iao-webhook-qa-20261110-3e970b5859/after",
+        "source_sha256": "eca53b25f61e9cc06873e5aac4c1348a0d1c1a4797ff4f34b73ef26e6c11697f",
+        "log_sha256": "514079a83012bd14b6ef77fc03a8d3924fe2eaa6e7411a37ee3c2d58521ccbb1",
+        "counts": {
+          "passed": 25,
+          "failed": 0
+        }
+      }
+    ]
+  },
+  "iao-webhook-retry-20261110-64e178ce73": {
+    "runtime": "deno 2.9.7 (stable, release, aarch64-apple-darwin)",
+    "actual_provider_calls": 0,
+    "fixture_sha256": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+    "attempt1_note": "Original handler did not execute because fixture widened listUsers return type; fixed SDK-like return type before reproduction.",
+    "results": [
+      {
+        "phase": "before",
+        "exit_code": 1,
+        "seconds": 2.266,
+        "command": [
+          "/opt/homebrew/bin/deno",
+          "test",
+          "--no-remote",
+          "--no-prompt",
+          "--deny-net",
+          "--deny-run",
+          "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+          "--config",
+          "tests/commerce/deno.json",
+          "tests/commerce/webhook-handler.test.ts"
+        ],
+        "cwd": "/Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/before",
+        "handler_sha256": "eca53b25f61e9cc06873e5aac4c1348a0d1c1a4797ff4f34b73ef26e6c11697f",
+        "log_sha256": "b629c787219174f40e6af26b00e71864721689430b9af0d28523885baee8710d",
+        "counts": {
+          "pass": 25,
+          "fail": 15
+        }
+      },
+      {
+        "phase": "after",
+        "exit_code": 0,
+        "seconds": 2.358,
+        "command": [
+          "/opt/homebrew/bin/deno",
+          "test",
+          "--no-remote",
+          "--no-prompt",
+          "--deny-net",
+          "--deny-run",
+          "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+          "--config",
+          "tests/commerce/deno.json",
+          "tests/commerce/webhook-handler.test.ts"
+        ],
+        "cwd": "/Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after",
+        "handler_sha256": "799ffc83f3f1447ba9d3cd0f70891c8db7f88b2cebbf04e5766b6616f3be4cce",
+        "log_sha256": "66709f6993c5fb207cc67a57eecaa23879c047664767bcb54a68087af08e4f56",
+        "counts": {
+          "pass": 40,
+          "fail": 0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,286 @@
+TAP version 13
+# Subtest: chat refuses another user’s public agent before history, writes or provider access
+ok 1 - chat refuses another user’s public agent before history, writes or provider access
+  ---
+  duration_ms: 13.280288
+  type: 'test'
+  ...
+# Subtest: chat refuses another user’s private agent before history, writes or provider access
+ok 2 - chat refuses another user’s private agent before history, writes or provider access
+  ---
+  duration_ms: 2.688379
+  type: 'test'
+  ...
+# Subtest: chat refuses an ownerless public official template before history, writes or provider access
+ok 3 - chat refuses an ownerless public official template before history, writes or provider access
+  ---
+  duration_ms: 2.482295
+  type: 'test'
+  ...
+# Subtest: chat refuses an ownerless private official template before history, writes or provider access
+ok 4 - chat refuses an ownerless private official template before history, writes or provider access
+  ---
+  duration_ms: 3.155347
+  type: 'test'
+  ...
+# Subtest: chat refuses a missing session before reading an agent
+ok 5 - chat refuses a missing session before reading an agent
+  ---
+  duration_ms: 2.253629
+  type: 'test'
+  ...
+# Subtest: chat refuses an invalid session before reading an agent
+ok 6 - chat refuses an invalid session before reading an agent
+  ---
+  duration_ms: 1.928921
+  type: 'test'
+  ...
+# Subtest: the real validation rejects a missing agent ID before database reads or effects
+ok 7 - the real validation rejects a missing agent ID before database reads or effects
+  ---
+  duration_ms: 3.18463
+  type: 'test'
+  ...
+# Subtest: the real validation rejects an invalid agent UUID before database reads or effects
+ok 8 - the real validation rejects an invalid agent UUID before database reads or effects
+  ---
+  duration_ms: 2.215102
+  type: 'test'
+  ...
+# Subtest: the real validation rejects a message exceeding 4000 characters before database reads or effects
+ok 9 - the real validation rejects a message exceeding 4000 characters before database reads or effects
+  ---
+  duration_ms: 2.782729
+  type: 'test'
+  ...
+# Subtest: the owner can chat with a private agent using only their own session history
+ok 10 - the owner can chat with a private agent using only their own session history
+  ---
+  duration_ms: 10.245239
+  type: 'test'
+  ...
+# Subtest: the owner can chat with a public agent using only their own session history
+ok 11 - the owner can chat with a public agent using only their own session history
+  ---
+  duration_ms: 2.211026
+  type: 'test'
+  ...
+# Subtest: an unavailable history returns 503 before writes or provider access
+ok 12 - an unavailable history returns 503 before writes or provider access
+  ---
+  duration_ms: 1.699303
+  type: 'test'
+  ...
+# Subtest: the provider receives the latest 20 owned turns in chronological order
+ok 13 - the provider receives the latest 20 owned turns in chronological order
+  ---
+  duration_ms: 2.684634
+  type: 'test'
+  ...
+# Subtest: the actual completion helper refuses a reply stopped by the token limit without recording assistant success
+ok 14 - the actual completion helper refuses a reply stopped by the token limit without recording assistant success
+  ---
+  duration_ms: 2.318064
+  type: 'test'
+  ...
+# Subtest: the actual completion helper refuses a reply without a completion reason without recording assistant success
+ok 15 - the actual completion helper refuses a reply without a completion reason without recording assistant success
+  ---
+  duration_ms: 3.368722
+  type: 'test'
+  ...
+# Subtest: the actual completion helper refuses an unhandled tool request without recording assistant success
+ok 16 - the actual completion helper refuses an unhandled tool request without recording assistant success
+  ---
+  duration_ms: 3.179052
+  type: 'test'
+  ...
+# Subtest: the actual completion helper refuses an empty completed answer without recording assistant success
+ok 17 - the actual completion helper refuses an empty completed answer without recording assistant success
+  ---
+  duration_ms: 2.460413
+  type: 'test'
+  ...
+# Subtest: an aborted request after history loading starts no provider and saves no message
+ok 18 - an aborted request after history loading starts no provider and saves no message
+  ---
+  duration_ms: 2.55966
+  type: 'test'
+  ...
+# Subtest: a provider reply arriving after cancellation is never recorded as completed
+ok 19 - a provider reply arriving after cancellation is never recorded as completed
+  ---
+  duration_ms: 3.913023
+  type: 'test'
+  ...
+# Subtest: no selected results (omitted) preserves the ordinary single-call chat
+ok 20 - no selected results (omitted) preserves the ordinary single-call chat
+  ---
+  duration_ms: 4.136852
+  type: 'test'
+  ...
+# Subtest: no selected results (empty) preserves the ordinary single-call chat
+ok 21 - no selected results (empty) preserves the ordinary single-call chat
+  ---
+  duration_ms: 3.66654
+  type: 'test'
+  ...
+# Subtest: selected server results reach exactly one model call in requested order with provenance and no raw detail persistence
+ok 22 - selected server results reach exactly one model call in requested order with provenance and no raw detail persistence
+  ---
+  duration_ms: 8.393191
+  type: 'test'
+  ...
+# Subtest: selected-result validation rejects a scalar before any database access
+ok 23 - selected-result validation rejects a scalar before any database access
+  ---
+  duration_ms: 2.506392
+  type: 'test'
+  ...
+# Subtest: selected-result validation rejects an invalid UUID before any database access
+ok 24 - selected-result validation rejects an invalid UUID before any database access
+  ---
+  duration_ms: 2.292406
+  type: 'test'
+  ...
+# Subtest: selected-result validation rejects more than three IDs before any database access
+ok 25 - selected-result validation rejects more than three IDs before any database access
+  ---
+  duration_ms: 2.133723
+  type: 'test'
+  ...
+# Subtest: selected-result validation rejects duplicate IDs before any database access
+ok 26 - selected-result validation rejects duplicate IDs before any database access
+  ---
+  duration_ms: 1.781824
+  type: 'test'
+  ...
+# Subtest: selected-result validation rejects duplicates differing only by case before any database access
+ok 27 - selected-result validation rejects duplicates differing only by case before any database access
+  ---
+  duration_ms: 1.779631
+  type: 'test'
+  ...
+# Subtest: selected results from another account never reach chat history, writes or the provider
+ok 28 - selected results from another account never reach chat history, writes or the provider
+  ---
+  duration_ms: 1.923854
+  type: 'test'
+  ...
+# Subtest: selected results from another agent never reach chat history, writes or the provider
+ok 29 - selected results from another agent never reach chat history, writes or the provider
+  ---
+  duration_ms: 2.206861
+  type: 'test'
+  ...
+# Subtest: selected results from a deleted or nonexistent result never reach chat history, writes or the provider
+ok 30 - selected results from a deleted or nonexistent result never reach chat history, writes or the provider
+  ---
+  duration_ms: 2.168994
+  type: 'test'
+  ...
+# Subtest: selected results from a partially missing selection never reach chat history, writes or the provider
+ok 31 - selected results from a partially missing selection never reach chat history, writes or the provider
+  ---
+  duration_ms: 1.943142
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects a foreign row from a faulty adapter even if the database adapter returns it
+ok 32 - the shared view validator rejects a foreign row from a faulty adapter even if the database adapter returns it
+  ---
+  duration_ms: 2.150748
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects a different requested result even if the database adapter returns it
+ok 33 - the shared view validator rejects a different requested result even if the database adapter returns it
+  ---
+  duration_ms: 1.872768
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects a malformed payload even if the database adapter returns it
+ok 34 - the shared view validator rejects a malformed payload even if the database adapter returns it
+  ---
+  duration_ms: 1.837617
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects an unsafe provenance URL even if the database adapter returns it
+ok 35 - the shared view validator rejects an unsafe provenance URL even if the database adapter returns it
+  ---
+  duration_ms: 1.92142
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects an oversized summary even if the database adapter returns it
+ok 36 - the shared view validator rejects an oversized summary even if the database adapter returns it
+  ---
+  duration_ms: 1.61639
+  type: 'test'
+  ...
+# Subtest: the shared view validator rejects a duplicate response row even if the database adapter returns it
+ok 37 - the shared view validator rejects a duplicate response row even if the database adapter returns it
+  ---
+  duration_ms: 1.620376
+  type: 'test'
+  ...
+# Subtest: a private-result database error is hidden and does not trigger a paid call
+ok 38 - a private-result database error is hidden and does not trigger a paid call
+  ---
+  duration_ms: 1.787172
+  type: 'test'
+  ...
+# Subtest: an ownership transfer observed during result loading refuses model disclosure
+ok 39 - an ownership transfer observed during result loading refuses model disclosure
+  ---
+  duration_ms: 2.002649
+  type: 'test'
+  ...
+# Subtest: cancellation during private-result loading performs no subsequent history read or effect
+ok 40 - cancellation during private-result loading performs no subsequent history read or effect
+  ---
+  duration_ms: 2.731603
+  type: 'test'
+  ...
+# Subtest: cancellation while recording the submitted turn does not start the provider
+ok 41 - cancellation while recording the submitted turn does not start the provider
+  ---
+  duration_ms: 2.083067
+  type: 'test'
+  ...
+# Subtest: failure to record the submitted turn does not start the provider or claim completion
+ok 42 - failure to record the submitted turn does not start the provider or claim completion
+  ---
+  duration_ms: 1.882743
+  type: 'test'
+  ...
+# Subtest: an upstream 429 body that echoes private content is never logged, returned or retried
+ok 43 - an upstream 429 body that echoes private content is never logged, returned or retried
+  ---
+  duration_ms: 2.340477
+  type: 'test'
+  ...
+# Subtest: an upstream 500 body that echoes private content is never logged, returned or retried
+ok 44 - an upstream 500 body that echoes private content is never logged, returned or retried
+  ---
+  duration_ms: 2.419523
+  type: 'test'
+  ...
+# Subtest: a thrown transport error containing private input is not disclosed or retried
+ok 45 - a thrown transport error containing private input is not disclosed or retried
+  ---
+  duration_ms: 2.193741
+  type: 'test'
+  ...
+# Subtest: three large Unicode results remain bounded valid JSON with explicit omissions and escaped delimiters
+ok 46 - three large Unicode results remain bounded valid JSON with explicit omissions and escaped delimiters
+  ---
+  duration_ms: 28.546152
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 980.021995

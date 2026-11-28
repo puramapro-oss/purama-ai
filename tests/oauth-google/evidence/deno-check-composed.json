@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+    "check",
+    "--no-config",
+    "--no-lock",
+    "--cached-only",
+    "--node-modules-dir=manual",
+    "supabase/functions/oauth-google/index.ts"
+  ],
+  "integratedHead": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "sourcesBefore": {
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+  },
+  "exitCode": 0,
+  "sourcesAfter": {
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+  },
+  "sourceUnchanged": true
+}

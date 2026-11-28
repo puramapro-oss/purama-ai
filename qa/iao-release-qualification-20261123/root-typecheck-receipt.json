@@ -1,0 +1,7 @@
+{
+  "command": "npm run typecheck",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "output": "root-typecheck.log",
+  "log_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f"
+}

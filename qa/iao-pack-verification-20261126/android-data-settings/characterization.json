@@ -1,0 +1,11 @@
+{
+  "recordedAt": "2026-11-26T05:02:39.896846+00:00",
+  "status": "EXPECTED_FAIL_BEFORE_REVIEW_FIX",
+  "tests": 5,
+  "failures": 5,
+  "scope": "Original evidence mutation before UI, malformed readiness, mixed resolver components, multiple focus records, geometry moving during final subscription observation.",
+  "sourceSha256": {
+    "mobile/scripts/qualify-android-data-settings.py": "771dba190efdbfe40230944a6dfcd5fec768cbe59690fbd7cc8fbe21f3788633",
+    "mobile/tests/watch-native/data-settings-qualification.test.cjs": "1ec306df12be04a7aa84681f4d1063c2e0ff86bf3507e9c1be9c8528e82814f1"
+  }
+}

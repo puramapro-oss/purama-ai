@@ -1,0 +1,18 @@
+{
+  "diagnostic_only": true,
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/overageCredit.test.ts",
+    "--maxWorkers=1",
+    "-t",
+    "stops the migration on historical duplicate sessions without deleting or rewriting a credit"
+  ],
+  "cwd": "/Users/matissdornier/purama-patches/commerce-phase-probe-20261110/vitest-copy/karta",
+  "exit_code": 1,
+  "seconds": 14.975,
+  "instrumented_test_sha256": "f86574e6966b008fe79ced03d876f198de396ddd73e3d53ffa68b4a84402e140",
+  "original_test_sha256": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+  "log_sha256": "00109731cc51073ac5215d2986a35c12da75763a08d4b3d15fda188f465a0427"
+}

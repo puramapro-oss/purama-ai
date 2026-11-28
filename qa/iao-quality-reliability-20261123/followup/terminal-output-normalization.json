@@ -1,0 +1,117 @@
+{
+  "rule": "Strip terminal trailing spaces/tabs/CR at LF boundaries and excess blank EOF lines; raw copies preserved.",
+  "files": [
+    {
+      "path": "build-final.log",
+      "original_sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd",
+      "normalized_sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05",
+      "original_bytes": 208,
+      "normalized_bytes": 207
+    },
+    {
+      "path": "build.log",
+      "original_sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd",
+      "normalized_sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05",
+      "original_bytes": 208,
+      "normalized_bytes": 207
+    },
+    {
+      "path": "composed-final.log",
+      "original_sha256": "419bef54681e2a5877a9ae10232a5f21a4e49dfa2e092e6ea3aec755f115cf39",
+      "normalized_sha256": "dfb0e7e8286dd0f038548cc8301a363438a903d040399c3bb4b60a8cc03d2542",
+      "original_bytes": 215,
+      "normalized_bytes": 214
+    },
+    {
+      "path": "composed.log",
+      "original_sha256": "3612ebec6c8cd1b870ae657b1ed4b08695721032532b8a2b36e401114d693f98",
+      "normalized_sha256": "5bc99c7b6293fd44bce2390dedfe99e7160aac617f59ea4439e09978baa2f811",
+      "original_bytes": 215,
+      "normalized_bytes": 214
+    },
+    {
+      "path": "cost-latency/authorize-red.log",
+      "original_sha256": "d011d9c322cb997bbcdf68c84f423459968237f030f639b5a0e8469e751e7fa4",
+      "normalized_sha256": "58d97c72c0b0a65b82311c5a621b1a18b071ac62af3cb261a25031605fdd3673",
+      "original_bytes": 1388,
+      "normalized_bytes": 1387
+    },
+    {
+      "path": "cost-latency/grant-handoff-red.log",
+      "original_sha256": "313025431d11c7b265e3878eec81664af537b894d687880361018c137b2e596e",
+      "normalized_sha256": "0899a86d9af64c8c32981f53d22a44b1f394819dacb7b10a2bd9f5916d6d191c",
+      "original_bytes": 1528,
+      "normalized_bytes": 1527
+    },
+    {
+      "path": "cost-latency/green-final.log",
+      "original_sha256": "7f54b15aa5b62adb12444deb7664c89a321944586d2a094631d0694c2663ebe0",
+      "normalized_sha256": "4477b9f946c8084f4699184e517ef42ea6f5648555954c7f8fada83d172c69a7",
+      "original_bytes": 420,
+      "normalized_bytes": 419
+    },
+    {
+      "path": "cost-latency/green-initial.log",
+      "original_sha256": "0ffecab25e0e12fdf075372156f12d248c21e16c6842d4a71616f35f5df9354d",
+      "normalized_sha256": "30f3801712cbbc3b078c6a02a8fc6bcb697ccb302eb9f2231c2e3ac2e27648cf",
+      "original_bytes": 221,
+      "normalized_bytes": 220
+    },
+    {
+      "path": "cost-latency/green-qualified.log",
+      "original_sha256": "f5634fe4889d2d6d1f1c4437538c3c4aa81370db5d9ff56e99129163d34e5ac0",
+      "normalized_sha256": "a8b2b5d2d2e4d716a0db9be27e8612f3d74e751089165684d6df204326247d37",
+      "original_bytes": 420,
+      "normalized_bytes": 419
+    },
+    {
+      "path": "cost-latency/red.log",
+      "original_sha256": "3c5d34093e43a9a4cada355a00a05809a5dd55d22ec154f62254b759b7d12c08",
+      "normalized_sha256": "81912706df9522b6c589aaff4db6c204625b544cb568260f34a406fe1ee66109",
+      "original_bytes": 5371,
+      "normalized_bytes": 5370
+    },
+    {
+      "path": "cost-latency/reservation-expiry-red.log",
+      "original_sha256": "0db96616c811a345c286263e069d408ac6430e35ce2b088bd4da80df8f41a7f7",
+      "normalized_sha256": "b907eaee7dd96755afbd8582456da333ce070a3b0f6d0f0e4fa6219ea1ff9dc9",
+      "original_bytes": 2801,
+      "normalized_bytes": 2800
+    },
+    {
+      "path": "gitnexus-baseline.log",
+      "original_sha256": "0ac6763156cb8cf7913b159c3e388c12037e650e0e38e22a44d51598b6d75979",
+      "normalized_sha256": "e02caa30efd0fd16b1676e4fc7f0f6400392a29e4d8ff38c530122d0be0dc82f",
+      "original_bytes": 17798,
+      "normalized_bytes": 17797
+    },
+    {
+      "path": "gitnexus-final-qualified.log",
+      "original_sha256": "5c95968db0431287cb8f35878c77911b25387249c2ca307f5c17c3c51bc7bac2",
+      "normalized_sha256": "f31f31d9b2c143fd98def61ae247e9549a0a4c5d47ab52cd3c5a8bb3b93c656e",
+      "original_bytes": 18086,
+      "normalized_bytes": 18085
+    },
+    {
+      "path": "gitnexus-final.log",
+      "original_sha256": "21a20f71d4a337afb296484b7d178431299d56353eee11b0d2471702d9295cd6",
+      "normalized_sha256": "70f07e5fd0a3b6089d82d09f21bb9cc147451b4e4f48daf2b8a95eb02c697bb9",
+      "original_bytes": 18086,
+      "normalized_bytes": 18085
+    },
+    {
+      "path": "persistence/impact.log",
+      "original_sha256": "b080e87c1e5bc1ef850466b867fe641a685c6a3a4828df8ecbda7e881092432e",
+      "normalized_sha256": "e20aca41b9cdc4a51eed7c83139b7f78330b1cb3f547caf98e22bfd783ccd936",
+      "original_bytes": 1373,
+      "normalized_bytes": 1372
+    },
+    {
+      "path": "persistence/recovery-test.log",
+      "original_sha256": "5b2627b1f7728821468a60058c149f9190a4ec0eecb19e1a5b0319c2da7d0d40",
+      "normalized_sha256": "cf334722df1642527b14f734ac5efa26f1f414b2349090877019b9b6d8355bfa",
+      "original_bytes": 1592,
+      "normalized_bytes": 1591
+    }
+  ]
+}

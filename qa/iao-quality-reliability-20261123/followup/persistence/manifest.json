@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "baseline": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "findings": "No new product or SQL defect reproduced. Six previously absent acknowledgement-loss scenarios pass against the production store and PostgreSQL/WASM migrations.",
+  "testCount": 6,
+  "execution": {
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/consultationPersistenceRecovery.test.ts",
+      "--reporter=verbose"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+    "exitCode": 0,
+    "durationSeconds": 6.115,
+    "log": "recovery-test.log",
+    "scope": "6 new tests; real production store and PostgreSQL/WASM migrations, simulated transport error only after successful SQL commit"
+  },
+  "sourcesUnchangedFromBaseline": {
+    "karta/src/claude/consultation-store.ts": true,
+    "karta/migrations/032_model_consultation.sql": true,
+    "karta/test/consultationSqlFixture.ts": true
+  },
+  "changedCode": [
+    "karta/test/consultationPersistenceRecovery.test.ts"
+  ],
+  "testSha256": "2581fa4886ba0a72efe3b049e7eb72d923102e2db005e87164389a36314f4464",
+  "impact": {
+    "target": "createConsultationStore",
+    "risk": "LOW",
+    "directCaller": "createConsultationHost",
+    "directCount": 1,
+    "processesResolved": 0,
+    "limitations": "FTS unavailable; named graph context and direct source review used.",
+    "indexedCommit": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+    "log": "impact.log"
+  },
+  "coverage": [
+    "create SQL commits, transport loses acknowledgement: exactly one operation/task/reservation, read-only recovery, ownership and changed-content conflict",
+    "start commits: lost acknowledgement never grants reserve or a second claim; recovered operation remains read-only",
+    "reserve commits: same call and a second call cannot reopen dispatch; unknown accounting stays unknown",
+    "settle commits: same receipt reconciles, conflicting usage fails; observed token total applied once",
+    "finalize commits: identical result reconciles, result cannot be replaced, one usage event, unknown monetary amount stays null and reservation retained",
+    "cancel-before-create commits: lost acknowledgement does not resurrect operation or invent resource grant"
+  ],
+  "priorGateAlreadyExecuted": {
+    "workflow": ".github/workflows/purama-chef-hardening.yml",
+    "job": "subscription-concurrency",
+    "test": "karta/test/consultationStore.native.mjs",
+    "note": "Existing five native multi-connection cases are not counted as newly executed in this lot."
+  },
+  "limits": [
+    "This new suite uses real PostgreSQL compiled to WASM (PGlite), one backend. It does not prove native multi-connection locking.",
+    "Recovery recreates the store adapter over preserved SQL state; database process restart, crash, durability of a remote volume and PostgREST transport are not exercised.",
+    "The network error is injected after the real SQL call succeeds; no external provider or paid API is called.",
+    "A successful reservation is not an actual provider invoice; test amounts remain fixture observations."
+  ],
+  "gatesNotRepeated": [
+    "Full KARTA/site suites: root handles composed qualification.",
+    "Existing native PostgreSQL CI suite: already executed on PR100; not repeated for test count."
+  ],
+  "postExecutionFormatting": {
+    "change": "Removed one extra blank line at EOF only",
+    "testSha256WhenExecuted": "f6788d46ec1ba0ebb1e3bb2860825496a2d14742c1d07c07d13c11865ba2e364",
+    "finalTestSha256": "2581fa4886ba0a72efe3b049e7eb72d923102e2db005e87164389a36314f4464",
+    "behaviorChanged": false,
+    "testsRepeated": false
+  }
+}

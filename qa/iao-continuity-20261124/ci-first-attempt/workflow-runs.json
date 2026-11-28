@@ -1,0 +1,24 @@
+{
+  "workflow_runs": [
+    {
+      "id": 45433919434,
+      "name": "KARTA IAO identity",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 86,
+      "jobs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45433919434/jobs",
+      "logs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45433919434/logs",
+      "workflow_id": 416493303
+    },
+    {
+      "id": 45433919473,
+      "name": "PURAMA CHEF hardening",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_number": 404,
+      "jobs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45433919473/jobs",
+      "logs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45433919473/logs",
+      "workflow_id": 368284292
+    }
+  ]
+}

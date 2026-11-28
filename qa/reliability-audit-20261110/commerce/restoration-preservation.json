@@ -1,0 +1,14 @@
+{
+  "source_head": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "commission_block_identical": true,
+  "commission_bytes": 5484,
+  "commission_sha256": "5090effc23a7c01ed0af637fc809eead453b83c2f94bac130b873f38de318a3b",
+  "plan_mapping_identical": true,
+  "plan_prices_identical": true,
+  "overage_actions_unchanged": true,
+  "final_handler_sha256": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+  "final_commission_block_identical": true,
+  "final_plan_mapping_identical": true,
+  "final_plan_prices_identical": true,
+  "serve_capture_preserved": true
+}

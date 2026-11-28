@@ -1,0 +1,20 @@
+{"case":"native_host_policy_to_catalogue","base":"5df79859548d8732317bc89f9ca837435beaccf2","actual":{"available":false,"reason":"account_unavailable","models":0},"providerRequestsFromHost":0,"resourceGrantChecks":0,"directFullPolicyFailure":"Profil de modèle invalide ou non qualifié","projectedControlModels":[{"model":"main","maxOutputTokens":16384,"reasoning":"none"}],"totalSimulatedRequests":1,"realNetworkCalls":0}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: A valid funded host must expose its qualified catalogue through the real loader
+
+false !== true
+
+    at file:///workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta/[eval1]:37:8
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.3

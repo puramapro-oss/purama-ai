@@ -1,0 +1,122 @@
+{
+  "recordedAt": "2026-11-26T04:49:45.040192+00:00",
+  "records": [
+    {
+      "target": "Preparation",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "Preparation",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "mobile/scripts/prepare-android-offline.py",
+        "--depth",
+        "2",
+        "--limit",
+        "15",
+        "--include-tests"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"target\": {\n    \"id\": \"Class:mobile/scripts/prepare-android-offline.py:Preparation\",\n    \"name\": \"Preparation\",\n    \"type\": \"Class\",\n    \"filePath\": \"mobile/scripts/prepare-android-offline.py\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 1,\n    \"hint\": \"\u26a0\ufe0f Index is 1 commit behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":50,\"time\":1795668582141,\"name\":\"gitnexus\",\"msg\":\"GitNexus: \u26a0\ufe0f Index for \\\"iao-continuity-20261125\\\" was built at /workspace/scratch/0414f811f329/iao-continuity; your cwd (/tmp/iao-quality-0414-p1it5pwv/repo) is a sibling clone that is 2 commits ahead of the indexed commit. Results may be stale or incorrect \u2014 re-run `gitnexus analyze` to refresh the index.\"}\n{\"level\":40,\"time\":1795668583102,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "target": "bounded_command",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "bounded_command",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "mobile/scripts/prepare-android-offline.py",
+        "--depth",
+        "2",
+        "--limit",
+        "15",
+        "--include-tests"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'bounded_command' not found\",\n  \"target\": {\n    \"name\": \"bounded_command\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":50,\"time\":1795668583979,\"name\":\"gitnexus\",\"msg\":\"GitNexus: \u26a0\ufe0f Index for \\\"iao-continuity-20261125\\\" was built at /workspace/scratch/0414f811f329/iao-continuity; your cwd (/tmp/iao-quality-0414-p1it5pwv/repo) is a sibling clone that is 2 commits ahead of the indexed commit. Results may be stale or incorrect \u2014 re-run `gitnexus analyze` to refresh the index.\"}\n{\"level\":40,\"time\":1795668584180,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "target": "inspect_data_subscription",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "inspect_data_subscription",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "mobile/scripts/prepare-android-offline.py",
+        "--depth",
+        "2",
+        "--limit",
+        "15",
+        "--include-tests"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'inspect_data_subscription' not found\",\n  \"target\": {\n    \"name\": \"inspect_data_subscription\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":50,\"time\":1795668584602,\"name\":\"gitnexus\",\"msg\":\"GitNexus: \u26a0\ufe0f Index for \\\"iao-continuity-20261125\\\" was built at /workspace/scratch/0414f811f329/iao-continuity; your cwd (/tmp/iao-quality-0414-p1it5pwv/repo) is a sibling clone that is 2 commits ahead of the indexed commit. Results may be stale or incorrect \u2014 re-run `gitnexus analyze` to refresh the index.\"}\n{\"level\":40,\"time\":1795668584960,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "target": "Qualification",
+      "recordedAt": "2026-11-26T05:01:52.243808+00:00",
+      "newFileNotIndexed": true,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "Qualification",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "mobile/scripts/qualify-android-data-settings.py",
+        "--depth",
+        "2",
+        "--limit",
+        "10"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'Qualification' not found\",\n  \"target\": {\n    \"name\": \"Qualification\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":50,\"time\":1795669311094,\"name\":\"gitnexus\",\"msg\":\"GitNexus: \u26a0\ufe0f Index for \\\"iao-continuity-20261125\\\" was built at /workspace/scratch/0414f811f329/iao-continuity; your cwd (/tmp/iao-quality-0414-p1it5pwv/repo) is a sibling clone that is 2 commits ahead of the indexed commit. Results may be stale or incorrect \u2014 re-run `gitnexus analyze` to refresh the index.\"}\n{\"level\":40,\"time\":1795669312138,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "target": "mobile_data_control",
+      "recordedAt": "2026-11-26T05:01:52.923534+00:00",
+      "newFileNotIndexed": true,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "mobile_data_control",
+        "--direction",
+        "upstream",
+        "--repo",
+        "/workspace/scratch/0414f811f329/iao-continuity",
+        "--file",
+        "mobile/scripts/qualify-android-data-settings.py",
+        "--depth",
+        "2",
+        "--limit",
+        "10"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"error\": \"Target 'mobile_data_control' not found\",\n  \"target\": {\n    \"name\": \"mobile_data_control\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":50,\"time\":1795669312599,\"name\":\"gitnexus\",\"msg\":\"GitNexus: \u26a0\ufe0f Index for \\\"iao-continuity-20261125\\\" was built at /workspace/scratch/0414f811f329/iao-continuity; your cwd (/tmp/iao-quality-0414-p1it5pwv/repo) is a sibling clone that is 2 commits ahead of the indexed commit. Results may be stale or incorrect \u2014 re-run `gitnexus analyze` to refresh the index.\"}\n{\"level\":40,\"time\":1795669312843,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    }
+  ]
+}

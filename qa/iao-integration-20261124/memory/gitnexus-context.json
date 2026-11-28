@@ -1,0 +1,71 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/integrations/localComputeFabricProvider.ts:buildMemoryPrompt",
+    "name": "buildMemoryPrompt",
+    "kind": "Function",
+    "filePath": "src/integrations/localComputeFabricProvider.ts",
+    "startLine": 44,
+    "endLine": 59
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:test/localComputeFabricMemoryBoundary.test.ts",
+        "name": "localComputeFabricMemoryBoundary.test.ts",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "File:test/localComputeFabricMemoryProjection.test.ts",
+        "name": "localComputeFabricMemoryProjection.test.ts",
+        "filePath": "test/localComputeFabricMemoryProjection.test.ts"
+      },
+      {
+        "uid": "File:test/localComputeFabricProvider.test.ts",
+        "name": "localComputeFabricProvider.test.ts",
+        "filePath": "test/localComputeFabricProvider.test.ts"
+      },
+      {
+        "uid": "Function:test/localComputeFabricMemoryBoundary.test.ts:prompt",
+        "name": "prompt",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Method:src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+        "name": "complete",
+        "filePath": "src/integrations/localComputeFabricProvider.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "accesses": [
+      {
+        "uid": "Const:src/integrations/localComputeFabricProvider.ts:MAX_MESSAGE_CHARS",
+        "name": "MAX_MESSAGE_CHARS",
+        "filePath": "src/integrations/localComputeFabricProvider.ts"
+      }
+    ],
+    "calls": [
+      {
+        "uid": "Function:src/integrations/localComputeFabricProvider.ts:memorySources",
+        "name": "memorySources",
+        "filePath": "src/integrations/localComputeFabricProvider.ts"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "proc_194__prepare",
+      "name": "#prepare → Trap",
+      "step_index": 4,
+      "step_count": 7
+    },
+    {
+      "id": "proc_195__prepare",
+      "name": "#prepare → Trap",
+      "step_index": 4,
+      "step_count": 7
+    }
+  ]
+}

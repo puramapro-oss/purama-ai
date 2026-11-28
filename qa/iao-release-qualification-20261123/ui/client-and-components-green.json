@@ -1,0 +1,19 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "src/lib/consultation-client.test.ts",
+    "src/components/ConsultationPanel.test.tsx",
+    "src/components/ChatbotWidget.consultation.test.tsx"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "seconds": 3.891,
+  "environment": "Vitest/jsdom; controlled external transport",
+  "source_sha256": {
+    "src/lib/consultation-client.ts": "eb2401c65fc7d370afb45aeb72c1fe9a187295f1d8c98c165be9c753e43018fe",
+    "src/lib/consultation-client.test.ts": "bf6ed93f03f6706e785966a505e4155427b51f4902954687281196258dddf82d",
+    "src/components/ConsultationPanel.tsx": "67ef15741202bc916f2a91994f39e58214d3743f2e4ad565a5dcc59cffeb8570",
+    "src/components/ChatbotWidget.tsx": "9559c55565b88393e933975d4215becc04e25a8afa57b035e4512e21cca7c888"
+  }
+}

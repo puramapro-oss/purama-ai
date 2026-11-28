@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "include": [
+    "../../src/vite-env.d.ts",
+    "../../src/pages/PartnerAgentSettings.tsx",
+    "../../src/pages/PartnerAgentSettings.ownership.test.tsx",
+    "../../src/pages/PartnerAgentSettings.schedule.test.tsx"
+  ]
+}

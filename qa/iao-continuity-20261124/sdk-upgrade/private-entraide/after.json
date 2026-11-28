@@ -1,0 +1,22 @@
+{
+  "baseHead": "58536f32f01dd912a1ab0472cc48efec59bf2742",
+  "testSourceSHA256": "71f0d3e5985e382e5fd65d7addda5312a1be024b305e2c4a8230cbefaf76e301",
+  "command": [
+    "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+    "--max-old-space-size=512",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/entraide/supabase-adapter.test.mjs"
+  ],
+  "exit": 0,
+  "counts": [
+    "# tests 8",
+    "# pass 8",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0"
+  ],
+  "publicInputsConformAfterOnlyTestVersionChange": true,
+  "status": "PASS"
+}

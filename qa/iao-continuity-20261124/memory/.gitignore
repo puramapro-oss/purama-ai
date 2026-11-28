@@ -1,0 +1,12 @@
+impact-projection-tests.log
+before-command.json
+before.json
+before.log
+after-command.json
+after.json
+after.log
+adapter-regression-command.json
+adapter-regression.json
+adapter-regression.log
+typecheck-command.json
+typecheck.log

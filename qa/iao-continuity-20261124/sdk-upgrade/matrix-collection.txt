@@ -1,0 +1,67 @@
+Listing tests:
+  [chromium-small-touch-320x568] › auth-client.spec.ts:71:1 › real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors
+  [chromium-small-touch-320x568] › auth-client.spec.ts:82:1 › real auth client recovers a persisted session and clears it on sign-out without a stale identity
+  [chromium-small-touch-320x568] › auth-client.spec.ts:97:1 › real auth client does not restore a signed-out session when an older refresh completes late
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:108:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:120:1 › two submits in the same browser task admit one request
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:131:1 › stop aborts the stream, removes partial output and restores the editable request
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:171:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:184:1 › account change during conversation creation prevents a subsequent model call
+  [chromium-small-touch-320x568] › lifecycle.spec.ts:214:1 › retrying a failed model request reuses the confirmed user turn
+  [chromium-small-touch-320x568] › workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request
+  [chromium-small-touch-320x568] › workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft
+  [chromium-small-touch-320x568] › workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output
+  [firefox-desktop-1280x800] › auth-client.spec.ts:71:1 › real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors
+  [firefox-desktop-1280x800] › auth-client.spec.ts:82:1 › real auth client recovers a persisted session and clears it on sign-out without a stale identity
+  [firefox-desktop-1280x800] › auth-client.spec.ts:97:1 › real auth client does not restore a signed-out session when an older refresh completes late
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:108:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:120:1 › two submits in the same browser task admit one request
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:131:1 › stop aborts the stream, removes partial output and restores the editable request
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:171:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:184:1 › account change during conversation creation prevents a subsequent model call
+  [firefox-desktop-1280x800] › lifecycle.spec.ts:214:1 › retrying a failed model request reuses the confirmed user turn
+  [firefox-desktop-1280x800] › workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request
+  [firefox-desktop-1280x800] › workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft
+  [firefox-desktop-1280x800] › workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output
+  [webkit-desktop-1280x800] › auth-client.spec.ts:71:1 › real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors
+  [webkit-desktop-1280x800] › auth-client.spec.ts:82:1 › real auth client recovers a persisted session and clears it on sign-out without a stale identity
+  [webkit-desktop-1280x800] › auth-client.spec.ts:97:1 › real auth client does not restore a signed-out session when an older refresh completes late
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:108:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:120:1 › two submits in the same browser task admit one request
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:131:1 › stop aborts the stream, removes partial output and restores the editable request
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:171:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:184:1 › account change during conversation creation prevents a subsequent model call
+  [webkit-desktop-1280x800] › lifecycle.spec.ts:214:1 › retrying a failed model request reuses the confirmed user turn
+  [webkit-desktop-1280x800] › workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request
+  [webkit-desktop-1280x800] › workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft
+  [webkit-desktop-1280x800] › workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output
+  [webkit-mobile-touch-390x844] › auth-client.spec.ts:71:1 › real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors
+  [webkit-mobile-touch-390x844] › auth-client.spec.ts:82:1 › real auth client recovers a persisted session and clears it on sign-out without a stale identity
+  [webkit-mobile-touch-390x844] › auth-client.spec.ts:97:1 › real auth client does not restore a signed-out session when an older refresh completes late
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:108:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:120:1 › two submits in the same browser task admit one request
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:131:1 › stop aborts the stream, removes partial output and restores the editable request
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:171:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:184:1 › account change during conversation creation prevents a subsequent model call
+  [webkit-mobile-touch-390x844] › lifecycle.spec.ts:214:1 › retrying a failed model request reuses the confirmed user turn
+  [webkit-mobile-touch-390x844] › workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request
+  [webkit-mobile-touch-390x844] › workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft
+  [webkit-mobile-touch-390x844] › workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output
+  [webkit-tablet-touch-768x1024] › auth-client.spec.ts:71:1 › real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors
+  [webkit-tablet-touch-768x1024] › auth-client.spec.ts:82:1 › real auth client recovers a persisted session and clears it on sign-out without a stale identity
+  [webkit-tablet-touch-768x1024] › auth-client.spec.ts:97:1 › real auth client does not restore a signed-out session when an older refresh completes late
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:108:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:120:1 › two submits in the same browser task admit one request
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:131:1 › stop aborts the stream, removes partial output and restores the editable request
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:171:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:184:1 › account change during conversation creation prevents a subsequent model call
+  [webkit-tablet-touch-768x1024] › lifecycle.spec.ts:214:1 › retrying a failed model request reuses the confirmed user turn
+  [webkit-tablet-touch-768x1024] › workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request
+  [webkit-tablet-touch-768x1024] › workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft
+  [webkit-tablet-touch-768x1024] › workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output
+Total: 65 tests in 3 files

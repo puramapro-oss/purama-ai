@@ -1,0 +1,14 @@
+--- a/karta/test/overageCredit.test.ts
++++ b/karta/test/overageCredit.test.ts
+@@ -340,3 +340,6 @@
+ it('stops the migration on historical duplicate sessions without deleting or rewriting a credit', async () => {
++  const phaseStarted = performance.now();
+   const db = await database(false);
++  console.log('PHASE_SETUP_MS', performance.now() - phaseStarted);
++  const assertionsStarted = performance.now();
+   try {
+@@ -348,3 +351,3 @@
+     expect((await db.query("SELECT column_name FROM information_schema.columns WHERE table_schema = 'purama_ai' AND table_name = 'overage_credits' AND column_name = 'payment_confirmed_at'")).rows).toEqual([]);
+-  } finally { await db.close(); }
++  } finally { console.log('PHASE_ASSERTIONS_MS', performance.now() - assertionsStarted); const closeStarted = performance.now(); await db.close(); console.log('PHASE_CLOSE_MS', performance.now() - closeStarted); }
+ });

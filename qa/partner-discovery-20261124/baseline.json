@@ -1,0 +1,55 @@
+{
+  "base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "source_sha256": "466daa6965a9a3b8dd8d04384d7ca928850024b9ccffcaf2f7284a40f95ec2c1",
+  "records": [
+    {
+      "source": "gitnexus-partner-initial.log",
+      "artifact": "baseline-gitnexus-partner-initial.log.gz",
+      "uncompressed_sha256": "f047d82a8228f76a28a62ea47eb77d3851bf39a08147c12b4415c727bc2ea704",
+      "uncompressed_bytes": 518
+    },
+    {
+      "source": "gitnexus-partner-bounded.log",
+      "artifact": "baseline-gitnexus-partner-bounded.log.gz",
+      "uncompressed_sha256": "3209feb1ea29958c75af9db7a98f66b5c721151b1cacfdddfd1dc8fac0fc2f76",
+      "uncompressed_bytes": 1156
+    },
+    {
+      "source": "gitnexus-partner-sequential.log",
+      "artifact": "baseline-gitnexus-partner-sequential.log.gz",
+      "uncompressed_sha256": "35c3f0235e2ae5c0019fc213703bbf5730d517303b46edba04730b014815493e",
+      "uncompressed_bytes": 1961
+    },
+    {
+      "source": "gitnexus-partner-product.log",
+      "artifact": "baseline-gitnexus-partner-product.log.gz",
+      "uncompressed_sha256": "7e0427a58158e369af0acc3ff73a247e9c2a40be741e0827cf4e8ff70cd7c8d6",
+      "uncompressed_bytes": 3973
+    },
+    {
+      "source": "partner-ui-discovery-red.log",
+      "artifact": "baseline-partner-ui-discovery-red.log.gz",
+      "uncompressed_sha256": "441e1ad32134ec1776fe75b185dbf2877addc7ffeb0ec3f8555061c95dfffdc0",
+      "uncompressed_bytes": 198062
+    },
+    {
+      "source": "iao-discovery-audit/red.log",
+      "artifact": "baseline-iao-discovery-audit-red.log.gz",
+      "uncompressed_sha256": "63957259571abaf01795fb3764019e42547399e307f6a3d04f42d818d643d1e1",
+      "uncompressed_bytes": 31539
+    },
+    {
+      "source": "iao-discovery-audit/before.json",
+      "artifact": "baseline-iao-discovery-audit-before.json.gz",
+      "uncompressed_sha256": "b4e53a8391bbbf6c043f920ecffaa2b9c83293c19691275008ab84f0dc5b0052",
+      "uncompressed_bytes": 3763
+    },
+    {
+      "source": "iao-discovery-audit/red-receipt.json",
+      "artifact": "baseline-iao-discovery-audit-red-receipt.json.gz",
+      "uncompressed_sha256": "6162b13d19a92deb772f9e96b3266da54f0d434e0809f610939cc1c7d7d3718a",
+      "uncompressed_bytes": 1175
+    }
+  ],
+  "scope": "Reproductions avant correction. Aucun statut de déploiement ni de fournisseur réel. Le rouge backend initial contient63cas; tout ajout ultérieur reste distinct."
+}

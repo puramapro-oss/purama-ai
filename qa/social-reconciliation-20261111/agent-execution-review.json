@@ -1,0 +1,119 @@
+{
+  "recorded_at": "2026-11-11T08:31:56.818707+00:00",
+  "phase": "final local qualification after independent SDK identity review",
+  "base_head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+  "production_file": "src/hooks/useAgentExecution.ts",
+  "before_sha256": "9d80f3b86875c942ab1e6fb6b21d04fcbfeb94f2daa2292db234b2e9c49c6ee6",
+  "after_sha256": "cc69a601f6200c55cb3864727af78e7a42da4f2922ef1072620c14308baa67cb",
+  "test_file": "tests/social-agent-execution.test.mjs",
+  "test_sha256": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+  "runtime": "Node22.23.4/React18.3.1/JSDOM26.1.0",
+  "boundary": "Production React hook and scope helpers. Eleven permanent cases, including real Supabase/PostgREST SDK with inert fetch. No hosted Auth, database or provider qualification.",
+  "gates": {
+    "before": {
+      "exit_code": 1,
+      "counts": {
+        "tests": 10,
+        "pass": 1,
+        "fail": 9,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "d0b4e0c9869d5f271cb9def12dc3c7ee6285b5bb6a2d06a276f25765fabf177f"
+    },
+    "after": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "046da0d3668245b1bf2bcd8c60f15063776076898a1b3fa78e5e79ad6aa142a4"
+    },
+    "before-sdk-headers": {
+      "exit_code": 1,
+      "counts": {
+        "tests": 11,
+        "pass": 10,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "59fe085dddf62ff7104203cdf100baac375a52fd9fa47e3d9b2b10ea2d33878e"
+    },
+    "after-sdk-headers": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "5e9bafe791451acfeb4d758db54012003ce657caa8b92d8fdb270eacdd208d7c"
+    },
+    "independent-sdk-bearer-before": {
+      "exit_code": 1,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "e06dce2943ea123833c411074677fd5a257a694135e6351d7c147d53bef618cb"
+    },
+    "independent-sdk-bearer-after": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log_sha256": "9d53db6dad6b28f6177a94587569f338640fa23dea3f61ee3317c4897bd21fb3"
+    }
+  },
+  "gitnexus": {
+    "impact_file": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/root-agent-execution-review/impact-before.log",
+    "risk": "LOW",
+    "resolved_upstream_callers": 2,
+    "log_sha256": "3f5cdac4c16034cf988934078d170367ef84c81ea6cd7a00595ea5d0ed161203"
+  },
+  "status": "PASS",
+  "production_sha256": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+  "initial_phase_receipt_sha256": "626a86a28f70cd3fcfff73a596ddbe75afd84fbfff07815329cd0c7a7606415e",
+  "fixes": [
+    "Per-owner and per-agent state and request leases",
+    "Captured session owner and explicit bearer for proxy invocation",
+    "Same bearer captured on both PostgREST requests without mutating global client headers",
+    "AbortSignal passed to proxy and PostgREST; guards after each await",
+    "Reset and unmount invalidate old requests; duplicate admission denied"
+  ],
+  "independent_review": {
+    "status": "PASS",
+    "reviewer": "audit_portfolio",
+    "validation_helper_unchanged": true,
+    "reset_layout_loop_found": false
+  },
+  "installed_packages": {
+    "react": "18.3.1",
+    "jsdom": "26.1.0",
+    "typescript": "5.8.3",
+    "@supabase/supabase-js": "2.91.0",
+    "@supabase/postgrest-js": "2.91.0"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "output": ""
+  }
+}

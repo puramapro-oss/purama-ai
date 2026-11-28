@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/evidence/tsconfig.sender.json"
+  ],
+  "cwd": "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/repo/karta",
+  "exit_code": 0,
+  "output": "",
+  "scope": "Le vrai test sender avec les options KARTA, include ciblé et typeRoots explicite vers les dépendances existantes car le tsconfig temporaire réside hors du dépôt."
+}

@@ -1,0 +1,31 @@
+
+  GitNexus Analyzer (1.6.12)
+Warning: npm 11.x can crash while installing gitnexus via npx (npm/arborist "node.target is null"). Prefer: pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-build=tree-sitter dlx gitnexus@latest analyze or npm install -g gitnexus@latest. See https://github.com/abhigyanpatwari/GitNexus/issues/1939
+[2K
+Reclaiming stale index lock from dead analyze (pid 61455, invocation deb4b362-482e-475a-927a-424b6656c672).
+[2K
+index schema changed (built by an unidentified GitNexus build, this build is 60fc01e4e4ed); forcing a full re-analyze so the database is recreated from the current schema.
+[2K
+analysis capabilities changed (missing:graph.class-framework-annotations); forcing a full rebuild so persisted feature evidence is complete.
+[2K
+analyzer runner identity changed (stamped schema missing, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.
+[2K
+  Skipped 2 large files (>512KB, likely generated/vendored)
+[2K
+  - qa/iao-runtime-finalization-20261110/verification.json
+[2K
+  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K
+  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+{"level":40,"time":1794385587243,"name":"gitnexus","msg":"[scope-resolution] 2018 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (javascript/typescript), children (typescript), command (typescript), data (javascript/typescript), env (javascript/typescript), errors (javascript/typescript), label (typescript), lines (typescript), messages (typescript), port (javascript/typescript), …"}
+{"level":40,"time":1794385587596,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1172,"entryPointsUnexplored":0,"walksCutByBudget":35,"tracesDepthCapped":0,"calleesDropped":3336,"processesDropped":0},"msg":"[processes] 594 flows reported, but whole flows are MISSING: 1172 of 1372 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 3336 callee(s) skipped at maxBranching, 35 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+{"level":30,"time":1794385594991,"name":"gitnexus","msg":"name-fallback resolution: 712 call sites (74 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 707/0, typescript 5/0)"}
+
+  Repository indexed successfully (112.6s)
+
+  18,388 nodes | 50,565 edges | 761 clusters | 594 flows
+  /Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

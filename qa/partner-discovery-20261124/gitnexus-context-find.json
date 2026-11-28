@@ -1,0 +1,35 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/pages/PartnerAgentProspects.tsx:PartnerAgentProspects.handleFind@274:2",
+    "name": "handleFind",
+    "kind": "Function",
+    "filePath": "src/pages/PartnerAgentProspects.tsx",
+    "startLine": 275,
+    "endLine": 287
+  },
+  "epistemic": "exact",
+  "incoming": {},
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:src/lib/partner.ts:findProspects",
+        "name": "findProspects",
+        "filePath": "src/lib/partner.ts"
+      },
+      {
+        "uid": "Function:src/pages/PartnerAgentProspects.tsx:PartnerAgentProspects.refresh@78:2",
+        "name": "refresh",
+        "filePath": "src/pages/PartnerAgentProspects.tsx"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "proc_33_handlefind",
+      "name": "HandleFind → Sb",
+      "step_index": 1,
+      "step_count": 4
+    }
+  ]
+}

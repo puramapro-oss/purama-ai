@@ -1,0 +1,82 @@
+✖ raw user identifier is rejected before Google exchange or persistence (182.881892ms)
+✖ a rejected database write cannot redirect as connected (52.283389ms)
+✖ start produces a random server-recorded state instead of exposing the actor id (49.23575ms)
+✖ a failed Google profile request cannot create a connected account (35.197146ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 944.129283
+
+✖ failing tests:
+
+test at tests/oauth-gmail/handler.test.mjs:126:1
+✖ raw user identifier is rejected before Google exchange or persistence (182.881892ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-gmail/handler.test.mjs:129:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/oauth-gmail/handler.test.mjs:134:1
+✖ a rejected database write cannot redirect as connected (52.283389ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /gmail=connected/. Input:
+  
+  'https://app.fixture.invalid/dashboard/email-agent?gmail=connected'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-gmail/handler.test.mjs:138:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'https://app.fixture.invalid/dashboard/email-agent?gmail=connected',
+    expected: /gmail=connected/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/oauth-gmail/handler.test.mjs:142:1
+✖ start produces a random server-recorded state instead of exposing the actor id (49.23575ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^[a-f0-9]{64}$/. Input:
+  
+  '11111111-1111-4111-8111-111111111111'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-gmail/handler.test.mjs:150:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '11111111-1111-4111-8111-111111111111',
+    expected: /^[a-f0-9]{64}$/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/oauth-gmail/handler.test.mjs:156:1
+✖ a failed Google profile request cannot create a connected account (35.197146ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-gmail/handler.test.mjs:159:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

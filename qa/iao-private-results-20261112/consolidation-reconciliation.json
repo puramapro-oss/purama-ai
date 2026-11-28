@@ -1,0 +1,338 @@
+{
+  "recorded_at": "2026-11-12T06:38:01.030814+00:00",
+  "merge_parents": [
+    "70e6ebe8c6dcf338675f7024e29180722497dd13",
+    "58baecb7f63d23ede5a2318078cbe8bac9807e78"
+  ],
+  "common_base": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "merge_conflicts": 0,
+  "owned_files_preserved": {
+    ".github/workflows/purama-chef-hardening.yml": {
+      "expected_blob": "9a2b2240a1d38fc081fa4586600735bf7c53a3d3",
+      "merged_blob": "9a2b2240a1d38fc081fa4586600735bf7c53a3d3"
+    },
+    "docs/iao-private-results.md": {
+      "expected_blob": "3db376cb849954624b08360a80cc4f82159e9836",
+      "merged_blob": "3db376cb849954624b08360a80cc4f82159e9836"
+    },
+    "karta/migrations/028_private_tool_results.sql": {
+      "expected_blob": "65753e375d52d3c90315fe444d0aea116382256b",
+      "merged_blob": "65753e375d52d3c90315fe444d0aea116382256b"
+    },
+    "karta/src/engine/approval.ts": {
+      "expected_blob": "5967b081b6374afec65c5c866d359da93bdacd33",
+      "merged_blob": "5967b081b6374afec65c5c866d359da93bdacd33"
+    },
+    "karta/src/engine/loop.ts": {
+      "expected_blob": "5660f66bdbc8704dd14c3cbcf164c6481603f640",
+      "merged_blob": "5660f66bdbc8704dd14c3cbcf164c6481603f640"
+    },
+    "karta/src/engine/private-tool-results.ts": {
+      "expected_blob": "a16eae03a5a4328b57f422f1797e202506942b7d",
+      "merged_blob": "a16eae03a5a4328b57f422f1797e202506942b7d"
+    },
+    "karta/src/knowledge/private-result-view.ts": {
+      "expected_blob": "270b24675848652c06a75a8144e84af6b807db00",
+      "merged_blob": "270b24675848652c06a75a8144e84af6b807db00"
+    },
+    "karta/src/knowledge/public-search.ts": {
+      "expected_blob": "5b73b35e5749c637e1dc66aa275f1647cb27952c",
+      "merged_blob": "5b73b35e5749c637e1dc66aa275f1647cb27952c"
+    },
+    "karta/test/knowledgeSearch.test.ts": {
+      "expected_blob": "09927ad80d018eff5396a88ed0a1c37e576bcf0c",
+      "merged_blob": "09927ad80d018eff5396a88ed0a1c37e576bcf0c"
+    },
+    "karta/test/privateToolResults.native.mjs": {
+      "expected_blob": "67866c81c19e0f6a207f3787c238899f976587ee",
+      "merged_blob": "67866c81c19e0f6a207f3787c238899f976587ee"
+    },
+    "karta/test/privateToolResults.test.ts": {
+      "expected_blob": "cf7616b06acca574b6d294f85079b441f619ce3f",
+      "merged_blob": "cf7616b06acca574b6d294f85079b441f619ce3f"
+    },
+    "karta/test/privateToolResultsExecution.test.ts": {
+      "expected_blob": "3016d0fb42e3a9826bcbb574b0f67597e459c30c",
+      "merged_blob": "3016d0fb42e3a9826bcbb574b0f67597e459c30c"
+    },
+    "karta/test/privateToolResultsSql.test.ts": {
+      "expected_blob": "831218cbeefb7931913f6aad119bc46ceea69158",
+      "merged_blob": "831218cbeefb7931913f6aad119bc46ceea69158"
+    },
+    "qa/iao-private-results-20261112/README.md": {
+      "expected_blob": "2c508765e312d84ef67b6b16b389fb98f505300b",
+      "merged_blob": "2c508765e312d84ef67b6b16b389fb98f505300b"
+    },
+    "qa/iao-private-results-20261112/detect-changes.json": {
+      "expected_blob": "0037ea7fb8fab2cb5f51fc42f7b23543894bac1b",
+      "merged_blob": "0037ea7fb8fab2cb5f51fc42f7b23543894bac1b"
+    },
+    "qa/iao-private-results-20261112/edge-chat.tap": {
+      "expected_blob": "2a864db3f33ac7dcc06cd8ee83447b591a14a1c5",
+      "merged_blob": "2a864db3f33ac7dcc06cd8ee83447b591a14a1c5"
+    },
+    "qa/iao-private-results-20261112/edge-sdk-typecheck.json": {
+      "expected_blob": "16105746a383932b402d1925a202cbb89e011c60",
+      "merged_blob": "16105746a383932b402d1925a202cbb89e011c60"
+    },
+    "qa/iao-private-results-20261112/engine-execution.json": {
+      "expected_blob": "838604ee191b3aec3a65aeeb2a15835020396115",
+      "merged_blob": "838604ee191b3aec3a65aeeb2a15835020396115"
+    },
+    "qa/iao-private-results-20261112/frontend-verification.json": {
+      "expected_blob": "881b4a0bc0d07ad1ac9578fc488d0c5874d08509",
+      "merged_blob": "881b4a0bc0d07ad1ac9578fc488d0c5874d08509"
+    },
+    "qa/iao-private-results-20261112/impact-before.json": {
+      "expected_blob": "3ad7dcab8520eb4456fe988060172f610fa87d85",
+      "merged_blob": "3ad7dcab8520eb4456fe988060172f610fa87d85"
+    },
+    "qa/iao-private-results-20261112/impact-edge-harness.json": {
+      "expected_blob": "0ad44bfaed3f52a3f75b03c173ce24e39ec1f721",
+      "merged_blob": "0ad44bfaed3f52a3f75b03c173ce24e39ec1f721"
+    },
+    "qa/iao-private-results-20261112/impact-native-ci.json": {
+      "expected_blob": "8898b942b288715135a533b59a1b87187fc3ad9a",
+      "merged_blob": "8898b942b288715135a533b59a1b87187fc3ad9a"
+    },
+    "qa/iao-private-results-20261112/initial-ci-receipt.json": {
+      "expected_blob": "ab93c50f88f4392406d993c255d15a0d9c2af30a",
+      "merged_blob": "ab93c50f88f4392406d993c255d15a0d9c2af30a"
+    },
+    "qa/iao-private-results-20261112/karta-private-policy.json": {
+      "expected_blob": "64f4520a344c800b759cadf8e5626f0f1b8deb02",
+      "merged_blob": "64f4520a344c800b759cadf8e5626f0f1b8deb02"
+    },
+    "qa/iao-private-results-20261112/lint-targeted.json": {
+      "expected_blob": "4d0340fbd18b1b8655f268a237ea98aee47e2957",
+      "merged_blob": "4d0340fbd18b1b8655f268a237ea98aee47e2957"
+    },
+    "qa/iao-private-results-20261112/local-verification.json": {
+      "expected_blob": "735e568e2c8526f26c8fba6569415e388a0e085f",
+      "merged_blob": "735e568e2c8526f26c8fba6569415e388a0e085f"
+    },
+    "qa/iao-private-results-20261112/retry-after-after.json": {
+      "expected_blob": "56690b2c86c09d40c4edb28e3aceff20f5e768ab",
+      "merged_blob": "56690b2c86c09d40c4edb28e3aceff20f5e768ab"
+    },
+    "qa/iao-private-results-20261112/retry-after-before.json": {
+      "expected_blob": "9b2b7e1b999512ea6bbf6ee8097509e31fdac13c",
+      "merged_blob": "9b2b7e1b999512ea6bbf6ee8097509e31fdac13c"
+    },
+    "qa/iao-private-results-20261112/unicode-detect-changes.json": {
+      "expected_blob": "5c3c0bdfae8352b22b0b3fabe14ab67841b569d2",
+      "merged_blob": "5c3c0bdfae8352b22b0b3fabe14ab67841b569d2"
+    },
+    "qa/iao-private-results-20261112/unicode-snapshot-after.json": {
+      "expected_blob": "e6bc705451a4225d5ceab59ef92469ce2252dd2f",
+      "merged_blob": "e6bc705451a4225d5ceab59ef92469ce2252dd2f"
+    },
+    "qa/iao-private-results-20261112/unicode-snapshot-before.json": {
+      "expected_blob": "2a7b5a1b7f88afacdb2612747c37d8ebdc005e32",
+      "merged_blob": "2a7b5a1b7f88afacdb2612747c37d8ebdc005e32"
+    },
+    "src/components/karta/PrivateToolResults.test.tsx": {
+      "expected_blob": "267003af034feaa9dee3c7b6e0985ec556aa1952",
+      "merged_blob": "267003af034feaa9dee3c7b6e0985ec556aa1952"
+    },
+    "src/components/karta/PrivateToolResults.tsx": {
+      "expected_blob": "28279b970ee38a86600c4797b11ec0184bc0138f",
+      "merged_blob": "28279b970ee38a86600c4797b11ec0184bc0138f"
+    },
+    "src/lib/creator-agent-results.test.ts": {
+      "expected_blob": "1f5ef8a982447b3f79a2a947257cc4cbd8f0a94c",
+      "merged_blob": "1f5ef8a982447b3f79a2a947257cc4cbd8f0a94c"
+    },
+    "src/lib/creator-agent.ts": {
+      "expected_blob": "00f5359367a4d29d70ac56634fa23bad24a64000",
+      "merged_blob": "00f5359367a4d29d70ac56634fa23bad24a64000"
+    },
+    "src/lib/private-tool-results.test.ts": {
+      "expected_blob": "3af489b0ebe61ea27a0e307fdcec701dece849d3",
+      "merged_blob": "3af489b0ebe61ea27a0e307fdcec701dece849d3"
+    },
+    "src/lib/private-tool-results.ts": {
+      "expected_blob": "e85f94e2694caea63eb68270b82fd4dd46deca1a",
+      "merged_blob": "e85f94e2694caea63eb68270b82fd4dd46deca1a"
+    },
+    "src/pages/CreatorAgentDetail.results.test.tsx": {
+      "expected_blob": "0236a3dac6ce9037136294917ab00c5a925ab60d",
+      "merged_blob": "0236a3dac6ce9037136294917ab00c5a925ab60d"
+    },
+    "src/pages/CreatorAgentDetail.tsx": {
+      "expected_blob": "8de07cf9196108c96a49a6c593bcc7e6b85c1e70",
+      "merged_blob": "8de07cf9196108c96a49a6c593bcc7e6b85c1e70"
+    },
+    "supabase/functions/_shared/private-tool-results.ts": {
+      "expected_blob": "6511f31a3b0b64305d42c0494a0e0b12a5461a95",
+      "merged_blob": "6511f31a3b0b64305d42c0494a0e0b12a5461a95"
+    },
+    "supabase/functions/_shared/validation.ts": {
+      "expected_blob": "9c7638f0da1cf057b1b1eb70296ae653217ca2d2",
+      "merged_blob": "9c7638f0da1cf057b1b1eb70296ae653217ca2d2"
+    },
+    "supabase/functions/creator-agent-chat/index.ts": {
+      "expected_blob": "ff1222f9dbbce771a08059ba0892a653a7722935",
+      "merged_blob": "ff1222f9dbbce771a08059ba0892a653a7722935"
+    },
+    "tests/creator-chat-authorization.test.mjs": {
+      "expected_blob": "38d594c22442e18db633971e7872e29fa082c06f",
+      "merged_blob": "38d594c22442e18db633971e7872e29fa082c06f"
+    }
+  },
+  "upstream_files_preserved": {
+    "karta/.env.example": {
+      "expected_blob": "0c8109b8b7e0a8a3ff8e7e722bdfaa576ff7aa08",
+      "merged_blob": "0c8109b8b7e0a8a3ff8e7e722bdfaa576ff7aa08"
+    },
+    "karta/src/agents/comptaAgent.ts": {
+      "expected_blob": "d1b95002fbb6daee3c775635922c8ad01ad40fa2",
+      "merged_blob": "d1b95002fbb6daee3c775635922c8ad01ad40fa2"
+    },
+    "karta/src/agents/legalAgent.ts": {
+      "expected_blob": "272484c6d6ce06d62c09e4aa1f1571d1b077fe31",
+      "merged_blob": "272484c6d6ce06d62c09e4aa1f1571d1b077fe31"
+    },
+    "karta/src/agents/partnerAgent.ts": {
+      "expected_blob": "a12663657eb34d0e8534cb9aedf13b80690c1b6e",
+      "merged_blob": "a12663657eb34d0e8534cb9aedf13b80690c1b6e"
+    },
+    "karta/src/claude/real.ts": {
+      "expected_blob": "6f4c5d237c08a886ada641b1266922dedc7f6b20",
+      "merged_blob": "6f4c5d237c08a886ada641b1266922dedc7f6b20"
+    },
+    "karta/src/claude/types.ts": {
+      "expected_blob": "ab316b33d0238dae893e9921d2cef8242a97641c",
+      "merged_blob": "ab316b33d0238dae893e9921d2cef8242a97641c"
+    },
+    "karta/src/config.ts": {
+      "expected_blob": "72734b3014263ffe145b0f705c5c887ead6ff652",
+      "merged_blob": "72734b3014263ffe145b0f705c5c887ead6ff652"
+    },
+    "karta/test/agentContextContract.test.ts": {
+      "expected_blob": "63b7277edd55e986d02d871d879ead00f39ab1ad",
+      "merged_blob": "63b7277edd55e986d02d871d879ead00f39ab1ad"
+    },
+    "karta/test/assistantPolicy.test.ts": {
+      "expected_blob": "77cda8e9788fe7598ec1c5d250f5cceda6f2d466",
+      "merged_blob": "77cda8e9788fe7598ec1c5d250f5cceda6f2d466"
+    },
+    "karta/test/claudeTransportCost.test.ts": {
+      "expected_blob": "f90ebc990585f2cf09c8fdb6da5d076fa868df90",
+      "merged_blob": "f90ebc990585f2cf09c8fdb6da5d076fa868df90"
+    },
+    "karta/test/claudeTransportDeadline.test.ts": {
+      "expected_blob": "603e613030524c5e79aeb298faf086a63b333dab",
+      "merged_blob": "603e613030524c5e79aeb298faf086a63b333dab"
+    },
+    "karta/test/modelQualityRouting.test.ts": {
+      "expected_blob": "4ff41794a3a6f7e96d16e136cce5d01b411fc33c",
+      "merged_blob": "4ff41794a3a6f7e96d16e136cce5d01b411fc33c"
+    },
+    "qa/iao-quality-latency-20261112/README.md": {
+      "expected_blob": "0294980383b1401847634906d8c3f91cfeecc80f",
+      "merged_blob": "0294980383b1401847634906d8c3f91cfeecc80f"
+    },
+    "qa/iao-quality-latency-20261112/base-reconciliation.json": {
+      "expected_blob": "d867e68585fbd7ebecbcefdb1e3a4cf6a8696bc8",
+      "merged_blob": "d867e68585fbd7ebecbcefdb1e3a4cf6a8696bc8"
+    },
+    "qa/iao-quality-latency-20261112/context-benchmark.json": {
+      "expected_blob": "21a901ce239a245cb74bca4c6e01e8c083e31d2c",
+      "merged_blob": "21a901ce239a245cb74bca4c6e01e8c083e31d2c"
+    },
+    "qa/iao-quality-latency-20261112/context-benchmark.mjs": {
+      "expected_blob": "ce80da2416afec733c8261a072316bdbb1df5b27",
+      "merged_blob": "ce80da2416afec733c8261a072316bdbb1df5b27"
+    },
+    "qa/iao-quality-latency-20261112/evidence/build.txt": {
+      "expected_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "merged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qa/iao-quality-latency-20261112/evidence/context-baseline.txt": {
+      "expected_blob": "a8fd4b6fb739e2854063fdcee4a6fc3826d23b6c",
+      "merged_blob": "a8fd4b6fb739e2854063fdcee4a6fc3826d23b6c"
+    },
+    "qa/iao-quality-latency-20261112/evidence/context-targeted.txt": {
+      "expected_blob": "1275011868ee1faf151837c8af1e889ac5ca1a6e",
+      "merged_blob": "1275011868ee1faf151837c8af1e889ac5ca1a6e"
+    },
+    "qa/iao-quality-latency-20261112/evidence/full-first.txt": {
+      "expected_blob": "8eabd86a37aa94ad871ac3dbd44df467b873dfb9",
+      "merged_blob": "8eabd86a37aa94ad871ac3dbd44df467b873dfb9"
+    },
+    "qa/iao-quality-latency-20261112/evidence/full-serial.txt": {
+      "expected_blob": "99e3eba9f739e1c9d8c76c6ed1ad8296fc8b4bb3",
+      "merged_blob": "99e3eba9f739e1c9d8c76c6ed1ad8296fc8b4bb3"
+    },
+    "qa/iao-quality-latency-20261112/evidence/recovery.txt": {
+      "expected_blob": "55446c5346d69588856f303bf51c9a06529dd2a6",
+      "merged_blob": "55446c5346d69588856f303bf51c9a06529dd2a6"
+    },
+    "qa/iao-quality-latency-20261112/evidence/routing-baseline.txt": {
+      "expected_blob": "08dcb17c4802df64c6cfca4bec0413b5b1f99029",
+      "merged_blob": "08dcb17c4802df64c6cfca4bec0413b5b1f99029"
+    },
+    "qa/iao-quality-latency-20261112/evidence/routing-targeted.txt": {
+      "expected_blob": "11be0878dfef9fd6fc097de98301242d781bbeaf",
+      "merged_blob": "11be0878dfef9fd6fc097de98301242d781bbeaf"
+    },
+    "qa/iao-quality-latency-20261112/evidence/transport-baseline.txt": {
+      "expected_blob": "1c4a3460fc8e2652fa4439c62cb5861e291d1dd2",
+      "merged_blob": "1c4a3460fc8e2652fa4439c62cb5861e291d1dd2"
+    },
+    "qa/iao-quality-latency-20261112/evidence/transport-targeted.txt": {
+      "expected_blob": "fb4f6404e2aefc5694724d4763bab7c72c6a4b31",
+      "merged_blob": "fb4f6404e2aefc5694724d4763bab7c72c6a4b31"
+    },
+    "qa/iao-quality-latency-20261112/evidence/typecheck.txt": {
+      "expected_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "merged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qa/iao-quality-latency-20261112/gitnexus-detect.json": {
+      "expected_blob": "faaa4458ee9d529e9813d222e12591e60e5ae8dc",
+      "merged_blob": "faaa4458ee9d529e9813d222e12591e60e5ae8dc"
+    },
+    "qa/iao-quality-latency-20261112/gitnexus-prechange.json": {
+      "expected_blob": "a42c408cbd08de108248dcf707f27348108e619a",
+      "merged_blob": "a42c408cbd08de108248dcf707f27348108e619a"
+    },
+    "qa/iao-quality-latency-20261112/integration-20261112.json": {
+      "expected_blob": "602757d77a3ddb544eba567cdf9939965961caef",
+      "merged_blob": "602757d77a3ddb544eba567cdf9939965961caef"
+    },
+    "qa/iao-quality-latency-20261112/integration-evidence/build.txt": {
+      "expected_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "merged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qa/iao-quality-latency-20261112/integration-evidence/cost-before.txt": {
+      "expected_blob": "f826402fa6d2b84e3efe6f3a74a96cc1f7e5607f",
+      "merged_blob": "f826402fa6d2b84e3efe6f3a74a96cc1f7e5607f"
+    },
+    "qa/iao-quality-latency-20261112/integration-evidence/targeted-after.txt": {
+      "expected_blob": "b858d382601077ca1bfcb1c71ebc4a1baab39f6e",
+      "merged_blob": "b858d382601077ca1bfcb1c71ebc4a1baab39f6e"
+    },
+    "qa/iao-quality-latency-20261112/integration-evidence/typecheck-retry.txt": {
+      "expected_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "merged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qa/iao-quality-latency-20261112/sources.json": {
+      "expected_blob": "88df8a6063597b00fd2d81536454b6449cdf5781",
+      "merged_blob": "88df8a6063597b00fd2d81536454b6449cdf5781"
+    },
+    "qa/iao-quality-latency-20261112/verification.json": {
+      "expected_blob": "37904991dd5897d17a828af6281be50e026016d6",
+      "merged_blob": "37904991dd5897d17a828af6281be50e026016d6"
+    },
+    "vercel.json": {
+      "expected_blob": "7b57d514d8d43d3a5417b59424b47d13312b2c87",
+      "merged_blob": "7b57d514d8d43d3a5417b59424b47d13312b2c87"
+    }
+  },
+  "overlap": [],
+  "notes": [
+    "Automatic merge without manual edits to model/cost/agent code.",
+    "The full exact-tree CI is required before this candidate enters consolidation."
+  ]
+}

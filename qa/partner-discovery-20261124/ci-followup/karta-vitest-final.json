@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/partnerDiscovery.test.ts",
+    "test/assistantPolicy.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "working_directory": "karta",
+  "exit_code": 0,
+  "elapsed_seconds": 24.109,
+  "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff"
+}

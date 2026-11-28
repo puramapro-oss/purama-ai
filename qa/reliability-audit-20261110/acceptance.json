@@ -1,0 +1,129 @@
+{
+  "status": "PARTIEL",
+  "base_commit": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+  "base_pr": 36,
+  "scope": [
+    "Static scheduler cancellation and stable scheduled-delivery identities",
+    "Restore the already-qualified Stripe webhook changes omitted from consolidation",
+    "Bind Google and Gmail OAuth connections to verified initiators and one-use state",
+    "Verify callback navigation, cancellation and truthful success/failure states",
+    "Prevent configuration saves from copying Gmail credentials and reject stale UI notifications",
+    "Reconcile the parallel PR39 runtime drain with stable scheduled delivery, preserving the 42d508b Web deadline fix"
+  ],
+  "gates": [
+    {
+      "name": "Source provenance and prior work preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "Impact analysis before source edits",
+      "status": "PASS"
+    },
+    {
+      "name": "Discriminating regressions fail on original source",
+      "status": "PASS"
+    },
+    {
+      "name": "Final targeted runtime and concurrency tests",
+      "status": "PASS"
+    },
+    {
+      "name": "Types, lint, builds and generated contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser paths with inert providers",
+      "status": "PASS"
+    },
+    {
+      "name": "Independent review and exact source manifest",
+      "status": "PASS"
+    },
+    {
+      "name": "Reviewable Git publication and CI status",
+      "status": "NON_TESTE",
+      "note": "Initial commit is published with PASS CI; the composed follow-up is prepared before publication."
+    },
+    {
+      "name": "Final GitNexus staged/main comparison before commit",
+      "status": "PASS",
+      "coverage": "PARTIEL",
+      "risk": "CRITICAL",
+      "receipt": "late-integration/gitnexus/receipt.json",
+      "note": "Fresh composed index, staged and main comparisons executed successfully; exact-tree staged check follows final documentation. Graph limits are retained."
+    }
+  ],
+  "production": {
+    "changed": false,
+    "real_payments": false,
+    "real_messages": false,
+    "real_oauth_authorization": false,
+    "read_only_availability": "BLOCKED",
+    "observed_at": "2026-11-10T22:24:18Z",
+    "observations": [
+      "purama.dev GET returned 404",
+      "auth.purama.dev/auth/v1/health GET returned 502",
+      "auth.purama.dev/functions/v1/oauth-google GET returned 502",
+      "purama-ai.purama.dev GET returned 402",
+      "Canonical-named Supabase containers remain stopped; active p8-t03 containers are not assumed canonical"
+    ]
+  },
+  "counterexample_base_commit": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "upstream_preserved": {
+    "commit": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+    "change": "request-body rejection rechecks cancellation/deadline",
+    "integration": "fast-forward without overlap"
+  },
+  "upstream_websearch_preserved": {
+    "commits": [
+      "26abc70",
+      "0bfd44c"
+    ],
+    "integration": "fast-forward without overlapping files; hosted CI qualifies the final composition"
+  },
+  "recorded_at": "2026-11-10T23:09:10.711498+00:00",
+  "record_phase": "Composed candidate before follow-up publication; current hosted status belongs to the exact published commit and is recorded in the PR.",
+  "whole_karta_local": {
+    "status": "PARTIEL",
+    "passed": 1643,
+    "failed": 3,
+    "failure_kind": "Test timeouts in two pre-existing PGlite migration test files",
+    "base": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+    "note": "Full hosted CI must qualify the final composition including the later upstream websearch changes."
+  },
+  "final_targeted": {
+    "oauth_node": 69,
+    "oauth_browser": 22,
+    "ui_state_browser": 17,
+    "native_sql_groups": 11,
+    "native_postgres_versions": [
+      "18.4",
+      "16.15"
+    ],
+    "scope": "Counts overlap; do not add them as independent scenarios."
+  },
+  "source_manifest": "source-manifest.json",
+  "initial_base_commit": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "publication_parent": "54971f5a511be752fa70ed94306cdb322f29ff81",
+  "runtime_composition_source": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+  "initial_published_ci": {
+    "status": "PASS",
+    "receipt": "late-integration/initial-published-ci.json",
+    "run_id": 42916932296
+  },
+  "composed_candidate": {
+    "local_status": "PASS",
+    "scheduler_union": 24,
+    "assertions_preserved": 65,
+    "neighbor_cases": [
+      36,
+      27
+    ],
+    "typecheck": "PASS",
+    "build": "PASS",
+    "independent_review": "PASS",
+    "source_entries": 62,
+    "receipt": "late-integration/scheduler/receipt.json",
+    "hosted_status": "NON_TESTE"
+  }
+}

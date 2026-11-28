@@ -1,0 +1,84 @@
+{
+  "target": {
+    "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:buildMemoryPrompt",
+    "name": "buildMemoryPrompt",
+    "type": "Function",
+    "filePath": "karta/src/integrations/localComputeFabricProvider.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [
+    {
+      "name": "complete",
+      "type": "Function",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Integrations",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:karta/src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+        "name": "complete",
+        "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_20_complete",
+            "label": "Complete → MemoryRecord",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_30_complete",
+            "label": "Complete → AssertFabricCurrent",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_31_complete",
+            "label": "Complete → FinishError",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_21_complete",
+            "label": "Complete → OwnData",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795631896146,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

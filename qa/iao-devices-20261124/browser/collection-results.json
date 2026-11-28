@@ -1,0 +1,45 @@
+{
+  "scope": "Playwright test discovery only; no browser or web server started",
+  "playwrightVersion": "1.64.1",
+  "results": [
+    {
+      "surface": "chat",
+      "expectedCollected": 30,
+      "actualCollected": 30,
+      "files": 1,
+      "exitCode": 0,
+      "durationSeconds": 0.725,
+      "status": "PASS"
+    },
+    {
+      "surface": "public",
+      "expectedCollected": 50,
+      "actualCollected": 50,
+      "files": 2,
+      "exitCode": 0,
+      "durationSeconds": 0.643,
+      "status": "PASS"
+    },
+    {
+      "surface": "offline",
+      "expectedCollected": 30,
+      "actualCollected": 30,
+      "files": 1,
+      "exitCode": 0,
+      "durationSeconds": 1.13,
+      "status": "PASS"
+    },
+    {
+      "surface": "touch",
+      "expectedCollected": 3,
+      "actualCollected": 3,
+      "files": 1,
+      "exitCode": 0,
+      "durationSeconds": 0.555,
+      "status": "PASS"
+    }
+  ],
+  "totalCollected": 113,
+  "testsExecuted": 0,
+  "status": "PASS"
+}

@@ -1,0 +1,34 @@
+{
+  "run_id": 45484899106,
+  "job_id": 138767550745,
+  "head_sha": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+  "conclusion": "failure",
+  "raw_log_sha256": "9d0295ee6efbacbd48fd4655d2dd68c7bb1b5fcbc4676c072bd2819f959b9311",
+  "log": "karta-job-before.log.gz",
+  "errors": [
+    {
+      "file": "karta/test/partnerDiscovery.test.ts",
+      "line": 482,
+      "code": "TS18046",
+      "message": "body is of type unknown"
+    },
+    {
+      "file": "karta/test/partnerDiscovery.test.ts",
+      "line": 494,
+      "code": "TS18046",
+      "message": "body is of type unknown"
+    },
+    {
+      "file": "karta/test/partnerDiscovery.test.ts",
+      "line": 495,
+      "code": "TS18046",
+      "message": "body is of type unknown"
+    },
+    {
+      "file": "karta/test/partnerDiscovery.test.ts",
+      "line": 511,
+      "code": "TS2571",
+      "message": "Object is of type unknown"
+    }
+  ]
+}

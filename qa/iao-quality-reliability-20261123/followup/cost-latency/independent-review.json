@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "reviewer": "audit_consultation_persistence",
+  "baseline": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "scope": "Independent read-only review of the consultation catalogue coalescing, cancellation, policy validity and admission handoff.",
+  "finalSha256": {
+    "karta/src/claude/consultation-host.ts": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a",
+    "karta/test/consultationHost.test.ts": "b75ea7e0371c8902ff497a33cb8bfe7081a6f410736d724797af881722cdff28"
+  },
+  "unresolvedP1P2": [],
+  "checks": [
+    {
+      "area": "Coalescing",
+      "result": "PASS",
+      "evidence": "loading is scoped to createConsultationHost; one pending Promise is reused only for validated account model capabilities."
+    },
+    {
+      "area": "Independent cancellation",
+      "result": "PASS",
+      "evidence": "Every waiter has its own bounded wait and finally decrements pending.waiters; a single cancelled caller cannot abort surviving waiters."
+    },
+    {
+      "area": "Full abandonment",
+      "result": "PASS",
+      "evidence": "The final waiter clears only its own pending load and aborts that load controller; a later request can create a new pending generation."
+    },
+    {
+      "area": "Late completion",
+      "result": "PASS",
+      "evidence": "bounded rejects expired/aborted work; current.throwIfAborted and controller.signal.throwIfAborted prevent a discarded predecessor from publishing cache data."
+    },
+    {
+      "area": "Failure cleanup",
+      "result": "PASS",
+      "evidence": "Both fulfilled and rejected promises clear loading only when it still refers to the same pending object; rejected loads do not poison future attempts."
+    },
+    {
+      "area": "Deadline",
+      "result": "PASS",
+      "evidence": "Shared fetch and each consumer wait are bounded to 5000ms; no new infinite wait was introduced."
+    },
+    {
+      "area": "Cache TTL and validity",
+      "result": "PASS",
+      "evidence": "TTL remains 60000 ms; policy validity is checked before cache read, after load and after the owner grant before catalog publication."
+    },
+    {
+      "area": "Authorization",
+      "result": "PASS",
+      "evidence": "Owner availability remains uncached and separately invoked. Policy validity is checked after the asynchronous stop check and again after sub-call reservation, with the request signal checked before returning admission. Both previously reported expiry windows now have failing-before/passing-after tests."
+    },
+    {
+      "area": "Account and host isolation",
+      "result": "PASS",
+      "evidence": "API key/policy/cache/active maps belong to the host closure; no user result, prompt, grant or budget is stored in the new shared load."
+    },
+    {
+      "area": "Mutable results",
+      "result": "PASS",
+      "evidence": "normalizeModelCatalog returns cloned capability objects including effortLevels; public catalog creates independent arrays and profiles."
+    },
+    {
+      "area": "Inference and quality",
+      "result": "PASS",
+      "evidence": "Catalog path neither calls store.begin nor decide. Model identifiers, output caps, reflection/speed and price estimates are preserved."
+    }
+  ],
+  "findingsResolved": [
+    {
+      "id": "policy_expiry_during_stop_check",
+      "observedBefore": "The policy could expire while authorize awaited stopped(); the failing test observed one reservation and one model dispatch after expiry.",
+      "fixVerified": "A synchronous valid() check follows the awaited stop check and signal check.",
+      "red": "authorize-red.log",
+      "green": "green-qualified.log"
+    },
+    {
+      "id": "policy_expiry_during_reservation",
+      "observedBefore": "An admitted reservation could return after policy expiry and still trigger one model dispatch.",
+      "fixVerified": "The wrapper awaits the reservation, checks cancellation and policy validity, and only then returns the admitted result. The real consultation runner keeps the failed handoff receipt blocked with empty usage and runs its existing settlement cleanup.",
+      "red": "reservation-expiry-red.log",
+      "green": "green-qualified.log"
+    }
+  ],
+  "evidenceRead": {
+    "green": {
+      "tests": 87,
+      "files": 5,
+      "newCasesIncluded": 13,
+      "log": "green-qualified.log",
+      "commandReceipt": "green-qualified-command.json",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "log": "typecheck-qualified.log",
+      "commandReceipt": "typecheck-qualified-command.json",
+      "exitCode": 0
+    },
+    "diffCheck": {
+      "commandReceipt": "diff-check-qualified-command.json",
+      "exitCode": 0
+    },
+    "supportingSources": [
+      "karta/src/runtime/lifecycle.ts",
+      "karta/src/claude/model-catalog.ts",
+      "karta/src/claude/execution-profile.ts",
+      "karta/src/claude/consultation.ts"
+    ],
+    "graph": "Named context createConsultationHost inspected on the refreshed index; FTS and indirect call coverage remain limited."
+  },
+  "reviewerActions": {
+    "productEdits": 0,
+    "testEdits": 0,
+    "testReruns": 0,
+    "providerCalls": 0,
+    "paidCalls": 0
+  },
+  "limits": [
+    "The verdict applies to the two exact hashes above and the reviewed paths, not all IAO behavior.",
+    "The 32-to-1 figure is a controlled catalogue GET count; it is not a production latency or invoice reduction claim.",
+    "No cross-process cache or request coalescing is introduced.",
+    "Provider HTTP, owner grant and model ports are simulated in the focused tests; no live provider billing qualification is claimed.",
+    "Final composed gates, refreshed change analysis and publication belong to root."
+  ]
+}

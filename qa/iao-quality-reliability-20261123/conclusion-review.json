@@ -1,0 +1,30 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "--",
+    "karta/src/claude/consultation.ts",
+    "karta/test/modelConsultation.test.ts",
+    "karta/test/consultationTransport.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "recorded_at": "2026-11-23T18:37:40.565034+00:00",
+  "files_sha256": {
+    "karta/src/claude/consultation.ts": "fb83034ff0c1af53539402e91d6ca7594cafb89ec71ce4ac68f7b4fc2c2dedad",
+    "karta/test/modelConsultation.test.ts": "06cdbd0a353149db36bcc76b102a0000e346647b6c6f5dca3b66a1b2fd31c98c",
+    "karta/test/consultationTransport.test.ts": "75f1e0a031a83c8a667ed47e67b3dc085a9d25a2c068ee9b419991153445c9b6"
+  },
+  "counts": {
+    "new_distinct_tests": 8,
+    "red_failed": 6,
+    "red_passed": 2,
+    "green_distinct_tests": 102
+  },
+  "limitations": [
+    "External model, auth and provider boundaries use test fixtures; HTTP loopback transport is real.",
+    "Existing malformed persisted results are not migrated by this preventive validation change.",
+    "No commit, deployment, external inference, or paid operation performed."
+  ]
+}

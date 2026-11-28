@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "scope": "Réconciliation frontend de PR112 avec la PR111 médias déjà canonique ; aucun déploiement ni envoi réel.",
+  "prior_discovery_head": "849402e",
+  "media_integration_base": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "source_sha256": {
+    "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+    "src/lib/partner-discovery-result.ts": "be213e14cdd03b64e41af3eb878bb83dfff35bc7e64802dae29736a4dde134c1",
+    "src/lib/partner-discovery-result.test.ts": "c3aed9cc9423b11b3aa91a83bd4ecb8e5336ae215b45bd9da1471f09d58ae5e1",
+    "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "1b41020d5be81bb091ea5c72510dda4dead987247e21e7e32a04ea8c4dbe158b",
+    "tests/quality/partner-media.spec.ts": "e1e427670babfdd1fc6d816173639b6ea59bfe4203de4d594aef65295b4e4d40"
+  },
+  "preserved_canonical_blocks": {
+    "qualification_types_labels_and_safe_links": {
+      "equal_to_canonical": true,
+      "sha256": "18cbebe0e2104f88cbbb182df155d9e7792d9aad3f28825c8f643e1ba789e189"
+    },
+    "protected_save_handler": {
+      "equal_to_canonical": true,
+      "sha256": "d6f2c68a3ec59ce80b6fb1ca966c5e7bc3216661fdc691ad99c5b583ca13a0c3"
+    },
+    "qualification_handlers": {
+      "equal_to_canonical": true,
+      "sha256": "4b2ce385f48e527ff4c0900567080c6c71fd2a381a75970e54c9d650b31556e8"
+    },
+    "media_prospect_display": {
+      "equal_to_canonical": true,
+      "sha256": "f682c92c9a8df93ed146cf26f7fe3abb56047b76820e4e7d45249a352b14b3da"
+    },
+    "qualification_dialog": {
+      "equal_to_canonical": true,
+      "sha256": "9d90c5b49d5a62afd9e21d0a628d1f09237f02596dbdf01293a549c499a616bf"
+    }
+  },
+  "unchanged_canonical_files": [
+    "src/pages/PartnerAgentSettings.tsx",
+    "src/pages/PartnerAgentPartners.tsx",
+    "src/lib/partner-contract-result.ts",
+    "src/lib/partner-outreach-result.ts",
+    "src/pages/PartnerAgentSettings.media.test.tsx",
+    "src/pages/PartnerAgentSettings.schedule.test.tsx"
+  ],
+  "reconciliation": [
+    "Conservation de toute la qualification authentifiée par RPC, de la source, du pays, de la langue, des preuves et dates d’accord, des offres, du retrait et des profils médias/rédactionnel/historique.",
+    "Conservation des conditions commerciales et de la formulation canonique prospects ajoutés à qualifier ; aucun passage automatique à prêt à contacter.",
+    "Réintégration du propriétaire de formulaire, du cycle de compte, de la révision du brouillon, du verrou synchrone et du masquage avant les effets passifs.",
+    "Décodeur aligné sur le plafond canonique de 25 candidats ; skipped optionnel conservé et validé, inserted + skipped au plus égal à 25.",
+    "Lecture non-2xx toujours limitée à 16 KiB et une seconde, sans clone, sans diagnostic fournisseur brut et sans relance automatique.",
+    "Fixture Playwright média corrigée pour fournir un reçu inserted=1, skipped=0 avec une ligne identified ; ses six scénarios et assertions de succès sont conservés."
+  ],
+  "impact": {
+    "receipt": "impact-receipts.json",
+    "manifest": "index-before.json",
+    "scope": "Graphe préédition de 13 fichiers, 585 nœuds et 1236 arêtes ; il ne représente pas tout le dépôt ni le code final.",
+    "PartnerAgentProspects": "UNKNOWN, callbacks React non résolus ; route src/App.tsx et bouton de recherche vérifiés manuellement.",
+    "handleFind": "UNKNOWN, même limite ; JSX et handler relus.",
+    "parsePartnerDiscoveryResult": "LOW, 2 impacts dont 1 direct",
+    "readPartnerDiscoveryError": "LOW, 2 impacts dont 1 direct",
+    "count": "LOW, 5 impacts dont 2 directs"
+  },
+  "validation": {
+    "initial_client": {
+      "exit_code": 1,
+      "passed": 28,
+      "failed": 4,
+      "total": 32,
+      "purpose": "Reproduction du refus des lots canoniques jusqu’à 25 et de skipped invalides ignorés avant adaptation.",
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-client-canon-before.log.gz",
+        "decoded_bytes": 8671,
+        "decoded_sha256": "960d43fb4a78b696507926f15637bd7a7dbd2aa55ca40a63b6473c4cd5693250",
+        "gzip_sha256": "74283a83d4a3257929e8312f1a1b2503d5ee27aaaf4aaceb69b90bf78de119ae"
+      }
+    },
+    "composed_frontend": {
+      "exit_code": 0,
+      "passed": 98,
+      "failed": 0,
+      "total": 98,
+      "duration_seconds": 8.78,
+      "breakdown": {
+        "http_client": 32,
+        "discovery_dom": 21,
+        "contract_dom": 12,
+        "settings_ownership": 18,
+        "settings_media": 10,
+        "settings_schedule": 5
+      },
+      "command": "timeout 90s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/vitest/vitest.mjs run src/lib/partner-discovery-result.test.ts src/pages/PartnerAgentProspects.discovery.test.tsx src/pages/PartnerAgentProspects.contract.test.tsx src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx src/pages/PartnerAgentSettings.media.test.tsx --maxWorkers=1 --pool=threads --reporter=verbose",
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-canon-composed.log.gz",
+        "decoded_bytes": 21284,
+        "decoded_sha256": "cce9b54f6f228d3cc434aa1b132a22f88b270e27bd17ebb5effb201e54d05372",
+        "gzip_sha256": "20450be047de66054ad90aa3257ab0adad422ec3ef7cc2fe68cd77cc28e8ae43"
+      }
+    },
+    "targeted_lint": {
+      "exit_code": 0,
+      "warnings": 0,
+      "max_warnings": 0,
+      "paths": [
+        "src/lib/partner.ts",
+        "src/lib/partner-discovery-result.ts",
+        "src/lib/partner-discovery-result.test.ts",
+        "src/pages/PartnerAgentProspects.tsx",
+        "src/pages/PartnerAgentProspects.discovery.test.tsx",
+        "tests/quality/partner-media.spec.ts"
+      ],
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-canon-lint.log.gz",
+        "decoded_bytes": 0,
+        "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      }
+    },
+    "diff_check": "PASS sur les six chemins",
+    "counting": "98 représente une exécution composée unique, incluant les 83 cas historiques adaptés, 5 cas client supplémentaires et 10 cas médias ; ne pas additionner les exécutions historiques."
+  },
+  "limits": {
+    "browser_media_scenarios": "NON TESTÉ dans cette reprise locale ; recette navigateur/CI coordonnée par root.",
+    "global_typecheck_and_build": "WAIT_ROOT — reçus CI attendus sur la composition finale.",
+    "existing_warnings": "Les avertissements Radix de description du dialogue contrat sont visibles dans les logs et n’ont pas été masqués.",
+    "production": "Aucune preuve de déploiement, campagne, dépense ou contact externe revendiquée."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "index": "iao-resume-cb46",
+  "indexPath": "/workspace/scratch/cb46f4d9a0df/iao-final-review",
+  "targets": [
+    {
+      "target": "callback",
+      "exitCode": -9,
+      "output": "\n  GitNexus Impact (1.6.12)\n"
+    },
+    {
+      "target": "initiate",
+      "exitCode": -9,
+      "output": "\n  GitNexus Impact (1.6.12)\n"
+    },
+    {
+      "target": "hook",
+      "exitCode": -9,
+      "output": "\n  GitNexus Impact (1.6.12)\n"
+    },
+    {
+      "target": "handler",
+      "exitCode": -9,
+      "output": "\n  GitNexus Impact (1.6.12)\n"
+    },
+    {
+      "target": "callback-inner",
+      "exitCode": 0,
+      "risk": "LOW",
+      "count": 1,
+      "status": null,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "src/pages/OAuthCallback.tsx",
+      "currentSha256": "c5a8f3142de7ac76aab134c86fcd7084722c3090b687f695bd21088da3bac5b8",
+      "indexSha256": "c5a8f3142de7ac76aab134c86fcd7084722c3090b687f695bd21088da3bac5b8",
+      "equal": true
+    },
+    {
+      "path": "src/hooks/useUserConnections.ts",
+      "currentSha256": "97ffef82cb8876a439e0d350b7744792f4d6fdee887258b80547ccea86c01d8c",
+      "indexSha256": "97ffef82cb8876a439e0d350b7744792f4d6fdee887258b80547ccea86c01d8c",
+      "equal": true
+    },
+    {
+      "path": "supabase/functions/oauth-google/index.ts",
+      "currentSha256": "4046764c7dfe055e0cd4003c0ab2c7c875e0611e42f870ca1e0663be9fe26807",
+      "indexSha256": "4046764c7dfe055e0cd4003c0ab2c7c875e0611e42f870ca1e0663be9fe26807",
+      "equal": true
+    }
+  ]
+}

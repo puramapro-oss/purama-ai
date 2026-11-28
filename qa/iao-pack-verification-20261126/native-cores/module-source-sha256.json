@@ -1,0 +1,19 @@
+{
+  "README.md": "ad36741d47dd1eb136111f9175ca374c0712983aa7ef336426e5087e187ccf47",
+  "android/build.gradle": "3fde354f0fdb8e2b145fb22dfdb8329e2fcf42220dfc2c90b611286a4ada2d51",
+  "android/src/main/AndroidManifest.xml": "343d5be1ac17cdd45d1a2f2ddc616c509290e655869125a9422a96d88aa66066",
+  "android/src/main/java/expo/modules/puramalocaldigest/PuramaLocalDigestModule.kt": "57afe3ea484393dc1ad714148335f8e9ad15fecaec8c9019c333852687402f19",
+  "android/src/main/java/expo/modules/puramalocaldigest/Sha256Core.java": "fe9e96ba7df11eed26cf99697abf0b9ee153ac7e12b2d41ee5d800737c74f36b",
+  "apple/PuramaLocalDigest.podspec": "cd341ebbc0f84f98dfa0663291b3ca0320eb375a19bee162544057bb369647a1",
+  "apple/PuramaLocalDigestModule.swift": "eedc620fc8ce5223e93645debac204f3f4a89823102d604f18f80dc173cccb20",
+  "apple/Sha256Core.swift": "341bf4b9ba5a4f99c97c7c6da065023174c10a4477a932550508a188f11cead8",
+  "contract.ts": "6d8279ae013eb413f747dc737e8dd9dc850e844843ed542266a9670b7d20c163",
+  "expo-module.config.json": "2e5a093a4aac9a15ed51011752ab80a13ccb28c49441786efef990d5a47a1c0a",
+  "index.ts": "74c7ab796cc400efda5dafa07ee78f0765bfd8951ab06d67b10d030b84919b81",
+  "index.web.ts": "377c64d2d0e16a3f49f411f30bb2eb8750eccd1afb3ede3454e8fdf1b97caa07",
+  "package.json": "a869e69010b5281eb15723e9b8def652fecbc61f7dd71be99af154b3bd66a8a9",
+  "tests/Sha256CoreTest.java": "63de35adf324286326e6a954bc2b337a44fc76a61ad2a2527f1323f17c4aad13",
+  "tests/Sha256CoreTests.swift": "5fa350e63036d6943a50a2a47f405e2bfc70b78a4e2a756a6dcd3884dc02432b",
+  "tests/module-contract.test.cjs": "c8cdc6ae60f5385ddd08b485a4cae2f47853e918fbe9cf082a0d0d242320c8e7",
+  "tests/run-core-tests.sh": "3c2099ef93ba6dea720cbc2b3cf410c401a05a1035c80bead318961268caab39"
+}

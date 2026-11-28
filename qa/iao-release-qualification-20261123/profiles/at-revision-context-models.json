@@ -1,0 +1,39 @@
+{
+  "status": "ambiguous",
+  "message": "Found 4 symbols matching 'models'. Use uid, file_path, or kind to disambiguate.",
+  "totalCandidates": 4,
+  "candidates": [
+    {
+      "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:2",
+      "name": "models",
+      "kind": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "line": 137,
+      "score": 0.96
+    },
+    {
+      "uid": "Property:karta/src/claude/consultation-host.ts:ConsultationPolicy.models",
+      "name": "models",
+      "kind": "",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "line": 19,
+      "score": 0.9
+    },
+    {
+      "uid": "Property:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.models@195:8",
+      "name": "models",
+      "kind": "",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "line": 196,
+      "score": 0.9
+    },
+    {
+      "uid": "Property:karta/src/claude/consultation-host.ts:parsePolicy.models@49:57",
+      "name": "models",
+      "kind": "",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "line": 50,
+      "score": 0.9
+    }
+  ]
+}

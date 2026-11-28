@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "tests/ui-state/playwright.config.ts",
+    "email-lifecycle.spec.ts",
+    "--grep",
+    "legacy success query"
+  ],
+  "exit": 0,
+  "seconds": 31.241,
+  "sources": {
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "tests/ui-state/email-lifecycle.spec.ts": "d3af2a1ced3bed62e5ed1054e1f30a1eccd0a5ab9ff21dbd369b626d368a36fc"
+  },
+  "sourcesAfter": {
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "tests/ui-state/email-lifecycle.spec.ts": "d3af2a1ced3bed62e5ed1054e1f30a1eccd0a5ab9ff21dbd369b626d368a36fc"
+  }
+}

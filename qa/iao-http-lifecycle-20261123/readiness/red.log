@@ -1,0 +1,397 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+stdout | test/apiIaoIntegration.test.ts > preserves authenticated IAO lookup after dependency readiness is lost
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > preserves authenticated IAO cancel after dependency readiness is lost
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks readiness after authentication before admitting /iao/requests
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks readiness after authentication before admitting /pura/requests
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > refuses admission when the final readiness check rejects without exposing its error
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks readiness after a partially received IAO body
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks lifetime after a partially received IAO body
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks shutdown after IAO lookup authentication before accessing the facade
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks shutdown after IAO cancel authentication before accessing the facade
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > rechecks shutdown after IAO submit authentication before accessing the facade
+[api] KARTA écoute sur :0
+
+stdout | test/apiIaoIntegration.test.ts > keeps IAO reads and cancellation isolated and authenticated during a dependency outage
+[api] KARTA écoute sur :0
+
+ ❯ test/apiIaoIntegration.test.ts (19 tests | 11 failed) 111ms
+   × preserves authenticated IAO lookup after dependency readiness is lost 14ms
+   × preserves authenticated IAO cancel after dependency readiness is lost 6ms
+   × rechecks readiness after authentication before admitting /iao/requests 4ms
+   × rechecks readiness after authentication before admitting /pura/requests 3ms
+   × refuses admission when the final readiness check rejects without exposing its error 4ms
+   × rechecks readiness after a partially received IAO body 3ms
+   × rechecks lifetime after a partially received IAO body 5ms
+   × rechecks shutdown after IAO lookup authentication before accessing the facade 2ms
+   × rechecks shutdown after IAO cancel authentication before accessing the facade 5ms
+   × rechecks shutdown after IAO submit authentication before accessing the facade 2ms
+   × keeps IAO reads and cancellation isolated and authenticated during a dependency outage 2ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > preserves authenticated IAO lookup after dependency readiness is lost
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "status": "draft",
++     "error": "IAO runtime unavailable",
+    },
+    "cache": "no-store",
+-   "status": 200,
++   "status": 503,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:145:20
+    143|       ? await call(server, "/iao/requests/" + id)
+    144|       : await call(server, "/iao/requests/" + id + "/cancel", "POST");
+    145|     expect(result).toMatchObject({ status: 200, cache: "no-store", bod…
+       |                    ^
+    146|     expect(probe).not.toHaveBeenCalled();
+    147|     expect(authenticate).toHaveBeenCalledTimes(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > preserves authenticated IAO cancel after dependency readiness is lost
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "status": "cancelled",
++     "error": "IAO runtime unavailable",
+    },
+    "cache": "no-store",
+-   "status": 200,
++   "status": 503,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:145:20
+    143|       ? await call(server, "/iao/requests/" + id)
+    144|       : await call(server, "/iao/requests/" + id + "/cancel", "POST");
+    145|     expect(result).toMatchObject({ status: 200, cache: "no-store", bod…
+       |                    ^
+    146|     expect(probe).not.toHaveBeenCalled();
+    147|     expect(authenticate).toHaveBeenCalledTimes(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks readiness after authentication before admitting /iao/requests
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.201Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:193:25
+    191|   available = false;
+    192|   release(identity());
+    193|   expect(await pending).toMatchObject({ status: 503, cache: "no-store"…
+       |                         ^
+    194|   expect(prepare).not.toHaveBeenCalled();
+    195| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks readiness after authentication before admitting /pura/requests
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.205Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:193:25
+    191|   available = false;
+    192|   release(identity());
+    193|   expect(await pending).toMatchObject({ status: 503, cache: "no-store"…
+       |                         ^
+    194|   expect(prepare).not.toHaveBeenCalled();
+    195| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > refuses admission when the final readiness check rejects without exposing its error
+AssertionError: expected { Object (status, cache, ...) } to deeply equal { Object (status, cache, ...) }
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.208Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:205:18
+    203|   const server = await listen({ authenticator: { authenticate: async (…
+    204|   const result = await call(server, "/iao/requests", "POST", body);
+    205|   expect(result).toEqual({ status: 503, cache: "no-store", body: { err…
+       |                  ^
+    206|   expect(probe).toHaveBeenCalledTimes(2);
+    207|   expect(prepare).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks readiness after a partially received IAO body
+AssertionError: expected { status: 202, body: { …(8) } } to deeply equal { status: 503, …(1) }
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.212Z",
+    },
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:238:26
+    236|   else lifetime.abort();
+    237|   client.end(encoded.slice(split));
+    238|   expect(await response).toEqual({ status: 503, body: { error: "IAO ru…
+       |                          ^
+    239|   expect(prepare).not.toHaveBeenCalled();
+    240| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks lifetime after a partially received IAO body
+AssertionError: expected { status: 202, body: { …(8) } } to deeply equal { status: 503, …(1) }
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.217Z",
+    },
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:238:26
+    236|   else lifetime.abort();
+    237|   client.end(encoded.slice(split));
+    238|   expect(await response).toEqual({ status: 503, body: { error: "IAO ru…
+       |                          ^
+    239|   expect(prepare).not.toHaveBeenCalled();
+    240| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks shutdown after IAO lookup authentication before accessing the facade
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "retained",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.219Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 200,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:258:25
+    256|   lifetime.abort();
+    257|   release(identity());
+    258|   expect(await pending).toMatchObject({ status: 503, cache: "no-store"…
+       |                         ^
+    259|   expect(observed).not.toHaveBeenCalled();
+    260| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks shutdown after IAO cancel authentication before accessing the facade
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(9 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "effect": "uncertain",
++     "identity": "iao",
++     "preview": "retained",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "cancelled",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.224Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 200,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:258:25
+    256|   lifetime.abort();
+    257|   release(identity());
+    258|   expect(await pending).toMatchObject({ status: 503, cache: "no-store"…
+       |                         ^
+    259|   expect(observed).not.toHaveBeenCalled();
+    260| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > rechecks shutdown after IAO submit authentication before accessing the facade
+AssertionError: expected { Object (status, cache, ...) } to match object { Object (status, cache, ...) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "retained",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:06:16.225Z",
+    },
+    "cache": "no-store",
+-   "status": 503,
++   "status": 202,
+  }
+
+ ❯ test/apiIaoIntegration.test.ts:258:25
+    256|   lifetime.abort();
+    257|   release(identity());
+    258|   expect(await pending).toMatchObject({ status: 503, cache: "no-store"…
+       |                         ^
+    259|   expect(observed).not.toHaveBeenCalled();
+    260| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+ FAIL  test/apiIaoIntegration.test.ts > keeps IAO reads and cancellation isolated and authenticated during a dependency outage
+AssertionError: expected 503 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 503
+
+ ❯ test/apiIaoIntegration.test.ts:279:29
+    277|       const path = "/iao/requests/" + id + (operation === "cancel" ? "…
+    278|       const result = await call(server, path, operation === "lookup" ?…
+    279|       expect(result.status).toBe(testCase.status);
+       |                             ^
+    280|       expect(result.cache).toBe("no-store");
+    281|       expect(JSON.stringify(result.body)).not.toContain("private");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed | 8 passed (19)
+   Start at  16:06:15
+   Duration  661ms (transform 57%, tests 28%, import 12%, setup 2%, worker 1%)

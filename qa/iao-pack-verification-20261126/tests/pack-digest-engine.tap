@@ -1,0 +1,472 @@
+TAP version 13
+# Subtest: import is passive; only explicit native absence selects the real Noble fallback
+ok 1 - import is passive; only explicit native absence selects the real Noble fallback
+  ---
+  duration_ms: 99.583421
+  type: 'test'
+  ...
+# Subtest: Noble fallback hashes bounded offset views without including sentinels
+ok 2 - Noble fallback hashes bounded offset views without including sentinels
+  ---
+  duration_ms: 50.527399
+  type: 'test'
+  ...
+# Subtest: Noble fallback rejects oversized and non-byte input before consuming it
+ok 3 - Noble fallback rejects oversized and non-byte input before consuming it
+  ---
+  duration_ms: 21.612061
+  type: 'test'
+  ...
+# Subtest: native adapter hashes bounded offset views without including sentinels
+ok 4 - native adapter hashes bounded offset views without including sentinels
+  ---
+  duration_ms: 41.595782
+  type: 'test'
+  ...
+# Subtest: native adapter rejects oversized and non-byte input before consuming it
+ok 5 - native adapter rejects oversized and non-byte input before consuming it
+  ---
+  duration_ms: 20.410661
+  type: 'test'
+  ...
+# Subtest: native lookup and constructor failures propagate without silently changing implementations
+ok 6 - native lookup and constructor failures propagate without silently changing implementations
+  ---
+  duration_ms: 37.252019
+  type: 'test'
+  ...
+# Subtest: native update failure propagates; cleanup still releases the context exactly once
+ok 7 - native update failure propagates; cleanup still releases the context exactly once
+  ---
+  duration_ms: 20.306182
+  type: 'test'
+  ...
+# Subtest: native digest failure propagates; cleanup still releases the context exactly once
+ok 8 - native digest failure propagates; cleanup still releases the context exactly once
+  ---
+  duration_ms: 6.885972
+  type: 'test'
+  ...
+# Subtest: release is attempted even if native destruction fails, preserving the first failure
+ok 9 - release is attempted even if native destruction fails, preserving the first failure
+  ---
+  duration_ms: 5.619529
+  type: 'test'
+  ...
+# Subtest: a standalone native release failure is surfaced and never blindly retried
+ok 10 - a standalone native release failure is surfaced and never blindly retried
+  ---
+  duration_ms: 7.013245
+  type: 'test'
+  ...
+# Subtest: engine and singleton construction do not import native code, touch hardware or prepare a pack
+ok 11 - engine and singleton construction do not import native code, touch hardware or prepare a pack
+  ---
+  duration_ms: 278.008637
+  type: 'test'
+  ...
+# Subtest: generation uses one local CPU context and parsed visible content, then releases it
+ok 12 - generation uses one local CPU context and parsed visible content, then releases it
+  ---
+  duration_ms: 117.758674
+  type: 'test'
+  ...
+# Subtest: late native callbacks cannot publish after a completion has settled
+ok 13 - late native callbacks cannot publish after a completion has settled
+  ---
+  duration_ms: 109.73623
+  type: 'test'
+  ...
+# Subtest: generation on an absent pack is local-only and never calls preparation or cloud
+ok 14 - generation on an absent pack is local-only and never calls preparation or cloud
+  ---
+  duration_ms: 48.662207
+  type: 'test'
+  ...
+# Subtest: explicit preparation verifies native availability then performs a smoke generation before ready
+ok 15 - explicit preparation verifies native availability then performs a smoke generation before ready
+  ---
+  duration_ms: 62.601705
+  type: 'test'
+  ...
+# Subtest: missing native runtime and insufficient admission memory reject before downloading
+ok 16 - missing native runtime and insufficient admission memory reject before downloading
+  ---
+  duration_ms: 153.551688
+  type: 'test'
+  ...
+# Subtest: web cannot prepare a native pack; no isDevice restriction is used for a qualified emulator
+ok 17 - web cannot prepare a native pack; no isDevice restriction is used for a qualified emulator
+  ---
+  duration_ms: 137.593643
+  type: 'test'
+  ...
+# Subtest: cancel stops completion, contains a rejected stop, ignores late output and retains process lease until cleanup
+ok 18 - cancel stops completion, contains a rejected stop, ignores late output and retains process lease until cleanup
+  ---
+  duration_ms: 75.121222
+  type: 'test'
+  ...
+# Subtest: cancel during uninterruptible native load returns promptly and releases the eventual context without generating
+ok 19 - cancel during uninterruptible native load returns promptly and releases the eventual context without generating
+  ---
+  duration_ms: 89.603994
+  type: 'test'
+  ...
+# Subtest: pre-aborted requests reject without acquiring native resources
+ok 20 - pre-aborted requests reject without acquiring native resources
+  ---
+  duration_ms: 34.109635
+  type: 'test'
+  ...
+# Subtest: two controllers cannot initialize simultaneous native engines
+ok 21 - two controllers cannot initialize simultaneous native engines
+  ---
+  duration_ms: 32.332846
+  type: 'test'
+  ...
+# Subtest: each completed request releases its context so a later conversation cannot reuse native KV state
+ok 22 - each completed request releases its context so a later conversation cannot reuse native KV state
+  ---
+  duration_ms: 63.171225
+  type: 'test'
+  ...
+# Subtest: history window trims complete old turns and preserves system/current message plus durable input array
+ok 23 - history window trims complete old turns and preserves system/current message plus durable input array
+  ---
+  duration_ms: 68.342222
+  type: 'test'
+  ...
+# Subtest: an oversized current prompt is rejected after actual tokenization without silent prompt truncation
+ok 24 - an oversized current prompt is rejected after actual tokenization without silent prompt truncation
+  ---
+  duration_ms: 40.906632
+  type: 'test'
+  ...
+# Subtest: invalid roles, empty current content and excessive message counts never initialize native code
+ok 25 - invalid roles, empty current content and excessive message counts never initialize native code
+  ---
+  duration_ms: 37.326765
+  type: 'test'
+  ...
+# Subtest: mutable caller messages are snapshotted before native initialization awaits
+ok 26 - mutable caller messages are snapshotted before native initialization awaits
+  ---
+  duration_ms: 49.891599
+  type: 'test'
+  ...
+# Subtest: raw reasoning is never substituted when parsed visible output is empty
+ok 27 - raw reasoning is never substituted when parsed visible output is empty
+  ---
+  duration_ms: 38.354588
+  type: 'test'
+  ...
+# Subtest: native release failure blocks any new context until application restart
+ok 28 - native release failure blocks any new context until application restart
+  ---
+  duration_ms: 62.068268
+  type: 'test'
+  ...
+# Subtest: a failed native release retains restart priority over an earlier generation failure
+ok 29 - a failed native release retains restart priority over an earlier generation failure
+  ---
+  duration_ms: 60.735388
+  type: 'test'
+  ...
+# Subtest: CPU qualification refuses an unexpected native GPU backend and still releases the context
+ok 30 - CPU qualification refuses an unexpected native GPU backend and still releases the context
+  ---
+  duration_ms: 94.206719
+  type: 'test'
+  ...
+# Subtest: cold inspection can finish a verified pack after the generation deadline without downloading
+ok 31 - cold inspection can finish a verified pack after the generation deadline without downloading
+  ---
+  duration_ms: 46.790981
+  type: 'test'
+  ...
+# Subtest: direct completion gives cold verification its own budget and preserves the full bounded inference deadline
+ok 32 - direct completion gives cold verification its own budget and preserves the full bounded inference deadline
+  ---
+  duration_ms: 38.471508
+  type: 'test'
+  ...
+# Subtest: cold inspection remains bounded and retains its lease until verification has actually stopped
+ok 33 - cold inspection remains bounded and retains its lease until verification has actually stopped
+  ---
+  duration_ms: 28.993833
+  type: 'test'
+  ...
+# Subtest: cancelling revalidation returns promptly, fences other callers, and permits retry after cleanup
+ok 34 - cancelling revalidation returns promptly, fences other callers, and permits retry after cleanup
+  ---
+  duration_ms: 29.365445
+  type: 'test'
+  ...
+# Subtest: an expired revalidation cannot revive generation when its file operation settles late
+ok 35 - an expired revalidation cannot revive generation when its file operation settles late
+  ---
+  duration_ms: 26.993249
+  type: 'test'
+  ...
+# Subtest: verification integrity failure never resets the deadline into native inference or repairs online
+ok 36 - verification integrity failure never resets the deadline into native inference or repairs online
+  ---
+  duration_ms: 26.868881
+  type: 'test'
+  ...
+# Subtest: late timer delivery cannot revive verification that has exceeded its monotonic deadline
+ok 37 - late timer delivery cannot revive verification that has exceeded its monotonic deadline
+  ---
+  duration_ms: 31.179172
+  type: 'test'
+  ...
+# Subtest: construction and absent inspection are local, passive and do not fetch or run a fake smoke
+ok 38 - construction and absent inspection are local, passive and do not fetch or run a fake smoke
+  ---
+  duration_ms: 136.918223
+  type: 'test'
+  ...
+# Subtest: prepare hashes bounded blocks, keeps a full licence, smoke-tests then promotes one directory
+ok 39 - prepare hashes bounded blocks, keeps a full licence, smoke-tests then promotes one directory
+  ---
+  duration_ms: 60.134683
+  type: 'test'
+  ...
+# Subtest: a new process controller rechecks provenance, hashes and real-smoke boundary without downloading
+ok 40 - a new process controller rechecks provenance, hashes and real-smoke boundary without downloading
+  ---
+  duration_ms: 61.710243
+  type: 'test'
+  ...
+# Subtest: a corrupt model never reaches smoke or ready and leaves no trusted or partial pack
+ok 41 - a corrupt model never reaches smoke or ready and leaves no trusted or partial pack
+  ---
+  duration_ms: 34.419187
+  type: 'test'
+  ...
+# Subtest: same-length corruption with valid GGUF magic is rejected by SHA-256
+ok 42 - same-length corruption with valid GGUF magic is rejected by SHA-256
+  ---
+  duration_ms: 38.800341
+  type: 'test'
+  ...
+# Subtest: a corrupt licence is rejected before native smoke and atomic promotion
+ok 43 - a corrupt licence is rejected before native smoke and atomic promotion
+  ---
+  duration_ms: 36.574894
+  type: 'test'
+  ...
+# Subtest: cancellation during download closes handles, removes staging, and has no ready receipt
+ok 44 - cancellation during download closes handles, removes staging, and has no ready receipt
+  ---
+  duration_ms: 29.324757
+  type: 'test'
+  ...
+# Subtest: cancellation while hashing is observed between bounded reads and closes the read handle
+ok 45 - cancellation while hashing is observed between bounded reads and closes the read handle
+  ---
+  duration_ms: 29.096907
+  type: 'test'
+  ...
+# Subtest: native smoke failure does not mark a hash-valid pack as ready
+ok 46 - native smoke failure does not mark a hash-valid pack as ready
+  ---
+  duration_ms: 35.11026
+  type: 'test'
+  ...
+# Subtest: missing or changed provenance blocks offline use; only explicit prepare repairs it
+ok 47 - missing or changed provenance blocks offline use; only explicit prepare repairs it
+  ---
+  duration_ms: 46.546275
+  type: 'test'
+  ...
+# Subtest: file mutation in a running process invalidates the verification cache without network fallback
+ok 48 - file mutation in a running process invalidates the verification cache without network fallback
+  ---
+  duration_ms: 37.763294
+  type: 'test'
+  ...
+# Subtest: insufficient storage rejects before fetching and stale staging is safely removed
+ok 49 - insufficient storage rejects before fetching and stale staging is safely removed
+  ---
+  duration_ms: 29.507016
+  type: 'test'
+  ...
+# Subtest: observers cannot interrupt promotion or make a completed pack disappear
+ok 50 - observers cannot interrupt promotion or make a completed pack disappear
+  ---
+  duration_ms: 29.114817
+  type: 'test'
+  ...
+# Subtest: a failed same-parent promotion never reports ready
+ok 51 - a failed same-parent promotion never reports ready
+  ---
+  duration_ms: 28.534028
+  type: 'test'
+  ...
+# Subtest: production streaming download consumes bounded bytes, passes abort signal, and never buffers a whole model
+ok 52 - production streaming download consumes bounded bytes, passes abort signal, and never buffers a whole model
+  ---
+  duration_ms: 35.973667
+  type: 'test'
+  ...
+# Subtest: production streaming transport rejects oversized or incorrectly declared bodies before trust
+ok 53 - production streaming transport rejects oversized or incorrectly declared bodies before trust
+  ---
+  duration_ms: 33.584576
+  type: 'test'
+  ...
+# Subtest: ready waits for the asynchronous native rename acknowledgement
+ok 54 - ready waits for the asynchronous native rename acknowledgement
+  ---
+  duration_ms: 29.274659
+  type: 'test'
+  ...
+# Subtest: prepare rejects model.gguf mutation during smoke instead of trusting a new fingerprint
+ok 55 - prepare rejects model.gguf mutation during smoke instead of trusting a new fingerprint
+  ---
+  duration_ms: 28.44656
+  type: 'test'
+  ...
+# Subtest: restart inspection rejects model.gguf mutation during smoke without downloading
+ok 56 - restart inspection rejects model.gguf mutation during smoke without downloading
+  ---
+  duration_ms: 37.332343
+  type: 'test'
+  ...
+# Subtest: prepare rejects LICENSE mutation during smoke instead of trusting a new fingerprint
+ok 57 - prepare rejects LICENSE mutation during smoke instead of trusting a new fingerprint
+  ---
+  duration_ms: 27.316287
+  type: 'test'
+  ...
+# Subtest: restart inspection rejects LICENSE mutation during smoke without downloading
+ok 58 - restart inspection rejects LICENSE mutation during smoke without downloading
+  ---
+  duration_ms: 40.560039
+  type: 'test'
+  ...
+# Subtest: prepare rejects an earlier asset changed while a later asset is hashed
+ok 59 - prepare rejects an earlier asset changed while a later asset is hashed
+  ---
+  duration_ms: 29.509353
+  type: 'test'
+  ...
+# Subtest: inspection rejects an earlier asset changed while a later asset is hashed
+ok 60 - inspection rejects an earlier asset changed while a later asset is hashed
+  ---
+  duration_ms: 40.280145
+  type: 'test'
+  ...
+# Subtest: a mutation during asynchronous promotion never becomes the trusted cache
+ok 61 - a mutation during asynchronous promotion never becomes the trusted cache
+  ---
+  duration_ms: 54.066319
+  type: 'test'
+  ...
+# Subtest: native lookup remains lazy until verification actually has a file to hash
+ok 62 - native lookup remains lazy until verification actually has a file to hash
+  ---
+  duration_ms: 34.467238
+  type: 'test'
+  ...
+# Subtest: the default verifier uses the available native boundary for both pinned assets
+ok 63 - the default verifier uses the available native boundary for both pinned assets
+  ---
+  duration_ms: 28.294024
+  type: 'test'
+  ...
+# Subtest: digest initialization failure never leaks an opened file
+ok 64 - digest initialization failure never leaks an opened file
+  ---
+  duration_ms: 36.476
+  type: 'test'
+  ...
+# Subtest: failure opening the file still destroys the newly created digest
+ok 65 - failure opening the file still destroys the newly created digest
+  ---
+  duration_ms: 27.355035
+  type: 'test'
+  ...
+# Subtest: cancellation while the digest initializes is observed before opening or reading the file
+ok 66 - cancellation while the digest initializes is observed before opening or reading the file
+  ---
+  duration_ms: 20.06091
+  type: 'test'
+  ...
+# Subtest: hash update error keeps its code even if both cleanups throw
+ok 67 - hash update error keeps its code even if both cleanups throw
+  ---
+  duration_ms: 23.544281
+  type: 'test'
+  ...
+# Subtest: hash digest error keeps its code even if both cleanups throw
+ok 68 - hash digest error keeps its code even if both cleanups throw
+  ---
+  duration_ms: 24.430602
+  type: 'test'
+  ...
+# Subtest: a cleanup failure after a valid digest still prevents trust and closes the file
+ok 69 - a cleanup failure after a valid digest still prevents trust and closes the file
+  ---
+  duration_ms: 26.745203
+  type: 'test'
+  ...
+# Subtest: short file read fails closed and cleans up both resources
+ok 70 - short file read fails closed and cleans up both resources
+  ---
+  duration_ms: 21.041709
+  type: 'test'
+  ...
+# Subtest: throw file read fails closed and cleans up both resources
+ok 71 - throw file read fails closed and cleans up both resources
+  ---
+  duration_ms: 26.699773
+  type: 'test'
+  ...
+# Subtest: a file changed between bounded hash reads is rejected and never promoted
+ok 72 - a file changed between bounded hash reads is rejected and never promoted
+  ---
+  duration_ms: 29.219614
+  type: 'test'
+  ...
+# Subtest: receipt mutation while being read invalidates a previously ready process cache
+ok 73 - receipt mutation while being read invalidates a previously ready process cache
+  ---
+  duration_ms: 46.445437
+  type: 'test'
+  ...
+# Subtest: unknown modification times cannot validate a same-size mutation during smoke
+ok 74 - unknown modification times cannot validate a same-size mutation during smoke
+  ---
+  duration_ms: 35.58783
+  type: 'test'
+  ...
+# Subtest: non-finite modification time NaN refuses verification before hashing
+ok 75 - non-finite modification time NaN refuses verification before hashing
+  ---
+  duration_ms: 20.279461
+  type: 'test'
+  ...
+# Subtest: non-finite modification time Infinity refuses verification before hashing
+ok 76 - non-finite modification time Infinity refuses verification before hashing
+  ---
+  duration_ms: 17.86499
+  type: 'test'
+  ...
+# Subtest: lost receipt metadata refuses offline use without attempting a download repair
+ok 77 - lost receipt metadata refuses offline use without attempting a download repair
+  ---
+  duration_ms: 24.578072
+  type: 'test'
+  ...
+1..77
+# tests 77
+# suites 0
+# pass 77
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4866.203233

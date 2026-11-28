@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=640",
+    "--max-semi-space-size=4",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 0,
+  "seconds": 16.724,
+  "sources": {
+    "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+    "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee",
+    "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+    "src/lib/partner-discovery-result.test.ts": "fbfef4f9d60cf4c62cd93bdf2fd72dcd41aa66d574ab8744cff2d78ee3eac7a6",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "1b41020d5be81bb091ea5c72510dda4dead987247e21e7e32a04ea8c4dbe158b",
+    "tests/quality/partner-media.spec.ts": "e1e427670babfdd1fc6d816173639b6ea59bfe4203de4d594aef65295b4e4d40"
+  },
+  "sources_unchanged": true,
+  "canonical_base": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de"
+}

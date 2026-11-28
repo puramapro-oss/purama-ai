@@ -20,6 +20,90 @@ async function identify(page: Page, id: string | null) {
   await expect(dialog(page)).toContainText('Décrivez ce que vous souhaitez faire.');
 }
 
+test('an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'write', [{ hold: true }, { status: 409, json: { code: '23505', message: 'duplicate key' } }]);
+  // The web client leaves retries to the application: one failed reconciliation,
+  // followed by a held read only after the user's explicit retry.
+  await plans(page, 'messages', [
+    { status: 503, json: { code: '', message: 'Read unavailable' } },
+    { hold: true },
+  ]);
+  const prompt = 'Conserver le même tour après la confirmation perdue';
+  await send(page, prompt);
+  await expect.poll(async () => (await calls(page, 'write')).length).toBe(1);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[0].body, chat_conversations: { user_id: 'owner' } };
+  expect(stored.id).toEqual(expect.any(String));
+  await page.evaluate(() => window.__chatHarness.pending.find(p => p.key === 'write')!.respond({
+    status: 503, json: { code: '', message: 'Acknowledgement unavailable' },
+  }));
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  const unavailableReads = await calls(page, 'messages');
+  expect(unavailableReads.map(call => ({ method: call.method, retryCount: call.retryCount }))).toEqual([
+    { method: 'GET', retryCount: 0 },
+  ]);
+  expect(await calls(page, 'write')).toHaveLength(1);
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(2);
+  const userWrites = (await calls(page, 'write')).filter(call => call.body.role === 'user');
+  expect(userWrites.map(call => call.body.id)).toEqual([stored.id, stored.id]);
+  expect(userWrites.map(call => ({ method: call.method, retryCount: call.retryCount }))).toEqual([
+    { method: 'POST', retryCount: 0 }, { method: 'POST', retryCount: 0 },
+  ]);
+  const resumedRead = (await calls(page, 'messages'))[1];
+  expect(resumedRead.retryCount).toBe(0);
+  const query = new URL(resumedRead.url);
+  expect(query.searchParams.get('id')).toBe(`eq.${stored.id}`);
+  expect(query.searchParams.get('conversation_id')).toBe(`eq.${stored.conversation_id}`);
+  expect(query.searchParams.get('chat_conversations.user_id')).toBe('eq.owner');
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await expect(dialog(page).getByText(prompt, { exact: true })).toHaveCount(1);
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  expect((await calls(page, 'chatbot'))[0].body.messages).toEqual([{ role: 'user', content: prompt }]);
+});
+
+test('an assistant acknowledgement is reconciled without generating another answer', async ({ page }) => {
+  await identify(page, 'owner'); await plans(page, 'write', [{ json: [] }, { hold: true }]);
+  await plans(page, 'messages', [{ hold: true }]);
+  await send(page, 'Conserver la réponse reçue');
+  await expect.poll(async () => (await calls(page, 'write')).length).toBe(2);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[1].body, chat_conversations: { user_id: 'owner' } };
+  expect(stored.id).toEqual(expect.any(String)); expect(stored.role).toBe('assistant');
+  await page.evaluate(() => window.__chatHarness.pending.find(p => p.key === 'write')!.respond({
+    status: 503, json: { code: '', message: 'Acknowledgement unavailable' },
+  }));
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(1);
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  await expect(dialog(page)).not.toContainText('son enregistrement a échoué');
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  expect(await calls(page, 'write')).toHaveLength(2);
+});
+
+test('a late save reconciliation cannot run the old account request', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'write', [{ status: 503, json: { code: '', message: 'Acknowledgement unavailable' } }]);
+  await plans(page, 'messages', [{ hold: true }]);
+  await send(page, 'Demande du compte précédent');
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(1);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[0].body, chat_conversations: { user_id: 'owner' } };
+  await identify(page, 'other-owner');
+  expect((await calls(page, 'messages'))[0].aborted).toBe(true);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(dialog(page)).not.toContainText('Demande du compte précédent');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await send(page, 'Demande du nouveau compte');
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  expect((await calls(page, 'chatbot'))[0].body.messages).toEqual([{ role: 'user', content: 'Demande du nouveau compte' }]);
+});
+
 test('guest chat uses one model request, no history database calls and no welcome in model context', async ({ page }, testInfo) => {
   await send(page);
   await expect(dialog(page)).toContainText('Réponse vérifiée dans la simulation.');
@@ -124,6 +208,98 @@ test('failure to save the answer preserves it without another model request', as
   await expect(dialog(page)).toContainText('son enregistrement a échoué');
   await expect(dialog(page)).toContainText('Réponse vérifiée');
   expect(await calls(page, 'chatbot')).toHaveLength(1);
+});
+
+test('retrying a failed model request reuses the confirmed user turn', async ({ page }) => {
+  const prompt = 'Reprendre ma demande enregistrée';
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ status: 503 }, { text: 'Réponse après relance.' }]);
+  await send(page, prompt);
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toHaveValue(prompt);
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse après relance.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(1);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(1);
+  expect(await calls(page, 'create')).toHaveLength(1);
+  const requests = await calls(page, 'chatbot');
+  expect(requests).toHaveLength(2);
+  expect(requests[1].body.messages).toEqual([{ role: 'user', content: prompt }]);
+  await expect(dialog(page).getByText(prompt, { exact: true })).toHaveCount(1);
+});
+
+test('editing a failed request creates a distinct saved turn', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ status: 429 }, { text: 'Réponse à la demande modifiée.' }]);
+  await send(page, 'Demande initiale');
+  await expect(dialog(page)).toContainText('Limite temporaire');
+  await send(page, 'Demande modifiée');
+  await expect(dialog(page)).toContainText('Réponse à la demande modifiée.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  expect((await calls(page, 'write')).filter(call => call.body.role === 'user').map(call => call.body.content))
+    .toEqual(['Demande initiale', 'Demande modifiée']);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([
+    { role: 'user', content: 'Demande initiale' }, { role: 'user', content: 'Demande modifiée' },
+  ]);
+});
+
+test('an intentional identical request after success creates a new turn', async ({ page }) => {
+  await identify(page, 'owner'); await send(page, 'Même question');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await send(page, 'Même question');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(2);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(2);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([
+    { role: 'user', content: 'Même question' }, { role: 'assistant', content: 'Réponse vérifiée dans la simulation.' },
+    { role: 'user', content: 'Même question' },
+  ]);
+});
+
+test('retrying a stopped saved turn excludes its partial answer', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ stream: true, text: 'Fragment provisoire' }, { text: 'Réponse après arrêt.' }]);
+  await send(page, 'Demande interrompue');
+  await expect(dialog(page)).toContainText('Fragment provisoire');
+  await page.getByRole('button', { name: 'Arrêter la réponse' }).click();
+  await expect(dialog(page)).not.toContainText('Fragment provisoire');
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse après arrêt.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(1);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(1);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Demande interrompue' }]);
+});
+
+for (const boundary of ['conversation', 'account']) {
+  test(`a failed turn is not reused after changing ${boundary}`, async ({ page }) => {
+    await identify(page, 'owner'); await plans(page, 'chatbot', [{ status: 503 }]);
+    await send(page, 'Même texte autre contexte');
+    await expect(dialog(page)).toContainText('Votre demande est conservée');
+    if (boundary === 'conversation') await page.getByRole('button', { name: 'Nouvelle conversation' }).click();
+    else await identify(page, 'other-owner');
+    await send(page, 'Même texte autre contexte');
+    await expect(dialog(page)).toContainText('Réponse vérifiée');
+    await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+    expect((await calls(page, 'write')).filter(call => call.body.role === 'user')).toHaveLength(2);
+    expect(await calls(page, 'create')).toHaveLength(2);
+    expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Même texte autre contexte' }]);
+  });
+}
+
+test('retrying a guest turn avoids duplicate context without storing history', async ({ page }) => {
+  await plans(page, 'chatbot', [{ status: 503 }]);
+  await send(page, 'Demande visiteur');
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  expect(await calls(page, 'create')).toHaveLength(0); expect(await calls(page, 'write')).toHaveLength(0);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Demande visiteur' }]);
+  await expect(dialog(page).getByText('Demande visiteur', { exact: true })).toHaveCount(1);
 });
 
 test('errors stay out of model context and real answers starting with Bienvenue stay in', async ({ page }) => {

@@ -1,0 +1,47 @@
+{
+  "owner": "qual_ui",
+  "base": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "status": "PARTIEL",
+  "product_defect": {
+    "description": "Client rejected execution-profile-valid model revision identifiers containing @ in catalogue, request and stored result.",
+    "status": "PASS",
+    "verification_scope": "Client correction only; this does not establish end-to-end HTTP support.",
+    "red": { "tests": 35, "failed": 3, "passed": 32, "receipt": "client-revision-red.json" },
+    "green": { "tests": 83, "failed": 0, "passed": 83, "receipt": "client-and-components-green.json" },
+    "impact": "impact-preedit.json",
+    "impact_risk": "LOW",
+    "scope": ["src/lib/consultation-client.ts", "src/lib/consultation-client.test.ts"]
+  },
+  "http_boundary": {
+    "status": "PARTIEL",
+    "source": "karta/src/api/consultation.ts",
+    "observation": "Source inspection still finds IDENTIFIER without @ used for incoming model/reviewer identifiers and outgoing catalogue/result projections. The corrected client alone is insufficient for end-to-end support.",
+    "reproduction_and_resolution_owner": "qual_profiles",
+    "end_to_end_verification_status": "NON TESTÉ",
+    "coordination": "Root requested the end-to-end reproduction; product source remains frozen in this UI lot."
+  },
+  "browser": {
+    "suite": "tests/chat/consultation.spec.ts",
+    "added_scenarios": 24,
+    "total_chat_scenarios_discovered": 48,
+    "discovery_receipt": "browser-discovery.json",
+    "local_execution_status": "BLOQUÉ",
+    "local_execution_reason": "Chromium process failed with socket() Operation not permitted before page creation.",
+    "local_execution_receipt": "browser-revision-red.json",
+    "ci_execution_status": "NON TESTÉ",
+    "next_owner": "root",
+    "command": "npm run test:chat",
+    "evidence_boundary": "Real Chromium/React/client intended; authentication and HTTP responses are simulated; no real model-quality or provider-billing proof."
+  },
+  "lint": { "status": "PASS", "receipt": "lint.json" },
+  "inventory": "inventory.md",
+  "source_manifest": "source-manifest.json",
+  "public_modes": {
+    "status": "PARTIEL",
+    "observation": "No public FLASH/EXPERT/APEX and RAPIDE/APPROFONDI/MAXIMUM choices found connected to the inspected source. Technical founder controls must not be reported as these public modes."
+  },
+  "product_component_edits": false,
+  "dependencies_added": false,
+  "workflow_edits": false,
+  "commit_or_push": false
+}

@@ -1,0 +1,286 @@
+{
+  "recordedAt": "2026-11-25T20:54:44.629544+00:00",
+  "scope": "Existing local trial media playback and continuity inventory; not overall IAO certification.",
+  "status": "PASS",
+  "localBaseCommit": "4fa91be71810a145b742f09eae689d62435aa9b2",
+  "remoteBaseCommit": "dd59dae670db7d3fca0d0b7173ad55aec5d10891",
+  "identicalBaseTree": "dcf21bb64af2d10d6a8b2f24030c3f5a157378ac",
+  "reviewBranch": "audit/reliability-oauth-20261110",
+  "mainCompared": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "versions": {
+    "node": "24.22.3",
+    "chromium": "158.0.8127.0",
+    "playwright": "1.65.1",
+    "vitest": "4.1.12",
+    "typescript": "5.8.3",
+    "eslint": "9.39.5",
+    "gitnexus": "1.6.12"
+  },
+  "sourceSha256": {
+    "src/components/IaoTrialPanel.tsx": "f85f1d54cf1c1126d9b997bd53b4aebe6a05b4f6b03562ba3693c2df4a6f3444",
+    "src/components/IaoMediaTrial.tsx": "9f12c824d96b59ddb3a9e2523964fca05847195ffe3f176f6cb5f8c0ab8ad875",
+    "tests/chat/trials.spec.ts": "c7e91e9089b42c511d65f89eeb7c63649a083bb20e613c6af47b471264dfb6b7",
+    "docs/iao-adaptive-intelligence-20261112.md": "a85c10d60effea46f39ccd7f757a727bffba32d5e52f86c6394c6989ec0f68b9",
+    "tests/chat/playwright.config.ts": "fc6e6b4e6340a31f0784b0af50775e287a293cbdadcfb4757fc7630ead073c69",
+    "package-lock.json": "07d29f490a10f6a0c0da15844e480b7e4f0e21f58004d983d1a633a46ee03da5"
+  },
+  "checks": [
+    {
+      "name": "product-regression-before-fix",
+      "exitCode": 1,
+      "expectedFailure": true,
+      "evidence": "browser/trials-media-red-command.json",
+      "assertion": "Hidden original video paused === true; observed false."
+    },
+    {
+      "name": "regression-after-fix",
+      "exitCode": 0,
+      "passed": 1,
+      "evidence": "browser/trials-media-green-command.json"
+    },
+    {
+      "name": "full-trial-browser-suite",
+      "exitCode": 0,
+      "passed": 5,
+      "durationSeconds": 11.3,
+      "evidence": "browser/trials-media-regression-command.json",
+      "qualification": "Before attachment-only edits; same business assertions. Counts overlap with targeted runs."
+    },
+    {
+      "name": "final-browser-regression",
+      "exitCode": 0,
+      "passed": 1,
+      "evidence": "browser/trials-media-final-command.json"
+    },
+    {
+      "name": "unit",
+      "exitCode": 0,
+      "passed": 23,
+      "failed": 0,
+      "pending": 0,
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/lib/iao-basket-trial.test.ts",
+        "src/lib/iao-media-trial.test.ts",
+        "src/lib/iao-trial-entry.test.ts",
+        "src/components/IaoTrialPanel.test.tsx",
+        "src/components/IaoWorkshopTrial.test.tsx",
+        "--reporter=json",
+        "--outputFile=/workspace/scratch/0414f811f329/iao-trials-unit.json"
+      ],
+      "evidence": "checks/iao-trials-unit.json"
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "evidence": "checks/iao-trials-typecheck.log"
+    },
+    {
+      "name": "eslint",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "src/components/IaoTrialPanel.tsx",
+        "tests/chat/trials.spec.ts"
+      ],
+      "evidence": "checks/iao-trials-eslint.log"
+    },
+    {
+      "name": "final-test-eslint",
+      "exitCode": 0,
+      "evidence": "browser/trials-media-final-eslint.json"
+    }
+  ],
+  "observations": {
+    "videoState": "browser/trials-media-final-video-return-state.json",
+    "externalPageRequestsForwarded": 0,
+    "networkEvidence": "browser/trials-media-final-chat-network.json",
+    "captureInspectedBy": [
+      "browser-test-agent",
+      "root"
+    ],
+    "independentCodeReview": {
+      "agent": "inventaire_iao_existant",
+      "status": "PASS",
+      "scope": "Product effect and native browser regression; no additional suite run."
+    }
+  },
+  "gitnexus": {
+    "preEditImpact": {
+      "target": "IaoTrialPanel",
+      "risk": "UNKNOWN",
+      "resolvedCallers": 0,
+      "provenance": "Observed CLI result before product patch; summarized here, raw output not exported.",
+      "manuallyVerifiedConsumers": [
+        "src/components/ChatbotWidget.tsx",
+        "src/trial-page/main.tsx"
+      ]
+    },
+    "firstLotDetect": {
+      "files": 3,
+      "symbols": 4,
+      "resolvedAffectedProcesses": 0,
+      "risk": "low",
+      "evidence": "gitnexus/first-lot-detect.txt"
+    },
+    "finalLotDetectEvidence": "gitnexus/final-lot-detect.txt",
+    "mainCompare": {
+      "exitCode": 0,
+      "files": 3456,
+      "symbols": 26605,
+      "affectedProcesses": 655,
+      "risk": "critical",
+      "evidence": "gitnexus/compare-main.txt",
+      "scope": "Cumulative review branch divergence from main; not limited to this patch."
+    },
+    "limitations": [
+      "FTS and vectors disabled",
+      "Graph traversal and displayed lists have caps",
+      "Unresolved UI edges checked directly in source",
+      "Not exhaustive program verification"
+    ]
+  },
+  "remaining": {
+    "nativeAssembly": "BLOQUÉ: concrete session authority, durable SMARANA port and durable Compute Fabric server not qualified or assembled in inspected startup.",
+    "nativeAccess": "BLOQUÉ: Mac observed offline, two Mac bridge status calls errored.",
+    "personalTransition": "CONCEPTION_EN_COURS: canonical doc extended; no new importer or comparative assessment implemented.",
+    "notTested": [
+      "audio listening",
+      "other browser engines",
+      "physical devices",
+      "real model inference",
+      "billing",
+      "remote services",
+      "production",
+      "general AI superiority"
+    ]
+  },
+  "artifacts": {
+    "RECEIPT.md": {
+      "sha256": "52529069fed6fc8f6a816cb7dc0e94a774017c76a27352d140eb930e76e8abf1",
+      "bytes": 6555
+    },
+    "evidence.zip": {
+      "sha256": "ad819f166b4ac90a5351811875857558e3c04740a33eb3d51b75d5318f7e981e",
+      "bytes": 17362
+    },
+    "media-preview-return.png": {
+      "sha256": "7b883dbf17ca3a21f810474182c41c3f83f4581281ca902b1c11c961fe986caf",
+      "bytes": 38896
+    }
+  },
+  "archiveMembers": {
+    "browser/trials-media-final-chat-network.json": {
+      "sha256": "442e66e29fb11a7ca7eda440a9bdcb180836491a7a093956a637b610b543509b",
+      "bytes": 189
+    },
+    "browser/trials-media-final-command.json": {
+      "sha256": "8d51cf6bfb71d461cd317602053ed021cf420e091b45f979628036579366ce0e",
+      "bytes": 836
+    },
+    "browser/trials-media-final-eslint.json": {
+      "sha256": "bdc1aaa5dce984df030d9dba3a4694e1dff692bab320d90563ac6003e47bd610",
+      "bytes": 240
+    },
+    "browser/trials-media-final-video-return-state.json": {
+      "sha256": "05e8fa88e633674dcb8511ace5d0a41c1f7e191bde116f53c85dc92a482918b4",
+      "bytes": 506
+    },
+    "browser/trials-media-final.json": {
+      "sha256": "33313e45a24ca0bc440aefdbaf1a7cc63dd81d44c535a50e74e00b94f33126a4",
+      "bytes": 6187
+    },
+    "browser/trials-media-final.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "browser/trials-media-green-command.json": {
+      "sha256": "5589f3d75d9e9069cc1ba8b39f45c068000e6ec73d444556c0e9325e5123be48",
+      "bytes": 812
+    },
+    "browser/trials-media-green.log": {
+      "sha256": "81ff69438f297b4544715b1d1ffa642ec85cc4476937ee554e4d1eaf8bdb55dd",
+      "bytes": 540
+    },
+    "browser/trials-media-red-command.json": {
+      "sha256": "7b63790b6cd3558df0d2775dcf9a533bdd7b20715f0a31923cbbbbc9fef332ec",
+      "bytes": 469
+    },
+    "browser/trials-media-red.log": {
+      "sha256": "1537c6c1567550a649140afdd2cb0d216186abef3ec199ea0355153bb52cbcaa",
+      "bytes": 1928
+    },
+    "browser/trials-media-regression-command.json": {
+      "sha256": "b31a4271f3f1902228b16d8bd54309162c49d6dd30e16f4f96ec19c3e03e9886",
+      "bytes": 781
+    },
+    "browser/trials-media-regression.log": {
+      "sha256": "f38e09871b1bde367b0cf494f1f9d122088c6ef625efe3f94c6bd33c35a91b00",
+      "bytes": 1078
+    },
+    "browser/trials-media-setup-selector-command.json": {
+      "sha256": "d505976fa9bf96bc81d5131fd2cf83d5d3f94c3eb3b7085c2d1832e01112c8d2",
+      "bytes": 469
+    },
+    "browser/trials-media-setup-selector.log": {
+      "sha256": "dc1182260cc892a242b4402fc80e564dbddcae54ec1712ca14777ed62b2e6306",
+      "bytes": 1832
+    },
+    "checks/iao-trials-eslint.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "checks/iao-trials-typecheck.log": {
+      "sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+      "bytes": 227
+    },
+    "checks/iao-trials-unit.json": {
+      "sha256": "a6dcf8e94e6878a177647c7dfd81b030c9925556b840f884dcc4ee1289b8be6c",
+      "bytes": 9013
+    },
+    "checks/iao-trials-unit.log": {
+      "sha256": "db1793541261d8e4ec1614cee87cc49919141f0f1bd4b8b74957e30afbf4b2d4",
+      "bytes": 76
+    },
+    "gitnexus/compare-main.stderr": {
+      "sha256": "d20f15d02033e2b083426d290df0f4c5b3bb59b8ef5d7bc5c406132be9fbfd06",
+      "bytes": 346
+    },
+    "gitnexus/compare-main.txt": {
+      "sha256": "c12fa65871bb8b2d60f06409fd997d9c462d9f4bd3d2f3a0da5dba92867daaf9",
+      "bytes": 2707
+    },
+    "gitnexus/final-lot-detect.stderr": {
+      "sha256": "8f657d43a07f82eac08a2c81d8ef3e8e657ccc73ff65ec8c04757237debb9dcd",
+      "bytes": 346
+    },
+    "gitnexus/final-lot-detect.txt": {
+      "sha256": "2e072c7119d93b47f7110e65162dc79422bfa6b416db2bd92a5fead74e0edab4",
+      "bytes": 422
+    },
+    "gitnexus/first-compare-main-missing-ref.stderr": {
+      "sha256": "4c212c42b05905fe26e43c25545b03c8e20499e019169ce63d42bc21bbdfd8f5",
+      "bytes": 531
+    },
+    "gitnexus/first-lot-detect.stderr": {
+      "sha256": "3118d010cc09ba1cfe5109b7ee84141c35f7e5c73ca9f9e4fac6a571b749807e",
+      "bytes": 346
+    },
+    "gitnexus/first-lot-detect.txt": {
+      "sha256": "1ffbcf16cce15639572ff0e8413bb881d42f8f5e99aae01cf96aac4638d418cc",
+      "bytes": 422
+    },
+    "gitnexus/index.log": {
+      "sha256": "cd7bb31d65e3b61026e4cf22663d7dee0e008572db93dc9d452f94eb6aa03d21",
+      "bytes": 28478
+    }
+  }
+}

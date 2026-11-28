@@ -1,0 +1,47 @@
+{
+  "lastCommit": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "indexedAt": "2026-11-23T20:50:09.031Z",
+  "branch": "fix/iao-release-qualification-20261123",
+  "stats": {
+    "files": 2326,
+    "nodes": 30298,
+    "edges": 99139,
+    "communities": 1305,
+    "processes": 565,
+    "embeddings": 0
+  },
+  "capabilities": {
+    "graph": {
+      "provider": "ladybugdb",
+      "status": "available"
+    },
+    "fts": {
+      "provider": "ladybugdb-fts",
+      "status": "unavailable",
+      "skipReason": "disabled-by-flag"
+    },
+    "vectorSearch": {
+      "provider": "ladybugdb-vector",
+      "status": "unavailable",
+      "exactScanLimit": 10000
+    }
+  },
+  "scope": "Current source graph; FTS disabled; missing flows are not proof of absent execution paths",
+  "attempts": [
+    {
+      "log": "gitnexus-baseline.log",
+      "exit_code": 1
+    },
+    {
+      "log": "gitnexus-baseline-retry.log",
+      "exit_code": 1
+    },
+    {
+      "log": "gitnexus-baseline-cached.log",
+      "exit_code": 0,
+      "workers": 1,
+      "node_heap_mb": 768,
+      "parser_cache_reused": true
+    }
+  ]
+}

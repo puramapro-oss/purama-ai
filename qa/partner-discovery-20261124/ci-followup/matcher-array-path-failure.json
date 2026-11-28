@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/partnerDiscovery.matcher-probe.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 3.21,
+  "probe_removed": true,
+  "counted_as_business_tests": false,
+  "note": "Concrete oracle regression check with KARTA Vitest 5.0.3; not additional product coverage."
+}

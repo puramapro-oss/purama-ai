@@ -1,0 +1,2 @@
+# Optional, independent test oracle only. Not a KARTA runtime dependency.
+qiskit==2.6.2

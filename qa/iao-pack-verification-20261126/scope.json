@@ -1,0 +1,59 @@
+{
+  "id": "IAO-PACK-VERIFICATION-20261126-0414",
+  "state": "QUALIFICATION_NATIVE_EN_ATTENTE",
+  "owner": "/root",
+  "source_remote": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "source_tree": "ae5d147a47012799caa1822be4d327767a215b82",
+  "received_local": "e6a9ece6d66fec795957e7d941d9948ab904d408",
+  "authorization": "Existing IAO local-pack design approval and current user request to execute missing tests, correct and finalize without duplication. Internal reliability/performance correction; no new product.",
+  "assignments": {
+    "/root": [
+      "mobile/lib/iao-local-pack.ts",
+      "mobile/lib/iao-local-digest.ts",
+      "mobile/tests/iao-local-pack.test.cjs",
+      "mobile/tests/iao-local-digest.test.cjs",
+      "targeted existing CI integration",
+      "qa/iao-pack-verification-20261126/",
+      "mobile/lib/iao-native-qualification.ts",
+      "mobile/tests/iao-native-qualification.test.cjs",
+      "mobile/scripts/qualify-offline-android.sh",
+      ".github/workflows/mobile-native-watch.yml"
+    ],
+    "/root/iao_pack_review_20261126": [
+      "mobile/modules/purama-local-digest/"
+    ],
+    "/root/iao_ci_reconcile_20261126": [
+      "mobile/scripts/qualify-android-data-settings.py",
+      "mobile/tests/watch-native/data-settings-qualification.test.cjs",
+      "qa/iao-pack-verification-20261126/android-data-settings/"
+    ]
+  },
+  "preserved_external_scopes": [
+    "IAO-TOOL-CANCELLATION-20261126-4F357A4B",
+    "private result Unicode/idempotency owner",
+    "Android default DATA diagnostics",
+    "T04 source-object-ids existing owner"
+  ],
+  "acceptance": [
+    "Reproduce after-hash file mutation before correction.",
+    "Never adopt an unverified asset stat fingerprint during smoke or asynchronous promotion.",
+    "Always attempt digest and file cleanup; preserve primary errors.",
+    "Native SHA-256 incremental context validates known vectors, bounded views and lifetime; no full-model buffering, new dependency, filesystem permission or background queue.",
+    "Noble fallback only on explicit missing module before hashing, never after a native failure.",
+    "Preserve offline/no-download inspection, licence/provenance, cancellation and atomic promotion.",
+    "Record exact source hashes and distinguish pure core, mocked boundaries, native binding builds and full emulator evidence."
+  ],
+  "limits": [
+    "No production deploy, main merge, billing change, user data cleanup or new subscription comparator.",
+    "Metadata checks do not detect deliberate same-size same-mtime replacement.",
+    "Full current GitNexus index failed exit137; FTS unavailable; manual direct-call review supplements UNKNOWN impact.",
+    "Existing 40e97b0 native success is historical; current271f Android preflight failed DATA readiness before observer.",
+    "Native qualification adds an actual offset-view SHA256 bridge probe; a Java/Swift core test alone is not an Expo binding/device execution proof."
+  ],
+  "received_before_publication": {
+    "remote": "cbd97aa0bc2838d84d9af4e43480c38973c96098",
+    "tree": "d74f53b9ce500d73d39df962779c2669e7fb77cb",
+    "local": "bc3fda84b7cc1536bc05ec2a763520bee9c271cf",
+    "overlap": false
+  }
+}

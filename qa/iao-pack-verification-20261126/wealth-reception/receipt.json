@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-26T05:26:18.134171+00:00",
+  "status": "PASS",
+  "scope": "Six exact archived QA blobs published in 185c619; whitespace gate only",
+  "owner": "/root/iao_native_gaps_20261126",
+  "authorization": "Parent /root explicitly authorized this correction; publication remains with /root.",
+  "source": {
+    "remoteHead": "185c61922c9d40573b1ac1063bcf7a293e5e4dd4",
+    "localHead": "cf928eb6670d43b2de1bb1e6a6db729798095e5a",
+    "tree": "8536df38d1f437019453b639e1004aedbc1626fc",
+    "prBase": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+    "failedRun": 45760351446,
+    "failedJob": 139708622721
+  },
+  "correction": {
+    "addedArchiveEntries": 6,
+    "previousEntries": 54,
+    "currentEntries": 60,
+    "matchingPolicyUnchanged": true,
+    "wildcardsAdded": false,
+    "directoryExceptionsAdded": false,
+    "workflowChanged": false,
+    "rawLogsChanged": false,
+    "sourceFiles": [
+      {
+        "path": "scripts/ci/check-wealth-diff.sh",
+        "sha256": "7971cff6d0cb6677750f1a7c8cf02d7636e2b5d3c03de68722ed3ac242fa274e",
+        "bytes": 7541
+      },
+      {
+        "path": "scripts/ci/test-wealth-diff.py",
+        "sha256": "b3af5c0c3b4edb88e977952cdf8688df3bc5ed67279e6edeab034daba3467f08",
+        "bytes": 11421
+      }
+    ],
+    "archives": [
+      {
+        "path": "qa/iao-pack-verification-20261126/android-data-settings/tests-characterization.log",
+        "blob": "05a46d2c95cdc2ea950b1d889d4732d91a76ef5e",
+        "mode": "100644",
+        "sha256": "c296622656fe48c10629771023cb3332c5e4ac3dd6cff213bbde89ad734c7057",
+        "bytes": 6379,
+        "unchangedFromCandidate": true
+      },
+      {
+        "path": "qa/iao-pack-verification-20261126/native-cores/java-swift-initial.log",
+        "blob": "8be06458826ba34bf88ddc96274668ef9c0f3518",
+        "mode": "100644",
+        "sha256": "0bf052d50dbb33414148b8bfcb7c8af893bb1679cefa837966e80f0ffa75470f",
+        "bytes": 1999,
+        "unchangedFromCandidate": true
+      },
+      {
+        "path": "qa/iao-pack-verification-20261126/native-cores/module-contract-final.log",
+        "blob": "e31a8cee91635f8b89e705679a090abebc1229b3",
+        "mode": "100644",
+        "sha256": "1b751ef2293a46b13db8dcc494b0a387574ebbcd8e172ae6e7c53b0f875a528c",
+        "bytes": 917,
+        "unchangedFromCandidate": true
+      },
+      {
+        "path": "qa/iao-pack-verification-20261126/native-cores/swift-final.log",
+        "blob": "81550a5050a86dc57ee97ad95c900c32e86e356d",
+        "mode": "100644",
+        "sha256": "de1e048862464ec4870d06f40b87917eef44fae2a4c4a4a3362c9861ab0feb99",
+        "bytes": 785,
+        "unchangedFromCandidate": true
+      },
+      {
+        "path": "qa/iao-pack-verification-20261126/native-cores/swift-sdk-explicit.log",
+        "blob": "954bc38b3769fedfc4927c2e0201a5f05e595e55",
+        "mode": "100644",
+        "sha256": "8a3739d83ffa6751cf4262fd87597d32259299119f84edc7b45a73529b9fd03e",
+        "bytes": 312,
+        "unchangedFromCandidate": true
+      },
+      {
+        "path": "qa/iao-pack-verification-20261126/tests/baseline-seven-regressions.tap",
+        "blob": "01b66a545645e3dc2d76d8982d8a3a0cd932b3d4",
+        "mode": "100644",
+        "sha256": "e262c344532b192e7c0ae55708d07e476616fccad546cee0ac176f8491efe8d3",
+        "bytes": 7161,
+        "unchangedFromCandidate": true
+      }
+    ]
+  },
+  "validation": {
+    "baselineGate": {
+      "status": "PASS",
+      "expectedExitCode": 2,
+      "actualExitCode": 2,
+      "evidence": "baseline-gate.json"
+    },
+    "correctedGateSameComparison": {
+      "status": "PASS",
+      "expectedExitCode": 0,
+      "actualExitCode": 0,
+      "evidence": "corrected-gate.json"
+    },
+    "defensiveSuite": {
+      "status": "PASS",
+      "total": 71,
+      "passed": 71,
+      "newCases": 32,
+      "coverage": [
+        "Each exact new path/blob/mode on first appearance",
+        "Each modified archive rejected",
+        "Each renamed archive rejected",
+        "Each preexisting path rejected",
+        "Each executable archive rejected",
+        "New archives compose with prior archives",
+        "New archives cannot mask bad application source",
+        "Existing unlisted QA and invalid revision guards preserved"
+      ],
+      "evidence": "tests.json"
+    },
+    "workingDiffWhitespace": {
+      "status": "PASS",
+      "evidence": "working-diff-check.json"
+    },
+    "gitnexus": {
+      "status": "PARTIEL",
+      "impact": "UNKNOWN: main and ARCHIVED_QA unresolved; FTS unavailable",
+      "detectChanges": "Exact worktree unavailable in existing index; see detect-after.json",
+      "manualReview": "Only the workflow and its isolated fixture harness call this gate; existing comparison logic unchanged.",
+      "evidence": [
+        "impact-before.json",
+        "detect-after.json"
+      ]
+    }
+  },
+  "runtime": {
+    "python": "Python 3.12.14",
+    "git": "git version 2.56.1",
+    "node": "v24.22.3"
+  },
+  "limits": [
+    "No project commit created; commits created by the existing test harness occur only in disposable fixture repositories.",
+    "No CI rerun, native build, engine Wealth test or publication performed.",
+    "Passing the repaired whitespace gate does not certify subsequent CI indexing or detect-changes."
+  ],
+  "evidenceFiles": [
+    {
+      "path": "baseline-gate.json",
+      "sha256": "27a2fb2efef54ca1db05611f5053458791cde928ea9d8a2a9d8ebc154933fe5c"
+    },
+    {
+      "path": "corrected-gate.json",
+      "sha256": "f83eb281d6dca6cbdc38e429e82c77ed86a91475fcb4e43b0970d7291186f33e"
+    },
+    {
+      "path": "detect-after.json",
+      "sha256": "9cd8c9308baccb6bb76f54aac7a514aa27e0ae5751a67ff391c02e61965ce816"
+    },
+    {
+      "path": "impact-before.json",
+      "sha256": "bd64f7c7ec27dc9d75316764a11faee913567174b60546fe323790a250346496"
+    },
+    {
+      "path": "tests.json",
+      "sha256": "4a09ca9e3b4250d66df67a1232244fabd5182f9001e6b9381aadd6a609dcfc06"
+    },
+    {
+      "path": "working-diff-check.json",
+      "sha256": "666392b6fe22788b5976a2dcc3dda414a4c7b0e2344ea179cf5f0fa47f35beae"
+    }
+  ]
+}

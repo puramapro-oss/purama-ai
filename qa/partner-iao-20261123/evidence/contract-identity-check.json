@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "Actual migrated RPC creates partner contract in canonical purama_ai hub identity; no provider transport",
+  "rows": [
+    {
+      "app_slug": "purama_ai",
+      "status": "draft",
+      "docuseal_submission_id": null
+    }
+  ]
+}

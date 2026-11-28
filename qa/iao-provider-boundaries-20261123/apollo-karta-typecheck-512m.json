@@ -1,0 +1,9 @@
+{
+  "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exitCode": -6,
+  "logSha256": "5faebf64268ed0e1da02a2e0399a999bf2b2e8b47efce66f33a142a69596c716",
+  "scope": "KARTA TypeScript compile check only; no emit and no provider calls.",
+  "rawCaptureLogSha256": "4359f08d6e7bc17bf4c8f31b341bcad8cd47163d0db7b430109ed3ace51418e1",
+  "logFormatting": "See log-formatting.json"
+}

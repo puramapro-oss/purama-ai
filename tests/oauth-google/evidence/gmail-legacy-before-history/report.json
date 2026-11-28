@@ -1,0 +1,148 @@
+{
+  "config": {
+    "configFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/playwright.config.ts",
+    "rootDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before-history/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before-history/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js --config tests/ui-state/vite.config.ts --mode test",
+      "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/",
+      "url": "http://127.0.0.1:4197/tests/ui-state/index.html",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "email-lifecycle.spec.ts",
+      "file": "email-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "email dashboard: a legacy success query cannot claim an unconnected Gmail account is connected",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11372,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: not \u001b[32m\"✅ Gmail connecté !\"\u001b[39m\nReceived array:     \u001b[31m[\u001b[7m\"✅ Gmail connecté !\"\u001b[27m]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: not \u001b[32m\"✅ Gmail connecté !\"\u001b[39m\nReceived array:     \u001b[31m[\u001b[7m\"✅ Gmail connecté !\"\u001b[27m]\u001b[39m\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:131:71",
+                    "location": {
+                      "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                      "column": 71,
+                      "line": 131
+                    },
+                    "snippet": "  129 |   await expect(page.getByRole('button', { name: 'Connecter Gmail', exact: true })).toBeVisible();\n  130 |   await settle(page);\n> 131 |   expect(await page.evaluate(() => window.uiStateToastHistory())).not.toContain('✅ Gmail connecté !');\n      |                                                                       ^\n  132 |   await expect(page.getByText('✅ Gmail connecté !', { exact: true })).toHaveCount(0);\n  133 | });\n  134 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                        "column": 71,
+                        "line": 131
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: not \u001b[32m\"✅ Gmail connecté !\"\u001b[39m\nReceived array:     \u001b[31m[\u001b[7m\"✅ Gmail connecté !\"\u001b[27m]\u001b[39m\n\n  129 |   await expect(page.getByRole('button', { name: 'Connecter Gmail', exact: true })).toBeVisible();\n  130 |   await settle(page);\n> 131 |   expect(await page.evaluate(() => window.uiStateToastHistory())).not.toContain('✅ Gmail connecté !');\n      |                                                                       ^\n  132 |   await expect(page.getByText('✅ Gmail connecté !', { exact: true })).toHaveCount(0);\n  133 | });\n  134 |\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:131:71"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:12:08.186Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before-history/artifacts/email-lifecycle-email-dash-7d0f0--Gmail-account-is-connected/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                    "column": 71,
+                    "line": 131
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-9a829446cf1a93c91570",
+          "file": "email-lifecycle.spec.ts",
+          "line": 126,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T22:11:57.955Z",
+    "duration": 26274.667,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

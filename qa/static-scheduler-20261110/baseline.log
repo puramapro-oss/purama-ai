@@ -1,0 +1,131 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --reporter=default --reporter=json --outputFile.json=../qa/static-scheduler-20261110/baseline.json test/staticAgentScheduler.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta
+
+ ❯ test/staticAgentScheduler.test.ts (6 tests | 5 failed) 121ms
+   ❯ static-agent scheduler lifecycle (6)
+     ✓ preserves all sixteen cadences and the current minute delivery identity 95ms
+     × keeps the scheduled slot when the active-user lookup finishes in another minute 10ms
+     × does not enqueue when a pending user lookup resolves after stop 4ms
+     × does not start a second enqueue when stop occurs during the first 5ms
+     × ignores a timer callback that had already been dispatched before destroy 2ms
+     × keeps provider error details out of the scheduler log and allows the next tick 2ms
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  22:26:35
+   Duration  460ms (tests 48%, transform 41%, setup 5%, import 5%, worker 2%)
+
+JSON report written to /workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/static-scheduler-20261110/baseline.json
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/staticAgentScheduler.test.ts > static-agent scheduler lifecycle > keeps the scheduled slot when the active-user lookup finishes in another minute
+AssertionError: expected 'cron|email|user-1|2026-11-10T12:01' to be 'cron|email|user-1|2026-11-10T12:00' // Object.is equality
+
+Expected: "cron|email|user-1|2026-11-10T12:00"
+Received: "cron|email|user-1|2026-11-10T12:01"
+
+ ❯ test/staticAgentScheduler.test.ts:84:57
+     82|     pending.resolve(["user-1"]);
+     83|     await flush();
+     84|     expect(state.enqueue.mock.calls[0]?.[1]?.dedupeKey).toBe("cron|ema…
+       |                                                         ^
+     85|     for (const controller of controllers) controller.stop();
+     86|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  test/staticAgentScheduler.test.ts > static-agent scheduler lifecycle > does not enqueue when a pending user lookup resolves after stop
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "agentType": "email",
+        "trigger": Object {
+          "payload": Object {
+            "slot": "2026-11-10T12:00",
+          },
+          "source": "Email Agent — Fetch & Process",
+          "type": "cron",
+        },
+        "userId": "user-1",
+      },
+      Object {
+        "dedupeKey": "cron|email|user-1|2026-11-10T12:00",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ test/staticAgentScheduler.test.ts:98:31
+     96|     pending.resolve(["user-1"]);
+     97|     await flush();
+     98|     expect(state.enqueue).not.toHaveBeenCalled();
+       |                               ^
+     99|     for (const controller of controllers) controller.stop();
+    100|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  test/staticAgentScheduler.test.ts > static-agent scheduler lifecycle > does not start a second enqueue when stop occurs during the first
+AssertionError: expected "vi.fn()" to be called 1 times, but got 2 times
+ ❯ test/staticAgentScheduler.test.ts:114:27
+    112|     pending.resolve("job-1");
+    113|     await flush();
+    114|     expect(state.enqueue).toHaveBeenCalledTimes(1);
+       |                           ^
+    115|     for (const controller of controllers) controller.stop();
+    116|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  test/staticAgentScheduler.test.ts > static-agent scheduler lifecycle > ignores a timer callback that had already been dispatched before destroy
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      "email",
+    ]
+
+
+Number of calls: 1
+
+ ❯ test/staticAgentScheduler.test.ts:125:28
+    123|     retiredCallback(context());
+    124|     await flush();
+    125|     expect(state.list).not.toHaveBeenCalled();
+       |                            ^
+    126|     expect(state.enqueue).not.toHaveBeenCalled();
+    127|     for (const controller of controllers) controller.stop();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  test/staticAgentScheduler.test.ts > static-agent scheduler lifecycle > keeps provider error details out of the scheduler log and allows the next tick
+AssertionError: expected '[scheduler] Email Agent — Fetch & Pro…' not to contain 'PRIVATE_DATABASE_DETAIL'
+
+Expected: "PRIVATE_DATABASE_DETAIL"
+Received: "[scheduler] Email Agent — Fetch & Process échoué: PRIVATE_DATABASE_DETAIL"
+
+ ❯ test/staticAgentScheduler.test.ts:137:82
+    135|     await flush();
+    136|     expect(console.error).toHaveBeenCalledTimes(1);
+    137|     expect(vi.mocked(console.error).mock.calls.flat().map(String).join…
+       |                                                                                  ^
+    138|     state.tasks[0].callback(context("2026-11-10T12:02:00.000Z"));
+    139|     await flush();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

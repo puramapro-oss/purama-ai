@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-22T23:44:55.517253+00:00",
+  "base_commit": "370ba539c3bc1bcb58f1e67cf7a17985f6ce59a1",
+  "branch": "fix/iao-runtime-deadline-20261122",
+  "design_status": "PRET_A_CODER",
+  "authorization": "Existing IAO design and continuation/correction request on 23 November 2026, Europe/Paris",
+  "scope": "Finish runtime lint correction and bound authenticated social-connect request bodies using the existing shared reader.",
+  "status": "PASS for local follow-up gates; new commit CI pending",
+  "production_deployed": false,
+  "real_provider_calls": 0,
+  "new_product_dependencies": false,
+  "changes": [
+    {
+      "path": "karta/src/iao/kartaRuntimePort.ts",
+      "purpose": "Replace assignment to catch binding by local failure variable; preserve interruption classification"
+    },
+    {
+      "path": "supabase/functions/_shared/social-connection-core.ts",
+      "purpose": "Bound incoming stream at16384bytes and5000ms; keep4096UTF16-unit limit; normalize one BOM; sanitize400/408/413"
+    },
+    {
+      "path": "tests/social-connection/connection.test.ts",
+      "purpose": "Append14regressions; preserve all prior tests and fixture"
+    }
+  ],
+  "files": {
+    "karta/src/iao/kartaRuntimePort.ts": {
+      "sha256": "f8525fa8863b0f48847ba65e1bb6a7ae99b2ebb3103bdce959e8e9f2876d9102",
+      "bytes": 10841
+    },
+    "supabase/functions/_shared/social-connection-core.ts": {
+      "sha256": "28fe4521d53e1d85b7d3c9b41e137246138cb83fd6634b590b222beda078508b",
+      "bytes": 13538
+    },
+    "tests/social-connection/connection.test.ts": {
+      "sha256": "80694971b6fc4ddf3522d9e4370fd214c7c74652be5585a1d6ed93806bad4426",
+      "bytes": 37791
+    }
+  },
+  "tests": {
+    "runtime_targeted": {
+      "passed": 55,
+      "failed": 0,
+      "exit_code": 0,
+      "log": "runtime-55.log"
+    },
+    "new_inbound_red": {
+      "passed": 2,
+      "failed": 12,
+      "filtered_existing": 36,
+      "exit_code": 1,
+      "log": "connect-body-red-final.log",
+      "source_sha256": "4be6b3050c0f4ba63d6ca0ecbe63759bef15d07ae30c1597de0bfa6ea4175335"
+    },
+    "new_inbound_green": {
+      "passed": 14,
+      "failed": 0,
+      "filtered_existing": 36,
+      "exit_code": 0,
+      "log": "connect-body-green.log"
+    },
+    "social_core": {
+      "passed": 130,
+      "failed": 0,
+      "files": 6,
+      "exit_code": 0,
+      "log": "social-core-green.log"
+    },
+    "social_routes_real_sdk": {
+      "passed": 14,
+      "failed": 0,
+      "files": 3,
+      "exit_code": 0,
+      "log": "social-sdk-manual-green.log",
+      "supabase_version": "2.91.0"
+    },
+    "independent_reader_sdk_boundaries": {
+      "passed": 6,
+      "failed": 0,
+      "exit_code": 0,
+      "supabase_version": "2.110.8",
+      "log": "sdk-boundaries-six.log"
+    },
+    "static": [
+      {
+        "name": "lint-final",
+        "command": [
+          "node",
+          "--max-old-space-size=640",
+          "/workspace/scratch/e2ed1eeef5d4/iao-audit/node_modules/eslint/bin/eslint.js",
+          "--config",
+          "/tmp/iao-qualification-20261123-ccfbf7e5800b/lint-tools/eslint.config.mjs",
+          "."
+        ],
+        "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+        "exit_code": 0
+      },
+      {
+        "name": "typecheck",
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+        "exit_code": 0
+      },
+      {
+        "name": "build",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+        "exit_code": 0
+      }
+    ],
+    "lint_errors": 0,
+    "lint_warnings": 22
+  },
+  "counting_note": "Targeted suites overlap the full suite; inbound14are included in social_core130. Do not add the counts into a single campaign.",
+  "toolchain": {
+    "node": "24.22.3",
+    "deno": "2.9.6",
+    "gitnexus": "1.6.12",
+    "vitest": "5.0.3",
+    "eslint": "9.39.5"
+  },
+  "lint_configuration": {
+    "original": "eslint.config.js",
+    "sha256": "61f035d77a7eba3ce99abef1bf6ffb057358951bd11080b789838cfbbce38c54",
+    "copy_verbatim": true,
+    "dependencies_match_lockfile": true
+  },
+  "initial_sdk_setup_failures": [
+    "Manual resolver initially found no root node_modules:0tests collected,3module load failures,exit1; no product defect attributed.",
+    "A cache-only resolver attempt stalled downloading registry metadata and was interrupted with exit130.",
+    "Final run reused the genuine installed six Supabase2.91.0packages after checking them against package-lock; a temporary root node_modules symlink was removed after the successful run. Runtime deny-net/deny-run preserved."
+  ],
+  "independent_reviews": [
+    "followup-20261123-runtime-review.json",
+    "followup-20261123-social-review.json"
+  ],
+  "initial_ci_reference": {
+    "commit": "370ba539c3bc1bcb58f1e67cf7a17985f6ce59a1",
+    "karta_tests_passed": 4299,
+    "karta_files_passed": 189,
+    "runs": [
+      45080184910,
+      45080184866
+    ],
+    "site": "lint failed on no-ex-assign; subsequent site steps skipped"
+  },
+  "limits": [
+    "Body deadline is scoped to input reading, not the whole OAuth transaction or authentication request.",
+    "UTF8andContent-Length now reject malformed input explicitly; leading BOM normalization is newly consistent across Node24andDeno2.9.6.",
+    "No production account, live provider, Mac performance or full autonomous mission qualified.",
+    "Advertising cycle still takes one model decision before its tools; existing consultation/private-result flows consume research elsewhere.",
+    "GitNexus omits some unresolved dynamic calls and flow branches; graph absence is not proof of no impact."
+  ]
+}

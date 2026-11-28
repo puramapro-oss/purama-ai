@@ -1,0 +1,205 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+    "name": "runChefWorkerCycle",
+    "kind": "Function",
+    "filePath": "karta/src/chef/supervisor.ts",
+    "startLine": 99,
+    "endLine": 531
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/workshop-runtime.ts:runWorkshopRuntime.projectLoop@307:2",
+        "name": "projectLoop",
+        "filePath": "karta/src/chef/workshop-runtime.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "Function:karta/src/chef/workshop-runtime.ts:defaultDependencies",
+        "name": "defaultDependencies",
+        "filePath": "karta/src/chef/workshop-runtime.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/chef/git-state.ts:captureCleanGitBaseline",
+        "name": "captureCleanGitBaseline",
+        "filePath": "karta/src/chef/git-state.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/git-state.ts:verifyCommittedGitState",
+        "name": "verifyCommittedGitState",
+        "filePath": "karta/src/chef/git-state.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.blockUnconfirmedStop@268:2",
+        "name": "blockUnconfirmedStop",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.blockUnconfirmedStop@268:2",
+        "name": "blockUnconfirmedStop",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.loseLease@234:2",
+        "name": "loseLease",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.onShutdown@226:2",
+        "name": "onShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.recoverTask@141:2",
+        "name": "recoverTask",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.releaseForShutdown@153:2",
+        "name": "releaseForShutdown",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.settleBeforeExecution@129:2",
+        "name": "settleBeforeExecution",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@263:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@263:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@263:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@263:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "proc_14_runchefworkercycle",
+      "name": "RunChefWorkerCycle → AssertRpc",
+      "step_index": 1,
+      "step_count": 4
+    },
+    {
+      "id": "proc_91_runchefworkercycle",
+      "name": "RunChefWorkerCycle → ChefProcessStopUnconfirmedError",
+      "step_index": 1,
+      "step_count": 4
+    }
+  ]
+}
+
+
+  GitNexus Context (1.6.12)
+{"level":40,"time":1795631941090,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

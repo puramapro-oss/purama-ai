@@ -1,0 +1,6 @@
+{
+  "original_filename": "settings-final.log",
+  "raw_sha256": "a2015dbdafd0f217aa9c4aa1b86f9fe7ed37808c4c98247134cf390c5d202753",
+  "raw_bytes": 225,
+  "stdout": "\n RUN  v4.1.12 /tmp/purama-iao-affiliate-fix-20261123\n\n\n Test Files  1 passed (1)\n      Tests  5 passed (5)\n   Start at  01:57:46\n   Duration  1.27s (transform 155ms, setup 0ms, import 355ms, tests 268ms, environment 423ms)\n\n"
+}

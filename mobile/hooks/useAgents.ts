@@ -16,8 +16,18 @@ export interface Agent {
 // Ces descriptions présentent des assistants IA, sans diplôme ni expérience humaine revendiqués.
 export const AGENTS: Agent[] = [
   {
+    slug: "purama",
+    name: "PURAMA",
+    category: "Conversation",
+    description: "Votre assistant sur cet appareil, avec une mémoire personnelle et une reprise après reconnexion.",
+    icon: "sparkles",
+    color: "#8B5CF6",
+    endpoint: "", // The exact /agent/purama native route owns this capability.
+    premium: false,
+  },
+  {
     slug: "compta",
-    name: "Agent Compta",
+    name: "Comptabilité",
     category: "Finance",
     description: "Assistant IA de comptabilité : aide pour factures, TVA, déclarations et bilans.",
     icon: "calculator",
@@ -27,7 +37,7 @@ export const AGENTS: Agent[] = [
   },
   {
     slug: "email",
-    name: "Agent Email",
+    name: "Courriels",
     category: "Communication",
     description: "Redige, repond et gere tes emails professionnels.",
     icon: "mail",
@@ -37,7 +47,7 @@ export const AGENTS: Agent[] = [
   },
   {
     slug: "juridique",
-    name: "Agent Juridique",
+    name: "Informations juridiques",
     category: "Legal",
     description: "Assistant IA juridique : informations et préparation de documents à vérifier.",
     icon: "scale",
@@ -47,7 +57,7 @@ export const AGENTS: Agent[] = [
   },
   {
     slug: "partenariat",
-    name: "Agent Partenariat",
+    name: "Partenariats",
     category: "Business",
     description: "Trouve et gere tes partenaires commerciaux.",
     icon: "handshake",
@@ -57,7 +67,7 @@ export const AGENTS: Agent[] = [
   },
   {
     slug: "createur",
-    name: "Agent Createur",
+    name: "Création de contenu",
     category: "Contenu",
     description: "Cree du contenu marketing, posts, articles, videos.",
     icon: "pen-tool",
@@ -67,7 +77,7 @@ export const AGENTS: Agent[] = [
   },
   {
     slug: "social",
-    name: "Agent Social",
+    name: "Réseaux sociaux",
     category: "Reseaux sociaux",
     description: "Gere tes reseaux sociaux en pilote automatique.",
     icon: "share-2",

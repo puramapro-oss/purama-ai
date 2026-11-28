@@ -1,0 +1,9 @@
+{
+  "error": "Target '.github/workflows/purama-chef-hardening.yml' not found",
+  "target": {
+    "name": ".github/workflows/purama-chef-hardening.yml"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "id": "site-personnel",
+    "name": "Site personnel",
+    "userIds": [
+      "00000000-0000-4000-8000-000000000001"
+    ],
+    "repo": "organisation/site-personnel",
+    "workdir": "/srv/purama/worktrees/site-personnel",
+    "allowedPaths": [
+      "src",
+      "public",
+      "index.html"
+    ],
+    "maxParallel": 2,
+    "tokenBudget": 900000,
+    "estimatedTokensPerTask": 300000,
+    "codexCommand": "codex",
+    "implementationProfiles": [
+      "typecheck",
+      "build"
+    ],
+    "reviewProfiles": [
+      "acceptance"
+    ],
+    "verificationProfiles": [
+      {
+        "name": "typecheck",
+        "kind": "typecheck",
+        "command": "npm",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "requirementKeys": [
+          "PRODUCT",
+          "QUALITY"
+        ],
+        "timeoutMs": 120000
+      },
+      {
+        "name": "build",
+        "kind": "build",
+        "command": "npm",
+        "args": [
+          "run",
+          "build"
+        ],
+        "requirementKeys": [
+          "PRODUCT",
+          "QUALITY"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "name": "acceptance",
+        "kind": "review",
+        "command": "npm",
+        "args": [
+          "run",
+          "test:distribution:unit"
+        ],
+        "requirementKeys": [
+          "PRODUCT",
+          "QUALITY"
+        ],
+        "timeoutMs": 180000
+      }
+    ]
+  }
+]

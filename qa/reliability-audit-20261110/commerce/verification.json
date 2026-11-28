@@ -1,0 +1,18 @@
+{
+  "base_head": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "status": "PASS_LOCAL_SCOPE",
+  "code_files": 5,
+  "checks": {
+    "source_manifest_current": true,
+    "ledger_current": true,
+    "mac_source_equal": true,
+    "mac_commerce_inputs_equal": true
+  },
+  "commerce_cases": 82,
+  "overage_cases": 38,
+  "counts_additive": false,
+  "runtime_sdk_check": "PASS",
+  "hosted_ci": "OWNED_BY_ROOT_ASSEMBLY",
+  "live_provider": "NOT_TESTED",
+  "production": "NOT_TESTED"
+}

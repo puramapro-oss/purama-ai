@@ -210,3 +210,33 @@ test('malformed serialized proofs return a verification refusal', async () => {
     }
   }
 });
+
+test('GHSA-848j-6mx2-7j84: contract proof paths do not invoke Elliptic ECDSA signing', async (t) => {
+  // Resolve the exact transitive instance used by Bitcore, not a substitute.
+  const bitcoreRequire = createRequire(require.resolve('bitcore-lib/package.json'));
+  const EC = bitcoreRequire('elliptic').ec;
+  const signing = t.mock.method(EC.prototype, 'sign', () => {
+    throw new Error('ECDSA_SIGNING_FORBIDDEN_IN_TIMESTAMP_PROOFS');
+  });
+  // Demonstrate that the tripwire is active before exercising the real APIs.
+  assert.throws(() => EC.prototype.sign(), /ECDSA_SIGNING_FORBIDDEN/);
+  signing.mock.resetCalls();
+
+  const { contracts, ots } = await library();
+  const stamped = await contracts.stampContract(pdf);
+  assert.equal(stamped.stampHash, digest(pdf));
+  const result = await contracts.verifyContractProof(pdf, stamped.proofBase64);
+  assert.equal(result.pending, true);
+  const altered = new Uint8Array(pdf);
+  altered[4] ^= 1;
+  assert.equal((await contracts.verifyContractProof(altered, stamped.proofBase64)).verified, false);
+  assert.equal((await ots.verifyProof(pdf, 'bm90IGFuIG90cyBwcm9vZg==')).verified, false);
+
+  // The real confirmed-attestation primitive compares Merkle bytes, without signing.
+  const bytes = [...createHash('sha256').update(pdf).digest()];
+  const attestation = new primitives.Notary.BitcoinBlockHeaderAttestation(1);
+  assert.equal(attestation.verifyAgainstBlockheader(bytes, {
+    merkleroot: Buffer.from(bytes).toString('hex'), time: 1231006505,
+  }), 1231006505);
+  assert.equal(signing.mock.callCount(), 0);
+});

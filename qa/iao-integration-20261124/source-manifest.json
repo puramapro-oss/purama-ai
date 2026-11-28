@@ -1,0 +1,60 @@
+{
+  "baseCommit": "60a3f6bce721331566951dee59b4c7b9a4b17099",
+  "scope": "Product and test source snapshot after the final stale-completion correction; final verification receipts refer to these bytes.",
+  "files": [
+    {
+      "path": "karta/src/api/iaoRoutes.ts",
+      "baseSha256": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b",
+      "candidateSha256": "3b92f9c26b4846bf9de56b4ba1b8001b38bc5965d469087e5a1d98b85f7701cb",
+      "bytes": 10741
+    },
+    {
+      "path": "karta/src/iao/iaoFacade.ts",
+      "baseSha256": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+      "candidateSha256": "5fdde33ec6e3119c059d3e4c7b17ca2985a1ea6b575fb09ad2793b70b7cdb5ab",
+      "bytes": 17626
+    },
+    {
+      "path": "karta/src/integrations/localComputeFabricProvider.ts",
+      "baseSha256": "46ad324197ea8d1456767571904f916e7f92970e1b9511ada74a5c9948ab53b1",
+      "candidateSha256": "6106e335c105bb2b3f912c01a781289baf50bda60f8441501a5ef0a3d6a3556f",
+      "bytes": 11608
+    },
+    {
+      "path": "karta/test/apiIaoIntegration.test.ts",
+      "baseSha256": "7e92c2e0db234cc76c8f924ae5f4f333cce01960c8973ee69369b446eb9d41e6",
+      "candidateSha256": "76fb04a03f1e27c23014ae738c137633251f21c9addebce60999bc7191f26f00",
+      "bytes": 18395
+    },
+    {
+      "path": "karta/test/iaoAdmissionRevalidation.test.ts",
+      "baseSha256": null,
+      "candidateSha256": "93e439ae7d621a96a31c1cb5a505f00d9cc51a830047f25f02c95b053f84cdc1",
+      "bytes": 6079
+    },
+    {
+      "path": "karta/test/iaoCompletedRetention.test.ts",
+      "baseSha256": null,
+      "candidateSha256": "0e1576875cc73cd199feaad5189773694c0c59adb690d1344aacb4e5f738643c",
+      "bytes": 7258
+    },
+    {
+      "path": "karta/test/iaoCompletedImmutability.test.ts",
+      "baseSha256": null,
+      "candidateSha256": "637afd380c26c0302a9262a278af3d07bfa3aef51310ae284c562d69abc84050",
+      "bytes": 7504
+    },
+    {
+      "path": "karta/test/localComputeFabricMemoryProjection.test.ts",
+      "baseSha256": null,
+      "candidateSha256": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea",
+      "bytes": 7983
+    },
+    {
+      "path": "karta/test/iao-facade.test.ts",
+      "baseSha256": "1174edc8e472ca7cd736f0079d0bcfdf8c6c7e3d30b60d415e5df26ce31b8baa",
+      "candidateSha256": "8b72918da0e445bf6a62d2f39b2b19ecd9add76730ef39735d9af5e49d84293c",
+      "bytes": 35528
+    }
+  ]
+}

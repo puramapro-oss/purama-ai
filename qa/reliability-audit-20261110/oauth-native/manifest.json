@@ -1,0 +1,126 @@
+{
+  "source_inputs": {
+    "supabase/migrations/20261110233000_oauth_connection_states.sql": "e0b0e94339d2f83966603bbfeeea74cfa6e1669808c06c6dfd16d6f8bc65ec67",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2"
+  },
+  "files": {
+    "qa/reliability-audit-20261110/oauth-native/README.md": {
+      "sha256": "7a85a7d1284699c96a4e2a1728a65f37ddb836323ad980e770d6cde41c7e2448",
+      "bytes": 9453
+    },
+    "qa/reliability-audit-20261110/oauth-native/baseline/migration.sql": {
+      "sha256": "aa53db76df986c60817253d34ae9c46757d3a47efeef23f36a1dfbfa47ce49dc",
+      "bytes": 4190
+    },
+    "qa/reliability-audit-20261110/oauth-native/baseline/oauth-state.ts": {
+      "sha256": "a6df9cafec0e97af3536099c6f930e2eabd4675b9d5b51739993c492837d08b5",
+      "bytes": 3106
+    },
+    "qa/reliability-audit-20261110/oauth-native/baseline/postgres.log": {
+      "sha256": "22d352ecf849f2c48615859db6cd21a14ba4b26325d296aca55ee258d4ff1bcc",
+      "bytes": 7471
+    },
+    "qa/reliability-audit-20261110/oauth-native/baseline/result.json": {
+      "sha256": "22418c864176b081d0783b9366cc37d2aeb75471f55f28ebb26186537d7a9656",
+      "bytes": 11854
+    },
+    "qa/reliability-audit-20261110/oauth-native/baseline/transcript.json": {
+      "sha256": "e63028dc751760f34275aeb9ca9c943e581cf932431c90bdb14bfb232ef0e221",
+      "bytes": 44784
+    },
+    "qa/reliability-audit-20261110/oauth-native/ci-portability-review.json": {
+      "sha256": "84260d439a44c2dcffb80d371384f51d5eea40a0d80e6d24cdd5b961cda5e2af",
+      "bytes": 2284
+    },
+    "qa/reliability-audit-20261110/oauth-native/final/migration.sql": {
+      "sha256": "e0b0e94339d2f83966603bbfeeea74cfa6e1669808c06c6dfd16d6f8bc65ec67",
+      "bytes": 4650
+    },
+    "qa/reliability-audit-20261110/oauth-native/final/oauth-state.ts": {
+      "sha256": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+      "bytes": 3399
+    },
+    "qa/reliability-audit-20261110/oauth-native/final/postgres.log": {
+      "sha256": "74a30b34a0a2a1db2994b480b371c8c2fc60a65bfb5f8937807c1b16ef5d4966",
+      "bytes": 7471
+    },
+    "qa/reliability-audit-20261110/oauth-native/final/result.json": {
+      "sha256": "e04dba6ce8d394bbb2f7197fc62406696f7e3d3ad671edb263789e6cff2d2907",
+      "bytes": 10854
+    },
+    "qa/reliability-audit-20261110/oauth-native/final/transcript.json": {
+      "sha256": "5ed92d19d054330cd54d3469709cc1ead39b6b5a01e375651d51cc41b906e9cb",
+      "bytes": 45190
+    },
+    "qa/reliability-audit-20261110/oauth-native/launcher-checks.json": {
+      "sha256": "3c68d8f2305319b3de11c14ad8511338a684de5b98b7fc0895cb167ee5f65488",
+      "bytes": 1746
+    },
+    "qa/reliability-audit-20261110/oauth-native/linux-pg16/execution.json": {
+      "sha256": "764e57764321b9c121ccce98f3139a787b198cbc84c2b01f9ffcf4a898868097",
+      "bytes": 899
+    },
+    "qa/reliability-audit-20261110/oauth-native/linux-pg16/execution.log": {
+      "sha256": "1f9831abe7fddf4c0584e7de394334e7ee99b4f4bf6ebf7e71c4d62fef1c02c2",
+      "bytes": 13046
+    },
+    "qa/reliability-audit-20261110/oauth-native/linux-pg16/postgres.log": {
+      "sha256": "f0296aefca9cdbb69f90effc6caf790847f246a1898607764423d694e682b527",
+      "bytes": 7319
+    },
+    "qa/reliability-audit-20261110/oauth-native/linux-pg16/result.json": {
+      "sha256": "4e4dbcdcff2e9f4e49e0acdf78ea6ecc626eb98e8c996f578350eb520ed569cc",
+      "bytes": 10800
+    },
+    "qa/reliability-audit-20261110/oauth-native/linux-pg16/transcript.json": {
+      "sha256": "90400e9fdc6d3f997c4f57c381470aa239bca5192bd59ff388cc8b9b0c233e1e",
+      "bytes": 53254
+    },
+    "qa/reliability-audit-20261110/oauth-native/run-native.sh": {
+      "sha256": "6faaac18a6010e74b3c34babda51d29d6b548b5b17ba5831fb8d465750f6ce9d",
+      "bytes": 1811
+    },
+    "qa/reliability-audit-20261110/oauth-native/transfer-receipt.json": {
+      "sha256": "8ddd474ab57e18d6fa05f0fb45a9bb3a3d1f113103e8fd2945b123c3b79df992",
+      "bytes": 1751
+    },
+    "qa/reliability-audit-20261110/oauth-native/verify_native.py": {
+      "sha256": "2474b629686dd265434b5f2594e41a2e79da4316ecf005a76deed3f48b3cf4d0",
+      "bytes": 25349
+    }
+  },
+  "native_result": {
+    "before": {
+      "groups_passed": 10,
+      "groups_failed": 1,
+      "expected_failed_group": "expiry_rechecked_after_lock_wait"
+    },
+    "after": {
+      "groups_passed": 11,
+      "groups_failed": 0
+    },
+    "server_version": "18.4 (Homebrew)",
+    "same_runner_before_after": true,
+    "linux_portability": {
+      "groups_passed": 11,
+      "groups_failed": 0,
+      "server_version": "16.15 (Debian 16.15-1.pgdg13+2)",
+      "via_portable_launcher": true,
+      "uid": 1000,
+      "same_runner_sha256": "2474b629686dd265434b5f2594e41a2e79da4316ecf005a76deed3f48b3cf4d0"
+    }
+  },
+  "cleanup": {
+    "stopped": true,
+    "cluster_removed": true,
+    "port_closed": true,
+    "errors": []
+  },
+  "scope": "Native migration in disposable PostgreSQL 18.4 on macOS and 16.15 on Linux; helper read and fingerprinted only; hosted CI, live OAuth and production not qualified by this subagent.",
+  "linux_cleanup": {
+    "stopped": true,
+    "cluster_removed": true,
+    "port_closed": true,
+    "errors": []
+  }
+}

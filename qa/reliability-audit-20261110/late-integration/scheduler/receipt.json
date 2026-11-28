@@ -1,0 +1,198 @@
+{
+  "status": "PASS_LOCAL_RECONCILIATION",
+  "starting_head": "54971f5a511be752fa70ed94306cdb322f29ff81",
+  "integrated_runtime_head": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+  "common_ancestor": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "environment": {
+    "node": "v24.22.1",
+    "npm": "11.9.0",
+    "vitest": "5.0.3",
+    "node_cron": "4.6.0",
+    "platform": "Linux"
+  },
+  "sources": [
+    {
+      "path": "karta/src/scheduler/cron.ts",
+      "sha256": "0bb2de145b86bbc6c377e90eb70f939f779343cc221d16754f9f4cd7aeb7b972",
+      "bytes": 6521,
+      "modified_by_this_lot": true
+    },
+    {
+      "path": "karta/test/coreSchedulerDrain.test.ts",
+      "sha256": "7c87b5a9847bd1d122de0759c51d7b070c3a6bc73789f68c52422b31c1460427",
+      "bytes": 10834,
+      "modified_by_this_lot": true
+    },
+    {
+      "path": "karta/test/staticAgentScheduler.test.ts",
+      "sha256": "73352d8f78163c6df1709e89d4c60b85dd807ad1e49aef6525637948f677f9f5",
+      "bytes": 5583,
+      "modified_by_this_lot": true
+    },
+    {
+      "path": "karta/test/staticAgentSchedulerCron.test.ts",
+      "sha256": "9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b",
+      "bytes": 3837,
+      "modified_by_this_lot": false
+    }
+  ],
+  "checks": {
+    "union_before": {
+      "status": "EXPECTED_FAIL",
+      "passed": 14,
+      "failed": 10,
+      "total": 24,
+      "exit_code": 1,
+      "proof": "before.json"
+    },
+    "union_after": {
+      "status": "PASS",
+      "passed": 24,
+      "failed": 0,
+      "total": 24,
+      "exit_code": 0,
+      "proof": "after.json"
+    },
+    "neighbors_initial": {
+      "status": "PARTIEL",
+      "passed": 36,
+      "planned": 63,
+      "worker_signal": "SIGKILL",
+      "exit_code": 1,
+      "proof": "neighbors-initial.json"
+    },
+    "remaining_queue_file_retry": {
+      "status": "PASS",
+      "passed": 27,
+      "total": 27,
+      "exit_code": 0,
+      "proof": "queue-retry.json"
+    },
+    "typecheck_initial": {
+      "status": "INTERRUPTED",
+      "exit_code": 137,
+      "proof": "typecheck-initial.json"
+    },
+    "typecheck_heap256": {
+      "status": "ENVIRONMENT_FAILURE",
+      "exit_code": 134,
+      "cause": "Explicit heap limit reached",
+      "proof": "typecheck-heap256.json"
+    },
+    "typecheck_final_heap512": {
+      "status": "PASS",
+      "exit_code": 0,
+      "proof": "typecheck-final.json"
+    },
+    "build_heap256": {
+      "status": "PASS",
+      "exit_code": 0,
+      "proof": "build.json"
+    },
+    "ast_preservation": {
+      "status": "PASS",
+      "unchanged_assertions": 65,
+      "unchanged_scenarios": 24,
+      "proof": "assertion-preservation.json"
+    },
+    "diff_check": {
+      "status": "PASS",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "karta/src/scheduler/cron.ts",
+        "karta/test/coreSchedulerDrain.test.ts",
+        "karta/test/staticAgentScheduler.test.ts",
+        "karta/test/staticAgentSchedulerCron.test.ts"
+      ]
+    },
+    "independent_review": "Reported separately by commerce_identity_audit and preserved by root",
+    "final_index_detect_changes": "PENDING_ROOT_FINAL_INDEX",
+    "composed_hosted_ci": "NOT_RUN_BY_THIS_AGENT"
+  },
+  "scope": {
+    "product_files_modified": 1,
+    "test_adapters_modified": 2,
+    "real_cron_test_unchanged": true,
+    "staging_by_this_agent": false,
+    "commits_by_this_agent": false,
+    "production_actions": false
+  },
+  "capture_policy": "Structured tool results preserve actual output and exit codes. The initial failed VM probe has no reconstructed raw script/log. Diagnostic helpers in this folder are qualification material, not product code.",
+  "files": {
+    "qa/reliability-audit-20261110/late-integration/scheduler/README.md": {
+      "sha256": "0ad3836455aac19b34a3454b76f3ad53aa860ebbf6674e9b6770de87ecf63567",
+      "bytes": 4186
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/after.json": {
+      "sha256": "3a32b6f6f73e43d9abd4e5546eb5df634b86cc3786c7e1575d7bf88ac4699d97",
+      "bytes": 1551
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/assertion-preservation.js.txt": {
+      "sha256": "f5accaed3e05786b44234e5dd0a0f413845d4fc2be7abaffbc7dc6d1aca36bfb",
+      "bytes": 2472
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/assertion-preservation.json": {
+      "sha256": "e664c45bcc194e57c97676e4d7b3ca3c70d28be77fdbbb23f4440bb9f356d21a",
+      "bytes": 2175
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/before.json": {
+      "sha256": "d7c06c3922d2435209d780f21bf868dd5a5c44b2208da5f0317e738f4c3ba7cf",
+      "bytes": 9637
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/build.json": {
+      "sha256": "3ad7ef2bdc5dbbf9e3bc8a3683ebba547242d60396a29f5b47712556e96c1ed1",
+      "bytes": 1056
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/comparison-probe-initial-error.json": {
+      "sha256": "8fe0ea85afa8aab9f8b622f5454a0928d30ee448154e24ffe727fc99f5496d48",
+      "bytes": 775
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/comparison-probe.js.txt": {
+      "sha256": "90a3b1189d245ce308b9d5cb32f580c321e6d93290fd687cc42d84e2fee473e1",
+      "bytes": 3347
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/comparison-probe.json": {
+      "sha256": "2cb66daef4aa013c428b76413d6124ac80245ed56238ca443c4d404957a3fff9",
+      "bytes": 1004
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/impact-main.json": {
+      "sha256": "9ab3112687e35bb0faa093122c5c971ba9d28b1ddf7a141876f466193a3c0d50",
+      "bytes": 5226
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/impact-provenance.json": {
+      "sha256": "c725883f5badfc6cdc3d432a633b33ef1ab5bced4321b45551690f1bff0b10ef",
+      "bytes": 704
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/impact-stop.json": {
+      "sha256": "ecd4d5623652d050dbdba85e6f58d32056a1af066bc97608df3fda464044dbe9",
+      "bytes": 31236
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/impact-tests.json": {
+      "sha256": "3cbc0866cfc812d82ba75c2c30f487f90e276bb5714926513c2cc428308734c3",
+      "bytes": 4110
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/neighbors-initial.json": {
+      "sha256": "1cfb7538caec09ceb0a7109b8edbf52fb6bd8892b627aae1d701b2706213fcd9",
+      "bytes": 3375
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/queue-retry.json": {
+      "sha256": "e3d6dafe92a35d30beff2f66f29ea58195f40bcde5da00aef6ec9b35742ce1be",
+      "bytes": 1412
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/typecheck-final.json": {
+      "sha256": "eb1b60e92af32db5a96ed7b290e70b836db3099c1c70152cec141ab18f8247ba",
+      "bytes": 1050
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/typecheck-heap256.json": {
+      "sha256": "6edc8855235a1a78aa08ac652ab261ae5e63eb57e707c0ebb9cd02950c4d15ac",
+      "bytes": 1783
+    },
+    "qa/reliability-audit-20261110/late-integration/scheduler/typecheck-initial.json": {
+      "sha256": "20196ca9b52c2cd73199915f227c2914a80084bcd5595e2964b870c014c413b7",
+      "bytes": 1126
+    }
+  }
+}

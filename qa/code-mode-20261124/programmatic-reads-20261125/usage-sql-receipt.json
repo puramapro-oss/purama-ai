@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--pool=threads",
+    "--maxWorkers=1",
+    "test/programmaticUsageMigration.test.ts",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/workspace/scratch/200bdf486cef/code-mode-ptc/usage-sql-threads-report.json"
+  ],
+  "started_at_utc": "2026-11-24T23:42:22.532272+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 4.393
+}

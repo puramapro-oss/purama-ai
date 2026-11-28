@@ -1,0 +1,285 @@
+{
+  "created_at_utc": "2026-11-24T21:41:41.585996+00:00",
+  "status": "PARTIEL: local runtime/typecheck/lint PASS; actual SQL gate awaits CI after local resource failures.",
+  "composition": {
+    "canonical_commit": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+    "canonical_pr": 111,
+    "previous_branch_head": "849402e342ea3dc757b2e009ff7c08c1532b1d97",
+    "target_pr": 112,
+    "single_engine": "index.ts is the authenticated adapter; handler.ts is the canonical injected discovery engine; persistence exclusively uses partner_discovery_import.",
+    "historical_receipts": "The earlier 235-case PR112 receipts remain historical. These composed runs are separate, not added to earlier totals."
+  },
+  "canonical_invariants": [
+    "Always identified; require_approval_new_prospect=false does not authorize outreach.",
+    "Preserve contact_role/contact_evidence; model role is unreviewed, public source is not consent.",
+    "Preserve account country/language targeting and explicit unrestricted lists.",
+    "Preserve 25 candidates, 1000 query characters, 4000 max_tokens, 2000 source-content and 200 title characters.",
+    "Canonical transaction, per-account import lock, deduplication and SQL counters unchanged.",
+    "No contract, commission, media qualification, permission or outreach policy changed by this port."
+  ],
+  "ported_protections": [
+    "Safe entry configuration before providers; active model default claude-sonnet-4-6, explicit override preserved, explicitly blank model rejected.",
+    "Exact whole email tokens with Unicode boundaries and safe truncation, including exact occurrence offsets used for stored excerpts.",
+    "Published audience requires number and unit; dates, signs and numerical suffixes cannot fabricate a count.",
+    "Website and social URLs require the cited source evidence or its exact homepage.",
+    "Completed assistant response only; stop_reason must be a string end_turn/stop_sequence. Shared helper unchanged.",
+    "Bounded request/provider JSON, strict shapes, safe errors and total cancellation/deadline.",
+    "Configuration reread before RPC; changed or unreadable targeting prevents import.",
+    "Unknown in-flight import, transport or malformed receipt never reports a confirmed rollback. SQLSTATE connection/completion-unknown errors stay unknown."
+  ],
+  "response_contract": {
+    "success": "inserted/skipped/prospects, inserted+skipped equals submitted candidate count; receipt rows belong to authenticated account and are identified.",
+    "known_failure": {
+      "status": "failed",
+      "inserted": 0,
+      "confirmed_inserted": 0,
+      "prospects": []
+    },
+    "ambiguous_import": {
+      "status": "unknown",
+      "inserted": 0,
+      "confirmed_inserted": 0,
+      "prospects": []
+    },
+    "note": "Zero confirmed rows is not a claim of zero committed rows when status is unknown. No partial prefix is invented for the atomic RPC. All early errors use the failed envelope."
+  },
+  "test_composition": {
+    "runtime_passed": 180,
+    "discovery_passed": 117,
+    "assistant_policy_passed": 63,
+    "canonical_discovery_cases_retained": true,
+    "legacy_policy_changes_documented": [
+      "ready_to_contact expectations become identified under the canonical policy.",
+      "Old partial per-row persistence oracle becomes atomic failure with zero confirmed prefix.",
+      "Unknown source_index yields an unverified identified candidate with null email and empty evidence, matching PR111.",
+      "Notes-based provenance assertions use the canonical contact_evidence fields.",
+      "Provider limits and excerpt-boundary witnesses use canonical 25/4000/2000/200 bounds."
+    ],
+    "sql_discovered": 9,
+    "sql_executed_locally": 0,
+    "sql_status": "BLOQUE: fork worker SIGKILL and one permitted thread retry SIGKILL during PGlite initialization. CI required.",
+    "sql_new_case": "One valid then one invalid candidate in the same actual SQL call must reject, leave zero rows and leave the account counter unchanged.",
+    "native_multisession_postgres": "NON TESTE; PGlite is one connection even once CI passes."
+  },
+  "checks": {
+    "typecheck-targeted-final": {
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "--v8-pool-size=1",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false",
+        "-p",
+        "tsconfig.partner-merge-temp.json"
+      ],
+      "working_directory": "karta",
+      "exit_code": 0,
+      "seconds": 2.474,
+      "hashes": {
+        "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+        "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+        "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+        "karta/test/assistantPolicy.test.ts": "4c95de34f95af42da015da5bae8224c7a434d2149deb14c07d4bd65932fcc80a",
+        "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+      },
+      "temporary_config": {
+        "extends": "./tsconfig.json",
+        "include": [
+          "test/partnerDiscovery.test.ts",
+          "test/assistantPolicy.test.ts",
+          "test/partnerDiscoverySql.test.ts"
+        ]
+      },
+      "scope": "Three affected test files with unchanged inherited KARTA options; global gate remains CI."
+    },
+    "runtime-final": {
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "--v8-pool-size=1",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/partnerDiscovery.test.ts",
+        "test/assistantPolicy.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "working_directory": "karta",
+      "exit_code": 0,
+      "seconds": 6.557,
+      "hashes": {
+        "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+        "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+        "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+        "karta/test/assistantPolicy.test.ts": "4c95de34f95af42da015da5bae8224c7a434d2149deb14c07d4bd65932fcc80a",
+        "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+      }
+    },
+    "lint-final": {
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "--v8-pool-size=1",
+        "node_modules/eslint/bin/eslint.js",
+        "supabase/functions/partner-find-prospects/index.ts",
+        "supabase/functions/partner-find-prospects/handler.ts",
+        "karta/test/partnerDiscovery.test.ts",
+        "karta/test/assistantPolicy.test.ts",
+        "karta/test/partnerDiscoverySql.test.ts",
+        "--max-warnings=0"
+      ],
+      "working_directory": ".",
+      "exit_code": 0,
+      "seconds": 1.526,
+      "hashes": {
+        "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+        "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+        "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+        "karta/test/assistantPolicy.test.ts": "4c95de34f95af42da015da5bae8224c7a434d2149deb14c07d4bd65932fcc80a",
+        "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+      }
+    },
+    "canonical-sql": {
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "--v8-pool-size=1",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/partnerDiscoverySql.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 1,
+      "seconds": 3.631,
+      "database": "PGlite executing actual unchanged canonical SQL migrations",
+      "scope": "Single-connection transaction and rollback proof; not native multi-session PostgreSQL concurrency."
+    },
+    "canonical-sql-threads": {
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "--v8-pool-size=1",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/partnerDiscoverySql.test.ts",
+        "--pool=threads",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": -9,
+      "seconds": 3.783,
+      "database": "PGlite executing unchanged canonical SQL migrations",
+      "retry_reason": "One permitted attempt sharing the runner process with a worker thread instead of duplicating it by fork; no memory increase.",
+      "scope": "Single-connection transaction and rollback proof; not native multi-session PostgreSQL concurrency."
+    }
+  },
+  "final_source_sha256": {
+    "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+    "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+    "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+    "karta/test/assistantPolicy.test.ts": "4c95de34f95af42da015da5bae8224c7a434d2149deb14c07d4bd65932fcc80a",
+    "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+  },
+  "unchanged_canonical_sql": {
+    "supabase/migrations/20261124050000_partner_discovery_evidence.sql": {
+      "sha256": "d3db17cd10d5af5a0573c9356b7a339a4f37327266484e581eee3e9b286e0388",
+      "unchanged_from_canonical": true
+    },
+    "supabase/migrations/20261124050100_partner_media_policy.sql": {
+      "sha256": "9ed9de303251d3dc4ad832b6360352b91c0c1aa838289bb05109e3b464b155b6",
+      "unchanged_from_canonical": true
+    },
+    "supabase/migrations/20261124050200_partner_reply_evidence.sql": {
+      "sha256": "c4206df1f246731cb791f4c41f59a0d0d95fda3938995489fa5c5d7cf6d5a920",
+      "unchanged_from_canonical": true
+    }
+  },
+  "impact": {
+    "product": "Parent received LOW impacts for createPartnerDiscoveryHandler, candidates and observedAddresses on fresh canonical bounded graph.",
+    "tests": "UNKNOWN: outside product graph; manual read of Vitest entry points and actual SQL migration; impact-test-receipts.json preserves tool result.",
+    "no_shared_helper_edits": true
+  },
+  "operations": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false,
+    "live_provider_calls": false,
+    "live_database_mutations": false
+  },
+  "evidence": {
+    "canonical-sql-threads.json": {
+      "bytes": 650,
+      "sha256": "fe3aaaeafa3b3b06bf9f3392c27bc204ca72174cf643235ffabacc944b701702"
+    },
+    "canonical-sql-threads.log": {
+      "bytes": 63,
+      "sha256": "10a7865e49641e17f2113f96bb7f2daf00456eb85b619cdeecd1cbe0bf90a695"
+    },
+    "canonical-sql.json": {
+      "bytes": 488,
+      "sha256": "56dd03c384ad936f3cc18e4f17c611227e6fa5d0e14682958b36750eb75d0077"
+    },
+    "canonical-sql.log": {
+      "bytes": 1364,
+      "sha256": "c0351c3886a4274f3c83914afb6555a083183bbef69bc29c33921a6d9c9c3569"
+    },
+    "composed-runtime-first.json": {
+      "bytes": 332,
+      "sha256": "304a635fbdb13715357599ee089ae77a0d6a0f1677e7f68be1a4bfee9abb31b6"
+    },
+    "composed-runtime-first.log": {
+      "bytes": 200,
+      "sha256": "4afbadef25b05b1ece5ab1677f6791363a5373dd92152e59ed53f22067213807"
+    },
+    "impact-discovery-sql-tests.log.gz": {
+      "bytes": 362,
+      "sha256": "c8076ea0601a7972f08f90bf753e110d738eabcc5df5120dd06e9874e3aff6fa"
+    },
+    "impact-discovery-tests.log.gz": {
+      "bytes": 360,
+      "sha256": "b1defa90247b5bf7ce356ea0d97820b0661782bb00ca0a3dee0b247d32d6f7d2"
+    },
+    "impact-policy-fixture.log.gz": {
+      "bytes": 357,
+      "sha256": "767b48bc1fc6bc9e43b4012e72f6f388c1c3dd329cb21b071391a20c1dfb6728"
+    },
+    "impact-test-receipts.json": {
+      "bytes": 1593,
+      "sha256": "ebde41f014a2b733be47960bbb64960855cdb33951a814dfa627352ed09e3766"
+    },
+    "lint-final.json": {
+      "bytes": 1108,
+      "sha256": "8d9dbcef205d962de5a91a9cfd267c7b77fa6b4850e1919fd8e23ddddf762878"
+    },
+    "lint-final.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime-final.json": {
+      "bytes": 971,
+      "sha256": "75bbd067ee2b1c53b28176041f32584777feb257964f8d242beae80ccac1afd4"
+    },
+    "runtime-final.log": {
+      "bytes": 199,
+      "sha256": "486c11ef18bab57ac807a750bf870bf4a5ebc08489bc4da41e11a1656756c151"
+    },
+    "typecheck-targeted-final.json": {
+      "bytes": 1274,
+      "sha256": "db5551f43f37d50f3d842daac9ce6538004d916c45a5daea41c5cfb1653d34e2"
+    },
+    "typecheck-targeted-final.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

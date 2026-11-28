@@ -1,0 +1,70 @@
+{
+  "reviewer": "root, independent of implementation agent",
+  "observed_utc": "2026-11-23T22:51:13.539701+00:00",
+  "type": "static review; no additional tests executed by reviewer",
+  "status": "PASS",
+  "findings_resolved": [
+    {
+      "finding": "A custom generation model does not prove that fixed UI choices are admitted by a matching custom KARTA catalogue.",
+      "resolution": "Test now distinguishes generation configuration from runtime admission and proves explicit rejection without adding an unqualified model."
+    },
+    {
+      "finding": "Touched selector text claimed strongest model and90% recommendation without evidence.",
+      "resolution": "Replaced with factual task-oriented wording."
+    }
+  ],
+  "review_conclusions": [
+    "Current default propagates coherently to manual form, create helper and generated suggestions.",
+    "Historical model identifier remains readable during migration rollout.",
+    "Server generation configuration is authoritative; client payload cannot override it.",
+    "SQL changes only the exact retired identifier and column default; Haiku, custom identifiers, NULL and current IDs remain unchanged.",
+    "SQL fixture exercises real existing table and distribution migration, idempotence and unchanged policies/ACL.",
+    "No provider call, deployment or production migration performed by review."
+  ],
+  "limitations": [
+    "Default KARTA catalogue is qualified; a custom host catalogue excluding the fixed UI choices still requires separate configuration qualification.",
+    "PGlite tests establish SQL semantics, not production migration execution or all concurrent runtime behavior."
+  ],
+  "files": [
+    {
+      "path": "src/lib/creator-agent.ts",
+      "sha256": "574af3cd0c85beb7b940f538446d8362bec58c7a408bdc9fe18e4f7b6d29e393",
+      "bytes": 16572
+    },
+    {
+      "path": "src/pages/CreatorAgentNew.tsx",
+      "sha256": "5f685d533aaa3fc71590a5f0a3ceb425273d58c5cbe8e52f2dc442c06bd8df1e",
+      "bytes": 10964
+    },
+    {
+      "path": "supabase/functions/creator-agent-generate/index.ts",
+      "sha256": "207f87408aa48794b63d9a77b5ae65582c8724df2cd3b87bde181dae5b8f983d",
+      "bytes": 9290
+    },
+    {
+      "path": "supabase/migrations/20261009000000_creator_agent_model_default_fix.sql",
+      "sha256": "3d22157ce7ec0ae24479af4143befa7dd1c96c8ef0685440afeddfc415457319",
+      "bytes": 719
+    },
+    {
+      "path": "src/lib/creator-agent-model.test.ts",
+      "sha256": "245b09be09e731160f4852d471dbb53dafc515ef3d5afb7b5186a70437165cce",
+      "bytes": 1746
+    },
+    {
+      "path": "src/pages/CreatorAgentNew.model.test.tsx",
+      "sha256": "d9592bfa5e5499a86428d5997c2e5637b764030b3e0f7620f769e0b227b980c0",
+      "bytes": 4458
+    },
+    {
+      "path": "karta/test/assistantPolicy.test.ts",
+      "sha256": "1f9680c180ab4099f0421e027f0e0d5fc31b3d8297b714d5d1a41836a94a1f25",
+      "bytes": 32093
+    },
+    {
+      "path": "karta/test/creatorAgentModelMigration.test.ts",
+      "sha256": "f45567d8f59d9e2958bff6d0d424f6e7006f067f24800dda87f605b27be01da7",
+      "bytes": 3794
+    }
+  ]
+}

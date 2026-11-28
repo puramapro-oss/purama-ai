@@ -1,0 +1,8 @@
+{
+  "scenario": "cold verification still progressing at 180001ms before any user inference",
+  "syntheticClockMs": 180001,
+  "outcomeBeforeVerificationFinishes": "timeout",
+  "verificationAborted": true,
+  "nativeGenerationCalls": 0,
+  "expected": "verification remains active within its own bounded verification deadline"
+}

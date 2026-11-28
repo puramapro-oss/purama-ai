@@ -1,0 +1,11 @@
+
+ RUN  v5.0.3 /workspace/scratch/529e43e3c136/calendar-email-20261122/repo/karta
+
+
+ Test Files  6 passed (6)
+      Tests  122 passed (122)
+   Start at  00:46:51
+   Duration  1.44s (transform 53%, tests 24%, import 16%, setup 5%, worker 3%)
+
+    Isolate  6 workers spawned · ~114ms startup each (spawn + environment, per file)
+             at least ~571ms faster with isolate: false — reuses workers across files instead of one per file

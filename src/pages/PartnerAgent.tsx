@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,25 +13,42 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
+import { createRequestScope } from '@/lib/request-scope';
 import {
   getPartnerConfig, updatePartnerConfig, listProspects,
   listActivePartners, partnerStats, formatEUR,
   PIPELINE_COLUMNS, STATUS_META,
   type PartnerConfig, type PartnerProspect, type PartnerActive,
 } from '@/lib/partner';
-import { AgentChatTab } from '@/components/voice/AgentChatTab';
+import { PartnerAgentChat } from '@/components/partner/PartnerAgentChat';
 
 export default function PartnerAgent() {
   const { user } = useAuth();
-  const [config, setConfig] = useState<PartnerConfig | null>(null);
-  const [prospects, setProspects] = useState<PartnerProspect[]>([]);
-  const [partners, setPartners] = useState<PartnerActive[]>([]);
-  const [stats, setStats] = useState<Awaited<ReturnType<typeof partnerStats>> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [savingToggle, setSavingToggle] = useState(false);
+  const ownerKey = user?.id ?? '';
+  const captureOwner = useRequestScope(ownerKey);
+  const [config, setConfig] = useScopedState<PartnerConfig | null>(ownerKey, null);
+  const [prospects, setProspects] = useScopedState<PartnerProspect[]>(ownerKey, []);
+  const [partners, setPartners] = useScopedState<PartnerActive[]>(ownerKey, []);
+  const [stats, setStats] = useScopedState<Awaited<ReturnType<typeof partnerStats>> | null>(ownerKey, null);
+  const [loading, setLoading] = useScopedState(ownerKey, true);
+  const [loadError, setLoadError] = useScopedState(ownerKey, false);
+  const [savingToggle, setSavingToggle] = useScopedState(ownerKey, false);
+  const [requests] = useState(createRequestScope);
+
+  useLayoutEffect(() => {
+    setConfig(null); setProspects([]); setPartners([]); setStats(null);
+    setLoading(Boolean(ownerKey)); setLoadError(false); setSavingToggle(false);
+    return () => requests.invalidate();
+  }, [ownerKey, requests, setConfig, setProspects, setPartners, setStats, setLoading, setLoadError, setSavingToggle]);
 
   const refresh = async () => {
     if (!user) return;
+    const isCurrent = captureOwner();
+    const request = requests.begin('load');
+    if (!request) return;
+    setLoading(true);
+    setLoadError(false);
     try {
       const [cfg, pros, parts, s] = await Promise.all([
         getPartnerConfig(user.id),
@@ -39,16 +56,18 @@ export default function PartnerAgent() {
         listActivePartners(user.id),
         partnerStats(user.id),
       ]);
+      if (!isCurrent() || !request.current()) return;
+      if (cfg.user_id !== user.id || pros.some(row => row.user_id !== user.id)
+        || parts.some(row => row.user_id !== user.id)) throw new Error('Compte de chargement incohérent');
       setConfig(cfg);
       setProspects(pros);
       setPartners(parts);
       setStats(s);
-    } catch (e) {
-      toast.error('Erreur de chargement', {
-        description: e instanceof Error ? e.message : String(e),
-      });
+    } catch {
+      if (!isCurrent() || !request.current()) return;
+      setLoadError(true);
     } finally {
-      setLoading(false);
+      if (request.finish() && isCurrent()) setLoading(false);
     }
   };
 
@@ -58,28 +77,39 @@ export default function PartnerAgent() {
   }, [user?.id]);
 
   const handleToggle = async (next: boolean) => {
-    if (!user || !config) return;
-    if (next && (!config.sender_name || !config.sender_email)) {
+    if (!user || !config || config.user_id !== user.id) return;
+    const isCurrent = captureOwner();
+    if (next && (!config.sender_name?.trim() || !config.sender_email?.trim())) {
       toast.error('Renseigne ton identité expéditeur dans les paramètres');
       return;
     }
+    const request = requests.begin('toggle');
+    if (!request) return;
     setSavingToggle(true);
     try {
       const updated = await updatePartnerConfig(user.id, { is_active: next });
+      if (!isCurrent() || !request.current()) return;
+      if (updated.user_id !== user.id) throw new Error('Les réglages du compte n’ont pas été confirmés.');
       setConfig(updated);
-      toast.success(next ? '🤖 Agent partenariat activé' : 'Agent en pause');
+      toast.success(next ? 'Traitement des partenariats autorisé' : 'Agent en pause');
     } catch (e) {
+      if (!isCurrent() || !request.current()) return;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSavingToggle(false); }
+    } finally { if (request.finish() && isCurrent()) setSavingToggle(false); }
   };
 
-  if (loading || !config) {
+  if (!user) return <p className="py-12 text-center text-muted-foreground">Connectez-vous pour retrouver vos partenariats.</p>;
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-accent-cyan animate-spin" />
+        <Loader2 aria-label="Chargement des partenariats" className="w-8 h-8 text-accent-cyan animate-spin" />
       </div>
     );
   }
+  if (loadError || !config) return <div role="alert" className="space-y-4 py-12 text-center">
+    <p>Impossible de charger les partenariats. Les chiffres ne sont pas disponibles.</p>
+    <Button onClick={() => void refresh()}>Réessayer le chargement</Button>
+  </div>;
 
   // Group prospects by pipeline column
   const byColumn: Record<string, PartnerProspect[]> = {};
@@ -89,16 +119,16 @@ export default function PartnerAgent() {
     if (col && byColumn[col]) byColumn[col].push(p);
   }
 
-  const isConfigured = !!config.sender_email;
+  const isConfigured = !!config.sender_email?.trim() && !!config.sender_name?.trim();
   const responseRate = stats && stats.emailsSent > 0
     ? Math.round((stats.emailsReplied / stats.emailsSent) * 100)
     : 0;
 
   const tutorialSteps: TutorialStep[] = [
-    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Trouve, contacte, signe et accompagne tes partenaires en continu. L\'IA fait tout : recherche Tavily, rédaction Claude, envoi Resend, contrats DocuSeal.' },
+    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Recherche des prospects, prépare des propositions et suis tes partenaires. Les actions utilisent les réglages du compte et les validations prévues.' },
     { selector: null, title: 'Configure ton identité', body: 'Avant tout : ton nom d\'envoi, ton email, ton ton de communication, tes niches cibles.' },
     { selector: null, title: 'Trouve des prospects via IA', body: 'Décris en français le type de partenaire que tu veux. L\'IA cherche, analyse et score 0-100.' },
-    { selector: null, title: 'Active l\'outreach automatique', body: 'L\'agent envoie 20 emails/jour personnalisés par défaut, dans tes plages horaires.' },
+    { selector: null, title: 'Configure la prospection', body: 'Définis tes horaires, ton quota et tes validations. Chaque envoi passe par les contrôles de la prospection.' },
     { selector: null, title: 'Suis le pipeline visuel', body: 'Identifié → Contacté → Intéressé → Contrat → Actif. Tu vois tout en un coup d\'œil.' },
   ];
 
@@ -116,13 +146,13 @@ export default function PartnerAgent() {
             <Handshake className="w-7 h-7 text-accent-cyan" />
             Agent Partenariat
             {config.is_active ? (
-              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Actif</Badge>
+              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Traitement autorisé</Badge>
             ) : (
               <Badge variant="secondary">En pause</Badge>
             )}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Trouve, contacte, signe et accompagne tes partenaires en continu.
+            Recherche, qualifie et accompagne tes partenaires, avec les validations prévues pour chaque action.
           </p>
         </div>
         <div className="flex gap-2">
@@ -161,16 +191,25 @@ export default function PartnerAgent() {
               <Power className="w-6 h-6 text-accent-cyan" />
             </div>
             <div>
-              <p className="font-semibold text-foreground">Activer l'agent</p>
+              <p className="font-semibold text-foreground">Autoriser le traitement des partenariats</p>
               <p className="text-xs text-muted-foreground">
-                Recherche quotidienne · {config.daily_outreach_limit} emails/jour max · relances {config.relance_1_delay_days}/{config.relance_2_delay_days}/{config.relance_3_delay_days}j
+                Limite configurée : {config.daily_outreach_limit} emails/jour. Chaque action conserve ses contrôles et validations.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Médias et rédaction : au plus deux relances, après {config.relance_1_delay_days} puis {config.relance_2_delay_days} jours selon les réglages.
+                La troisième relance concerne uniquement les autres parcours autorisés.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Cette autorisation ne confirme pas la connexion des services. Une adresse qualifiée, un accord valable
+                et une boîte de réponse disponible restent requis ; chaque contrat attend la validation de son PDF.
               </p>
             </div>
           </div>
           <Switch
             checked={config.is_active}
+            aria-label="Autoriser le traitement des partenariats"
             onCheckedChange={handleToggle}
-            disabled={savingToggle || !isConfigured}
+            disabled={savingToggle || (!config.is_active && !isConfigured)}
           />
         </CardContent>
       </Card>
@@ -299,18 +338,7 @@ export default function PartnerAgent() {
       )}
 
       {/* Chat with the Partner Agent */}
-      <AgentChatTab
-        agentType="partner"
-        agentName="Agent Partenariats"
-        agentEmoji="🤝"
-        agentColor="#A855F7"
-        suggestions={[
-          'Écris-moi un cold email pour un partenaire SaaS B2B',
-          'Quels KPI suivre pour mon programme d\'affiliation ?',
-          'Comment qualifier un lead en MEDDIC ?',
-          'Propose une grille de commission pour des partenaires premium',
-        ]}
-      />
+      <PartnerAgentChat prospects={prospects} />
     </div>
   );
 }

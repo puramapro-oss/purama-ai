@@ -1,0 +1,18 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2Kanalyzer runner identity changed (stamped schema 4, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.
+[2K  Skipped 1 large files (>512KB, likely generated/vendored)
+[2K  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+{"level":40,"time":1794352042665,"name":"gitnexus","msg":"[scope-resolution] 1131 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (javascript/typescript), children (typescript), command (typescript), data (javascript/typescript), env (typescript), errors (javascript/typescript), label (typescript), lines (typescript), messages (typescript), port (typescript), …"}
+{"level":40,"time":1794352043468,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1063,"entryPointsUnexplored":0,"walksCutByBudget":30,"tracesDepthCapped":0,"calleesDropped":2558,"processesDropped":0},"msg":"[processes] 575 flows reported, but whole flows are MISSING: 1063 of 1263 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 2558 callee(s) skipped at maxBranching, 30 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+{"level":30,"time":1794352081161,"name":"gitnexus","msg":"name-fallback resolution: 63 call sites (13 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 58/0, typescript 5/0)"}
+[2KParse cache: pruned 25 stale chunk entries
+
+  Repository indexed successfully (170.0s)
+
+  15,641 nodes | 41,499 edges | 617 clusters | 575 flows
+  /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code
+

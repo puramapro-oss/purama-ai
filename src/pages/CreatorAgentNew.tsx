@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Sparkles, Loader2, Save, Wand2, Edit3 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useRequestScope } from '@/hooks/useRequestScope';
 import { useAuth } from '@/hooks/useAuth';
 import {
   generateAgent, createAgent,
@@ -22,7 +23,13 @@ import {
   type AgentCategory, type AgentModel,
 } from '@/lib/creator-agent';
 
+import { OrganizationMissionPicker } from '@/components/creator/OrganizationMissionPicker';
+
 interface DraftAgent {
+  is_active?: false;
+  is_public?: false;
+  karta_enabled?: false;
+  schedule_enabled?: false;
   name: string;
   description: string;
   emoji: string;
@@ -42,7 +49,7 @@ const blank = (): DraftAgent => ({
   color: '#8B5CF6',
   category: 'productivity',
   system_prompt: '',
-  model: 'claude-sonnet-4-20250514',
+  model: 'claude-sonnet-4-6',
   temperature: 0.7,
   tools_enabled: [],
   schedule_cron: null,
@@ -50,7 +57,13 @@ const blank = (): DraftAgent => ({
 
 export default function CreatorAgentNew() {
   const { user } = useAuth();
+  return <CreatorAgentForm key={user?.id ?? 'guest'} ownerId={user?.id} />;
+}
+
+function CreatorAgentForm({ ownerId }: { ownerId?: string }) {
   const nav = useNavigate();
+  const [params] = useSearchParams();
+  const captureScope = useRequestScope(ownerId ?? 'guest');
   const [aiDescription, setAiDescription] = useState('');
   const [generating, setGenerating] = useState(false);
   const [draft, setDraft] = useState<DraftAgent>(blank());
@@ -61,9 +74,11 @@ export default function CreatorAgentNew() {
       toast.error('Décris l\'agent que tu veux');
       return;
     }
+    const isCurrent = captureScope();
     setGenerating(true);
     try {
       const g = await generateAgent(aiDescription);
+      if (!isCurrent()) return;
       setDraft({
         name: g.name,
         description: g.description,
@@ -78,23 +93,25 @@ export default function CreatorAgentNew() {
       });
       toast.success('✨ Agent généré', { description: 'Vérifie le prompt et clique « Créer »' });
     } catch (e) {
-      toast.error('Erreur génération', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setGenerating(false); }
+      if (isCurrent()) toast.error('Erreur génération', { description: e instanceof Error ? e.message : String(e) });
+    } finally { if (isCurrent()) setGenerating(false); }
   };
 
   const handleSave = async () => {
-    if (!user || !draft.name.trim() || !draft.system_prompt.trim()) {
+    if (!ownerId || !draft.name.trim() || !draft.system_prompt.trim()) {
       toast.error('Renseigne au moins le nom et le prompt système');
       return;
     }
+    const isCurrent = captureScope();
     setSaving(true);
     try {
-      const a = await createAgent(user.id, draft);
+      const a = await createAgent(ownerId, draft);
+      if (!isCurrent()) return;
       toast.success(`✅ ${a.name} créé`);
       nav(`/dashboard/creator-agent/${a.id}`);
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSaving(false); }
+      if (isCurrent()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally { if (isCurrent()) setSaving(false); }
   };
 
   return (
@@ -108,7 +125,7 @@ export default function CreatorAgentNew() {
         </h1>
       </motion.div>
 
-      <Tabs defaultValue="ai">
+      <Tabs defaultValue={params.get('mode') === 'organisation' ? 'manual' : 'ai'}>
         <TabsList>
           <TabsTrigger value="ai"><Wand2 className="w-4 h-4 mr-2" /> Mode IA</TabsTrigger>
           <TabsTrigger value="manual"><Edit3 className="w-4 h-4 mr-2" /> Mode manuel</TabsTrigger>
@@ -181,7 +198,14 @@ export default function CreatorAgentNew() {
           )}
         </TabsContent>
 
-        <TabsContent value="manual">
+        <TabsContent value="manual" className="space-y-4">
+          <OrganizationMissionPicker
+            disabled={generating || saving || Boolean(draft.name || draft.description || draft.system_prompt)}
+            onApply={mission => setDraft(current => ({
+              ...current, ...mission, is_active: false, is_public: false, karta_enabled: false,
+              tools_enabled: [], schedule_cron: null, schedule_enabled: false,
+            }))}
+          />
           <Card className="bg-card border-border">
             <CardContent className="p-5 space-y-4">
               <DraftEditor draft={draft} setDraft={setDraft} showAll />

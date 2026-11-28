@@ -3,6 +3,10 @@ import { createHash } from "node:crypto";
 import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
+import type { ChefCapabilitySelection } from "./capability-selection.js";
+import { appendChefVerificationFeedback, chefVerificationFeedbackEvidence, chefVerificationMadeNoProgress,
+  createChefVerificationFeedback, validateChefVerificationFeedback, type ChefVerificationFeedback } from "./verification-feedback.js";
+export type { ChefVerificationFeedback } from "./verification-feedback.js";
 
 export interface ChefRuntimeTask {
   id: string;
@@ -17,6 +21,8 @@ export interface ChefRuntimeTask {
   baseSha?: string;
   verificationProfiles: string[];
   allowedPaths: string[];
+  capabilitySelection?: ChefCapabilitySelection;
+  userId?: string;
 }
 
 export interface ChefEvidenceClaim {
@@ -49,6 +55,8 @@ export interface ChefControlPlane {
   transition(input: { taskId: string; workerId: string; fencingToken: number; target: "running" | "verifying" | "verified_done" | "retryable" | "blocked_human" | "blocked_external" | "failed"; error?: string; outputSha?: string }): Promise<boolean>;
   quarantineProcess?(taskId: string, claim: ChefEvidenceClaim, reason: string): Promise<boolean>;
   addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean>;
+  /** Read only the previous generation's independent negative verification, if available. */
+  loadVerificationFeedback?(task: ChefRuntimeTask): Promise<ChefVerificationFeedback | null>;
   /** False means a capped dimension is still unknown; its reservation remains held. */
   recordUsage(input: ChefClaimUsage): Promise<boolean>;
   tryFinishMission(missionId: string): Promise<boolean>;
@@ -136,16 +144,21 @@ export async function runChefWorkerCycle(
     if (!settled) throw new Error("Réservation sans exécution non réconciliée");
     preExecutionSettled = true;
   };
+  const recoverTask = async (error: string): Promise<ChefWorkerCycleResult> => {
+    // A plan acknowledgment is not an effect receipt. Once a capability driver
+    // has started, every failed validation or interruption requires reconciliation.
+    const reconcile = driverStarted && Boolean(task.capabilitySelection);
+    const accepted = await control.transition({
+      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+      target: reconcile ? "blocked_external" : "retryable", error: error.slice(0, 10_000),
+    });
+    if (!accepted) return { state: "lost_lease", taskId: task.id, error };
+    if (reconcile) return { state: "blocked_external", taskId: task.id, error };
+    return { state: "retryable", taskId: task.id, error };
+  };
   const releaseForShutdown = async (): Promise<ChefWorkerCycleResult> => {
     if (!driverStarted) await settleBeforeExecution();
-    const error = "Arrêt du worker demandé; exécution arrêtée ou non démarrée";
-    const released = await control.transition({
-      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "retryable", error,
-    });
-    return released
-      ? { state: "retryable", taskId: task.id, error }
-      : { state: "lost_lease", taskId: task.id, error };
+    return recoverTask("Arrêt du worker demandé; exécution arrêtée ou non démarrée");
   };
   if (options.signal?.aborted) return await releaseForShutdown();
   const evidenceClaim = Object.freeze({
@@ -164,10 +177,24 @@ export async function runChefWorkerCycle(
   }
 
   let executionBaseSha = task.baseSha;
-  if (task.accessMode === "write") {
+  let previousVerification: ChefVerificationFeedback | undefined;
+  let instructions = task.instructions;
+  // Read tasks also need an independent revision: their verifier must not turn
+  // a changed tree into a passing review, even when the driver reports no SHA.
+  {
     try {
+      if (task.attempt > 1 && !task.capabilitySelection && control.loadVerificationFeedback) {
+        const loaded = await control.loadVerificationFeedback(task);
+        if (loaded) {
+          previousVerification = validateChefVerificationFeedback(loaded, task);
+          instructions = appendChefVerificationFeedback(task.instructions, previousVerification);
+        }
+      }
       const baseline = await captureCleanGitBaseline({ cwd: task.cwd, expectedBranch: task.branch });
-      if (task.baseSha && baseline.headSha.toLowerCase() !== task.baseSha.toLowerCase()) {
+      // A correction may resume only the exact prior output independently checked
+      // under this same task contract. Never absorb a concurrent or foreign commit.
+      const expectedBaseSha = previousVerification?.outputSha ?? task.baseSha;
+      if (expectedBaseSha && baseline.headSha.toLowerCase() !== expectedBaseSha.toLowerCase()) {
         const error = "Base Git assignée devenue obsolète : replanification requise";
         await settleBeforeExecution();
         const blocked = await control.transition({
@@ -303,24 +330,19 @@ export async function runChefWorkerCycle(
         fencingToken: task.fencingToken,
         attempt: task.attempt,
         briefHash: task.briefHash,
-        instructions: task.instructions,
+        instructions,
         cwd: task.cwd,
         branch: task.branch,
         baseSha: executionBaseSha,
         accessMode: task.accessMode,
         allowedPaths: task.allowedPaths,
+        ...(task.capabilitySelection ? { userId: task.userId, capabilitySelection: task.capabilitySelection } : {}),
       }, abort.signal);
     } catch (error) {
       if (error instanceof ChefProcessStopUnconfirmedError) return await blockUnconfirmedStop(error);
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
       const message = error instanceof Error ? error.message : "Erreur worker";
-      const retry = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: message.slice(0, 10_000),
-      });
-      return retry
-        ? { state: "retryable", taskId: task.id, error: message }
-        : { state: "lost_lease", taskId: task.id, error: message };
+      return recoverTask(message);
     }
 
     // A late receipt settles only this exact attempt. Lease loss still prevents
@@ -356,6 +378,20 @@ export async function runChefWorkerCycle(
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
 
+    if (task.capabilitySelection && response.status === "blocked_external") {
+      // A capability adapter may have produced an external effect before its
+      // receipt was lost, even when cancellation subsequently stopped it.
+      // Persist reconciliation before the generic shutdown/retry path.
+      stopRenewal();
+      const ok = await control.transition({
+        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+        target: "blocked_external", error: response.summary.slice(0, 10_000),
+      });
+      return ok
+        ? { state: "blocked_external", taskId: task.id, error: response.summary }
+        : { state: "lost_lease", taskId: task.id, error: response.summary };
+    }
+
     if (abort.signal.aborted) {
       stopRenewal();
       return await releaseForShutdown();
@@ -375,55 +411,58 @@ export async function runChefWorkerCycle(
 
     if (response.status === "failed") {
       stopRenewal();
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: response.summary.slice(0, 10_000),
-      });
-      return ok
-        ? { state: "retryable", taskId: task.id, error: response.summary }
-        : { state: "lost_lease", taskId: task.id, error: response.summary };
+      return recoverTask(response.summary);
     }
 
     if (task.accessMode === "write" && !response.outputSha) {
       stopRenewal();
       const error = "Worker write terminé sans outputSha";
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error,
-      });
-      return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+      return recoverTask(error);
     }
 
+    const expectedOutputSha = task.accessMode === "read" ? executionBaseSha : response.outputSha;
     let gitEvidence: ChefVerificationEvidence | undefined;
-    if (task.accessMode === "write" && response.outputSha) {
+    if (expectedOutputSha) {
       try {
+        if (task.accessMode === "read" && response.outputSha &&
+            response.outputSha.toLowerCase() !== expectedOutputSha.toLowerCase()) {
+          throw new Error("Révision déclarée différente de la base de lecture");
+        }
         gitEvidence = await verifyCommittedGitState({
           cwd: task.cwd,
-          expectedHeadSha: response.outputSha,
+          expectedHeadSha: expectedOutputSha,
           expectedBranch: task.branch,
-          baseSha: executionBaseSha,
-          allowedPaths: task.allowedPaths,
+          ...(task.accessMode === "write" ? {
+            baseSha: executionBaseSha, allowedPaths: task.allowedPaths,
+          } : {}),
         });
       } catch (error) {
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git" };
         const message = error instanceof Error ? error.message : "État Git invalide";
         stopRenewal();
-        const ok = await control.transition({
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-          target: "retryable", error: message.slice(0, 10_000),
+          target: "blocked_external", error: message.slice(0, 10_000),
         });
-        return ok
-          ? { state: "retryable", taskId: task.id, error: message }
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
           : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
 
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
+
     const verifying = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "verifying", outputSha: response.outputSha,
+      target: "verifying", outputSha: expectedOutputSha,
     });
-    if (!verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
+    if (lostLease || !verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
     heartbeatState = "verifying";
     await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "verifying", taskId: task.id });
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
 
     let verification;
     try {
@@ -433,11 +472,7 @@ export async function runChefWorkerCycle(
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
       const message = error instanceof Error ? error.message : "Erreur de vérification";
       stopRenewal();
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: message.slice(0, 10_000),
-      });
-      return ok ? { state: "retryable", taskId: task.id, error: message } : { state: "lost_lease", taskId: task.id, error: message };
+      return recoverTask(message);
     }
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
@@ -448,23 +483,30 @@ export async function runChefWorkerCycle(
 
     // Observe Git again after the checks. This detects a changed final HEAD/worktree;
     // it is not a claim that commands executed inside an immutable snapshot.
-    if (task.accessMode === "write" && response.outputSha) {
+    if (expectedOutputSha) {
       try {
         gitEvidence = await verifyCommittedGitState({
           cwd: task.cwd,
-          expectedHeadSha: response.outputSha,
+          expectedHeadSha: expectedOutputSha,
           expectedBranch: task.branch,
-          baseSha: executionBaseSha,
-          allowedPaths: task.allowedPaths,
+          ...(task.accessMode === "write" ? {
+            baseSha: executionBaseSha, allowedPaths: task.allowedPaths,
+          } : {}),
         });
       } catch (error) {
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git final" };
         const message = error instanceof Error ? error.message : "État Git modifié pendant la vérification";
         stopRenewal();
-        const ok = await control.transition({
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-          target: "retryable", error: message.slice(0, 10_000),
+          target: "blocked_external", error: message.slice(0, 10_000),
         });
-        return ok ? { state: "retryable", taskId: task.id, error: message } : { state: "lost_lease", taskId: task.id, error: message };
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
+          : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
 
@@ -485,19 +527,29 @@ export async function runChefWorkerCycle(
 
     if (!verification.ok) {
       stopRenewal();
+      const feedback = expectedOutputSha ? createChefVerificationFeedback(task, expectedOutputSha, verification) : null;
+      if (feedback) {
+        if (!await control.addEvidence(task.id, chefVerificationFeedbackEvidence(feedback), evidenceClaim)) {
+          return { state: "lost_lease", taskId: task.id, error: "Claim périmé lors du retour de vérification" };
+        }
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue après le retour de vérification" };
+        if (options.signal?.aborted) return await releaseForShutdown();
+        if (previousVerification && chefVerificationMadeNoProgress(previousVerification, feedback)) {
+          const error = "Correction sans progrès : même sortie et mêmes contrôles en échec";
+          const accepted = await control.transition({ taskId: task.id, workerId: options.workerId,
+            fencingToken: task.fencingToken, target: "blocked_human", error });
+          return accepted ? { state: "blocked_human", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+        }
+      }
       const error = verification.error ?? "Vérification échouée";
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: error.slice(0, 10_000),
-      });
-      return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+      return recoverTask(error);
     }
 
     stopRenewal();
     if (options.signal?.aborted) return await releaseForShutdown();
     const done = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "verified_done", outputSha: response.outputSha,
+      target: "verified_done", outputSha: expectedOutputSha,
     });
     if (!done) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant validation finale" };
     await control.tryFinishMission(task.missionId);

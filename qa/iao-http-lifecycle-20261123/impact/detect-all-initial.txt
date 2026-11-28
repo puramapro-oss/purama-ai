@@ -1,0 +1,34 @@
+Changes: 6 files, 45 symbols
+Affected processes: 469
+Risk level: critical
+
+Changed symbols:
+  Function handleIaoRoute → karta/src/api/iaoRoutes.ts
+  Function assertAdmissionOpen → karta/src/api/iaoRoutes.ts
+  Function beforeAdmission → karta/src/api/iaoRoutes.ts
+  Function isActive → karta/src/api/iaoRoutes.ts
+  Function canAdmit → karta/src/api/iaoRoutes.ts
+  Function unavailable → karta/src/api/iaoRoutes.ts
+  Function handleRequest → karta/src/api/server.ts
+  Function isActive → karta/src/api/server.ts
+  Interface KartaIaoPort → karta/src/iao/iaoFacade.ts
+  Property prepare → karta/src/iao/iaoFacade.ts
+  Method executionBudgetMs → karta/src/iao/iaoFacade.ts
+  Const MAX_EXECUTION_BUDGET_MS → karta/src/iao/iaoFacade.ts
+  Property #settleResult → karta/src/iao/iaoFacade.ts
+  Property #late → karta/src/iao/iaoFacade.ts
+  Property get → karta/src/iao/iaoFacade.ts
+... and 30 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (4 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • RunDailyReport → Deliver (3 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • SocialSettings → Interrupt (9 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • CreatorAgentDetail → Resolve (8 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • SocialSettings → Now (8 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest
+  • CreatorAgentDetail → AssertCurrent (7 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • Ecosystem → Entries (7 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • Ecosystem → Entries (7 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+  • SocialSettings → RequestDeadlineError (7 steps) — changed: MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS, MAX_EXECUTION_BUDGET_MS
+... and 459 more

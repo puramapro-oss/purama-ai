@@ -1,0 +1,108 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/claudeUsageTransport.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-api-usage-20261112/karta
+
+ ❯ test/claudeUsageTransport.test.ts (9 tests | 9 failed) 11ms
+   ❯ provider usage through the real installed SDK (9)
+     × reports bounded counters without changing the accepted decision or issuing another request 5ms
+     × retains usage before rejecting max_tokens 1ms
+     × retains usage before rejecting refusal 1ms
+     × retains usage before rejecting pause_turn 0ms
+     × retains usage before rejecting unknown 1ms
+     × retains usage even when the response content fails local validation 0ms
+     × keeps omitted usage unknown without rejecting an otherwise complete compatible response 1ms
+     × does not invent a receipt or repeat inference after a connection failure 0ms
+     × distinguishes the native endpoint without storing its URL 1ms
+
+ Test Files  1 failed (1)
+      Tests  9 failed (9)
+   Start at  07:38:30
+   Duration  402ms (import 47%, transform 43%, tests 5%, setup 3%, worker 2%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > reports bounded counters without changing the accepted decision or issuing another request
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:38:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting max_tokens
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting refusal
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting pause_turn
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting unknown
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:54:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage even when the response content fails local validation
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:62:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > keeps omitted usage unknown without rejecting an otherwise complete compatible response
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:69:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > does not invent a receipt or repeat inference after a connection failure
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:76:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > distinguishes the native endpoint without storing its URL
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ Module.createRealClaudeClient src/claude/real.ts:35:11
+     33|   const timeoutMs = config.anthropicTimeoutMs;
+     34|   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeout…
+     35|     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 …
+       |           ^
+     36|   }
+     37|   // KARTA owns durable delivery/recovery. The SDK's implicit retries …
+ ❯ test/claudeUsageTransport.test.ts:83:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯

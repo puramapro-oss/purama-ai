@@ -17,5 +17,8 @@ export const supabase = createClient<Database, 'purama_ai'>(SUPABASE_URL, SUPABA
   },
   db: {
     schema: 'purama_ai',
+    // TanStack Query and explicit user actions own retries in the web app.
+    // Avoid multiplying their attempts with the SDK's automatic HTTP retries.
+    retry: false,
   },
 });

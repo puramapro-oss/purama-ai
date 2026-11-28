@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+    "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "staged",
+    "--repo",
+    "/workspace/scratch/200bdf486cef/purama-ai",
+    "--limit",
+    "500"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 1.19,
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\n{\"level\":40,\"time\":1795548012852,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+}

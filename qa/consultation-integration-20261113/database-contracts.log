@@ -1,0 +1,1 @@
+PASS: generated Supabase table contracts match the versioned SQL catalog.

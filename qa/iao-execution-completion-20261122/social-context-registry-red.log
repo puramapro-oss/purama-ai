@@ -1,0 +1,39 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+stderr | test/socialStatusRegistry.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+
+ ❯ test/socialStatusRegistry.test.ts (2 tests | 1 failed) 8ms
+   ❯ social status capability registration (2)
+     × prepares social context only for the existing advertising agent 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/socialStatusRegistry.test.ts > social status capability registration > prepares social context only for the existing advertising agent
+AssertionError: expected [] to deeply equal [ 'maitre-des-publicites' ]
+
+- Expected
++ Received
+
+- [
+-   "maitre-des-publicites",
+- ]
++ []
+
+ ❯ test/socialStatusRegistry.test.ts:15:20
+     13|       .filter(agent => agent.buildContext === buildSocialBriefContext)
+     14|       .map(agent => agent.type);
+     15|     expect(owners).toEqual(["maitre-des-publicites"]);
+       |                    ^
+     16|     // This engine makes one decision. A post-decision read would lose…
+     17|     // result instead of informing a later decision or private deliver…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:32:45
+   Duration  960ms (import 62%, transform 36%, tests 1%, setup 1%, worker 1%)

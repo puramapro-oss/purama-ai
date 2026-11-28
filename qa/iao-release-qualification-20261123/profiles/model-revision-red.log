@@ -1,0 +1,108 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 test
+> vitest run --run test/consultationProfileMatrix.test.ts -t excludes @revision --reporter=verbose --reporter=json --outputFile=../qa/iao-release-qualification-20261123/profiles/model-revision-red.json
+
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+stdout | test/consultationProfileMatrix.test.ts
+[api] KARTA écoute sur :0
+
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > publishes exactly the supported 36 profiles, without dispatching inference
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/auto/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/auto/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/auto/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/standard/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/standard/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-none/standard/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/auto/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/auto/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/auto/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/standard/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/standard/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/standard/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/deep/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/deep/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/deep/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/maximum/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/maximum/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-budget/maximum/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/auto/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/auto/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/auto/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/standard/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/standard/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/standard/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/deep/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/deep/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/deep/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/maximum/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/maximum/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-adaptive/maximum/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/auto/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/auto/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/auto/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/standard/standard with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/standard/fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > executes qualified-tiny-budget/standard/ultra_fast with exact provider parameters and one durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > rejects unsupported maximum reflection for qualified-none before allocation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > rejects unsupported maximum reflection for qualified-tiny-budget before allocation
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > runs 1 reviewers at standard/standard and accounts for exactly 3 calls
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > runs 2 reviewers at deep/fast and accounts for exactly 6 calls
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > runs 3 reviewers at maximum/standard and accounts for exactly 8 calls
+ ↓ test/consultationProfileMatrix.test.ts > actual advertised profiles through internal HTTP, SQL and installed SDK > rejects a reviewer in ultra-fast mode without silently dropping it or spending
+ × test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > excludes @revision before public catalogue and direct-host allocation (mixed catalogue: false) 60ms
+   → expected 502 to be 200 // Object.is equality
+ × test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > excludes @revision before public catalogue and direct-host allocation (mixed catalogue: true) 28ms
+   → expected 502 to be 200 // Object.is equality
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves one character through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves 1000 characters through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves 4000 characters through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves 8000 character limit through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves 8000 CJK characters through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > preserves 4000 supplementary Unicode codepoints through HTTP, SDK serialization, SQL and restart
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > rejects one character above the request limit before catalogue, allocation or inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > records the configured context-byte ceiling without dispatch or invented expenditure
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > enforces absent owner resources before provider inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > enforces expired owner resources before provider inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > enforces inactive owner resources before provider inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > enforces insufficient_tokens owner resources before provider inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > enforces insufficient_cost owner resources before provider inference
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > isolates a different owner even with the same operation identifier
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > coalesces overlapping duplicate HTTP requests into one provider call and durable reservation
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > persists a refusal failure without repeating paid inference on recovery
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > persists a invalid_json failure without repeating paid inference on recovery
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > persists a wrong_model failure without repeating paid inference on recovery
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > does not retry a provider 429 or pretend unknown token/cost usage is zero
+ ↓ test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > keeps previous output and accounting when the next operation selects a different model
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > excludes @revision before public catalogue and direct-host allocation (mixed catalogue: false)
+ FAIL  test/consultationProfileMatrix.test.ts > composition boundaries and durable recovery > excludes @revision before public catalogue and direct-host allocation (mixed catalogue: true)
+AssertionError: expected 502 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 502
+
+ ❯ test/consultationProfileMatrix.test.ts:230:37
+    228|     const preferences = { model, reflection: "standard" as const, spee…
+    229|     const catalog = await api({ action: "catalog" });
+    230|     expect(catalog.response.status).toBe(200);
+       |                                     ^
+    231|     expect(catalog.body.catalog).toMatchObject({ available: mixed, rea…
+    232|     expect(catalog.body.catalog?.models.map(candidate => candidate.mod…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 63 skipped (65)
+   Start at  22:05:33
+   Duration  4.51s (tests 87%, transform 9%, import 4%)
+
+JSON report written to /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/qa/iao-release-qualification-20261123/profiles/model-revision-red.json

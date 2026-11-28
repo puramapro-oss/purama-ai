@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=256"
+  },
+  "exit_code": 0,
+  "seconds": 3.6,
+  "source_sha256": "bb4ab70ae63aa4f4a300e1626140c7d92cba10698e878c5a062c49181416cd4f"
+}

@@ -1,0 +1,35 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ❯ test/consultationHost.test.ts (27 tests | 2 failed | 25 skipped) 124ms
+   ❯ catalogue request reuse and cancellation isolation (11)
+     × does not publish ready when the request becomes expired during the owner grant check 68ms
+     × does not publish ready when the request becomes cancelled during the owner grant check 54ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 25 skipped (27)
+   Start at  20:48:12
+   Duration  676ms (transform 48%, tests 27%, import 23%, setup 1%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > does not publish ready when the request becomes expired during the owner grant check
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > does not publish ready when the request becomes cancelled during the owner grant check
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/consultationHost.test.ts:206:30
+    204|     grant.resolve(true);
+    205|     const result = await request;
+    206|     expect(result.available).toBe(false);
+       |                              ^
+    207|     expect(result.reason).toBe(condition === "expired" ? "not_configur…
+    208|     expect(result.models).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯

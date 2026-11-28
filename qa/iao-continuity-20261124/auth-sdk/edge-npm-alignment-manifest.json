@@ -1,0 +1,216 @@
+{
+  "base_head": "6ebe773d77961feeb6a1145c7e2f8ddb010a00c2",
+  "replacement": {
+    "from": "npm:@supabase/supabase-js@2.91.0",
+    "to": "npm:@supabase/supabase-js@2.119.2"
+  },
+  "file_count": 34,
+  "occurrence_count": 35,
+  "mechanical_only": true,
+  "files": [
+    {
+      "path": "karta/test/chefWorkshopEdge.test.ts",
+      "occurrences": 1,
+      "before_sha256": "35d208a3b3b58ac771e7e34e0d1b3569a65bd52edfe5132260ce44ca7abefccc",
+      "after_sha256": "98443f062184d9037ec4dfeafef5ce36718d8f7d220f371b7350cd4604579d24"
+    },
+    {
+      "path": "karta/test/consultationTransport.test.ts",
+      "occurrences": 1,
+      "before_sha256": "75f1e0a031a83c8a667ed47e67b3dc085a9d25a2c068ee9b419991153445c9b6",
+      "after_sha256": "d0f89e55dddb9a9d5de5a26c4a6a9aadea2ec5a1f520daa6701de78a83460fd4"
+    },
+    {
+      "path": "karta/test/kartaTriggerEdge.test.ts",
+      "occurrences": 1,
+      "before_sha256": "43c5649db9497e1799987df1624ecc8d3a3a81c49d6588998d465d585a75a04f",
+      "after_sha256": "372ee60a7d7b50f40be608287124d383ef80366919dc747401017e88d06a0c1a"
+    },
+    {
+      "path": "supabase/functions/_shared/billing-boundary.ts",
+      "occurrences": 1,
+      "before_sha256": "7e7014545795c8d0ae0d9cb20cd4697852b4086b7d56440bb9a4de4d8f37e25c",
+      "after_sha256": "aa0a340e49b60b9d150f34c1e60d32b8648d4f10586da93e7fe2a813f297d8ac"
+    },
+    {
+      "path": "supabase/functions/_shared/entraide-runtime.ts",
+      "occurrences": 1,
+      "before_sha256": "52af2136493fe886a8ef5935a179697a6f53cdde713e1ca32c98b9d0e565843d",
+      "after_sha256": "e2874530476e11a48a334d1784d1d3d73a64845a526c8f527457cf83449ffad6"
+    },
+    {
+      "path": "supabase/functions/_shared/entraide-supabase.ts",
+      "occurrences": 1,
+      "before_sha256": "896772e2a1c4bcba87a4339fdce2c10e355cf1fb0bdba2c134c9e3730204d09f",
+      "after_sha256": "c823fc25ef011c4d9a81faa6900091acc0a8958faed58a3b1213deab123d0516"
+    },
+    {
+      "path": "supabase/functions/_shared/ots-auth.ts",
+      "occurrences": 1,
+      "before_sha256": "2bf737b49fa67942be0ce1c070ebcc1f1bfb9796dbf93e54f23b2b8d5473f06b",
+      "after_sha256": "3d793b58658ec7601512d11ea89b531385324c36296ece4f30f104f1a24f8b4e"
+    },
+    {
+      "path": "supabase/functions/agent-chat/index.ts",
+      "occurrences": 1,
+      "before_sha256": "2075e9c4f0e20dda51d58d295c7ee01bc95f898d9fdd53debc994658093f24ac",
+      "after_sha256": "3f68c971b9071c75d37146da7d9f2bc600ec494d8430a0b6a02873035c85e4b9"
+    },
+    {
+      "path": "supabase/functions/chef-workshop/index.ts",
+      "occurrences": 1,
+      "before_sha256": "498ca11939a3b414b1d4832be92b8ad69b70445a4c1312ca93ecda4d313c3232",
+      "after_sha256": "66fc0364430c67840b3dc7fd08c544c88e74063a70749ae116c7bd9695b13894"
+    },
+    {
+      "path": "supabase/functions/contracts-cancel/index.ts",
+      "occurrences": 1,
+      "before_sha256": "e4ea2489f0abdc3ef8e649956780104d3e176ecd09e06caa96b738269c824f15",
+      "after_sha256": "b5925e2925272d275f20073d4d23fbc80f5d77d9f5c9cca200c8a686b7131c45"
+    },
+    {
+      "path": "supabase/functions/contracts-create/index.ts",
+      "occurrences": 1,
+      "before_sha256": "a8cdea506465f5ec944d65566ac85688a10a437d2bea752c0f1e5514476ac809",
+      "after_sha256": "6d193040c7c6367072441199300df3ce15902b104dc74c4e7bd230139e24c089"
+    },
+    {
+      "path": "supabase/functions/contracts-get/index.ts",
+      "occurrences": 1,
+      "before_sha256": "79edd6080f595508091a096518da5fddcd57aeaad876c0a554ac058e18e5b931",
+      "after_sha256": "3f0dfcb603e4a7d7e0178e0b169f44e31a186c83c2e10dee7bdc6d01c67e04bf"
+    },
+    {
+      "path": "supabase/functions/contracts-list-user/index.ts",
+      "occurrences": 1,
+      "before_sha256": "591cf46135b9a942835112bdefd5ff4bbc7ff1c4112bf9bf423869e27af224a1",
+      "after_sha256": "720908fe4cd2653c6e7b3cc85d9c97649de03545c40acaa1f096a0dec466cb77"
+    },
+    {
+      "path": "supabase/functions/contracts-webhook/index.ts",
+      "occurrences": 1,
+      "before_sha256": "063ddd9b7efcf4bd21850be45e8352bdbf58f537c109c8e24ec5071a9f1e1e93",
+      "after_sha256": "39a6b992521b4bcbd0f4ba9a519a671c47e01d19f7c11e94f84ead86861f4169"
+    },
+    {
+      "path": "supabase/functions/creator-agent-chat/index.ts",
+      "occurrences": 1,
+      "before_sha256": "76eee907420b761589c8d80abdb7df53107f80d99168675e01587543095b7cc5",
+      "after_sha256": "557f2538ea3cbdbba81e8ac9410e6bc38a46d365f55c2f12844fe2a71a5d3dfa"
+    },
+    {
+      "path": "supabase/functions/creator-agent-run/index.ts",
+      "occurrences": 1,
+      "before_sha256": "415a3c63a687155d2ce09bf1ab483845dec274080baa80e67a33b74509d1a19a",
+      "after_sha256": "ef3c38ba91dcc9421baf2482837be29433f3504d10a95b279a3434021d58338f"
+    },
+    {
+      "path": "supabase/functions/email-agent-gmail-oauth/index.ts",
+      "occurrences": 1,
+      "before_sha256": "38a578f5e5afb38cd0ed1267aed0dd7986f71726a94e7cebc4ef2e882d9b2849",
+      "after_sha256": "cc41bab380137325b9efa633d8be6076e07ee128f04c798909e473f3b49f7ca5"
+    },
+    {
+      "path": "supabase/functions/founder-dashboard/index.ts",
+      "occurrences": 1,
+      "before_sha256": "f2e5783a90ce4370b8f1c00bc683f1b60db8d325471fedaee976b7622b89376b",
+      "after_sha256": "c3f5cee01e3cd958d0479826bda35a84ed757aa42f4584ceb76955b8910a7bff"
+    },
+    {
+      "path": "supabase/functions/founder-dashboard/reader.ts",
+      "occurrences": 1,
+      "before_sha256": "7615b0e7174601054690d954303469352550644059c0aa419a7e1948247092a7",
+      "after_sha256": "d9b7a6e1f37ddcf2f1c091ccaaf49e31cd6865c40752e991e39ca6764c2c16a5"
+    },
+    {
+      "path": "supabase/functions/iao-consultation/index.ts",
+      "occurrences": 1,
+      "before_sha256": "0e21432fcfbe4027b4c32c0af370e7dd6803e412b0daff7b8d36ede59515a1f4",
+      "after_sha256": "172beed1f5fe786830412ddbf80d8c497e1eb557aa7fa399cf31156670e84424"
+    },
+    {
+      "path": "supabase/functions/karta-trigger/index.ts",
+      "occurrences": 1,
+      "before_sha256": "75b775170e35f08c713ee0f56d1c623df3240a0005425c8d5d003a8959ca527b",
+      "after_sha256": "9d42ead116986a2c8c5986a61e6eb7a51fe99f2cb28c270d2d317bfd9f0d14cf"
+    },
+    {
+      "path": "supabase/functions/legal-build-case/index.ts",
+      "occurrences": 1,
+      "before_sha256": "9a5084a7d846b8877e852d50c7207446c6da99b138bde2892842e4103de9ab34",
+      "after_sha256": "f955d36cea74f2c2fae846a9d0221e8e26f9af8afb0974348dd8363e14a6d30a"
+    },
+    {
+      "path": "supabase/functions/legal-chat/index.ts",
+      "occurrences": 1,
+      "before_sha256": "6d6a34d5ae3d43a97d573fae19593329e2acc4ac08e880780176f69c96d55ac1",
+      "after_sha256": "7bcdc0a1636ef69fbe42994fa422abbd25cfdeee338551933270554ee1698d5e"
+    },
+    {
+      "path": "supabase/functions/oauth-google/index.ts",
+      "occurrences": 1,
+      "before_sha256": "2deb78bb97f8c04a082a32f5c631acae3e4bbc4fb07db4dd26c9bf024930d235",
+      "after_sha256": "4b4ba7b79e97813380487e8d1f5754887d1bbd6c3675331f9d52ee2c4ac27e28"
+    },
+    {
+      "path": "tests/billing/fixture.mjs",
+      "occurrences": 1,
+      "before_sha256": "bb37e8ecfadf10ef636d16630b0edded55ff0f8dcb40b4fc22e50b9e0b9cb537",
+      "after_sha256": "d4f91350a22a06d2bcaad7e4353ca357577a8316dcc2b448da425278d742e5b3"
+    },
+    {
+      "path": "tests/commerce/deno.json",
+      "occurrences": 1,
+      "before_sha256": "0887da227a90a9ea8cd0737b058c4d88c854d7eb794dcf6145e084742476e509",
+      "after_sha256": "dc2fbbaa3ad12c2b73185fb6e508d099b24e5179f5d6b8071989c83d83bc6457"
+    },
+    {
+      "path": "tests/contracts-ots-authorization.test.mjs",
+      "occurrences": 1,
+      "before_sha256": "b675e677f76b2e8224742bd1e782c0b14ab84f9f4f226be7b0c3662510358679",
+      "after_sha256": "1a5842c710ae76c71f58d3436efd90d0f1f60bba3af782980655c4e4b8244d02"
+    },
+    {
+      "path": "tests/contracts-ots-integrity.mjs",
+      "occurrences": 1,
+      "before_sha256": "5b86be76335523f70d30738c0c62c79e5663b1e9118812c745f8af8a02a32913",
+      "after_sha256": "58228df76f27cb370d89e0f313b9d0d10b7d49590f8869c4e39549d59624649c"
+    },
+    {
+      "path": "tests/contracts-ots-native/deno.json",
+      "occurrences": 1,
+      "before_sha256": "5e79753546dfc746b2ab19768cee3d3b2d8e99c53f145633d98dbb7b03dd7d61",
+      "after_sha256": "6eca7b39255dda78bd0fdfd37d57f3988b92f662430fa53c1fed510ead80da95"
+    },
+    {
+      "path": "tests/contracts-ots/deno.json",
+      "occurrences": 1,
+      "before_sha256": "b0055cfbd1f1ee5e0257e891c550dae502d6658b217495d0b731532b2d6ab7c3",
+      "after_sha256": "4411e8abde02b05d5d0d2a00ac2cfe5f72c5ba50cdcacd9a2ed8dca3226b58a2"
+    },
+    {
+      "path": "tests/contracts-ots/verification-atomicity.mjs",
+      "occurrences": 1,
+      "before_sha256": "a3c39e4df7919ce5d94b7752e3ed22cf3307db812754d5ca6a52a325aa96bf49",
+      "after_sha256": "25895bef6b753b155349896211f66715bb1fe1b58e4b13156930ff7a15c89807"
+    },
+    {
+      "path": "tests/revenue/deno.json",
+      "occurrences": 1,
+      "before_sha256": "9d9df1d3ed87e91794aa2d77c46f6fa39d8569fe51bcef92a5b462d6c2170a52",
+      "after_sha256": "62ed83f332fa9f7551f6d8025f0b4d56c38b2d503f9d27c7433f731c6c5470ad"
+    },
+    {
+      "path": "tests/social-connection/deno.json",
+      "occurrences": 2,
+      "before_sha256": "788dc69f46b7e9670b0071fa6ecf000dfed10b443fd5121755c680034ee31598",
+      "after_sha256": "f376c26f8543eb51dedafc1f4f9b4a47dfc99383ce15bc64594cbd2f907d6eeb"
+    },
+    {
+      "path": "tests/voice-tts-boundaries.test.mjs",
+      "occurrences": 1,
+      "before_sha256": "1c007f4e6e2500e690b9f8a6bec055a7b1b5a714319f3ac5591ae753f005e0ec",
+      "after_sha256": "237c4e8b15f1794191a86fbc46e9dabd9566cfbd1f66911048940e0a1683a3d6"
+    }
+  ]
+}

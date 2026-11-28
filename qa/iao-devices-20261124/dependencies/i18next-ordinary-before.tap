@@ -1,0 +1,15 @@
+✔ bundled French and English resources support repeated language changes (4.030955ms)
+✔ every additional bundled locale can be loaded and selected without losing its text (3.636752ms)
+✔ missing translations and regional locale tags retain the French fallback (1.156951ms)
+✔ ordinary interpolation preserves values and supports explicit escaping (0.841947ms)
+✔ plural selection supports English and all Arabic plural categories (1.694159ms)
+✔ ordinary deep resource updates preserve siblings and replace intended values (0.441814ms)
+✔ react-i18next renders the active language through its provider and hook (3.747509ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.725557

@@ -1,0 +1,369 @@
+{
+  "baseline_before": {
+    "phase": "before",
+    "command": [
+      "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+      "test",
+      "--no-remote",
+      "--no-prompt",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+      "--config",
+      "tests/commerce/deno.json",
+      "tests/commerce/webhook-handler.test.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/before",
+    "exit_code": 1,
+    "seconds": 1.057,
+    "log_sha256": "af85db7eff1fe3cd5e0499aa618f252be2954840534c90bb52151ad0f1d68ab1",
+    "tests": {
+      "passed": 9,
+      "failed": 31,
+      "total": 40
+    },
+    "runtime_actual": "deno 2.9.6 (stable, release, x86_64-unknown-linux-gnu)"
+  },
+  "restored_before_type_fix": {
+    "phase": "after",
+    "command": [
+      "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+      "test",
+      "--no-remote",
+      "--no-prompt",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+      "--config",
+      "tests/commerce/deno.json",
+      "tests/commerce/webhook-handler.test.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/after",
+    "exit_code": 0,
+    "seconds": 0.99,
+    "log_sha256": "811cc4ca17e087706459750d50c52d02504af096b3f21fb373993a2cb546b8b1",
+    "tests": {
+      "passed": 40,
+      "failed": 0,
+      "total": 40
+    },
+    "runtime_actual": "deno 2.9.6 (stable, release, x86_64-unknown-linux-gnu)"
+  },
+  "commerce_final": {
+    "command": [
+      "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+      "test",
+      "--no-remote",
+      "--no-prompt",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=WEBHOOK_SECRET,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+      "--config",
+      "tests/commerce/deno.json",
+      "tests/commerce"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "exit_code": 0,
+    "seconds": 1.817,
+    "log_sha256": "8c8c82d5fd9a787f035947682127c1a06a038eecb416433be922ed57efa5a91e",
+    "tests": {
+      "passed": 82,
+      "failed": 0
+    }
+  },
+  "sdk_linux_network_block": {
+    "command": [
+      "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+      "check",
+      "--no-config",
+      "--no-lock",
+      "supabase/functions/stripe-webhook/index.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/after",
+    "exit_code": 1,
+    "seconds": 20.5,
+    "log_sha256": "7c3c09305eef85eb0ba76633c4ed095951381906de1644788e23256c8592d8ab"
+  },
+  "sdk_final": {
+    "command": [
+      "/opt/homebrew/bin/deno",
+      "check",
+      "--no-config",
+      "--no-lock",
+      "supabase/functions/stripe-webhook/index.ts"
+    ],
+    "cwd": "/Users/matissdornier/purama-patches/commerce-restoration-sdk-20261110",
+    "exit_code": 0,
+    "seconds": 14.571,
+    "runtime": "deno 2.9.7 (stable, release, aarch64-apple-darwin)\nv8 15.0.245.2-rusty\ntypescript 6.0.3",
+    "handler_sha256": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+    "log_sha256": "99d29c91207986af8b9fd4c5b10d0937fb4eedbf3618ff9d299af9459058e0c7"
+  },
+  "overage_linux_initial": {
+    "command": [
+      "npm",
+      "test",
+      "--",
+      "test/overageCredit.test.ts",
+      "--maxWorkers=1"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+    "exit_code": 1,
+    "seconds": 2.597,
+    "log_sha256": "8b0f1f9bd6ef0abf1a6058e95f8a05c62b7b6a08e40f4b840aa3053dc36e66d0"
+  },
+  "overage_linux_retry": {
+    "command": [
+      "npm",
+      "test",
+      "--",
+      "test/overageCredit.test.ts",
+      "--maxWorkers=1"
+    ],
+    "env_override": {
+      "NODE_OPTIONS": "--max-old-space-size=256"
+    },
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+    "exit_code": 1,
+    "seconds": 78.8,
+    "log_sha256": "d23921b6d6f0dc51d8b4c392598af0c4894c25fedbcc09c78ac9840cc5e6d243"
+  },
+  "lint": {
+    "command": [
+      "./node_modules/.bin/eslint",
+      "supabase/functions/stripe-webhook/index.ts",
+      "tests/commerce/webhook-handler.test.ts",
+      "tests/commerce/webhook-provider-fixture.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "tool_session_id": 85290
+  },
+  "diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "supabase/functions/stripe-webhook/index.ts",
+      "tests/commerce/deno.json",
+      "tests/commerce/webhook-handler.test.ts",
+      "tests/commerce/webhook-provider-fixture.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "exit_code": 0
+  },
+  "sdk_historical_patch": {
+    "command": [
+      "/opt/homebrew/bin/deno",
+      "check",
+      "--cached-only",
+      "--no-config",
+      "--no-lock",
+      "/Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts"
+    ],
+    "exit_code": 1,
+    "type_error_count": 18,
+    "handler_sha256": "799ffc83f3f1447ba9d3cd0f70891c8db7f88b2cebbf04e5766b6616f3be4cce",
+    "evidence": "sdk-historical-patch-errors.txt",
+    "note": "Remote process transcript retained; direct compiler result, not a fixture check."
+  },
+  "overage_mac_initial": {
+    "command": [
+      "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/overageCredit.test.ts",
+      "--maxWorkers=1"
+    ],
+    "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta",
+    "exit_code": 1,
+    "seconds": 25.876,
+    "node_version": "v22.23.3",
+    "vitest_version": "5.0.3",
+    "inputs_before": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158"
+    },
+    "inputs_after": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158"
+    },
+    "inputs_unchanged": true,
+    "log_sha256": "559b8ec3108da38d1dcee147407b7d7b4aaefad78696b8ee25ed2da022bfa22b"
+  },
+  "overage_mac_targeted": {
+    "command": [
+      "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/overageCredit.test.ts",
+      "--maxWorkers=1",
+      "-t",
+      "stops the migration on historical duplicate sessions without deleting or rewriting a credit"
+    ],
+    "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta",
+    "exit_code": 1,
+    "seconds": 13.768,
+    "node_version": "v22.23.3",
+    "inputs_before": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158"
+    },
+    "inputs_after": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158"
+    },
+    "inputs_unchanged": true,
+    "log_sha256": "9998675a4194e0e5bb04fbf453236c52d4eb7d6e394a2f523d94a9f546093787"
+  },
+  "overage_mac_final": {
+    "command": [
+      "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/overageCredit.test.ts",
+      "--maxWorkers=1"
+    ],
+    "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta",
+    "exit_code": 0,
+    "seconds": 8.456,
+    "node_version": "v22.23.3",
+    "inputs_before": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+      "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+    },
+    "inputs_after": {
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "karta/test/overageCredit.test.ts": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
+      "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+      "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+      "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+    },
+    "inputs_unchanged": true,
+    "log_sha256": "5a2ffcc354150c90e5b7092f8be7987de9da67152f1cf9d0d83137f7502f0e51"
+  },
+  "commerce_mac_final": {
+    "command": [
+      "/opt/homebrew/bin/deno",
+      "test",
+      "--no-remote",
+      "--no-prompt",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=WEBHOOK_SECRET,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+      "--config",
+      "tests/commerce/deno.json",
+      "tests/commerce"
+    ],
+    "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code",
+    "exit_code": 0,
+    "seconds": 3.084,
+    "deno_version": "deno 2.9.7 (stable, release, aarch64-apple-darwin)\nv8 15.0.245.2-rusty\ntypescript 6.0.3",
+    "tests": {
+      "passed": 82,
+      "failed": 0
+    },
+    "inputs_before": {
+      "tests/commerce/deno.json": "a7956dfa3c48ff09981035075271851e8e3dbf8a83297d9c7d3bb3e2661ae941",
+      "tests/commerce/payout-handler.test.ts": "f945d2fe10023e147b8317d14de2dc38cde9a586722dada829af79e8ea85a73a",
+      "tests/commerce/payout-provider-fixture.ts": "8c0a437939856f9ca7d749c43f75157da75887a8056ebdea97f712240b533a69",
+      "tests/commerce/serve-capture.ts": "3b835346701691f482dabf3cee56891c5c97dda4731466b5b45ea358b568ebf7",
+      "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+      "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+      "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+      "tests/commerce/webhook-handler.test.ts": "a92208f22ac7f78098ae4d705f22f98ec64d6c23127699be1a1c5460acd85623",
+      "tests/commerce/webhook-provider-fixture.ts": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+      "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+      "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489"
+    },
+    "inputs_after": {
+      "tests/commerce/deno.json": "a7956dfa3c48ff09981035075271851e8e3dbf8a83297d9c7d3bb3e2661ae941",
+      "tests/commerce/payout-handler.test.ts": "f945d2fe10023e147b8317d14de2dc38cde9a586722dada829af79e8ea85a73a",
+      "tests/commerce/payout-provider-fixture.ts": "8c0a437939856f9ca7d749c43f75157da75887a8056ebdea97f712240b533a69",
+      "tests/commerce/serve-capture.ts": "3b835346701691f482dabf3cee56891c5c97dda4731466b5b45ea358b568ebf7",
+      "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+      "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+      "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+      "tests/commerce/webhook-handler.test.ts": "a92208f22ac7f78098ae4d705f22f98ec64d6c23127699be1a1c5460acd85623",
+      "tests/commerce/webhook-provider-fixture.ts": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+      "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+      "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+      "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+      "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489"
+    },
+    "inputs_unchanged": true,
+    "log_sha256": "6a5a677b058e16153e8fba0f07d42fa4ab57bdbf56357e1342bdbaa3ce2751ad"
+  },
+  "lint_credit_fixture": {
+    "command": [
+      "./node_modules/.bin/eslint",
+      "karta/test/overageCredit.test.ts"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "tool_session_id": 25021
+  },
+  "gitnexus_context_incomplete": {
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+      "context",
+      "logStep",
+      "--file",
+      "supabase/functions/stripe-webhook/index.ts",
+      "--repo",
+      "iao-resume-cb46"
+    ],
+    "env_override": {
+      "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "268435456"
+    },
+    "exit_code": 137,
+    "tool_session_id": 97281,
+    "cause": "not established",
+    "result": "No context result returned; file impact and manual trace were retained."
+  }
+}

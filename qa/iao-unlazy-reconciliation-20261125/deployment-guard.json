@@ -1,0 +1,9 @@
+{
+  "path": "vercel.json",
+  "newBranch": "audit/unlazy-reconciliation-20261125",
+  "deploymentEnabled": false,
+  "allPreviousConfigurationUnchanged": true,
+  "noDuplicateKeys": true,
+  "sha256": "9b7ff0336b80b1e358707be1c00a4967d7fab92f9f6e00d2aba2a9c05e9763cc",
+  "authorization": "Root requested this exact additional guard before review publication; no push or deployment performed."
+}

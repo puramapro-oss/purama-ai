@@ -1,0 +1,18 @@
+{
+  "productAndDocumentationWhitespaceCheck": {
+    "exitCode": 0
+  },
+  "completeWhitespaceCheck": {
+    "exitCode": 2,
+    "scope": "Only exact raw QA logs contain trailing whitespace or extra blank EOF lines; their bytes are intentionally preserved.",
+    "output": "qa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\n"
+  },
+  "sourceManifestMatched": true,
+  "compressedEvidenceRoundTripsMatched": true,
+  "deploymentConfigOnlyChange": "feat/iao-integration-20261124=false; every existing entry and other setting preserved",
+  "changedProductPaths": [
+    "karta/src/api/iaoRoutes.ts",
+    "karta/src/iao/iaoFacade.ts",
+    "karta/src/integrations/localComputeFabricProvider.ts"
+  ]
+}

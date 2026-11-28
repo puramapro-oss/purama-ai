@@ -1,0 +1,5 @@
+verified_bundle_sha256 0700cfe653175990c996bfb67589af771ff5b5955f7b014eb58a0ecb0ed399ea
+{"case":"arithmetic_exact_format","status":"PASS","elapsedMs":48140,"observed":{"summary":"42","toolCalls":[]}}
+{"case":"structured_tool_decision","status":"PASS","elapsedMs":783,"observed":{"summary":"(aucun résumé texte — décision uniquement via appels d'outils)","toolCalls":[{"tool":"record_fixture","params":{"name":"Zoé","amount":12.5,"currency":"EUR"}}]}}
+{"status":"PASS","model":"qwen3-coder:30b","calls":2,"usage":[{"input_tokens":941,"cache_read_input_tokens":0,"output_tokens":3},{"input_tokens":417,"cache_read_input_tokens":859,"output_tokens":47}],"results":[{"case":"arithmetic_exact_format","status":"PASS","elapsedMs":48140,"observed":{"summary":"42","toolCalls":[]}},{"case":"structured_tool_decision","status":"PASS","elapsedMs":783,"observed":{"summary":"(aucun résumé texte — décision uniquement via appels d'outils)","toolCalls":[{"tool":"record_fixture","params":{"name":"Zoé","amount":12.5,"currency":"EUR"}}]}}],"scope":"local client and two synthetic decisions; not production, global quality or OmniRoute"}
+✅ Process completed with exit code 0 (runtime: 53.48s)

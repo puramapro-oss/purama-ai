@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "id": "IAO-ANDROID-DATA-SETTINGS-QUALIFICATION-20261126-0414",
+  "recordedAt": "2026-11-26T05:07:51.863869+00:00",
+  "status": "PASS_LOCAL_FIXTURES_REAL_IMAGE_NOT_TESTED",
+  "source": {
+    "remoteBaseline": "271f40b666c11d90fe4a350a41432513a08fc72f",
+    "localHead": "e6a9ece6d66fec795957e7d941d9948ab904d408",
+    "workingTreeFiles": {
+      "mobile/scripts/qualify-android-data-settings.py": {
+        "bytes": 26197,
+        "sha256": "6f175b1994b826b24b3c982aacab7f566715983468d6c941894d0eb6e530ce06"
+      },
+      "mobile/tests/watch-native/data-settings-qualification.test.cjs": {
+        "bytes": 22038,
+        "sha256": "896712ed3db0e30375b416ccbd01de929bcf92c44b03554459e3f02f62abac0c"
+      }
+    }
+  },
+  "runtime": {
+    "node": "v24.22.3",
+    "python": "3.12.14",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41"
+  },
+  "tests": {
+    "command": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "--test-reporter=tap",
+      "mobile/tests/watch-native/data-settings-qualification.test.cjs"
+    ],
+    "exitCode": 0,
+    "tests": 46,
+    "pass": 46,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 25462.662451,
+    "log": "tests-final.tap",
+    "logSha256": "917eac9a0340fbb0abb13e1d9aac347abedc6572231dd7b82c65e2964987be86",
+    "rawAdbStreams": "Successful fixture verifies stdout/stderr byte sizes and SHA-256 for every actual subprocess result; fixture files are disposable.",
+    "maximumUiObservationsTested": 9,
+    "maximumUiClicks": 2,
+    "selectionAttempts": 1
+  },
+  "reviewCharacterization": {
+    "tests": 5,
+    "beforeFix": "5 reproducible failures recorded in characterization.json and tests-characterization.log",
+    "afterFix": "Included in final 46 PASS"
+  },
+  "static": {
+    "pythonAst": "PASS",
+    "whitespace": [
+      {
+        "file": "mobile/scripts/qualify-android-data-settings.py",
+        "exitCode": 1,
+        "result": "CLEAN",
+        "note": "--no-index reports a new-file difference with rc1; whitespace check emits no diagnostics.",
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "file": "mobile/tests/watch-native/data-settings-qualification.test.cjs",
+        "exitCode": 1,
+        "result": "CLEAN",
+        "note": "--no-index reports a new-file difference with rc1; whitespace check emits no diagnostics.",
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "preservedFiles": {
+    "mobile/scripts/prepare-android-offline.py": {
+      "expected": "4f69fbed87c5ace67d9f5106a61c432b0776807d112fcfb20e21fcac8c11cb05",
+      "actual": "4f69fbed87c5ace67d9f5106a61c432b0776807d112fcfb20e21fcac8c11cb05"
+    },
+    "mobile/scripts/wait-for-android-offline.py": {
+      "expected": "11b41f3f70601f16b6aa312e176a75407f6c9b3567d41c3a074c74ac837dafd2",
+      "actual": "11b41f3f70601f16b6aa312e176a75407f6c9b3567d41c3a074c74ac837dafd2"
+    },
+    "mobile/tests/watch-native/offline-preparation.test.cjs": {
+      "expected": "fcabb5b83edcd17be056fe6f823facd6b6f611472a2ee836de6f1688e35b4793",
+      "actual": "fcabb5b83edcd17be056fe6f823facd6b6f611472a2ee836de6f1688e35b4793"
+    },
+    "mobile/tests/watch-native/offline-network.test.cjs": {
+      "expected": "7fdce85aff3af047885efc46d67e120f2071c41ed91fa2b14a62eb43bb90d374",
+      "actual": "7fdce85aff3af047885efc46d67e120f2071c41ed91fa2b14a62eb43bb90d374"
+    }
+  },
+  "scope": {
+    "preparerEdited": false,
+    "observerEdited": false,
+    "existing56TestsRerun": false,
+    "workflowEditedByThisAgent": false,
+    "realAdbExecuted": false,
+    "ciDispatched": false,
+    "published": false
+  },
+  "gitnexus": {
+    "status": "UNKNOWN",
+    "evidence": "impact-before.json",
+    "reason": "Existing index one commit behind; FTS unavailable; reused Python functions and new diagnostic class not fully resolved. Manual callers reviewed; original sources unchanged."
+  },
+  "limits": [
+    "UI behavior on actual API35/google_apis/x86_64 r9 remains NON TESTE.",
+    "English Mobile data and known switch-resource IDs are strict recognition gates, not an assertion of binary/runtime equivalence.",
+    "Origin is bound to canonical run UUID, serial, expected image, checkout evidence and freshness <=180 seconds; original receipt contains no kernel boot UUID.",
+    "DATA_SELECTION_OBSERVED is a separate diagnostic result; original preflight stays FAIL and networkVerified stays false.",
+    "Root owns workflow integration, original exit retention, any publication and actual CI qualification."
+  ],
+  "workflowCommand": "python3 -B scripts/qualify-android-data-settings.py --artifact-dir \"$PWD/qa/android-network-preflight\" --allow-settings-transition"
+}

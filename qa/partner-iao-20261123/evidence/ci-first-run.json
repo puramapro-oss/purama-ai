@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": 45092414496,
+  "published_head": "d633b769f8ed8f03df64088c7267c18d85b76d17",
+  "base": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "ci_checkout": "5fe12ae67a0ad382f37d88704c0b98258b299d74",
+  "verified_identical_tree": "b4d65fb82d0e8e3d2482605b5b3fa5ae4caf6af6",
+  "jobs": [
+    {
+      "id": 137424716518,
+      "name": "karta",
+      "conclusion": "success",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45092414496/job/137424716518",
+      "excerpt_kind": "Selected log lines; not a full raw log",
+      "lines": [
+        "2026-11-23T01:04:20.3005705Z HEAD is now at 5fe12ae Merge d633b769f8ed8f03df64088c7267c18d85b76d17 into d150c87ff9e3c7530765c4abaf5412c637b74366",
+        "2026-11-23T01:04:39.7009586Z  ✓ test/partnerOutreach.test.ts (88 tests) 8223ms",
+        "2026-11-23T01:04:42.0831257Z  ✓ test/assistantPolicy.test.ts (57 tests) 2605ms",
+        "2026-11-23T01:04:48.4955207Z  ✓ test/partnerContract.test.ts (38 tests) 5489ms",
+        "2026-11-23T01:06:06.8121955Z  ✓ test/partnerChat.test.ts (13 tests) 4137ms",
+        "2026-11-23T01:06:53.2542983Z  ✓ test/partnerSchedulerWorkflow.test.ts (8 tests) 9ms",
+        "2026-11-23T01:06:58.9847987Z  Test Files  192 passed (192)",
+        "2026-11-23T01:06:58.9875112Z       Tests  4401 passed (4401)"
+      ]
+    },
+    {
+      "id": 137424716287,
+      "name": "site",
+      "conclusion": "failure",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45092414496/job/137424716287",
+      "excerpt_kind": "Selected log lines; not a full raw log",
+      "lines": [
+        "2026-11-23T01:18:47.1824380Z   ✓  15 tests/ui-state/ownership.spec.ts:35:3 › partner: load failure is visible and retry restores the settings (481ms)",
+        "2026-11-23T01:18:47.9824288Z   ✘  16 tests/ui-state/ownership.spec.ts:46:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft (765ms)",
+        "2026-11-23T01:18:49.2301178Z   ✘  17 tests/ui-state/ownership.spec.ts:70:3 › partner: late A config cannot overwrite loaded B (791ms)",
+        "2026-11-23T01:18:50.2053945Z   ✓  18 tests/ui-state/ownership.spec.ts:35:3 › email: load failure is visible and retry restores the settings (560ms)",
+        "2026-11-23T01:18:50.9883507Z   ✓  19 tests/ui-state/ownership.spec.ts:46:3 › email: account switch never saves A's settings as B; same-account refresh preserves draft (774ms)",
+        "2026-11-23T01:18:51.7278039Z   ✓  20 tests/ui-state/ownership.spec.ts:70:3 › email: late A config cannot overwrite loaded B (732ms)",
+        "2026-11-23T01:18:52.2225292Z   ✓  21 tests/ui-state/ownership.spec.ts:35:3 › compta: load failure is visible and retry restores the settings (486ms)",
+        "2026-11-23T01:18:53.0084325Z   ✓  22 tests/ui-state/ownership.spec.ts:46:3 › compta: account switch never saves A's settings as B; same-account refresh preserves draft (777ms)",
+        "2026-11-23T01:18:53.7462884Z   ✓  23 tests/ui-state/ownership.spec.ts:70:3 › compta: late A config cannot overwrite loaded B (728ms)",
+        "2026-11-23T01:18:54.1665159Z   ✓  24 tests/ui-state/ownership.spec.ts:84:1 › legal: late history A cannot replace selected conversation B (410ms)",
+        "2026-11-23T01:18:54.8002669Z   ✓  25 tests/ui-state/ownership.spec.ts:94:1 › legal: new conversation stays empty after old history resolves (625ms)",
+        "2026-11-23T01:18:55.5232507Z   1) tests/ui-state/ownership.spec.ts:46:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft ",
+        "2026-11-23T01:18:55.5233582Z     TypeError: Cannot read properties of undefined (reading 'ownerId')",
+        "2026-11-23T01:18:55.5237126Z         at /work/tests/ui-state/ownership.spec.ts:66:17",
+        "2026-11-23T01:18:55.5238491Z   2) tests/ui-state/ownership.spec.ts:70:3 › partner: late A config cannot overwrite loaded B ──────",
+        "2026-11-23T01:18:55.5239317Z     Expected: \"00000000-0000-4000-8000-000000000002\"",
+        "2026-11-23T01:18:55.5239866Z     Received: undefined",
+        "2026-11-23T01:18:55.5242694Z         at /work/tests/ui-state/ownership.spec.ts:80:27",
+        "2026-11-23T01:18:55.5243730Z   2 failed",
+        "2026-11-23T01:18:55.5244297Z     tests/ui-state/ownership.spec.ts:46:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft ",
+        "2026-11-23T01:18:55.5245027Z     tests/ui-state/ownership.spec.ts:70:3 › partner: late A config cannot overwrite loaded B ───────",
+        "2026-11-23T01:18:55.5245407Z   24 passed (22.0s)",
+        "2026-11-23T01:18:55.7383442Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "notes": [
+    "KARTA passed 4401 tests including the final 38 contract cases; those cases are included, not additional.",
+    "The site job failed in two partner settings browser cases because their existing-row fixture omitted the newly required outreach_timezone.",
+    "Product validation is retained. The fixture now mirrors the migration/default UTC value; an early CI typecheck guards this fixture contract.",
+    "Corrective browser CI remains pending at this evidence snapshot."
+  ]
+}

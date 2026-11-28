@@ -1,0 +1,43 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ❯ test/lmStudioQualification.test.ts (9 tests | 2 failed) 2196ms
+   ❯ existing LM Studio qualification CLI gates (9)
+     × does not mistake unrelated ambient cloud configuration for local unavailability: {"KARTA_MODEL_PROFILES_JSON":"not-json"} 148ms
+     × does not mistake unrelated ambient cloud configuration for local unavailability: {"KARTA_ANTHROPIC_PROMPT_CACHE":"not-a-mode"} 192ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/lmStudioQualification.test.ts > existing LM Studio qualification CLI gates > does not mistake unrelated ambient cloud configuration for local unavailability: {"KARTA_MODEL_PROFILES_JSON":"not-json"}
+ FAIL  test/lmStudioQualification.test.ts > existing LM Studio qualification CLI gates > does not mistake unrelated ambient cloud configuration for local unavailability: {"KARTA_ANTHROPIC_PROMPT_CACHE":"not-a-mode"}
+AssertionError: expected { code: 1, signal: null, …(2) } to match object { code: +0, signal: null, stderr: '' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "signal": null,
+-   "stderr": "",
++   "stderr": "BLOQUÉ : vérifier la sélection explicite, le modèle chargé et le serveur LM Studio local.
++ ",
+  }
+
+ ❯ test/lmStudioQualification.test.ts:101:20
+     99|   ])("does not mistake unrelated ambient cloud configuration for local…
+    100|     const result = await runSmoke(extra);
+    101|     expect(result).toMatchObject({ code: 0, signal: null, stderr: "" }…
+       |                    ^
+    102|     expect(records(result).map(record => record.status)).toEqual(["PAS…
+    103|     expect(requests.map(request => request.path)).toEqual(["/api/v1/mo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  21:48:41
+   Duration  2.40s (tests 98%, transform 1%)
+

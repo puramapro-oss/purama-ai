@@ -1,0 +1,103 @@
+{
+  "status": "PASS local and native; exact-head browser CI pending",
+  "from": "2.91.0",
+  "to": "2.119.2",
+  "node": "v24.22.3",
+  "minimumSdkNode": "22.0.0",
+  "ciNode": "22",
+  "rootDependencyOnly": true,
+  "sdkPackages": {
+    "supabase-js": "2.119.2",
+    "auth-js": "2.119.2",
+    "functions-js": "2.119.2",
+    "postgrest-js": "2.119.2",
+    "realtime-js": "2.119.2",
+    "storage-js": "2.119.2"
+  },
+  "changedLockEntries": [
+    "",
+    "node_modules/@supabase/auth-js",
+    "node_modules/@supabase/functions-js",
+    "node_modules/@supabase/phoenix",
+    "node_modules/@supabase/postgrest-js",
+    "node_modules/@supabase/realtime-js",
+    "node_modules/@supabase/storage-js",
+    "node_modules/@supabase/supabase-js",
+    "node_modules/@types/node",
+    "node_modules/@types/phoenix",
+    "node_modules/@types/ws",
+    "node_modules/undici-types",
+    "node_modules/ws"
+  ],
+  "clientSourceUnchanged": true,
+  "clientSHA256": "c4c92076076fe01f4ad7747bc1085ceb000e60307258b0529148fb607296f076",
+  "authOptionsPreserved": {
+    "persistSession": true,
+    "autoRefreshToken": true,
+    "customLock": false
+  },
+  "unit": {
+    "testFiles": 33,
+    "passed": 646,
+    "failed": 0,
+    "pending": 0,
+    "success": true
+  },
+  "typecheck": {
+    "initialParallelAttemptExit": 137,
+    "sequentialBoundedAttemptExit": 0,
+    "maxOldSpaceMiB": 1024
+  },
+  "audit": {
+    "info": 0,
+    "low": 3,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 3
+  },
+  "impact": {
+    "gitnexus": "UNKNOWN for exported client constant; property access/import use is not represented by resolved call edges",
+    "manualImporters": 69,
+    "manualRisk": "HIGH",
+    "broadIndexAttempt": "Stopped by execution environment, exit137; no complete graph claim",
+    "targetedIndex": "1068 nodes,2627edges,39flows; FTS unavailable, processes truncated"
+  },
+  "evidenceZipSHA256": "897e87b6481e09bde08c1b2d3fa1c1c22f54005ac4c1d81a1af6f28811dfa8ea",
+  "limits": [
+    "No production session or live GoTrue server qualification",
+    "Live server version and parent-of-active refresh behavior unverified",
+    "Native browser overlay has existing auxiliary tool versions; exact committed lock tested in CI",
+    "No pageerror assertion removed; original failures retained in ci-first-attempt"
+  ],
+  "native": {
+    "attempt": 4,
+    "status": "PASS",
+    "passed": 59,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "retries": 0,
+    "sourceFiles": 452,
+    "candidateFiles": 18,
+    "candidateSha256": "ba1b9c2eda3a3cd1a8d2c8a7da0fedafc9ec64cfbba0a88d0fc802f85cd80614",
+    "sourcesUnchanged": true,
+    "optimizedSdk": {
+      "file": "/Users/matissdornier/purama-patches/iao-continuity-20261124-native/repo/tests/chat/.cache/vite/deps/@supabase_supabase-js.js",
+      "sha256": "4e255317a7fb1560c8415f64b73409f993e0ce15cbf216245895d25599b46daa",
+      "oldVersionOccurrences": 0,
+      "newVersionOccurrences": 4,
+      "discardedRefreshGuardPresent": true,
+      "optimizerForced": true
+    },
+    "receipt": "native/attempt-4.json",
+    "networkReceipt": "native/attempt-4-network.json"
+  },
+  "matrix": {
+    "collected": 65,
+    "scenarios": 13,
+    "profiles": 5,
+    "executedInLocalLinux": false,
+    "receipt": "matrix-collection.txt"
+  }
+}

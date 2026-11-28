@@ -1,0 +1,169 @@
+{
+  "project": "IAO / purama-ai",
+  "date": "2026-11-23T20:55:56.809508+00:00",
+  "baseline": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "branch": "fix/iao-release-qualification-20261123",
+  "owner": "qual_release",
+  "status": "PARTIEL",
+  "implemented_fix": "Local qualification CLI isolates ambient cloud cache and model catalogue; production route unchanged.",
+  "proof_status": {
+    "cli_regression_gates": "PASS: 9/9 after correction, 2 reproduced failures before correction",
+    "existing_readiness_transport_gates": "PASS: 79/79, synthetic dependencies/provider",
+    "typescript": "PASS",
+    "live_lmstudio_inference": "NON TESTÉ",
+    "real_result_quality": "NON TESTÉ",
+    "real_billing": "NON TESTÉ",
+    "real_load": "NON TESTÉ",
+    "deployment": "NON TESTÉ"
+  },
+  "changes": {
+    "production_source": [
+      "karta/scripts/qualify-lmstudio.ts"
+    ],
+    "tests": [
+      "karta/test/lmStudioQualification.test.ts"
+    ],
+    "prohibited_changes_performed": []
+  },
+  "files_sha256": {
+    "karta/scripts/qualify-lmstudio.ts": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+    "karta/test/lmStudioQualification.test.ts": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6",
+    "qa/iao-release-qualification-20261123/release/qualification-matrix.md": "01d52ca3c357a80942522351925401b72762ee7015a8bd1b0e1d8f818648d6a6"
+  },
+  "commands": {
+    "cli-red-command.json": {
+      "stage": "RED, product script unchanged",
+      "command": [
+        "./node_modules/.bin/vitest",
+        "run",
+        "test/lmStudioQualification.test.ts"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "exit_code": 1,
+      "elapsed_seconds": 2.822,
+      "log": "cli-red.log",
+      "script_sha256": "652e3678a38806827dd81c026b654846efea5f683a7817cd0bfcf37314728804",
+      "test_sha256": "d4da866fbb98ae4e5ea6bbd431e73a2a8ff85b05717adb28a9c8886ab60b7f53"
+    },
+    "cli-green-command.json": {
+      "command": [
+        "./node_modules/.bin/vitest",
+        "run",
+        "test/lmStudioQualification.test.ts"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "exit_code": 0,
+      "elapsed_seconds": 3.371,
+      "log": "cli-green.log",
+      "log_sha256": "d305de69758cfa3c45e88dd45ecb86e8b5db5d1d43fc1458db11a48afa5a0356",
+      "script_sha256": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+      "test_sha256": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6"
+    },
+    "typecheck-before-command.json": {
+      "stage": "shared typecheck before product fix",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "exit_code": 0,
+      "elapsed_seconds": 8.415,
+      "log": "typecheck-before.log",
+      "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "test_sha256": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6"
+    },
+    "typecheck-after-command.json": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "exit_code": 0,
+      "elapsed_seconds": 9.059,
+      "log": "typecheck-after.log",
+      "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "script_sha256": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+      "test_sha256": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6"
+    },
+    "existing-readiness-command.json": {
+      "command": [
+        "./node_modules/.bin/vitest",
+        "run",
+        "test/runtimeApiReadiness.test.ts",
+        "test/runtimeUsageReadiness.test.ts",
+        "test/runtimeProbe.test.ts",
+        "test/lmStudioTransport.test.ts"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+      "exit_code": 0,
+      "elapsed_seconds": 1.554,
+      "scope": "Existing readiness and local-transport gates. HTTP server real where specified, dependencies/model synthetic; no production or real inference claim.",
+      "log": "existing-readiness.log",
+      "log_sha256": "7fee07b0528cb13b55d7c7e084ec5e60e378f0cd28e838f2db7a236ac1e61a76",
+      "files_sha256": {
+        "karta/test/runtimeApiReadiness.test.ts": "869bd3335c73d4044c33268d48ca448f91207d90047ba1576c233be84192ce52",
+        "karta/test/runtimeUsageReadiness.test.ts": "0f0df089a3d8de50b8b66ddd382eb2aa17f7529a27fee1b34df92208d5e346ea",
+        "karta/test/runtimeProbe.test.ts": "131713410b7fc50f2df4cd1ee8d19c671c25b8fa26d9f8b365c5f86957c60367",
+        "karta/test/lmStudioTransport.test.ts": "746e01d85f308a0a5156f7bc91c84667704895cbc44586870869fbefd8bc0fd3",
+        "karta/src/runtime/probe.ts": "a4965446978528e794fd9d5de31ddebaed74ed284ad26196cd5c0985ca41bdd2",
+        "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+        "karta/src/claude/real.ts": "d48318fa1e388e83ae0ea135b4e588a717520f32797faeed8f4f8224ba607cef"
+      }
+    },
+    "diff-check-command.json": {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "karta/scripts/qualify-lmstudio.ts",
+        "karta/test/lmStudioQualification.test.ts"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "stdout": "",
+      "untracked_whitespace_check": {
+        "method": "Python splitlines: line.rstrip() == line for every line in the three owned deliverables",
+        "findings": []
+      },
+      "files_sha256": {
+        "karta/scripts/qualify-lmstudio.ts": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+        "karta/test/lmStudioQualification.test.ts": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6",
+        "qa/iao-release-qualification-20261123/release/qualification-matrix.md": "01d52ca3c357a80942522351925401b72762ee7015a8bd1b0e1d8f818648d6a6"
+      }
+    },
+    "gitnexus-impact-command.json": {
+      "command": [
+        "node",
+        "--input-type=module"
+      ],
+      "stdin_summary": "Import LocalBackend; init; callTool context(name=main,file_path=karta/scripts/qualify-lmstudio.ts,include_content=false); callTool impact(target=main,file_path=karta/scripts/qualify-lmstudio.ts,direction=upstream); write evidence; dispose",
+      "repo": "iao-quality-20261123",
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "evidence": "gitnexus-impact.json",
+      "evidence_sha256": "e1aed9f901617b7090b286ccbbd1d2c221ed6f3d462a0690f1d0b64232318692",
+      "risk": "LOW",
+      "direct_callers": 1,
+      "affected_processes": 0,
+      "limitation": "FTS unavailable, exact indexed target resolved. Downstream decide links resolve to test fixtures and are not treated as real callees."
+    }
+  },
+  "independent_review": {
+    "reviewer": "qual_profiles",
+    "mode": "read-only",
+    "result": "PASS; no blocking finding",
+    "tests_rerun_by_reviewer": false,
+    "confirmed": "No provider model quality or support for additional reflection levels inferred from this synthetic CLI suite."
+  },
+  "limits": [
+    "The CLI uses a real child process, installed SDK and real loopback HTTP; responses and inventory are synthetic.",
+    "Live native observations are owned by root and require their own receipts. Ollama OpenAI compatibility is not LM Studio Messages compatibility.",
+    "The script remains opt-in; no production routing, credentials, model weights, dependencies or workflows changed.",
+    "Readiness technical checks are distinct from model generation, quality, billing, load and deployment.",
+    "No global zero-bug, zero-latency or all-task success claim."
+  ],
+  "matrix": "qualification-matrix.md"
+}

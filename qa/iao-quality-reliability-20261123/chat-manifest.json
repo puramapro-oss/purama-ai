@@ -1,0 +1,154 @@
+{
+  "scope": "ChatbotWidget: stable message identity and strict reconciliation of lost write acknowledgement",
+  "base_commit": "5df79859548d8732317bc89f9ca837435beaccf2",
+  "branch": "fix/iao-quality-reliability-20261123",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "source_sha256": {
+    "src/components/ChatbotWidget.tsx": "9559c55565b88393e933975d4215becc04e25a8afa57b035e4512e21cca7c888",
+    "src/components/ChatbotWidget.consultation.test.tsx": "87744028d240d6cd46094414203bc4d0ff879bd65630e617779181c8bceeda84",
+    "tests/chat/lifecycle.spec.ts": "86f63975f628913fe3e435c006c75c397a3aca375008e1d38215cc9bf804f824"
+  },
+  "final_unique_react_tests": {
+    "total": 29,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "existing": 11,
+    "new": 18
+  },
+  "browser_status": {
+    "collected": 24,
+    "new": 3,
+    "attempted": 3,
+    "assertions_executed": 0,
+    "status": "BLOCKED",
+    "reason": "Configured Chromium headless shell executable missing; no install or bypass attempted."
+  },
+  "commands": [
+    {
+      "phase": "RED",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/ChatbotWidget.consultation.test.tsx --reporter=verbose",
+      "exit": 1,
+      "log": "chat-red.log",
+      "tests": {
+        "passed": 11,
+        "failed": 3
+      },
+      "product": "unaltered base",
+      "finding": "Retry after committed user INSERT with lost acknowledgement persists two user rows instead of one."
+    },
+    {
+      "phase": "INITIAL_GREEN",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/ChatbotWidget.consultation.test.tsx --reporter=verbose",
+      "exit": 0,
+      "log": "chat-green-initial.log",
+      "tests": {
+        "passed": 14,
+        "failed": 0
+      },
+      "counts_not_additive": true
+    },
+    {
+      "phase": "BOUNDARY_GREEN",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/ChatbotWidget.consultation.test.tsx --reporter=verbose",
+      "exit": 0,
+      "log": "chat-green.log",
+      "tests": {
+        "passed": 26,
+        "failed": 0
+      },
+      "counts_not_additive": true
+    },
+    {
+      "phase": "DEFINITIVE_REJECTION_RED",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/ChatbotWidget.consultation.test.tsx -t 'definitive thrown' --reporter=verbose",
+      "exit": 1,
+      "log": "chat-definitive-throw-red.log",
+      "tests": {
+        "failed": 3,
+        "skipped": 26
+      },
+      "finding": "Structured definitive rejections incorrectly initiate a reconciliation read in initial implementation."
+    },
+    {
+      "phase": "FINAL_GREEN",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/ChatbotWidget.consultation.test.tsx --reporter=verbose",
+      "exit": 0,
+      "log": "chat-green-final.log",
+      "tests": {
+        "passed": 29,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "phase": "BROWSER_COLLECTION",
+      "command": "node node_modules/@playwright/test/cli.js test --config tests/chat/playwright.config.ts --list",
+      "exit": 0,
+      "log": "chat-browser-collection.log",
+      "collected": 24,
+      "not_an_execution": true
+    },
+    {
+      "phase": "BROWSER_NATIVE",
+      "command": "node node_modules/@playwright/test/cli.js test --config tests/chat/playwright.config.ts --grep 'unconfirmed message|assistant acknowledgement|late save reconciliation' --output /workspace/scratch/ccfbf7e5800b/iao-quality-evidence-20261123/chat-browser-results",
+      "exit": 1,
+      "log": "chat-browser-native.log",
+      "result": "BLOCKED before browser launch; executable missing at /home/agent/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell"
+    },
+    {
+      "phase": "DIFF_CHECK",
+      "command": "git diff --check -- src/components/ChatbotWidget.tsx src/components/ChatbotWidget.consultation.test.tsx tests/chat/lifecycle.spec.ts",
+      "exit": 0
+    },
+    {
+      "phase": "BROWSER_TYPES_RED",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler --lib ES2023,DOM tests/chat/lifecycle.spec.ts",
+      "exit": 2,
+      "log": "chat-browser-types.log",
+      "finding": "7 TS2339 diagnostics: object spreads of Record<string, unknown> did not retain indexed fields; fixed with explicit Record annotations on three new fixtures."
+    },
+    {
+      "phase": "BROWSER_TYPES_GREEN",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler --lib ES2023,DOM tests/chat/lifecycle.spec.ts",
+      "exit": 0,
+      "log": "chat-browser-types-green.log",
+      "finding": "Pass after type annotations only; no product or runtime behavior change."
+    }
+  ],
+  "tools": {
+    "vitest": "4.1.12",
+    "postgrest": "2.91.0",
+    "gitnexus": "1.6.12"
+  },
+  "impact_evidence": "chat-impacts-preedit.json",
+  "patch": "chat-qualified.diff",
+  "product_symbols": [
+    "ChatbotWidget",
+    "saveMessage",
+    "sendMessage"
+  ],
+  "no_changes": [
+    "SQL/schema/RPC",
+    "SMARANA/native PR99",
+    "request-scope and SSE parsers",
+    "existing test helpers",
+    "dependency lockfiles",
+    "deployment configuration by this agent"
+  ],
+  "limits": [
+    "Stable pending turn identity remains in the current mounted page only; reload/crash durability is not added.",
+    "Initial conversation creation whose acknowledgement is lost remains outside this change.",
+    "An assistant save that is still indeterminate stays visible with the existing notice; no new persist-only retry action was added.",
+    "An explicit retry after model failure may invoke and bill inference again; SQL identity is not provider inference idempotency.",
+    "Browser assertions await CI execution; collection and local missing-binary failures are not reported as PASS.",
+    "React SQL transport simulates commit/ack separation and PK/RLS behavior; no production database was accessed."
+  ],
+  "ownership": {
+    "code_and_new_chat_tests": "/root/assemblage_runtime_iao_20261123",
+    "composed_typecheck_lint_ci_and_commit": "/root",
+    "independent_review": "/root/recherche_apprentissage_iao_20261123"
+  },
+  "publication": "No commit, push, PR or deployment performed by this agent.",
+  "final_annotations_note": "Final browser SHA includes only three Record<string, unknown> type annotations after collection/native attempt; functional tests were not repeated for these erased annotations."
+}

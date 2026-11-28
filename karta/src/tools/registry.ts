@@ -4,9 +4,15 @@ export { calendarCreateEventTool } from "./calendar.js";
 export { stripeListUnpaidInvoicesTool } from "./stripe-tool.js";
 export { docusealCreateSubmissionTool } from "./docuseal.js";
 export { zernioPublishTool } from "./zernio.js";
+// Read component used before inference. Exporting it does not add a post-decision
+// tool to the single-decision engine or grant an agent a provider permission.
+export { socialStatusTool } from "./social-status.js";
 export { apolloSearchPeopleTool } from "./apollo.js";
 export { generatePdfTool } from "./pdf.js";
 export { webSearchTool } from "./websearch.js";
+export { knowledgeSearchTool } from "./knowledge-search.js";
+export { quantumSimulateTool } from "./quantum.js";
+export { resolutionQualificationTool } from "./resolution-qualification.js";
 export { sendNotificationTool } from "./notification-tool.js";
 export { delegateToAgentTool } from "./delegate.js";
 // Planning only. The host must inject its authenticated account/permission resolver.

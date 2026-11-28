@@ -1,0 +1,18 @@
+{
+  "phase": "RED",
+  "command": "node node_modules/vitest/vitest.mjs run test/apolloTool.test.ts --maxWorkers 1 --no-file-parallelism --reporter=verbose",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "baselineCommit": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "exitCode": 1,
+  "tests": {
+    "total": 34,
+    "passed": 2,
+    "failed": 32
+  },
+  "sourceSha256": "0c2f819f26bad8f46d4f1eaf2008ae80a1a054e52d7dbdd88ab85048e45288d5",
+  "testSha256": "a00e56bb65353a626d2ab41ca8a3594b1d3b3f9f1a9768a08f6139747a45d5cc",
+  "logSha256": "f9e449fe686ee9373d3b6b6cb7e93cf3ee1369a76a0945645c5f9fe94d1c972b",
+  "scope": "Real Apollo tool and provider helper, simulated fetch and synthetic credential; no external provider call.",
+  "rawCaptureLogSha256": "a67632d587eb4093f79d4e802761ca5c83b59794b4e3c09f35b70627aa506bf8",
+  "logFormatting": "See log-formatting.json"
+}

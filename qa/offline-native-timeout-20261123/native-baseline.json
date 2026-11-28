@@ -1,0 +1,63 @@
+{
+  "repository": "puramapro-oss/purama-ai",
+  "pull_request": 99,
+  "head": "6db3a1ef6df8f0124707663dafb87620ac9996ff",
+  "run_id": 45232818699,
+  "job_id": 137896602820,
+  "artifact_id": 14850299653,
+  "artifact_sha256": "ce2e9069eab0b193016ab27cabdf844c1444459add4f4bbd7a8142f26b3201d5",
+  "job_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45232818699/job/137896602820",
+  "prepared": {
+    "schema": 1,
+    "phase": "prepared",
+    "status": "PASS",
+    "runId": "02981fe4-c22e-4bb8-a156-a09360875d82",
+    "fixtureAccountsOnly": true,
+    "platform": "android",
+    "reportedTotalMemoryBytes": 4110737408,
+    "requiredMemoryBytes": 3221225472,
+    "model": {
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "bytes": 639446688,
+      "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+    },
+    "backend": "llama.rn",
+    "gpu": false,
+    "nativeOutput": "bonjour",
+    "tokensGenerated": 1,
+    "resourceId": "06d2d31a-da81-4246-9c09-19cf299ce376",
+    "checks": {
+      "officialPackVerified": true,
+      "realNativeCompletion": true,
+      "encryptedStoreOpened": true,
+      "draftSaved": true,
+      "assistantPendingSaved": true,
+      "storeClosedBeforeReceipt": true
+    },
+    "limitation": "Preparation phase only; restart and offline proof require the second receipt."
+  },
+  "complete": {
+    "schema": 1,
+    "phase": "failed",
+    "status": "FAIL",
+    "attemptedPhase": "complete",
+    "runId": "02981fe4-c22e-4bb8-a156-a09360875d82",
+    "code": "timeout",
+    "fixtureAccountsOnly": true
+  },
+  "qualification": {
+    "schema": 1,
+    "status": "FAIL",
+    "phase": "harness",
+    "exitCode": 20,
+    "note": "No complete native offline receipt was verified. Inspect bounded logcat evidence."
+  },
+  "clock_utc": {
+    "runner_start": "2026-11-23T17:55:24.7432759Z",
+    "qualification_start": "2026-11-23T18:18:47.2873716Z",
+    "prepared_observed": "2026-11-23T18:28:15.4879164Z",
+    "failure_observed": "2026-11-23T18:31:17.5085610Z"
+  },
+  "scope": "Actual native initial preparation and failed process restart. This artifact does not include the correction in this commit."
+}

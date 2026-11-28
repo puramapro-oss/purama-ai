@@ -3,6 +3,9 @@ import { gmailCreateDraftTool, gmailSendTool } from "./gmail.js";
 import { calendarCreateEventTool } from "./calendar.js";
 import { generatePdfTool } from "./pdf.js";
 import { webSearchTool } from "./websearch.js";
+import { knowledgeSearchTool } from "./knowledge-search.js";
+import { quantumSimulateTool } from "./quantum.js";
+import { resolutionQualificationTool } from "./resolution-qualification.js";
 import { sendNotificationTool } from "./notification-tool.js";
 import type { AnyToolDefinition } from "../engine/types.js";
 
@@ -22,15 +25,18 @@ export const CUSTOM_AGENT_TOOLS: Record<string, AnyToolDefinition> = {
   calendar_create_event: calendarCreateEventTool,
   generate_pdf: generatePdfTool,
   web_search: webSearchTool,
+  knowledge_search: knowledgeSearchTool,
+  quantum_simulate: quantumSimulateTool,
+  qualify_resolution: resolutionQualificationTool,
   send_notification: sendNotificationTool,
 };
 
 export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);
 
-/** Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
+/** Filtre défensif : ne résout qu'une fois les noms d'outils connus (liste blanche), ignore le reste
  * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent. */
 export function resolveCustomAgentTools(names: string[] | null | undefined): AnyToolDefinition[] {
-  return (names ?? [])
-    .map((name) => CUSTOM_AGENT_TOOLS[name])
+  return [...new Set(names ?? [])]
+    .map((name) => Object.hasOwn(CUSTOM_AGENT_TOOLS, name) ? CUSTOM_AGENT_TOOLS[name] : undefined)
     .filter((tool): tool is AnyToolDefinition => Boolean(tool));
 }

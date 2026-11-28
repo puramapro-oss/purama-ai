@@ -1,0 +1,500 @@
+{
+  "base": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "index": "iao-quality-20261123",
+  "source": "src/lib/consultation-client.ts",
+  "commands": [
+    {
+      "kind": "impact",
+      "symbol": "catalog",
+      "command": [
+        "node",
+        "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "--uid",
+        "Function:src/lib/consultation-client.ts:catalog",
+        "--repo",
+        "iao-quality-20261123",
+        "--direction",
+        "upstream",
+        "--include-tests"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "seconds": 1.007,
+      "result": {
+        "target": {
+          "id": "Function:src/lib/consultation-client.ts:catalog",
+          "name": "catalog",
+          "type": "Function",
+          "filePath": "src/lib/consultation-client.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 1,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "lower-bound",
+        "boundaries": [
+          "6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+        ],
+        "causes": {
+          "scopeExtractionFiles": 0,
+          "receiverTyping": 6,
+          "dispatchBoundary": 0,
+          "externalBoundary": 0,
+          "undecidedSatisfaction": 0,
+          "callableValueReferences": 0
+        },
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1
+        },
+        "affected_processes": [],
+        "affected_modules": [
+          {
+            "name": "Components",
+            "hits": 1,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Method:src/lib/consultation-client.ts:createConsultationClient.catalog@244:4#1",
+              "name": "catalog",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      },
+      "output": "{\n  \"target\": {\n    \"id\": \"Function:src/lib/consultation-client.ts:catalog\",\n    \"name\": \"catalog\",\n    \"type\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"lower-bound\",\n  \"boundaries\": [\n    \"6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher.\"\n  ],\n  \"causes\": {\n    \"scopeExtractionFiles\": 0,\n    \"receiverTyping\": 6,\n    \"dispatchBoundary\": 0,\n    \"externalBoundary\": 0,\n    \"undecidedSatisfaction\": 0,\n    \"callableValueReferences\": 0\n  },\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Components\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Method:src/lib/consultation-client.ts:createConsultationClient.catalog@244:4#1\",\n        \"name\": \"catalog\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795467260577,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "kind": "impact",
+      "symbol": "input",
+      "command": [
+        "node",
+        "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "--uid",
+        "Function:src/lib/consultation-client.ts:input",
+        "--repo",
+        "iao-quality-20261123",
+        "--direction",
+        "upstream",
+        "--include-tests"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "seconds": 0.924,
+      "result": {
+        "target": {
+          "id": "Function:src/lib/consultation-client.ts:input",
+          "name": "input",
+          "type": "Function",
+          "filePath": "src/lib/consultation-client.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 1,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1
+        },
+        "affected_processes": [],
+        "affected_modules": [
+          {
+            "name": "Components",
+            "hits": 1,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Method:src/lib/consultation-client.ts:createConsultationClient.consult@245:4#2",
+              "name": "consult",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      },
+      "output": "{\n  \"target\": {\n    \"id\": \"Function:src/lib/consultation-client.ts:input\",\n    \"name\": \"input\",\n    \"type\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Components\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Method:src/lib/consultation-client.ts:createConsultationClient.consult@245:4#2\",\n        \"name\": \"consult\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795467260541,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "kind": "impact",
+      "symbol": "plan",
+      "command": [
+        "node",
+        "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "--uid",
+        "Function:src/lib/consultation-client.ts:plan",
+        "--repo",
+        "iao-quality-20261123",
+        "--direction",
+        "upstream",
+        "--include-tests"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "seconds": 0.915,
+      "result": {
+        "target": {
+          "id": "Function:src/lib/consultation-client.ts:plan",
+          "name": "plan",
+          "type": "Function",
+          "filePath": "src/lib/consultation-client.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 4,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 2
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 1,
+          "3": 2
+        },
+        "affected_processes": [],
+        "affected_modules": [
+          {
+            "name": "Components",
+            "hits": 3,
+            "impact": "direct"
+          },
+          {
+            "name": "Cluster_735",
+            "hits": 1,
+            "impact": "indirect"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:src/lib/consultation-client.ts:result",
+              "name": "result",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:src/lib/consultation-client.ts:operation",
+              "name": "operation",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "3": [
+            {
+              "depth": 3,
+              "id": "Function:src/lib/consultation-client.ts:createConsultationClient.lookup@236:2",
+              "name": "lookup",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 3,
+              "id": "Method:src/lib/consultation-client.ts:createConsultationClient.consult@245:4#2",
+              "name": "consult",
+              "filePath": "src/lib/consultation-client.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      },
+      "output": "{\n  \"target\": {\n    \"id\": \"Function:src/lib/consultation-client.ts:plan\",\n    \"name\": \"plan\",\n    \"type\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 4,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 2\n  },\n  \"byDepthCounts\": {\n    \"1\": 1,\n    \"2\": 1,\n    \"3\": 2\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Components\",\n      \"hits\": 3,\n      \"impact\": \"direct\"\n    },\n    {\n      \"name\": \"Cluster_735\",\n      \"hits\": 1,\n      \"impact\": \"indirect\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Function:src/lib/consultation-client.ts:result\",\n        \"name\": \"result\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"Function:src/lib/consultation-client.ts:operation\",\n        \"name\": \"operation\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ],\n    \"3\": [\n      {\n        \"depth\": 3,\n        \"id\": \"Function:src/lib/consultation-client.ts:createConsultationClient.lookup@236:2\",\n        \"name\": \"lookup\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      },\n      {\n        \"depth\": 3,\n        \"id\": \"Method:src/lib/consultation-client.ts:createConsultationClient.consult@245:4#2\",\n        \"name\": \"consult\",\n        \"filePath\": \"src/lib/consultation-client.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795467260550,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "kind": "context",
+      "symbol": "catalog",
+      "command": [
+        "node",
+        "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+        "context",
+        "--uid",
+        "Function:src/lib/consultation-client.ts:catalog",
+        "--repo",
+        "iao-quality-20261123"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "seconds": 0.707,
+      "result": {
+        "status": "found",
+        "symbol": {
+          "uid": "Function:src/lib/consultation-client.ts:catalog",
+          "name": "catalog",
+          "kind": "Function",
+          "filePath": "src/lib/consultation-client.ts",
+          "startLine": 63,
+          "endLine": 88
+        },
+        "epistemic": "lower-bound",
+        "boundaries": [
+          "6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+        ],
+        "causes": {
+          "scopeExtractionFiles": 0,
+          "receiverTyping": 6,
+          "dispatchBoundary": 0,
+          "externalBoundary": 0,
+          "undecidedSatisfaction": 0,
+          "callableValueReferences": 0
+        },
+        "incoming": {
+          "calls": [
+            {
+              "uid": "Method:src/lib/consultation-client.ts:createConsultationClient.catalog@244:4#1",
+              "name": "catalog",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ]
+        },
+        "outgoing": {
+          "accesses": [
+            {
+              "uid": "Const:src/lib/consultation-client.ts:reflections",
+              "name": "reflections",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Const:src/lib/consultation-client.ts:speeds",
+              "name": "speeds",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ],
+          "calls": [
+            {
+              "uid": "Function:src/lib/consultation-client.ts:id",
+              "name": "id",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:id",
+              "name": "id",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:integer",
+              "name": "integer",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:keys",
+              "name": "keys",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:keys",
+              "name": "keys",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:keys",
+              "name": "keys",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:keys",
+              "name": "keys",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:limits",
+              "name": "limits",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:record",
+              "name": "record",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:record",
+              "name": "record",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:record",
+              "name": "record",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:record",
+              "name": "record",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:values",
+              "name": "values",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:values",
+              "name": "values",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ]
+        },
+        "processes": []
+      },
+      "output": "{\n  \"status\": \"found\",\n  \"symbol\": {\n    \"uid\": \"Function:src/lib/consultation-client.ts:catalog\",\n    \"name\": \"catalog\",\n    \"kind\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\",\n    \"startLine\": 63,\n    \"endLine\": 88\n  },\n  \"epistemic\": \"lower-bound\",\n  \"boundaries\": [\n    \"6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher.\"\n  ],\n  \"causes\": {\n    \"scopeExtractionFiles\": 0,\n    \"receiverTyping\": 6,\n    \"dispatchBoundary\": 0,\n    \"externalBoundary\": 0,\n    \"undecidedSatisfaction\": 0,\n    \"callableValueReferences\": 0\n  },\n  \"incoming\": {\n    \"calls\": [\n      {\n        \"uid\": \"Method:src/lib/consultation-client.ts:createConsultationClient.catalog@244:4#1\",\n        \"name\": \"catalog\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ]\n  },\n  \"outgoing\": {\n    \"accesses\": [\n      {\n        \"uid\": \"Const:src/lib/consultation-client.ts:reflections\",\n        \"name\": \"reflections\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Const:src/lib/consultation-client.ts:speeds\",\n        \"name\": \"speeds\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ],\n    \"calls\": [\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:id\",\n        \"name\": \"id\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:id\",\n        \"name\": \"id\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:integer\",\n        \"name\": \"integer\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:limits\",\n        \"name\": \"limits\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:values\",\n        \"name\": \"values\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:values\",\n        \"name\": \"values\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ]\n  },\n  \"processes\": []\n}\n\n  GitNexus Context (1.6.12)\n{\"level\":40,\"time\":1795467261357,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "kind": "context",
+      "symbol": "plan",
+      "command": [
+        "node",
+        "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+        "context",
+        "--uid",
+        "Function:src/lib/consultation-client.ts:plan",
+        "--repo",
+        "iao-quality-20261123"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+      "exit_code": 0,
+      "seconds": 0.714,
+      "result": {
+        "status": "found",
+        "symbol": {
+          "uid": "Function:src/lib/consultation-client.ts:plan",
+          "name": "plan",
+          "kind": "Function",
+          "filePath": "src/lib/consultation-client.ts",
+          "startLine": 53,
+          "endLine": 61
+        },
+        "epistemic": "exact",
+        "incoming": {
+          "accesses": [
+            {
+              "uid": "Function:src/lib/consultation-client.ts:result",
+              "name": "result",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ],
+          "calls": [
+            {
+              "uid": "Function:src/lib/consultation-client.ts:result",
+              "name": "result",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ]
+        },
+        "outgoing": {
+          "calls": [
+            {
+              "uid": "Function:src/lib/consultation-client.ts:id",
+              "name": "id",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:integer",
+              "name": "integer",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:integer",
+              "name": "integer",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:invalid",
+              "name": "invalid",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:keys",
+              "name": "keys",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:limits",
+              "name": "limits",
+              "filePath": "src/lib/consultation-client.ts"
+            },
+            {
+              "uid": "Function:src/lib/consultation-client.ts:record",
+              "name": "record",
+              "filePath": "src/lib/consultation-client.ts"
+            }
+          ]
+        },
+        "processes": []
+      },
+      "output": "{\n  \"status\": \"found\",\n  \"symbol\": {\n    \"uid\": \"Function:src/lib/consultation-client.ts:plan\",\n    \"name\": \"plan\",\n    \"kind\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\",\n    \"startLine\": 53,\n    \"endLine\": 61\n  },\n  \"epistemic\": \"exact\",\n  \"incoming\": {\n    \"accesses\": [\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:result\",\n        \"name\": \"result\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ],\n    \"calls\": [\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:result\",\n        \"name\": \"result\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ]\n  },\n  \"outgoing\": {\n    \"calls\": [\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:id\",\n        \"name\": \"id\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:integer\",\n        \"name\": \"integer\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:integer\",\n        \"name\": \"integer\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:limits\",\n        \"name\": \"limits\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ]\n  },\n  \"processes\": []\n}\n\n  GitNexus Context (1.6.12)\n{\"level\":40,\"time\":1795467261393,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    }
+  ]
+}

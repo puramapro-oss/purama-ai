@@ -1,0 +1,156 @@
+{
+  "processes": [],
+  "process_symbols": [],
+  "definitions": [
+    {
+      "id": "Function:karta/src/scheduler/customAgents.ts:refreshSchedules",
+      "name": "refreshSchedules",
+      "filePath": "karta/src/scheduler/customAgents.ts",
+      "startLine": 65,
+      "endLine": 108,
+      "module": "Test"
+    },
+    {
+      "id": "Function:karta/src/scheduler/customAgents.ts:refreshSchedules.task@87:4",
+      "name": "task",
+      "filePath": "karta/src/scheduler/customAgents.ts",
+      "startLine": 88,
+      "endLine": 105,
+      "module": "Test"
+    },
+    {
+      "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler",
+      "name": "startCustomAgentScheduler",
+      "filePath": "karta/src/scheduler/customAgents.ts",
+      "startLine": 111,
+      "endLine": 143,
+      "module": "Test"
+    },
+    {
+      "id": "Const:karta/test/customAgentSchedulerCron.test.ts:agent",
+      "name": "agent",
+      "filePath": "karta/test/customAgentSchedulerCron.test.ts",
+      "startLine": 8,
+      "endLine": 11
+    },
+    {
+      "id": "Property:karta/test/customAgentSchedulerCron.test.ts:agent.schedule_cron",
+      "name": "schedule_cron",
+      "filePath": "karta/test/customAgentSchedulerCron.test.ts",
+      "startLine": 10,
+      "endLine": 10
+    },
+    {
+      "id": "File:karta/test/customAgentSchedulerCron.test.ts",
+      "name": "customAgentSchedulerCron.test.ts",
+      "filePath": "karta/test/customAgentSchedulerCron.test.ts"
+    },
+    {
+      "id": "Const:karta/test/customAgentScheduler.test.ts:agent",
+      "name": "agent",
+      "filePath": "karta/test/customAgentScheduler.test.ts",
+      "startLine": 30,
+      "endLine": 33
+    },
+    {
+      "id": "Property:karta/test/customAgentScheduler.test.ts:agent.schedule_cron",
+      "name": "schedule_cron",
+      "filePath": "karta/test/customAgentScheduler.test.ts",
+      "startLine": 32,
+      "endLine": 32
+    },
+    {
+      "id": "File:karta/test/customAgentScheduler.test.ts",
+      "name": "customAgentScheduler.test.ts",
+      "filePath": "karta/test/customAgentScheduler.test.ts"
+    },
+    {
+      "id": "Property:src/lib/creator-agent.ts:CreatorAgent.schedule_cron",
+      "name": "schedule_cron",
+      "filePath": "src/lib/creator-agent.ts",
+      "startLine": 35,
+      "endLine": 35
+    },
+    {
+      "id": "Const:src/lib/creator-agent.ts:SCHEDULE_PRESETS",
+      "name": "SCHEDULE_PRESETS",
+      "filePath": "src/lib/creator-agent.ts",
+      "startLine": 111,
+      "endLine": 118
+    },
+    {
+      "id": "File:src/lib/creator-agent.ts",
+      "name": "creator-agent.ts",
+      "filePath": "src/lib/creator-agent.ts"
+    },
+    {
+      "id": "Property:src/pages/CreatorAgentNew.tsx:DraftAgent.schedule_cron",
+      "name": "schedule_cron",
+      "filePath": "src/pages/CreatorAgentNew.tsx",
+      "startLine": 35,
+      "endLine": 35
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentNew.tsx:blank",
+      "name": "blank",
+      "filePath": "src/pages/CreatorAgentNew.tsx",
+      "startLine": 38,
+      "endLine": 49,
+      "module": "Pages"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentNew.tsx:CreatorAgentNew.handleGenerate@58:2",
+      "name": "handleGenerate",
+      "filePath": "src/pages/CreatorAgentNew.tsx",
+      "startLine": 59,
+      "endLine": 83,
+      "module": "Pages"
+    },
+    {
+      "id": "Function:karta/src/scheduler/cron.ts:startSchedulers",
+      "name": "startSchedulers",
+      "filePath": "karta/src/scheduler/cron.ts",
+      "startLine": 35,
+      "endLine": 47,
+      "module": "Queue"
+    },
+    {
+      "id": "Function:karta/src/scheduler/cron.ts:runScheduledCycle",
+      "name": "runScheduledCycle",
+      "filePath": "karta/src/scheduler/cron.ts",
+      "startLine": 49,
+      "endLine": 64,
+      "module": "Queue"
+    },
+    {
+      "id": "File:karta/src/scheduler/cron.ts",
+      "name": "cron.ts",
+      "filePath": "karta/src/scheduler/cron.ts"
+    },
+    {
+      "id": "Property:karta/src/agents/customAgent.ts:CustomAgentRow.schedule_cron",
+      "name": "schedule_cron",
+      "filePath": "karta/src/agents/customAgent.ts",
+      "startLine": 16,
+      "endLine": 16
+    },
+    {
+      "id": "Const:karta/src/agents/customAgent.ts:SELECT_COLUMNS",
+      "name": "SELECT_COLUMNS",
+      "filePath": "karta/src/agents/customAgent.ts",
+      "startLine": 19,
+      "endLine": 20
+    }
+  ],
+  "timing": {
+    "vector": 14.8,
+    "bm25": 592.3,
+    "merge": 0.2,
+    "symbol_lookup": 33.5,
+    "ranking": 0,
+    "formatting": 0,
+    "wall": 631.5
+  }
+}
+
+  GitNexus Query (1.6.12)

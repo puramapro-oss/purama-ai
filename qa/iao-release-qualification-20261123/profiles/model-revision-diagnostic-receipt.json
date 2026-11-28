@@ -1,0 +1,29 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--run",
+    "test/consultationProfileMatrix.test.ts",
+    "-t",
+    "@revision contract mismatch",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile=../qa/iao-release-qualification-20261123/profiles/model-revision-diagnostic.json"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "started_at": "2026-11-23T20:59:26.892301+00:00",
+  "finished_at": "2026-11-23T20:59:32.521166+00:00",
+  "elapsed_seconds": 5.629,
+  "exit_code": 0,
+  "test_sha256": "699d03b4653500ac45f85dec63b3a963a8d5e0074b49fee65639720032f15451",
+  "source_unchanged_during_run": true,
+  "external_provider_call": false,
+  "paid_api_call": false,
+  "stages": [
+    "Public internal HTTP rejects before inference",
+    "Additional direct real-host diagnostic crosses installed SDK and production SQL in PGlite; explicitly bypasses HTTP entry without changing it"
+  ],
+  "log": "model-revision-diagnostic.log",
+  "report": "model-revision-diagnostic.json"
+}

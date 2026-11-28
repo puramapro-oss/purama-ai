@@ -1,0 +1,37 @@
+{
+  "utc": "2026-11-23T22:24:43.277324+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "base": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+  "integration_head": "1170ac3a91e2c828b893a7374f4271a06827d0d2",
+  "local_original_gate_exit": 2,
+  "local_corrected_gate_exit": 0,
+  "regressions_passed": 10,
+  "regressions_total": 10,
+  "archives_unchanged": 14,
+  "workflow_yaml": "PASS",
+  "new_branch_autodeployment": false,
+  "graph_status": "NON VALID\u00c9: local index did not complete; CI must qualify before integration",
+  "graph_attempts": [
+    {
+      "log": "analyze-low-memory.log",
+      "exit": 137,
+      "sha256": "20ca3d6c4ed96b41bd7e2d1a58c275aded375d4b897f6dd0123c5799d8335404",
+      "tail": "\n  GitNexus Analyzer (1.6.12)\n\u001b[2K\rIndex lock: OS socket lock unavailable here \u2014 using the file lock.\n\u001b[2K\rReclaiming stale index lock from dead analyze (pid 2, invocation 8ffaa95f-21d4-4c91-a129-71b1ac7acc4c).\n\u001b[2K\rCleared 2 orphaned index-staging file(s) from a prior interrupted analyze.\n\u001b[2K\rindex schema changed (built by an unidentified GitNexus build, this build is 60fc01e4e4ed); forcing a full re-analyze so the database is recreated from the current schema.\n\u001b[2K\ranalysis capabilities changed (missing:graph.class-framework-annotations); forcing a full rebuild so persisted feature evidence is complete.\n\u001b[2K\ranalyzer runner identity changed (stamped schema missing, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.\n\u001b[2K\r  Skipped 4 large files (>512KB, likely generated/vendored)\n\u001b[2K\r  - qa/iao-http-lifecycle-20261123/impact/detect-compare.json\n\u001b[2K\r  - qa/iao-http-lifecycle-20261123/reconciliation-pr96/detect-compare.json\n\u001b[2K\r  - qa/iao-runtime-finalization-20261110/verification.json\n\u001b[2K\r  - qa/ots-stamp-atomicity-20261110/native-final.json\n\u001b[2K\r  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.\n"
+    },
+    {
+      "log": "analyze-bounded-workers.log",
+      "exit": 134,
+      "sha256": "fe791f6bba344d553a21b0e6f8fc0f9d17ccc83eebf20dacb376a590c49f14f2",
+      "tail": "\n  GitNexus Analyzer (1.6.12)\n\u001b[2K\rIndex lock: OS socket lock unavailable here \u2014 using the file lock.\n\u001b[2K\rReclaiming stale index lock from dead analyze (pid 5, invocation 5b02a5a4-a4c6-4ad6-87a8-173e1df9f846).\n\u001b[2K\rindex schema changed (built by an unidentified GitNexus build, this build is 60fc01e4e4ed); forcing a full re-analyze so the database is recreated from the current schema.\n\u001b[2K\ranalysis capabilities changed (missing:graph.class-framework-annotations); forcing a full rebuild so persisted feature evidence is complete.\n\u001b[2K\ranalyzer runner identity changed (stamped schema missing, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.\n\u001b[2K\r  Skipped 4 large files (>512KB, likely generated/vendored)\n\u001b[2K\r  - qa/iao-http-lifecycle-20261123/impact/detect-compare.json\n\u001b[2K\r  - qa/iao-http-lifecycle-20261123/reconciliation-pr96/detect-compare.json\n\u001b[2K\r  - qa/iao-runtime-finalization-20261110/verification.json\n\u001b[2K\r  - qa/ots-stamp-atomicity-20261110/native-final.json\n\u001b[2K\r  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.\n\n<--- Last few GCs --->\n\n[5:0xe716000]   102186 ms: Mark-Compact 378.4 (389.3) -> 374.6 (389.6) MB, pooled: 0 MB, 140.30 / 0.00 ms  (average mu = 0.192, current mu = 0.090) allocation failure; scavenge might not succeed\n[5:0xe716000]   102355 ms: Mark-Compact 378.6 (389.6) -> 374.9 (389.8) MB, pooled: 0 MB, 163.41 / 0.00 ms  (average mu = 0.117, current mu = 0.033) allocation failure; scavenge might not succeed\n\nFATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory\n----- Native stack trace -----\n\n 1: 0x91df90  [node]\n 2: 0x75bb9f node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]\n 3: 0xc77280  [node]\n 4: 0xc7737f  [node]\n 5: 0xf272b5  [node]\n 6: 0xf272e2  [node]\n 7: 0xf27664  [node]\n 8: 0xf393ca  [node]\n 9: 0xf3d880  [node]\n10: 0x1a420c1  [node]\n"
+    },
+    {
+      "log": "detect-local.log",
+      "exit": 1,
+      "sha256": "b548042ba69892c5a95dbd8cec8caf48673595b432c26d72e4ffac720bbed879",
+      "tail": "\n  GitNexus Detect Changes (1.6.12)\nfile:///workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/workspace/scratch/6431e6d17379/iao-current\" not found. Available: iao-harmony-20261123, iao-chat-retry-20261123, iao-quality-20261123, iao-http-qualified-20261123\n    at LocalBackend.selectToolRepository (file:///workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.3\n"
+    }
+  ],
+  "scope_review": "Only exact archived hash/path data, new isolated regression tests, CI wiring, branch-specific deployment exclusion and evidence. No existing application function/class/method was modified.",
+  "application_inference": "NOT RUN",
+  "mac_shared_checkout": "PRESERVED"
+}

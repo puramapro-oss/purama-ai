@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node_modules/eslint/bin/eslint.js",
+    "."
+  ],
+  "exitCode": 0,
+  "durationSeconds": 53.82,
+  "after": "branch fallback and test formatting fixes"
+}

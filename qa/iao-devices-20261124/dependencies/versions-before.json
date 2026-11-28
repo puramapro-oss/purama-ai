@@ -1,0 +1,36 @@
+{
+  "capturedAt": "2026-11-24T03:02:31.487135+00:00",
+  "phase": "before",
+  "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+  "head": "3a8d39c9927c461a7300712b719ef0aa6cc1f173",
+  "node": "v24.22.3",
+  "npm": "11.19.1",
+  "sha256": {
+    "package.json": "c85242e0f74230e0048e05b70d491ffce89c81b393e998aa6c904cafcc81ce1e",
+    "package-lock.json": "30f79a02c277a5f5e2a03c5bc48ed1b62e4ad5c1cfab087a557c8c0c4324eee9"
+  },
+  "versions": {
+    "i18next": "26.0.4",
+    "react-i18next": "17.0.2",
+    "i18next-browser-languagedetector": "8.2.1",
+    "opentimestamps": "0.4.9",
+    "bitcore-lib": "8.25.47",
+    "elliptic": "6.6.1"
+  },
+  "tree": {
+    "command": [
+      "npm",
+      "ls",
+      "i18next",
+      "react-i18next",
+      "i18next-browser-languagedetector",
+      "opentimestamps",
+      "bitcore-lib",
+      "elliptic",
+      "--json"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"version\": \"0.0.0\",\n  \"name\": \"vite_react_shadcn_ts\",\n  \"dependencies\": {\n    \"i18next-browser-languagedetector\": {\n      \"version\": \"8.2.1\",\n      \"resolved\": \"https://registry.npmjs.org/i18next-browser-languagedetector/-/i18next-browser-languagedetector-8.2.1.tgz\",\n      \"overridden\": false\n    },\n    \"i18next\": {\n      \"version\": \"26.0.4\",\n      \"resolved\": \"https://registry.npmjs.org/i18next/-/i18next-26.0.4.tgz\",\n      \"overridden\": false\n    },\n    \"opentimestamps\": {\n      \"version\": \"0.4.9\",\n      \"resolved\": \"https://registry.npmjs.org/opentimestamps/-/opentimestamps-0.4.9.tgz\",\n      \"overridden\": false,\n      \"dependencies\": {\n        \"bitcore-lib\": {\n          \"version\": \"8.25.47\",\n          \"resolved\": \"https://registry.npmjs.org/bitcore-lib/-/bitcore-lib-8.25.47.tgz\",\n          \"overridden\": false,\n          \"dependencies\": {\n            \"elliptic\": {\n              \"version\": \"6.6.1\",\n              \"resolved\": \"https://registry.npmjs.org/elliptic/-/elliptic-6.6.1.tgz\",\n              \"overridden\": false\n            }\n          }\n        }\n      }\n    },\n    \"react-i18next\": {\n      \"version\": \"17.0.2\",\n      \"resolved\": \"https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.2.tgz\",\n      \"overridden\": false,\n      \"dependencies\": {\n        \"i18next\": {\n          \"version\": \"26.0.4\"\n        }\n      }\n    }\n  }\n}",
+    "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options."
+  }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Send, Loader2, Bot, Sparkles, Plus, Headphones } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Card } from '@/components/ui/card';
@@ -27,17 +27,19 @@ interface Props {
   agentEmoji: string;
   agentColor: string;
   suggestions?: string[];
+  prospectId?: string;
 }
 
-export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [] }: Props) {
+export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [], prospectId }: Props) {
   const { user } = useAuth();
   const userId = user?.id ?? null;
   const [requests] = useState(createRequestScope);
   const voice = useVoice();
+  const reducedMotion = useReducedMotion();
   const { cancelRecording, stopSpeaking } = voice;
-  const resourceKey = JSON.stringify([userId, agentType]);
+  const resourceKey = JSON.stringify([userId, agentType, prospectId ?? null]);
   const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
-  const conversationKey = JSON.stringify([userId, agentType, sessionId]);
+  const conversationKey = JSON.stringify([userId, agentType, prospectId ?? null, sessionId]);
   const captureConversation = useRequestScope(conversationKey);
   const [messages, setMessages] = useScopedState<AgentChatMessage[]>(conversationKey, []);
   const [input, setInput] = useScopedState(conversationKey, '');
@@ -60,16 +62,16 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     if (!userId || !sessionId) return;
     const request = requests.begin('messages');
     if (!request) return;
-    listAgentChatMessages(userId, agentType, sessionId)
+    listAgentChatMessages(userId, agentType, sessionId, prospectId)
       .then(next => { if (request.current()) setMessages(next); })
       .catch(() => {})
       .finally(() => request.finish());
     return () => requests.invalidate();
-  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
+  }, [userId, agentType, prospectId, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reducedMotion ? 'auto' : 'smooth' });
+  }, [messages, reducedMotion]);
 
   // Auto-play last assistant message when voice settings.auto_play
   const { speak } = voice;
@@ -103,6 +105,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
       user_id: userId,
       agent_type: agentType,
       session_id: sessionId,
+      ...(agentType === 'partner' ? { partner_prospect_id: prospectId ?? null } : {}),
       role: 'user',
       content: text.trim(),
       tokens: null,
@@ -110,7 +113,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), request.signal);
+      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), request.signal, prospectId);
       if (!request.current()) return null;
       const replyId = 'tmp-asst-' + Date.now();
       // VoiceMode owns playback for its turn, even if the modal closes before effects run.
@@ -201,8 +204,9 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
           ) : messages.map(m => (
             <motion.div
               key={m.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={reducedMotion ? { duration: 0 } : undefined}
               className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
               <div
@@ -243,7 +247,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
                 {agentEmoji}
               </div>
               <div className="inline-block rounded-2xl p-3 bg-secondary/30 border border-border">
-                <Loader2 className="w-4 h-4 animate-spin" style={{ color: agentColor }} />
+                <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin motion-reduce:animate-none" style={{ color: agentColor }} />
               </div>
             </div>
           )}
@@ -261,23 +265,28 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => {
+                // Enter can confirm an IME candidate before it becomes a message.
+                if (e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229) return;
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();
                 }
               }}
-              placeholder={`Parle à ${agentName}…`}
+              placeholder={`Écris à ${agentName}…`}
+              aria-label={`Message pour ${agentName}`}
               rows={2}
               className="resize-none flex-1"
               disabled={sending}
             />
             <Button
+              type="button"
               onClick={handleSend}
               disabled={sending || !input.trim()}
-              className="self-end"
+              aria-label="Envoyer le message"
+              className="min-h-11 min-w-11 self-end"
               style={{ background: agentColor }}
             >
-              <Send className="w-4 h-4" />
+              <Send aria-hidden="true" className="w-4 h-4" />
             </Button>
           </div>
         </div>

@@ -1,0 +1,7 @@
+tests/chat/lifecycle.spec.ts(31,17): error TS2339: Property 'id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(40,64): error TS2339: Property 'id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(40,75): error TS2339: Property 'id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(42,58): error TS2339: Property 'id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(43,71): error TS2339: Property 'conversation_id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(60,17): error TS2339: Property 'id' does not exist on type '{ chat_conversations: { user_id: string; }; }'.
+tests/chat/lifecycle.spec.ts(60,64): error TS2339: Property 'role' does not exist on type '{ chat_conversations: { user_id: string; }; }'.

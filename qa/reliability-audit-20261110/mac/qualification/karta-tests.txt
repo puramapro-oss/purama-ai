@@ -1,0 +1,322 @@
+
+> karta-engine@1.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90m/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta[39m
+
+ [32m✓[39m test/chefBudgetMigration.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 22507[2mms[22m[39m
+   [32m✓[39m CHEF budget migration of existing claims [2m(3)[22m
+     [33m[2m✓[22m[39m refuses an unreserved historical capped claim rather than assuming a missing receipt is zero[33m 13349[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves charged historical totals, treats old synthetic zero costs as unknown and is replayable[33m 4855[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects mixed historical known and ambiguous cost receipts without changing charged totals[33m 4288[2mms[22m[39m
+ [31m❯[39m test/chefEvidenceFreshness.test.ts [2m([22m[2m31 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 18736[2mms[22m[39m
+   [31m❯[39m CHEF evidence generation [2m(31)[22m
+     [32m✓[39m refuses completion when only a prior attempt has successful evidence[32m 149[2mms[22m[39m
+     [32m✓[39m does not cover an updated task generation with its previous proof[32m 151[2mms[22m[39m
+     [32m✓[39m accepts a fresh proof and preserves coverage after the lease owner is cleared[32m 169[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":1,"token":0,"worker":"worker"} atomically[32m 98[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":2,"token":1,"worker":"worker"} atomically[32m 88[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":1,"token":1,"worker":"other"} atomically[32m 64[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":null,"token":1,"worker":"worker"} atomically[32m 67[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":1,"token":null,"worker":"worker"} atomically[32m 86[2mms[22m[39m
+     [32m✓[39m rejects stale or missing claim metadata {"attempt":1,"token":1,"worker":null} atomically[32m 50[2mms[22m[39m
+     [32m✓[39m rejects proof writes after task state becomes claimed[32m 90[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects proof writes after task state becomes retryable[33m 335[2mms[22m[39m
+     [32m✓[39m rejects proof writes after task state becomes blocked_external[32m 119[2mms[22m[39m
+     [32m✓[39m rejects proof writes after task state becomes verified_done[32m 182[2mms[22m[39m
+     [32m✓[39m rejects proof writes after task state becomes cancelled[32m 192[2mms[22m[39m
+     [32m✓[39m rejects proof writes after task state becomes failed[32m 176[2mms[22m[39m
+     [32m✓[39m uses the actual clock even within a transaction started before expiry[32m 244[2mms[22m[39m
+     [33m[2m✓[22m[39m also refuses completion after expiry inside an older transaction[33m 363[2mms[22m[39m
+     [32m✓[39m does not revive an expired lease through a transaction started earlier[32m 284[2mms[22m[39m
+     [32m✓[39m renews a live lease only for its current owner and token[32m 225[2mms[22m[39m
+     [32m✓[39m rejects a NULL token for transition even when the worker matches[32m 192[2mms[22m[39m
+     [32m✓[39m rejects a NULL token for renew even when the worker matches[32m 194[2mms[22m[39m
+     [32m✓[39m does not accept a NULL worker even on a task with no lease owner[32m 123[2mms[22m[39m
+     [32m✓[39m rejects a NULL renewal duration instead of erasing the lease[32m 112[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects an old token even when the attempt number is reused after unblocking[33m 343[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps historical proof rows while a fresh check completes the new generation[33m 378[2mms[22m[39m
+     [32m✓[39m requires a fresh independent review for the critical review task's current generation[32m 296[2mms[22m[39m
+     [32m✓[39m does not let freshness bypass success or scope checks {"ok":false,"scopeVersion":1,"requirementKeys":["R1"]}[32m 259[2mms[22m[39m
+     [32m✓[39m does not let freshness bypass success or scope checks {"ok":true,"scopeVersion":1,"requirementKeys":["OTHER"]}[32m 250[2mms[22m[39m
+     [32m✓[39m applies the claim trigger to direct service-role inserts[32m 149[2mms[22m[39m
+     [32m✓[39m rolls back every row of a batch when one row carries a stale claim[32m 170[2mms[22m[39m
+[31m     [31m×[31m preserves pre-migration rows without certifying them as current evidence[39m[33m 5251[2mms[22m[39m
+ [32m✓[39m test/briefClaims.test.ts [2m([22m[2m57 tests[22m[2m)[22m[33m 8335[2mms[22m[39m
+ [32m✓[39m test/chefIndependentReview.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 4849[2mms[22m[39m
+ [31m❯[39m test/chatHistoryIsolation.test.ts [2m([22m[2m39 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 61908[2mms[22m[39m
+   [32m✓[39m stored chat ownership: public only [2m(10)[22m
+     [32m✓[39m preserves historical anonymous and owned rows[32m 38[2mms[22m[39m
+     [32m✓[39m denies anonymous reads and inserts even with a known conversation and session[32m 35[2mms[22m[39m
+     [32m✓[39m lets each authenticated user read only their own history[32m 20[2mms[22m[39m
+     [32m✓[39m preserves creation, RETURNING, user/assistant messages and status updates for the owner[32m 26[2mms[22m[39m
+     [32m✓[39m denies cross-user and anonymous conversation creation or message insertion[32m 8[2mms[22m[39m
+     [32m✓[39m rejects system messages and ownership transfers by authenticated clients[32m 13[2mms[22m[39m
+     [32m✓[39m does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients[32m 6[2mms[22m[39m
+     [32m✓[39m does not authorize an authenticated role without a user identity[32m 8[2mms[22m[39m
+     [32m✓[39m preserves administrative read/write/delete rights, including anonymous historical rows[32m 16[2mms[22m[39m
+     [32m✓[39m can be applied twice without changing the resulting policies or privileges[32m 56[2mms[22m[39m
+   [32m✓[39m stored chat ownership: purama_ai only [2m(10)[22m
+     [32m✓[39m preserves historical anonymous and owned rows[32m 22[2mms[22m[39m
+     [32m✓[39m denies anonymous reads and inserts even with a known conversation and session[32m 16[2mms[22m[39m
+     [32m✓[39m lets each authenticated user read only their own history[32m 31[2mms[22m[39m
+     [32m✓[39m preserves creation, RETURNING, user/assistant messages and status updates for the owner[32m 17[2mms[22m[39m
+     [32m✓[39m denies cross-user and anonymous conversation creation or message insertion[32m 12[2mms[22m[39m
+     [32m✓[39m rejects system messages and ownership transfers by authenticated clients[32m 8[2mms[22m[39m
+     [32m✓[39m does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients[32m 8[2mms[22m[39m
+     [32m✓[39m does not authorize an authenticated role without a user identity[32m 8[2mms[22m[39m
+     [32m✓[39m preserves administrative read/write/delete rights, including anonymous historical rows[32m 12[2mms[22m[39m
+     [32m✓[39m can be applied twice without changing the resulting policies or privileges[32m 26[2mms[22m[39m
+   [32m✓[39m stored chat ownership: both schemas [2m(10)[22m
+     [32m✓[39m preserves historical anonymous and owned rows[32m 17[2mms[22m[39m
+     [32m✓[39m denies anonymous reads and inserts even with a known conversation and session[32m 17[2mms[22m[39m
+     [32m✓[39m lets each authenticated user read only their own history[32m 18[2mms[22m[39m
+     [32m✓[39m preserves creation, RETURNING, user/assistant messages and status updates for the owner[32m 24[2mms[22m[39m
+     [32m✓[39m denies cross-user and anonymous conversation creation or message insertion[32m 14[2mms[22m[39m
+     [32m✓[39m rejects system messages and ownership transfers by authenticated clients[32m 43[2mms[22m[39m
+     [32m✓[39m does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients[32m 16[2mms[22m[39m
+     [32m✓[39m does not authorize an authenticated role without a user identity[32m 15[2mms[22m[39m
+     [32m✓[39m preserves administrative read/write/delete rights, including anonymous historical rows[32m 25[2mms[22m[39m
+     [32m✓[39m can be applied twice without changing the resulting policies or privileges[32m 32[2mms[22m[39m
+   [31m❯[39m migration preflight refuses an unreviewed schema [2m(9)[22m
+     [33m[2m✓[22m[39m rolls back both schemas when only conversations remain[33m 3721[2mms[22m[39m
+[31m     [31m×[31m rolls back both schemas when only messages remain[39m[33m 6515[2mms[22m[39m
+[31m     [31m×[31m rolls back both schemas when an extra permissive conversation policy…[39m[33m 8543[2mms[22m[39m
+     [33m[2m✓[22m[39m rolls back both schemas when an extra permissive message policy exis…[33m 2772[2mms[22m[39m
+     [33m[2m✓[22m[39m rolls back both schemas when a required policy is missing[33m 4358[2mms[22m[39m
+     [33m[2m✓[22m[39m rolls back both schemas when a known name has an unexpected policy c…[33m 2935[2mms[22m[39m
+     [33m[2m✓[22m[39m rolls back both schemas when a known name is unexpectedly restrictive[33m 3032[2mms[22m[39m
+     [33m[2m✓[22m[39m rolls back both schemas when a table was replaced by a view[33m 3714[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses to report success when neither schema contains chat history[33m 4648[2mms[22m[39m
+ [32m✓[39m test/runtimeHardening.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 8189[2mms[22m[39m
+ [32m✓[39m test/partnerOutreach.test.ts [2m([22m[2m47 tests[22m[2m)[22m[33m 13509[2mms[22m[39m
+   [33m[2m✓[22m[39m retains pending approval and reports it honestly without an email send[33m 361[2mms[22m[39m
+   [33m[2m✓[22m[39m twenty simultaneous approval clicks dispatch the same frozen email only once[33m 430[2mms[22m[39m
+   [33m[2m✓[22m[39m rechecks email='changed@example.invalid' after preview and before an approved send[33m 308[2mms[22m[39m
+   [33m[2m✓[22m[39m rechecks is_active=false after preview and before an approved send[33m 301[2mms[22m[39m
+   [33m[2m✓[22m[39m twenty simultaneous requests reserve one action and one provider send[33m 370[2mms[22m[39m
+ [32m✓[39m test/chefEvidenceGate.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 10347[2mms[22m[39m
+ [32m✓[39m test/approvalParentGuard.test.ts [2m([22m[2m48 tests[22m[2m)[22m[33m 10909[2mms[22m[39m
+ [32m✓[39m test/approval.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 7586[2mms[22m[39m
+ [32m✓[39m test/chefBudgetReservations.test.ts [2m([22m[2m28 tests[22m[2m)[22m[33m 9386[2mms[22m[39m
+ [32m✓[39m test/chefProcessQuarantine.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 8461[2mms[22m[39m
+ [32m✓[39m test/briefDatabaseCycle.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 7222[2mms[22m[39m
+ [32m✓[39m test/chefVerificationGitIntegration.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 4279[2mms[22m[39m
+   [32m✓[39m CHEF Git checks around actual verification [2m(3)[22m
+     [33m[2m✓[22m[39m handles a unchanged worktree after the verifier[33m 1639[2mms[22m[39m
+     [33m[2m✓[22m[39m handles a dirty worktree after the verifier[33m 1101[2mms[22m[39m
+     [33m[2m✓[22m[39m handles a new-commit worktree after the verifier[33m 1537[2mms[22m[39m
+ [32m✓[39m test/queueDeliveryIdentity.test.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 7669[2mms[22m[39m
+   [32m✓[39m durable queue delivery identity [2m(18)[22m
+     [33m[2m✓[22m[39m reuses the same confirmed run after queue retention, and executes a genuinely new mission[33m 391[2mms[22m[39m
+[90mstdout[2m | test/briefSubmissionFlow.test.ts
+[22m[39m[api] KARTA écoute sur :0
+
+ [32m✓[39m test/briefSubmissionFlow.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 11123[2mms[22m[39m
+   [32m✓[39m durable user mission through the combined HTTP/SQL/queue/engine contract [2m(12)[22m
+     [33m[2m✓[22m[39m stores before enqueue, handles a lost SQL acknowledgement, and returns the correlated result without private text[33m 422[2mms[22m[39m
+     [33m[2m✓[22m[39m binds mission B exactly while an older mission A is ready for a safe retry[33m 447[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves an uncertain external effect for reconciliation and refuses automatic replay[33m 333[2mms[22m[39m
+ [32m✓[39m test/briefSubmission.test.ts [2m([22m[2m32 tests[22m[2m)[22m[33m 11324[2mms[22m[39m
+ [32m✓[39m test/chefHardening.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 6811[2mms[22m[39m
+ [32m✓[39m test/chefRuntimePolicy.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5923[2mms[22m[39m
+ [32m✓[39m test/chefGitState.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4696[2mms[22m[39m
+   [32m✓[39m CHEF git state verifier [2m(4)[22m
+     [33m[2m✓[22m[39m accepts an exact clean committed HEAD[33m 2088[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects a worker that lies about its output SHA[33m 560[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects uncommitted or untracked output[33m 597[2mms[22m[39m
+     [33m[2m✓[22m[39m requires the final HEAD to descend from the assigned base[33m 1445[2mms[22m[39m
+ [32m✓[39m test/chefBudgetAdmission.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 9025[2mms[22m[39m
+   [32m✓[39m CHEF cumulative estimated-budget admission [2m(18)[22m
+     [33m[2m✓[22m[39m reserves 70 before admitting another 70 against a shared budget of 100[33m 441[2mms[22m[39m
+     [33m[2m✓[22m[39m also reserves token estimates when the currency budget is unlimited[33m 320[2mms[22m[39m
+[90mstderr[2m | test/approvalContinuation.test.ts[2m > [22m[2mverified approval continuation through the real loop and SQL-finalized receipts[2m > [22m[2mforbids replay after an uncertain approval insert, even when closing fails: true
+[22m[39m[loop] journalisation indisponible ; reprise automatique interdite
+
+ [32m✓[39m test/approvalContinuation.test.ts [2m([22m[2m42 tests[22m[2m)[22m[33m 9950[2mms[22m[39m
+ [32m✓[39m test/chefEstimates.test.ts [2m([22m[2m44 tests[22m[2m)[22m[33m 7523[2mms[22m[39m
+[90mstderr[2m | test/customAuthorization.test.ts[2m > [22m[2mcustom authority immediately before the provider request[2m > [22m[2mreconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[22m[39m[loop] suivi secondaire indisponible ; résultat final conservé
+
+ [32m✓[39m test/customAuthorization.test.ts [2m([22m[2m46 tests[22m[2m)[22m[32m 128[2mms[22m[39m
+ [32m✓[39m test/assistantPolicy.test.ts [2m([22m[2m55 tests[22m[2m)[22m[33m 4938[2mms[22m[39m
+   [32m✓[39m canonical policy assembly [2m(7)[22m
+     [33m[2m✓[22m[39m resolves the actual Deno re-export to the one canonical Node source[33m 419[2mms[22m[39m
+ [32m✓[39m test/overageCredit.test.ts [2m([22m[2m38 tests[22m[2m)[22m[33m 10637[2mms[22m[39m
+   [32m✓[39m legacy overage: real webhook and PostgreSQL credit boundary [2m(37)[22m
+     [33m[2m✓[22m[39m credits a confirmed session once and retains the signed payment month on redelivery[33m 354[2mms[22m[39m
+ [32m✓[39m test/loopTriggerContext.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+ [32m✓[39m test/commercePrivileges.test.ts [2m([22m[2m58 tests[22m[2m)[22m[33m 13824[2mms[22m[39m
+ [32m✓[39m test/approvalTriggerContext.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 7133[2mms[22m[39m
+ [32m✓[39m test/chefMission.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 6759[2mms[22m[39m
+ [32m✓[39m test/loggerFinalization.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 6411[2mms[22m[39m
+ [32m✓[39m test/chefControlPlane.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 6691[2mms[22m[39m
+ [32m✓[39m test/chefProcess.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 971[2mms[22m[39m
+   [32m✓[39m CHEF owned POSIX process group [2m(5)[22m
+     [33m[2m✓[22m[39m kills a surviving descendant in the owned group after its leader exits[33m 392[2mms[22m[39m
+ [32m✓[39m test/chefSupervisor.test.ts [2m([22m[2m20 tests[22m[2m)[22m[33m 1143[2mms[22m[39m
+   [32m✓[39m CHEF autonomous worker cycle [2m(20)[22m
+     [33m[2m✓[22m[39m waits for a timed-out worker to finish before the retryable transition[33m 996[2mms[22m[39m
+ [32m✓[39m test/chefDriver.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 220[2mms[22m[39m
+ [32m✓[39m test/chefCancellation.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 463[2mms[22m[39m
+ [32m✓[39m test/chefVerifier.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 186[2mms[22m[39m
+ [32m✓[39m test/chefWorkerShutdown.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 149[2mms[22m[39m
+ [32m✓[39m test/jev-tool.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 185[2mms[22m[39m
+ [32m✓[39m test/jev-client.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 158[2mms[22m[39m
+ [32m✓[39m test/chatEscalation.test.ts [2m([22m[2m49 tests[22m[2m)[22m[32m 232[2mms[22m[39m
+ [32m✓[39m test/chefEvidenceAdapter.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 103[2mms[22m[39m
+ [32m✓[39m test/chefBrief.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+[90mstdout[2m | test/apiSafety.test.ts
+[22m[39m[api] KARTA écoute sur :0
+
+[90mstderr[2m | test/apiSafety.test.ts[2m > [22m[2mdoes not expose internal exception details
+[22m[39m[api] requête échouée
+
+ [32m✓[39m test/apiSafety.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 85[2mms[22m[39m
+[90mstdout[2m | test/apiDeliveryIdentity.test.ts
+[22m[39m[api] KARTA écoute sur :0
+
+ [32m✓[39m test/apiDeliveryIdentity.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m test/brief.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+[90mstderr[2m | test/loopBriefLifecycle.test.ts[2m > [22m[2meffect barrier and immutable completion[2m > [22m[2mdoes not replay an effect when closure remains ambiguous
+[22m[39m[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+[90mstderr[2m | test/loopBriefLifecycle.test.ts[2m > [22m[2meffect barrier and immutable completion[2m > [22m[2mforbids automatic retry if an inference failure cannot be durably closed
+[22m[39m[loop] journalisation indisponible ; reprise automatique interdite
+
+[90mstderr[2m | test/loopBriefLifecycle.test.ts[2m > [22m[2meffect barrier and immutable completion[2m > [22m[2mpreserves confirmed success when secondary bookkeeping fails
+[22m[39m[loop] suivi secondaire indisponible ; résultat final conservé
+
+ [32m✓[39m test/loopBriefLifecycle.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+[90mstderr[2m | test/loopTracePrivacy.test.ts[2m > [22m[2mprivate tool traces through the real agent cycle[2m > [22m[2mretains executed evidence and forbids replay after bookkeeping fails
+[22m[39m[loop] suivi secondaire indisponible ; résultat final conservé
+
+ [32m✓[39m test/loopTracePrivacy.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 112[2mms[22m[39m
+ [32m✓[39m test/customAgentScheduler.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 259[2mms[22m[39m
+ [32m✓[39m test/chefBudgetAccounting.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 157[2mms[22m[39m
+ [32m✓[39m test/approvalTracePrivacy.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 279[2mms[22m[39m
+ [32m✓[39m test/cycleAdmissionPrivacy.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m test/claudeDecisionCompleteness.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+[90mstderr[2m | test/loggerCycleFinalization.test.ts[2m > [22m[2ma committed cycle remains final when secondary bookkeeping fails[2m > [22m[2mpreserves a newer approval resolution that occurs during notification
+[22m[39m[loop] suivi secondaire indisponible ; résultat final conservé
+
+[90mstderr[2m | test/loggerCycleFinalization.test.ts[2m > [22m[2mbounded reconciliation of the first cycle outcome[2m > [22m[2mforbids automatic replay without tools or an execution key after an uncertain close
+[22m[39m[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+[90mstderr[2m | test/loggerCycleFinalization.test.ts[2m > [22m[2mbounded reconciliation of the first cycle outcome[2m > [22m[2mstops after two unconfirmed closes of success without replaying effects
+[22m[39m[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+[90mstderr[2m | test/loggerCycleFinalization.test.ts[2m > [22m[2mbounded reconciliation of the first cycle outcome[2m > [22m[2mstops after two unconfirmed closes of awaiting_approval without replaying effects
+[22m[39m[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+ [32m✓[39m test/loggerCycleFinalization.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m test/staticAgentScheduler.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 147[2mms[22m[39m
+ [32m✓[39m test/delegate.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m test/executionOriginMigration.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 13096[2mms[22m[39m
+   [32m✓[39m canonical 026 origin migration and historical upgrades [2m(10)[22m
+     [33m[2m✓[22m[39m applies the exact fresh canonical schema and returns the extended owned row from the real claim[33m 917[2mms[22m[39m
+     [33m[2m✓[22m[39m upgrades PR33 without inventing legacy origins or changing RLS, grants or the claim body[33m 976[2mms[22m[39m
+     [33m[2m✓[22m[39m recognizes exact Aether origins and preserves its reservation through canonical 021--026[33m 1250[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects text column transactionally without replacing the unknown schema[33m 354[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects disabled RLS transactionally without replacing the unknown schema[33m 313[2mms[22m[39m
+ [32m✓[39m test/executionOrigin.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m test/generative.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1447[2mms[22m[39m
+   [33m[2m✓[22m[39m browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks[33m 363[2mms[22m[39m
+   [33m[2m✓[22m[39m provider to browser chain preserves content and confirmed completion[33m 593[2mms[22m[39m
+   [33m[2m✓[22m[39m provider errors propagate without a false completion[33m 308[2mms[22m[39m
+ [32m✓[39m test/chefSupervisorCancellation.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m test/chefQuarantineAdapter.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+ [32m✓[39m test/customAgentSchedulerCron.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 306[2mms[22m[39m
+ [32m✓[39m test/connectPermissions.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 16787[2mms[22m[39m
+ [32m✓[39m test/walletRpcPermissions.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 16945[2mms[22m[39m
+ [32m✓[39m test/webCapabilityPlan.test.ts [2m([22m[2m47 tests[22m[2m)[22m[33m 1541[2mms[22m[39m
+   [32m✓[39m bounded generated policy inputs (not an AI or website benchmark) [2m(2)[22m
+     [33m[2m✓[22m[39m 1000 varied contexts cannot execute or reserve funds; uncertainty cannot become fallback[33m 804[2mms[22m[39m
+     [33m[2m✓[22m[39m 1000 forged policy fields cannot enter the intention contract[33m 629[2mms[22m[39m
+ [32m✓[39m test/streaming.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 932[2mms[22m[39m
+   [33m[2m✓[22m[39m streams text followed by a confirmed completion[33m 308[2mms[22m[39m
+   [33m[2m✓[22m[39m bounds an unterminated event[33m 341[2mms[22m[39m
+ [32m✓[39m test/publicChatAdmission.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 2576[2mms[22m[39m
+   [33m[2m✓[22m[39m does not call a paid model when the daily quota cannot be proven: {"data":true,"error":{"message":"unavailable"}}[33m 512[2mms[22m[39m
+   [33m[2m✓[22m[39m does not renew a visitor rate limit by rotating the body sessionId[33m 366[2mms[22m[39m
+   [33m[2m✓[22m[39m refuses a system role supplied by a client before model or knowledge calls[33m 304[2mms[22m[39m
+ [32m✓[39m test/streamCompletionAudit.test.ts [2m([22m[2m23 tests[22m[2m)[22m[33m 1090[2mms[22m[39m
+   [33m[2m✓[22m[39m does not accept finish_reason=length as a complete text answer[33m 694[2mms[22m[39m
+ [32m✓[39m test/kartaTriggerEdge.test.ts [2m([22m[2m87 tests[22m[2m)[22m[33m 1093[2mms[22m[39m
+   [32m✓[39m KARTA authenticated edge proxy [2m(60)[22m
+     [33m[2m✓[22m[39m handles preflight and refuses unsupported methods before authentication[33m 450[2mms[22m[39m
+ [32m✓[39m test/webSearchValidation.test.ts [2m([22m[2m41 tests[22m[2m)[22m[33m 583[2mms[22m[39m
+ [32m✓[39m test/sseConsumer.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 527[2mms[22m[39m
+   [33m[2m✓[22m[39m accepts a confirmed complete response[33m 509[2mms[22m[39m
+ [32m✓[39m test/gmailTool.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 386[2mms[22m[39m
+   [32m✓[39m gmail_send hardening [2m(5)[22m
+     [33m[2m✓[22m[39m réserve atomiquement une place seulement après une authentification disponible[33m 351[2mms[22m[39m
+ [32m✓[39m test/customAgent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m test/jev-schema.test.ts [2m([22m[2m30 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+ [32m✓[39m test/loopJevTracePrivacy.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+[90mstderr[2m | test/loop.test.ts[2m > [22m[2mcycle outcomes and interruption[2m > [22m[2mpreserves committed success and forbids replay after a bookkeeping failure
+[22m[39m[loop] suivi secondaire indisponible ; résultat final conservé
+
+ [32m✓[39m test/loop.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m test/webAccessPlanTool.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32m✓[39m test/staticAgentSchedulerCron.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 486[2mms[22m[39m
+   [32m✓[39m static-agent scheduler with actual node-cron [2m(3)[22m
+     [33m[2m✓[22m[39m invalidates a real executing callback before its database read completes[33m 434[2mms[22m[39m
+ [32m✓[39m test/logger.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m test/chefCostGovernor.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m test/briefSubmissionClient.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m test/chatRequestScope.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m test/toolResult.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m test/chefBudgetAdapter.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 168[2mms[22m[39m
+ [32m✓[39m test/chefProtocol.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m test/actionAgentsMock.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m test/agentsRegistry.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 93[2mms[22m[39m
+ [32m✓[39m test/mockClaude.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 228[2mms[22m[39m
+ [32m✓[39m test/customAgentScanAbort.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 181[2mms[22m[39m
+ [32m✓[39m test/sseFraming.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 331[2mms[22m[39m
+ [32m✓[39m test/supabaseTool.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m test/gmail-token-crypto.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 70[2mms[22m[39m
+ [32m✓[39m test/autonomy.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 279[2mms[22m[39m
+ [32m✓[39m test/customRegistry.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 143[2mms[22m[39m
+ [32m✓[39m test/stripeIsolation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 88[2mms[22m[39m
+ [32m✓[39m test/real-claude.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m test/chatHistoryIsolation.test.ts[2m > [22mmigration preflight refuses an unreviewed schema[2m > [22mrolls back both schemas when only messages remain
+[41m[1m FAIL [22m[49m test/chatHistoryIsolation.test.ts[2m > [22mmigration preflight refuses an unreviewed schema[2m > [22mrolls back both schemas when an extra permissive conversation policy…
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m test/chatHistoryIsolation.test.ts:[2m249:17[22m[39m
+    [90m247|[39m   ];
+    [90m248|[39m
+    [90m249|[39m   it.each(cases)('rolls back both schemas when $label', async ({ setup…
+    [90m   |[39m                 [31m^[39m
+    [90m250|[39m     const db = await fixture(['public', 'purama_ai']);
+    [90m251|[39m     try {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/chefEvidenceFreshness.test.ts[2m > [22mCHEF evidence generation[2m > [22mpreserves pre-migration rows without certifying them as current evidence
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m test/chefEvidenceFreshness.test.ts:[2m231:3[22m[39m
+    [90m229|[39m   });
+    [90m230|[39m
+    [90m231|[39m   it("preserves pre-migration rows without certifying them as current …
+    [90m   |[39m   [31m^[39m
+    [90m232|[39m     const legacy = new PGlite();
+    [90m233|[39m     try {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m94 passed[39m[22m[90m (96)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1643 passed[39m[22m[90m (1646)[39m
+[2m   Start at [22m 22:59:22
+[2m   Duration [22m 266.92s[2m (tests 86%, import 11%, transform 2%, setup 1%, worker 1%)[22m
+
+[2m    Isolate [22m [33m96 workers spawned[39m[2m · ~717ms startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~33.72s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

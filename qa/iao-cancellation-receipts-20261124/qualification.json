@@ -1,0 +1,648 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-24T03:51:26.588136+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "baseCommit": "38d888c4fdb229a5438e60faa2ae76c9b8830b67",
+  "status": "LOCAL_PASS_REVIEWED",
+  "scope": "Immutable first complete KARTA receipt, request-bound control receipts, and independent proof snapshots in ordinary/cancelled IaoFacade responses. No real service or effect used.",
+  "sourceBeforeSha256": "5fdde33ec6e3119c059d3e4c7b17ca2985a1ea6b575fb09ad2793b70b7cdb5ab",
+  "sourceAfterSha256": "d122adb306379d42642b6edc46e55535681b6833669bfea23c90b46bf9291c80",
+  "testSha256": "5f4043c00704c6875ec270c679f7953291eda5d3cbc7ed0b8f7842dd7346eadc",
+  "regressionBefore": {
+    "passed": 10,
+    "failed": 11,
+    "total": 21,
+    "exitCode": 1,
+    "baseline": "Unmodified module at 38d888c in an isolated fixture; identical final test file"
+  },
+  "regressionAfter": {
+    "passed": 21,
+    "failed": 0,
+    "total": 21,
+    "exitCode": 0
+  },
+  "relatedTests": {
+    "passed": 301,
+    "failed": 0,
+    "total": 301,
+    "files": 10,
+    "includesNew21": true,
+    "exitCode": 0
+  },
+  "typecheck": {
+    "at": "2026-11-24T03:48:22.005364+00:00",
+    "cwd": "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 7.909998007002287,
+    "nodeOptions": "--max-old-space-size=2048",
+    "sourceSHA256": "d122adb306379d42642b6edc46e55535681b6833669bfea23c90b46bf9291c80"
+  },
+  "build": {
+    "at": "2026-11-24T03:48:25.540070+00:00",
+    "cwd": "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 3.5341280440043192,
+    "nodeOptions": "--max-old-space-size=2048",
+    "sourceSHA256": "d122adb306379d42642b6edc46e55535681b6833669bfea23c90b46bf9291c80"
+  },
+  "dependencyProvenance": {
+    "dependencyPath": "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta/node_modules",
+    "isSymlink": true,
+    "donorPath": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta/node_modules",
+    "packageSha256": "5ee2b3342406e3348d554f222c3e2cd706e9187f01c1856b3e4b8b0eff63f7ca",
+    "donorPackageSha256": "5ee2b3342406e3348d554f222c3e2cd706e9187f01c1856b3e4b8b0eff63f7ca",
+    "lockSha256": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+    "donorLockSha256": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+    "selectedObservedVersions": {
+      "vitest": {
+        "observed": "5.0.3",
+        "lock": "5.0.3",
+        "matches": true
+      },
+      "vite": {
+        "observed": "8.3.7",
+        "lock": "8.3.7",
+        "matches": true
+      },
+      "typescript": {
+        "observed": "5.9.3",
+        "lock": "5.9.3",
+        "matches": true
+      },
+      "tsx": {
+        "observed": "4.23.1",
+        "lock": "4.23.1",
+        "matches": true
+      },
+      "@supabase/supabase-js": {
+        "observed": "2.110.8",
+        "lock": "2.110.8",
+        "matches": true
+      }
+    },
+    "runtime": {
+      "node": "v24.22.3",
+      "platform": "linux/x64"
+    },
+    "limitation": "Dependencies reused from an existing donor; no fresh npm ci executed by this lot."
+  },
+  "impact": {
+    "tool": "GitNexus 1.6.12",
+    "target": "IaoFacade.#late",
+    "risk": "UNKNOWN",
+    "freshBase": "38d888c4fdb229a5438e60faa2ae76c9b8830b67",
+    "coveredFiles": 15,
+    "symbolNodes": 696,
+    "edges": 2535,
+    "limitations": [
+      "FTS deliberately unavailable for this scoped index",
+      "Private method calls were not resolved; no absence-of-callers safety claim"
+    ],
+    "manualCallChain": [
+      "#prepare and recordKartaResult call #settleResult",
+      "#settleResult invokes #late for terminal responses"
+    ],
+    "scope": "Receipt admission and finalization inside the existing facade; type/action captured as scalar values. Dispatch and public status contracts preserved.",
+    "targets": {
+      "acceptedReceipt": {
+        "risk": "LOW",
+        "directCallers": [
+          "#apply",
+          "#late"
+        ],
+        "confidence": 0.85
+      },
+      "submit": {
+        "risk": "UNKNOWN"
+      },
+      "#apply": {
+        "risk": "UNKNOWN"
+      },
+      "#late": {
+        "risk": "UNKNOWN"
+      }
+    }
+  },
+  "commands": {
+    "final-baseline": [
+      "node",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta/node_modules/vitest/vitest.mjs",
+      "run",
+      "test/iaoCancellationReceiptMonotonicity.test.ts",
+      "--maxWorkers",
+      "1",
+      "--no-file-parallelism",
+      "--no-cache",
+      "--configLoader",
+      "runner",
+      "--fsModuleCachePath",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/vitest-cache",
+      "--reporter=json",
+      "--outputFile",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/final-baseline-tests.json"
+    ],
+    "memory-binding-after": [
+      "node",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta/node_modules/vitest/vitest.mjs",
+      "run",
+      "test/iaoCancellationReceiptMonotonicity.test.ts",
+      "--maxWorkers",
+      "1",
+      "--no-cache",
+      "--configLoader",
+      "runner",
+      "--fsModuleCachePath",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/vitest-cache",
+      "--reporter=json",
+      "--outputFile",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/memory-binding-after-tests.json"
+    ],
+    "final-targeted": [
+      "node",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/repo/karta/node_modules/vitest/vitest.mjs",
+      "run",
+      "test/iaoCancellationReceiptMonotonicity.test.ts",
+      "test/iao-facade.test.ts",
+      "test/iaoIdentityBoundary.test.ts",
+      "test/iaoAdmissionDeadline.test.ts",
+      "test/iaoAdmissionRevalidation.test.ts",
+      "test/iaoCompletedRetention.test.ts",
+      "test/iaoCompletedImmutability.test.ts",
+      "test/iaoPendingRetention.test.ts",
+      "test/iaoExecutionBudget.test.ts",
+      "test/kartaRuntimeDeadline.test.ts",
+      "--maxWorkers",
+      "1",
+      "--no-file-parallelism",
+      "--no-cache",
+      "--configLoader",
+      "runner",
+      "--fsModuleCachePath",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/vitest-cache",
+      "--reporter=json",
+      "--outputFile",
+      "/workspace/scratch/6c23d26aa02f/iao-audit/final-targeted-tests.json"
+    ]
+  },
+  "rawEvidence": {
+    "location": "Raw evidence archive accompanying this audit; files are not duplicated in Git history",
+    "root": "/workspace/scratch/6c23d26aa02f",
+    "files": [
+      {
+        "path": "iao-audit/build-receipt.json",
+        "bytes": 270,
+        "sha256": "4d3c5d397d3ab3302f6314c2b218ee7abd98dbaaf3afdf348c004cb6f62a99d5"
+      },
+      {
+        "path": "iao-audit/build.log",
+        "bytes": 208,
+        "sha256": "c31dffb3e7948520b9ba40b7ea23294b1a6b4a49f1dbd7da5fbd6656322da2e1"
+      },
+      {
+        "path": "iao-audit/cancellation-before-receipt.json",
+        "bytes": 975,
+        "sha256": "da01d46326bc527deb029e2cecbcbf2bea5c408a4312dfc8630a8d8c1e3f4fbe"
+      },
+      {
+        "path": "iao-audit/cancellation-before.log",
+        "bytes": 3209,
+        "sha256": "834436bff7025dc493f8198736f5a6c321a969086f39120d264b60a26d1502c6"
+      },
+      {
+        "path": "iao-audit/cancellation-monotonicity.mts",
+        "bytes": 2378,
+        "sha256": "1faa329a94241b9749002dd7119cb7113fc6c271db7e85b754620b8e7033cc58"
+      },
+      {
+        "path": "iao-audit/cancellation-receipts.test.mts",
+        "bytes": 2840,
+        "sha256": "7712df9b4bf90ab64fe9719fd97c29345aa8cd4aea95b652318ed7dc9378f2eb"
+      },
+      {
+        "path": "iao-audit/context-record.stderr.log",
+        "bytes": 339,
+        "sha256": "b5620afb1869a4118fc8af24e0ba4bde9d5a1771751edf71ca9f4b62571856ef"
+      },
+      {
+        "path": "iao-audit/context-record.stdout.json",
+        "bytes": 3044,
+        "sha256": "2d7f6069c4a72db362061903433f55891612d79b944ea6fcb6846581ccab49e4"
+      },
+      {
+        "path": "iao-audit/context-settle.stderr.log",
+        "bytes": 339,
+        "sha256": "244881d598884a60a565bcae43a851d21d36f37f1c950016a332511c5cb59b54"
+      },
+      {
+        "path": "iao-audit/context-settle.stdout.json",
+        "bytes": 2311,
+        "sha256": "906c4abe2dc6afa42ff5881aaba5c456766e2063442e215ae022dfba8122ff72"
+      },
+      {
+        "path": "iao-audit/dependency-provenance.json",
+        "bytes": 1263,
+        "sha256": "73b6dd953d11ae8157f2e376ea3ff38644787793febee78eeec3e8a5f54b958e"
+      },
+      {
+        "path": "iao-audit/detect-main-receipt.json",
+        "bytes": 521,
+        "sha256": "3875dadb802cc23b65d55c8da3ce9c8e7034971b99148dcd59514a35ae454330"
+      },
+      {
+        "path": "iao-audit/detect-main.stderr.log",
+        "bytes": 531,
+        "sha256": "8c55d2dd322bc9b8d2824cfe33b668cc17c39cd66a9bfcba71c4bce1908f8a70"
+      },
+      {
+        "path": "iao-audit/detect-main.stdout.json",
+        "bytes": 347,
+        "sha256": "73ae69bbe0dd2e9406fce136cd04137eff78301b539900ea98d1d37c032053fd"
+      },
+      {
+        "path": "iao-audit/detect-staged-receipt.json",
+        "bytes": 490,
+        "sha256": "e9eaa6ea61efff1d81e8a7fd5a18fbfd00d60e8dc7ebaf856f1afed8fca1d8a0"
+      },
+      {
+        "path": "iao-audit/detect-staged.stderr.log",
+        "bytes": 346,
+        "sha256": "fd3e0e92a9f2cef173f6717d7cdf2bec60beedbd6d27d74c4cf874cdd07d5754"
+      },
+      {
+        "path": "iao-audit/detect-staged.stdout.json",
+        "bytes": 373,
+        "sha256": "12a31a248f433b739d0c7239958a5b722df1db042864b467a69e27197abf9da1"
+      },
+      {
+        "path": "iao-audit/final-baseline-receipt.json",
+        "bytes": 994,
+        "sha256": "9d50ee78a08f473101cf9d920d079c27c45a1f53b826ef86c8217755b3cb7976"
+      },
+      {
+        "path": "iao-audit/final-baseline-tests.json",
+        "bytes": 15299,
+        "sha256": "c7266a183d4ca6e93134d050064859c60e3bd466dbaa2e4e6370558ca5fb7b3a"
+      },
+      {
+        "path": "iao-audit/final-baseline.log",
+        "bytes": 91,
+        "sha256": "bb5a508e97ba39c5c1b1f64d2f71cbfb0a3c2d13ffead030cd3d63f171c5fde7"
+      },
+      {
+        "path": "iao-audit/final-build-receipt.json",
+        "bytes": 356,
+        "sha256": "211110713f9e3ceb74adb8ef5934a8597d89485831106514daba8c3ff9aa41cb"
+      },
+      {
+        "path": "iao-audit/final-build.log",
+        "bytes": 208,
+        "sha256": "c31dffb3e7948520b9ba40b7ea23294b1a6b4a49f1dbd7da5fbd6656322da2e1"
+      },
+      {
+        "path": "iao-audit/final-detect-main-receipt.json",
+        "bytes": 521,
+        "sha256": "07d25ff61f5ff97f83b5007256ec23fb52c4d312c757b7788e4e1fe60754f857"
+      },
+      {
+        "path": "iao-audit/final-detect-main.stderr.log",
+        "bytes": 531,
+        "sha256": "248fdac1088574441b1c2112e388ff8a9f64ac8e20a31968a8a756132738e94f"
+      },
+      {
+        "path": "iao-audit/final-detect-main.stdout.json",
+        "bytes": 347,
+        "sha256": "73ae69bbe0dd2e9406fce136cd04137eff78301b539900ea98d1d37c032053fd"
+      },
+      {
+        "path": "iao-audit/final-detect-staged-receipt.json",
+        "bytes": 490,
+        "sha256": "ef5481066795664dc12256296a7d4202760835c16c35642b485ce545807c43d9"
+      },
+      {
+        "path": "iao-audit/final-detect-staged.stderr.log",
+        "bytes": 346,
+        "sha256": "47bbe9ece486a87cd73631e72c78bf589ad244605b1c755c281c0dd2941ed317"
+      },
+      {
+        "path": "iao-audit/final-detect-staged.stdout.json",
+        "bytes": 999,
+        "sha256": "debe8b9d96ea7a2e394b32ea8f846f4f380d4461177fd96061c2d47c42d24ff6"
+      },
+      {
+        "path": "iao-audit/final-targeted-receipt.json",
+        "bytes": 1353,
+        "sha256": "52549d6b6a8fa5834206ddbf299861aeb9df89a3487d936eb58e1aea0094341b"
+      },
+      {
+        "path": "iao-audit/final-targeted-tests.json",
+        "bytes": 108691,
+        "sha256": "97b63646ebd46e178f64b92511c292197a43ff44d782c38b31c227f5a5d029a1"
+      },
+      {
+        "path": "iao-audit/final-targeted.log",
+        "bytes": 91,
+        "sha256": "9a1936192c3ef35a825cd20a7c68bc8e575bfb6ab6b064ad3001b91334b649f5"
+      },
+      {
+        "path": "iao-audit/final-typecheck-receipt.json",
+        "bytes": 359,
+        "sha256": "bbc4d0307423f2d5b28101a8caaef9c5ebae9de57e3e210e6d896076ae685b16"
+      },
+      {
+        "path": "iao-audit/final-typecheck.log",
+        "bytes": 215,
+        "sha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e"
+      },
+      {
+        "path": "iao-audit/gitnexus-analysis.log",
+        "bytes": 1003,
+        "sha256": "cf4886c906af18902570cbbfff00ef4f835a5354b544fcc3ef3177f618c78f49"
+      },
+      {
+        "path": "iao-audit/gitnexus-scope.txt",
+        "bytes": 233,
+        "sha256": "c7c527c9c0e25356d4a199a4d0f76f699bf7ff5dd8c00b7d54eb4581e5528607"
+      },
+      {
+        "path": "iao-audit/impact-late.stderr.log",
+        "bytes": 338,
+        "sha256": "8ff29e3f296d16546ec3014f7ad2850846a4124310d0857cadc1d30ca7ed3ae2"
+      },
+      {
+        "path": "iao-audit/impact-late.stdout.json",
+        "bytes": 905,
+        "sha256": "a7f200d8d769c292c958011172591897ab90c0b55a0cab4c11e81449f46900b1"
+      },
+      {
+        "path": "iao-audit/memory-binding-after-receipt.json",
+        "bytes": 925,
+        "sha256": "e8b91470fc6e6d8215e3be1dff68e7c38a9a2e7b8db4f06e49c3f226effac573"
+      },
+      {
+        "path": "iao-audit/memory-binding-after-tests.json",
+        "bytes": 8998,
+        "sha256": "0485d4d6b4add638f609714ae7810007053ff4b0295b719c5e53abfc80ef08ad"
+      },
+      {
+        "path": "iao-audit/memory-binding-after.log",
+        "bytes": 97,
+        "sha256": "bf9abca5689a4551f670eb977d7e4792b0f908c1fa09641355d55b7c42ef97e2"
+      },
+      {
+        "path": "iao-audit/memory-binding-before-receipt.json",
+        "bytes": 927,
+        "sha256": "b6c6603fae9374c7ab75c94d53382b65534ed066291c6032b1dfbae144e7a24f"
+      },
+      {
+        "path": "iao-audit/memory-binding-before-tests.json",
+        "bytes": 13065,
+        "sha256": "369ca3c43c7d6aae25f469be7d04d634b7a988c383afc4efbb03c97812bc543b"
+      },
+      {
+        "path": "iao-audit/memory-binding-before.log",
+        "bytes": 98,
+        "sha256": "a4a5c53b74fc465c89a60d9ed2f44d0bdd0378bd10e863de3411d3cff197a82c"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-acceptedReceipt.stderr.log",
+        "bytes": 338,
+        "sha256": "8c1b19aff207fb131d9119b1205a3746067b903c26374a79b084ec7233476540"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-acceptedReceipt.stdout.json",
+        "bytes": 2666,
+        "sha256": "2b1ed81cb0064a2fc8eddbe41fcc1528e3899b4308eb4ccbf07171faa9703c5e"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-apply.stderr.log",
+        "bytes": 338,
+        "sha256": "320db0099ea54f1990b1b525d4e7f40531a461b8d037d99f3acfafcc6c7fd34a"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-apply.stdout.json",
+        "bytes": 907,
+        "sha256": "774a0dabf77822c65a471eb9fe63dd05669ea5b6e5d41cf66538f44beb0274ab"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-late.stderr.log",
+        "bytes": 338,
+        "sha256": "7a2b3e169c1ab40de6fde38d9fba940ddd26546fa124dc6b7ee39ef5d9ecd606"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-late.stdout.json",
+        "bytes": 905,
+        "sha256": "a7f200d8d769c292c958011172591897ab90c0b55a0cab4c11e81449f46900b1"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-submit.stderr.log",
+        "bytes": 338,
+        "sha256": "ad8b531ef74d2f5aac86fe15be0d8de33717943a289c446ccdb3539691960e5d"
+      },
+      {
+        "path": "iao-audit/memory-binding-impact-submit.stdout.json",
+        "bytes": 1385,
+        "sha256": "7bc388da43fe0fa7f2225ff23ec98551659b54ba5dbac76a8cd1ad02baa2882f"
+      },
+      {
+        "path": "iao-audit/monotonicity-after-receipt.json",
+        "bytes": 781,
+        "sha256": "d0c33230c0ad4c113afe348d32f43efe2dc837e57529a4e4f766a85ea8f57fb7"
+      },
+      {
+        "path": "iao-audit/monotonicity-after-tests.json",
+        "bytes": 6213,
+        "sha256": "72f7886ca266598067feafcc2165ad550134f27f68a95c94c20495160f503390"
+      },
+      {
+        "path": "iao-audit/monotonicity-after.log",
+        "bytes": 95,
+        "sha256": "5dc7db9f04a11ad22ec263580391464f05689d73f27ea0d2d411da94fb2bc669"
+      },
+      {
+        "path": "iao-audit/monotonicity-before-receipt.json",
+        "bytes": 782,
+        "sha256": "fe74255809b30fd41bc77dc22cf55c5ea3ce248e5b29fd001a4a79a0f1d17935"
+      },
+      {
+        "path": "iao-audit/monotonicity-before-tests.json",
+        "bytes": 8399,
+        "sha256": "85defab3da71a70163496bbd0f96069894367ccc347faa887017c91d4a1c2737"
+      },
+      {
+        "path": "iao-audit/monotonicity-before.log",
+        "bytes": 96,
+        "sha256": "70c85b441aa67ae98645593a60480876a717abf00e291eb041e72380066aafe8"
+      },
+      {
+        "path": "iao-audit/ownership.json",
+        "bytes": 1160,
+        "sha256": "bc01039a59106f9186b86ac0bfaa19ae4dc64fa8ec39ec2bbefc37444432d910"
+      },
+      {
+        "path": "iao-audit/peer-review-before-receipt.json",
+        "bytes": 423,
+        "sha256": "0de9cee91c0c32210bea2dc432e171a97544a7a7754289abdbb1692ed86a7664"
+      },
+      {
+        "path": "iao-audit/peer-review-before.log",
+        "bytes": 1510,
+        "sha256": "27d5c4f2b0e5729fb94a0bfbd17708e0834357bdfa305a1f32ed5cb91517458e"
+      },
+      {
+        "path": "iao-audit/provisional-monotonicity.patch",
+        "bytes": 9164,
+        "sha256": "7dc04ece1dbe0d48191866243ba15db2e4be8a62e62eddad189eda8b480d8a04"
+      },
+      {
+        "path": "iao-audit/scope-review.json",
+        "bytes": 521,
+        "sha256": "141837b80661eabde4de6b45b500b9a8b3587353e5b8ac9b4f4c15a8052e409a"
+      },
+      {
+        "path": "iao-audit/status.stderr.log",
+        "bytes": 28,
+        "sha256": "820344419df41592258b63bdaee75c541005480d9d183b59d149f9dea0d1ef12"
+      },
+      {
+        "path": "iao-audit/status.stdout.json",
+        "bytes": 2589,
+        "sha256": "979285dc8686f341b29c92795332f1726e781c20fe9080115a23774761b0738e"
+      },
+      {
+        "path": "iao-audit/targeted-receipt.json",
+        "bytes": 1348,
+        "sha256": "3dc2283009de0c3109bc6f3317d06aa87df759b8b17179906fa9fb51e7e0e99f"
+      },
+      {
+        "path": "iao-audit/targeted-tests.json",
+        "bytes": 105930,
+        "sha256": "06b73b91a91965b514fedac5d87fd4b6e5c654d03dd48485f972367cfe13fdab"
+      },
+      {
+        "path": "iao-audit/targeted.log",
+        "bytes": 85,
+        "sha256": "321ad8c5b3ebbee65a7419c4b33d6f04b3adb19c076c9a42fcfb69d0f982ebdd"
+      },
+      {
+        "path": "iao-audit/typecheck-receipt.json",
+        "bytes": 273,
+        "sha256": "f982191b441d940210129bdc9f2f62bf7d627602cd007215cf3c87b30effcd40"
+      },
+      {
+        "path": "iao-audit/typecheck.log",
+        "bytes": 215,
+        "sha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e"
+      },
+      {
+        "path": "iao-review/reviewer-cases.mts",
+        "bytes": 6302,
+        "sha256": "5b28670a462d12406a2fd6cf0f941a9e1906da00da9806daa2829c5cdeceef4a"
+      },
+      {
+        "path": "iao-review/before.json",
+        "bytes": 746,
+        "sha256": "b9974e742ca5ef6716c007f66351d1c7bef0547b5075612997d998c7c1d1d26d"
+      },
+      {
+        "path": "iao-review/before.log",
+        "bytes": 2651,
+        "sha256": "1799c17a324beb9a08840c4f22d437032a0b11952136d0881011b8b888711d5b"
+      },
+      {
+        "path": "iao-review/normal-alias-before.json",
+        "bytes": 754,
+        "sha256": "66b5e792bbc79c75ad1134253c7b03ff21bb432c19e4d62e03cc44588d6f15b2"
+      },
+      {
+        "path": "iao-review/normal-alias-before.log",
+        "bytes": 2171,
+        "sha256": "2f74632d026fd74bf43f06b9ed24d21bd01e9613907530d98665d0002db6269a"
+      },
+      {
+        "path": "iao-review/after.json",
+        "bytes": 746,
+        "sha256": "f83633181f8b028ef760845ab3dd69bcfb84c72d7f8f04ed1f361b65477de65f"
+      },
+      {
+        "path": "iao-review/after.log",
+        "bytes": 1676,
+        "sha256": "a12e2f0696a31afd022d0da80cf013c75fc3773d3af7540953dc522fa635b96e"
+      }
+    ]
+  },
+  "limitations": [
+    "No production deployment or provider account tested",
+    "No fresh full KARTA run performed by this lot; related 301 tests only",
+    "No fresh dependency installation; reused donor with matching manifests and selected package versions",
+    "Static graph does not resolve private-method call edges; manual tracing supplements UNKNOWN result",
+    "Comparison with main invoked but unavailable: current ae84415be0b9516422805910be999a2c1e6350c0 object and main ref absent locally. No substitute main ref created.",
+    "Remote publication and post-publication CI not performed by this agent"
+  ],
+  "peerReview": {
+    "owner": "/root/audit_midas_coverage",
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "sourceSHA256": "d122adb306379d42642b6edc46e55535681b6833669bfea23c90b46bf9291c80",
+    "scope": "Independent adverse callback orders, receipt completeness/action binding, aliasing and preserved behavior; overlapping scope, not extra unique coverage."
+  },
+  "historicalRefinement": {
+    "firstCandidate": {
+      "newTests": 14,
+      "passedBefore": 9,
+      "failedBefore": 5,
+      "passedAfter": 14,
+      "source": "e12f610c278a25fae3e5db9def0be7dcbe24a88786fc3ff6aebc380f30ebe05c"
+    },
+    "peerReview": "The first candidate was rejected before publication for accepting incomplete/wrong-action memory receipts. Ordinary proof aliasing was also reproduced. Final tests contain these corrections.",
+    "expandedAgainstFirstCandidate": {
+      "total": 21,
+      "passed": 15,
+      "failed": 6
+    }
+  },
+  "changeDetection": {
+    "staged": {
+      "command": [
+        "gitnexus",
+        "detect_changes",
+        "--scope",
+        "staged",
+        "--repo",
+        "iao-cancel-receipts-6c23"
+      ],
+      "status": "EXECUTED",
+      "exitCode": 0,
+      "risk": "HIGH",
+      "files": 4,
+      "symbols": 8,
+      "flows": 8,
+      "note": "HIGH risk disclosed before commit; one product file reviewed manually and qualified by related tests. No complete global static coverage claimed."
+    },
+    "mainComparison": {
+      "command": [
+        "gitnexus",
+        "detect_changes",
+        "--scope",
+        "compare",
+        "--base-ref",
+        "main",
+        "--repo",
+        "iao-cancel-receipts-6c23"
+      ],
+      "status": "PARTIAL",
+      "exitCode": 1,
+      "reason": "main ref and current main object ae84415be0b9516422805910be999a2c1e6350c0 absent locally; no fabricated replacement."
+    }
+  }
+}

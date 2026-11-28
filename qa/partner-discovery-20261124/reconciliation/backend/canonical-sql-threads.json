@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/partnerDiscoverySql.test.ts",
+    "--pool=threads",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": -9,
+  "seconds": 3.783,
+  "database": "PGlite executing unchanged canonical SQL migrations",
+  "retry_reason": "One permitted attempt sharing the runner process with a worker thread instead of duplicating it by fork; no memory increase.",
+  "scope": "Single-connection transaction and rollback proof; not native multi-session PostgreSQL concurrency."
+}

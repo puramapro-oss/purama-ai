@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=128",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "requestFabric",
+    "--repo",
+    "purama-iao-qualification-20261123",
+    "--uid",
+    "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric",
+    "--direction",
+    "upstream",
+    "--depth",
+    "3",
+    "--limit",
+    "20"
+  ],
+  "exit_code": 0,
+  "started_at_utc": "2026-11-23T01:30:03.502163+00:00",
+  "ended_at_utc": "2026-11-23T01:30:04.457896+00:00",
+  "source_equivalence": "All karta/src paths unchanged between c4228f5 and6ed27aef; no product changes yet"
+}

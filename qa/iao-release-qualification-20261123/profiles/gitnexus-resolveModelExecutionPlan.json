@@ -1,0 +1,113 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/claude/execution-profile.ts:resolveModelExecutionPlan",
+    "name": "resolveModelExecutionPlan",
+    "kind": "Function",
+    "filePath": "karta/src/claude/execution-profile.ts",
+    "startLine": 87,
+    "endLine": 125
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/consultationPersistenceRecovery.test.ts",
+        "name": "consultationPersistenceRecovery.test.ts",
+        "filePath": "karta/test/consultationPersistenceRecovery.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationTransport.test.ts",
+        "name": "consultationTransport.test.ts",
+        "filePath": "karta/test/consultationTransport.test.ts"
+      },
+      {
+        "uid": "File:karta/test/executionProfile.test.ts",
+        "name": "executionProfile.test.ts",
+        "filePath": "karta/test/executionProfile.test.ts"
+      },
+      {
+        "uid": "File:karta/test/modelConsultationStore.test.ts",
+        "name": "modelConsultationStore.test.ts",
+        "filePath": "karta/test/modelConsultationStore.test.ts"
+      },
+      {
+        "uid": "File:karta/test/modelConsultationStoreSql.test.ts",
+        "name": "modelConsultationStoreSql.test.ts",
+        "filePath": "karta/test/modelConsultationStoreSql.test.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.consult@207:4.addModel@228:6",
+        "name": "addModel",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation",
+        "name": "runModelConsultation",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.call@197:6",
+        "name": "call",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/real.ts:selectModel",
+        "name": "selectModel",
+        "filePath": "karta/src/claude/real.ts"
+      },
+      {
+        "uid": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4#2",
+        "name": "catalog",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.consult@207:4#3",
+        "name": "consult",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Method:karta/src/claude/real.ts:createRealClaudeClient.decide@75:4#1",
+        "name": "decide",
+        "filePath": "karta/src/claude/real.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:normalizeModelCatalog",
+        "name": "normalizeModelCatalog",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:normalizeModelPreferences",
+        "name": "normalizeModelPreferences",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "Interface:karta/src/claude/execution-profile.ts:ModelExecutionPlan",
+        "name": "ModelExecutionPlan",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Interface:karta/src/claude/execution-profile.ts:ModelExecutionPreferences",
+        "name": "ModelExecutionPreferences",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      }
+    ]
+  },
+  "processes": []
+}

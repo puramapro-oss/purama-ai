@@ -1,0 +1,101 @@
+{
+  "reviewer": "qual_release",
+  "reviewed_at": "2026-11-23T21:00:09.479315+00:00",
+  "base": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "mode": "Independent read-only source and evidence review; no tests rerun",
+  "status": "PARTIEL",
+  "client_change_review": "PASS",
+  "source_sha256": {
+    "src/lib/consultation-client.ts": "eb2401c65fc7d370afb45aeb72c1fe9a187295f1d8c98c165be9c753e43018fe",
+    "src/lib/consultation-client.test.ts": "bf6ed93f03f6706e785966a505e4155427b51f4902954687281196258dddf82d",
+    "tests/chat/consultation.spec.ts": "02fa254969a5c9e79471a747edb08f5d96cdacf8db6b03aa64750692f70bfc43"
+  },
+  "source_manifest_matches": true,
+  "baseline_client_sha256": "2aaf0e6a05b941e5fa649273935c77221c1b3d0cbcd284b43a0b26e8f8284083",
+  "red_source_matches_baseline": true,
+  "green_source_matches_current": true,
+  "evidence_sha256": {
+    "client-revision-red.json": "b36b6978a7fdfd0f8dbedc75281075164abeccc644cade78be88fadf86c7201d",
+    "client-revision-red.log": "4a4ad7307af42803b824d2f801ac9a575b31bbd6949e1b5dce44e6861588d71f",
+    "client-and-components-green.json": "71bb39185b27d371f37519e8118154122f1789fd268628601e58bf981c6ebd52",
+    "client-and-components-green.log": "3e136bc3737a7d639655d7e65339ae50790308c7558639102fcb924aecea7747",
+    "browser-revision-red.json": "4b12a18682384ed630fbf96549f0953e046f4742424bcc99d64be834c47ddc16",
+    "browser-revision-red.log": "8530a47e7860df601c39c9318f004943c60e0bd6ea41f72026345b894516583b",
+    "browser-discovery.json": "536656aaa59487a9bff208a0e683ca9835b52e384f8389f6c2f3fbbf0af8df5a",
+    "browser-discovery.log": "5cb00c8a6992d20063ff54393c4944e89a6b5a72ca73ca998d9db104e6361e75",
+    "impact-preedit.json": "b71b61a9e4cca85cd0eead670c0256e5839af573223e2718cb90cb41d8145258",
+    "lint.json": "ad2ffe493f6d92e63c28c1548eecab0a77f58131bda8e94ceb44a4729a7b520a",
+    "lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-manifest.json": "ea2042253eeab203f160af38fce52608e46639e97970499c74870f076bcd771b",
+    "qualification.json": "9278c550fbcabda792d5bb26a5388b2fcbe6d5e41b6203083d89a995e265a4fc",
+    "inventory.md": "70b2a4b0b565184eff115e5bad511965543c86d474b3531c956c20241c53de77"
+  },
+  "verified_evidence": [
+    {
+      "stage": "RED unit",
+      "result": "3 failing revision-ID assertions and 32 passing tests, exit 1. Failures are catalogue, outgoing main/reviewers and stored result parsing.",
+      "receipt": "client-revision-red.json"
+    },
+    {
+      "stage": "GREEN client/components",
+      "result": "83 tests in 3 files, exit 0; current client and unit-test hashes match receipt.",
+      "receipt": "client-and-components-green.json"
+    },
+    {
+      "stage": "Browser discovery",
+      "result": "48 discovered scenarios including 24 new consultation scenarios. Discovery is not execution.",
+      "receipt": "browser-discovery.json"
+    },
+    {
+      "stage": "Browser launch",
+      "result": "Chromium failed before page creation with socket() Operation not permitted. This is an environment block, not a reproduced product failure.",
+      "receipt": "browser-revision-red.json"
+    },
+    {
+      "stage": "Lint",
+      "result": "Exit 0 with empty diagnostic log.",
+      "receipt": "lint.json"
+    }
+  ],
+  "checks": [
+    "The model-specific regular expression exactly matches the execution-profile resolver, including strict end-of-string rejection and the 200-character bound.",
+    "The change is limited to main model, reviewers, catalogue model and result-plan model. Generic source/provider identifiers remain unchanged; source@revision is still rejected by the new negative test.",
+    "Authority fields, account token capture, operation UUID binding, duplicate reviewers, unsafe source URLs, request/response byte bounds, redirect rejection and cancellation paths are unchanged.",
+    "Browser fixtures explicitly mark authentication and HTTP responses synthetic; they assert request payloads and visible outputs rather than successful clicks alone.",
+    "The existing closed-network fixture blocks unexpected external traffic; the consultation file is included by testMatch *.spec.ts and the existing CI test:chat command.",
+    "No skipped assertion, forced PASS, test-only production branch, dependency or workflow change found in this client diff."
+  ],
+  "findings": [
+    {
+      "id": "UI-REVIEW-001",
+      "severity": "MEDIUM",
+      "status": "RESOLVED by early native host exclusion; @ support remains intentionally unavailable on this native composition",
+      "scope": "End-to-end @ model revision contract, outside the UI diff",
+      "observation": "At review time karta/src/api/consultation.ts still uses IDENTIFIER without @ in parseConsultationAction for main/reviewers, projectConsultationCatalog and projectPlan. The execution-profile resolver and corrected client allow @.",
+      "observed_api_sha256": "2b19ae82022be85c7efd865d5d2e1704b774f98a680b83bb6f0684fe90c42c96",
+      "consequence": "Client unit tests and browser fixtures can pass while the real internal HTTP boundary still rejects these identifiers. No E2E @ compatibility claim is justified by the UI suite alone.",
+      "required_evidence": "Independent HTTP entry/projection regression and privacy-preserving resolution, including unchanged generic source/provider identifiers; owned by root/qual_profiles.",
+      "resolution": {
+        "source": "karta/src/claude/consultation-host.ts",
+        "sha256": "51c2ae0bc5b6a1432541fe9bd2f69c4f2669e8a195d331d6d81d580f316f26b4",
+        "proof": "../profiles/model-revision-green-receipt.json",
+        "independent_review": "../profiles/native-model-filter-independent-review.json",
+        "interpretation": "No admission or budget reservation for the incompatible main/reviewer; no widened HTTP/Edge/usage/SQL identifiers. This is not E2E support for @."
+      }
+    }
+  ],
+  "residual_limits": [
+    "The 24 new browser scenarios have not yet executed successfully; CI browser validation remains owned by root.",
+    "The two queued catalogue responses intentionally depend on current React StrictMode double effect behavior. This matches the existing harness; no timing failure is proven without a runnable browser.",
+    "The browser response fixture does not exercise internal KARTA HTTP or native provider APIs, nor real authentication, model reasoning quality or invoices.",
+    "Usage identifier minimization in karta/src/claude/usage.ts is not modified or qualified by this UI change."
+  ],
+  "tests_rerun": false,
+  "product_modified": false,
+  "release_suite_modified": false,
+  "review_files_written": [
+    "qa/iao-release-qualification-20261123/ui/independent-review.json"
+  ],
+  "ui_report_clarification": "qual_ui updated inventory.md and qualification.json after this review to say PASS client only; internal HTTP @ incompatibility remains PARTIEL and E2E compatibility is not proven by simulated HTTP.",
+  "followup_reviewed_at": "2026-11-23T21:08:06.406221+00:00"
+}

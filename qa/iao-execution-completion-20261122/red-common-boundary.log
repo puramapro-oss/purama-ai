@@ -1,0 +1,65 @@
+Check tests/social-connection/connection.test.ts
+running 36 tests from ./tests/social-connection/connection.test.ts
+state binds the user, platform and profile with a random one-use nonce ... ok (3ms)
+expired/future state and short secrets cannot authorize a callback ... ok (934µs)
+authorized flow creates one stable profile, verifies external identity and binds once ... ok (3ms)
+callback refuses another profile before provider reads or writes ... ok (841µs)
+callback refuses another platform before provider reads or writes ... ok (537µs)
+callback refuses missing account before provider reads or writes ... ok (789µs)
+callback refuses duplicate account param before provider reads or writes ... ok (540µs)
+valid HMAC without registered intent does not authorize writes ... ok (697µs)
+provider account/profile mismatch or disconnected account never binds ... ok (2ms)
+a superseded or cancelled intent cannot bind; callback errors are sanitized ... ok (1ms)
+uncertain creation is reconciled by a read, without a repeated POST ... ok (650µs)
+a racing successful callback is never reported as cancelled after a zero-row update ... ok (642µs)
+concurrent initial requests claim profile creation once ... ok (323µs)
+database failure does not consume the intent or claim successful binding ... ok (715µs)
+connect HTTP gates method/origin/authentication before privileged dependencies ... ok (8ms)
+callback HTTP rejects forged state before privileged client and avoids false success on replay ... ok (1ms)
+schema selection preserves purama_ai and rejects silent fallbacks ... ok (285µs)
+real provider adapter verifies identity from authenticated account response ... ok (4ms)
+provider refuses foreign profiles, duplicate IDs and incomplete cursor pages ... ok (1ms)
+absence is returned only after an explicit complete final cursor page ... ok (2ms)
+provider follows bounded cursor pagination and normalizes platform names ... ok (1ms)
+account reconnect and enable flags are reflected in publishability ... ok (715µs)
+profile POST uses stable idempotency and rejects contradictory profile evidence ... ok (956µs)
+OAuth URL uses documented camelCase profileId and redirect_url; insecure URLs fail ... ok (926µs)
+provider deadline: non-cooperative fetch rejects once and discards a late response ... ok (20ms)
+provider deadline: a body without EOF is cancelled without confirming an account ... ok (16ms)
+provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation ... ok (963µs)
+provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit ... ok (4ms)
+provider byte cap: a valid response exactly at the byte limit remains accepted ... ok (6ms)
+provider deadline: headers and body share one budget ... ok (154ms)
+provider deadline: invalid timeout configuration is rejected before any transport ... ok (510µs)
+provider HTTP refusal cleans its unread body and preserves public error classification ... ok (822µs)
+provider deadline: timed-out profile creation stays uncertain and cannot issue another POST ... ok (17ms)
+provider deadline: a late account verification never completes the OAuth binding ... ok (17ms)
+provider deadline: transport respects the reader's earlier absolute boundary ... FAILED (1ms)
+provider deadline: parsing respects the reader's earlier absolute boundary ... FAILED (630µs)
+
+ ERRORS
+
+provider deadline: transport respects the reader's earlier absolute boundary => ./tests/social-connection/connection.test.ts:489:8
+error: AssertionError: The validation function is expected to return "true". Received false
+
+Caught error:
+
+SocialProviderError: provider_billing_required
+      await assert.rejects(() => provider.listAccounts(profileId), error =>
+      ^
+    at async file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:505:7
+
+provider deadline: parsing respects the reader's earlier absolute boundary => ./tests/social-connection/connection.test.ts:489:8
+error: AssertionError: Missing expected rejection.
+      await assert.rejects(() => provider.listAccounts(profileId), error =>
+      ^
+    at async file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:505:7
+
+ FAILURES
+
+provider deadline: transport respects the reader's earlier absolute boundary => ./tests/social-connection/connection.test.ts:489:8
+provider deadline: parsing respects the reader's earlier absolute boundary => ./tests/social-connection/connection.test.ts:489:8
+
+FAILED | 34 passed | 2 failed (292ms)
+
+error: Test failed

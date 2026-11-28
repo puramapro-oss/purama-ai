@@ -1,0 +1,149 @@
+{
+  "status": "PASS",
+  "received_remote": "cbd97aa0bc2838d84d9af4e43480c38973c96098",
+  "received_tree": "d74f53b9ce500d73d39df962779c2669e7fb77cb",
+  "received_local": "bc3fda84b7cc1536bc05ec2a763520bee9c271cf",
+  "file_count": 27,
+  "all_received_blob_hashes_verified": true,
+  "overlap_mobile": false,
+  "overlap_mobile_native_workflow": false,
+  "working_tree_preserved_from": "/tmp/iao-quality-0414-p1it5pwv/repo",
+  "metadata_isolation_reason": "Shared workspace briefly ran out of disk space while writing the worktree index. A separate Git checkout with its own writable metadata received the exact27upstreamblobs; previous worktree and original repository were preserved. No unrelated files/cache were removed.",
+  "received_files": [
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "sha": "1145449f227b8e0e283bd66f7dc2da7c7a72c957",
+      "status": "modified"
+    },
+    {
+      "path": "docs/iao-private-results.md",
+      "sha": "55179d94f313c0447a058867029156ef5c32bb60",
+      "status": "modified"
+    },
+    {
+      "path": "karta/migrations/037_resolution_unicode_lengths.sql",
+      "sha": "7b19ea9398ec13130eb6d1176a967547252a118a",
+      "status": "added"
+    },
+    {
+      "path": "karta/src/engine/resolution-result-projection.ts",
+      "sha": "df23e22e0017b444618365a1d80b8ed750502d5b",
+      "status": "modified"
+    },
+    {
+      "path": "karta/src/knowledge/private-result-view.ts",
+      "sha": "a2adaae377e080fade6f80250c63ed67655b04c9",
+      "status": "modified"
+    },
+    {
+      "path": "karta/src/lib/resolution-qualification.ts",
+      "sha": "3dd0b5afd50d61f2444222d8191c64106bc32b7e",
+      "status": "modified"
+    },
+    {
+      "path": "karta/test/privateToolResults.native.mjs",
+      "sha": "aa38f67b76f4f2e3dc8a479ebd3c87b23b17837d",
+      "status": "modified"
+    },
+    {
+      "path": "karta/test/privateToolResultsSql.test.ts",
+      "sha": "f1fee971f5541672236a5c15530beba748362a3a",
+      "status": "modified"
+    },
+    {
+      "path": "karta/test/resolutionPrivateResults.test.ts",
+      "sha": "79a2cfcbabbd30799e7464531e743580889fc4f1",
+      "status": "modified"
+    },
+    {
+      "path": "karta/test/resolutionQualification.test.ts",
+      "sha": "50d7424044556187faaa59481e65ecb92474ad74",
+      "status": "modified"
+    },
+    {
+      "path": "package.json",
+      "sha": "adc8cb1c22a1cc8303a8f7b18281c906c13c0b80",
+      "status": "modified"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/README.md",
+      "sha": "918db17d93e54b5862778515b9a98e498f0bdbd0",
+      "status": "modified"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/continuity-verification-20261126.json",
+      "sha": "dc33c1810d800ded57cd67ec3c3930cb8bf1490a",
+      "status": "added"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/deployment-readiness-followup-20261126.json",
+      "sha": "a3917fc35dede0c80d235567024907acdede9ba3",
+      "status": "added"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/edge-package-check.json",
+      "sha": "0ae5f80f890f1c62fdae4c0ab9029b9e30d51c8c",
+      "status": "added"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/edge-package-check.mjs",
+      "sha": "535044afbfb577ac6ff6343441616b4b0a7d44ef",
+      "status": "added"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/private-resolution-roundtrip.json",
+      "sha": "74f9fe1c9e76cdf8831d5da8dd49e991f0ab16ed",
+      "status": "modified"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/private-resolution-roundtrip.mjs",
+      "sha": "c5480e2114f21656e4fc486fd6cc67e1f9628496",
+      "status": "modified"
+    },
+    {
+      "path": "qa/resolution-qualification-20261125/scope.json",
+      "sha": "6bfd247cb8e4935b18f10f228c7e16d894a69a8c",
+      "status": "modified"
+    },
+    {
+      "path": "src/hooks/useCreatorAgentKarta.trigger.test.tsx",
+      "sha": "e30b936819c5c3da4be8eae8aba1a8787b463bfa",
+      "status": "added"
+    },
+    {
+      "path": "src/hooks/useCreatorAgentKarta.ts",
+      "sha": "71c8821fc29f0a6e3c667d48fcf17145682e4b3a",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/CreatorAgentDetail.execution.test.tsx",
+      "sha": "bc72f972e4b1e66dbca52ae3f728fff048e445f5",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/CreatorAgentDetail.tsx",
+      "sha": "853f4bb42ccac5a360f2ce8ede25210b6fb4e6d8",
+      "status": "modified"
+    },
+    {
+      "path": "supabase/functions/karta-trigger-custom/index.ts",
+      "sha": "ee661d0e5058ebb1fc6b2e65fc98b22116a2d532",
+      "status": "modified"
+    },
+    {
+      "path": "tests/helpers/custom-trigger-harness.mjs",
+      "sha": "05294f897ce94078f4a01d322b59d0f164265994",
+      "status": "added"
+    },
+    {
+      "path": "tests/karta-trigger-custom.test.mjs",
+      "sha": "26964171b39092643dbb4a48f3b7c02cc116b58e",
+      "status": "added"
+    },
+    {
+      "path": "tests/quality/creator-agent-trigger.spec.ts",
+      "sha": "f327d745359cfd295aa4d78f2f9f480916a9ac78",
+      "status": "added"
+    }
+  ]
+}

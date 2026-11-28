@@ -1,0 +1,19 @@
+✔ rejects isolated continuation UTF-8 instead of silently replacing it (5.269ms)
+✔ rejects truncated sequence UTF-8 instead of silently replacing it (2.298453ms)
+✔ rejects overlong sequence UTF-8 instead of silently replacing it (0.731642ms)
+✔ accepts valid Unicode split inside a multibyte sequence (1.46081ms)
+✔ preserves exact byte cap at maximum + 0 (9.359275ms)
+✔ preserves exact byte cap at maximum + 1 (8.115097ms)
+✔ absolute receipt boundary at 99 milliseconds (1.27842ms)
+✔ absolute receipt boundary at 100 milliseconds (2.768593ms)
+✔ expiry during JSON validation never confirms the receipt (0.820944ms)
+✔ expiry across parsed-response promise handoff never confirms the receipt (0.910455ms)
+✔ cancellation across parsed-response promise handoff remains private and terminal (0.740395ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 188.556026

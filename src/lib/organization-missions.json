@@ -1,0 +1,386 @@
+[
+  {
+    "id": 1,
+    "family": "Commerce et catalogues",
+    "title": "Fiches fabricant prêtes à importer",
+    "acceptance": "Le distributeur importe le lot et confirme les références acceptées."
+  },
+  {
+    "id": 2,
+    "family": "Commerce et catalogues",
+    "title": "Correspondance des références fournisseurs",
+    "acceptance": "L’acheteur valide les correspondances et retrouve une liste des ambiguïtés restantes."
+  },
+  {
+    "id": 3,
+    "family": "Commerce et catalogues",
+    "title": "Entretien des catalogues multisites",
+    "acceptance": "Les points de vente confirment la version reçue et les écarts restants."
+  },
+  {
+    "id": 4,
+    "family": "Commerce et catalogues",
+    "title": "Contrôle des tarifs d’achat",
+    "acceptance": "Chaque écart retenu renvoie au tarif source et à une unité vérifiée."
+  },
+  {
+    "id": 5,
+    "family": "Commerce et catalogues",
+    "title": "Préparation des réassorts",
+    "acceptance": "Le responsable vérifie quantités et contraintes avant décision d’achat."
+  },
+  {
+    "id": 6,
+    "family": "Commerce et catalogues",
+    "title": "Vérification des réceptions",
+    "acceptance": "Le responsable retrouve le bon, la ligne concernée et la quantité en écart."
+  },
+  {
+    "id": 7,
+    "family": "Commerce et catalogues",
+    "title": "Dossiers de litige transport",
+    "acceptance": "Le service logistique vérifie toutes les pièces convenues et réceptionne le dossier complet."
+  },
+  {
+    "id": 8,
+    "family": "Commerce et catalogues",
+    "title": "Diagnostic des retours produits",
+    "acceptance": "L’enseigne retrouve les retours sources et valide la liste des causes retenues."
+  },
+  {
+    "id": 9,
+    "family": "Service client et opérations",
+    "title": "SAV sur les demandes répétitives",
+    "acceptance": "Dossier résolu selon le contrat et absence de réouverture dans le délai convenu."
+  },
+  {
+    "id": 10,
+    "family": "Service client et opérations",
+    "title": "Choix d’une pièce de rechange",
+    "acceptance": "Le technicien valide la référence sur le modèle et la version concernés."
+  },
+  {
+    "id": 11,
+    "family": "Service client et opérations",
+    "title": "Suivi des demandes de devis",
+    "acceptance": "Le client retrouve demande, responsable, étape et date de prochaine action."
+  },
+  {
+    "id": 12,
+    "family": "Service client et opérations",
+    "title": "Maintenance de la base d’assistance",
+    "acceptance": "Le client confirme que les étapes décrites fonctionnent dans la version visée."
+  },
+  {
+    "id": 13,
+    "family": "Service client et opérations",
+    "title": "Replanification des interventions",
+    "acceptance": "Un créneau convenu figure dans l’agenda du client et du technicien."
+  },
+  {
+    "id": 14,
+    "family": "Service client et opérations",
+    "title": "Dossiers d’entrée en relation",
+    "acceptance": "Le gestionnaire valide la complétude du dossier et garde la décision d’ouverture."
+  },
+  {
+    "id": 15,
+    "family": "Service client et opérations",
+    "title": "Rapprochement commande et facture",
+    "acceptance": "La comptabilité retrouve les justificatifs et valide chaque écart signalé."
+  },
+  {
+    "id": 16,
+    "family": "Service client et opérations",
+    "title": "Passation des dossiers entre équipes",
+    "acceptance": "L’équipe entrante accepte la passation et accède aux documents cités."
+  },
+  {
+    "id": 17,
+    "family": "Logiciels et agents IA",
+    "title": "Tests avant changement de modèle",
+    "acceptance": "Les cas convenus sont rejoués et chaque écart est associé à ses deux réponses."
+  },
+  {
+    "id": 18,
+    "family": "Logiciels et agents IA",
+    "title": "Réduction du coût d’un traitement IA",
+    "acceptance": "Le client peut reproduire les coûts et le score qualité sur son jeu témoin."
+  },
+  {
+    "id": 19,
+    "family": "Logiciels et agents IA",
+    "title": "Migration d’un fournisseur d’IA",
+    "acceptance": "Import, cas métier et retour à la version précédente réussissent sur le lot convenu."
+  },
+  {
+    "id": 20,
+    "family": "Logiciels et agents IA",
+    "title": "Recherche privée chez le client",
+    "acceptance": "Un compte autorisé retrouve un dossier témoin et un compte exclu ne le voit pas."
+  },
+  {
+    "id": 21,
+    "family": "Logiciels et agents IA",
+    "title": "Maintenance d’un connecteur métier",
+    "acceptance": "Le lot témoin se synchronise une seule fois et les lignes rejetées sont identifiées."
+  },
+  {
+    "id": 22,
+    "family": "Logiciels et agents IA",
+    "title": "Surveillance des agents métier",
+    "acceptance": "Une panne simulée produit l’alerte convenue et une trace de reprise identifiable."
+  },
+  {
+    "id": 23,
+    "family": "Logiciels et agents IA",
+    "title": "Accès sous licence dans un logiciel tiers",
+    "acceptance": "L’appel autorisé aboutit, l’accès révoqué échoue et le relevé concorde avec le test."
+  },
+  {
+    "id": 24,
+    "family": "Logiciels et agents IA",
+    "title": "Répétition d’une restauration",
+    "acceptance": "Le client retrouve les dossiers témoins et mesure le délai convenu."
+  },
+  {
+    "id": 25,
+    "family": "Savoir et documents",
+    "title": "Réponses sourcées aux équipes",
+    "acceptance": "Chaque réponse renvoie au bon passage ou signale que le manuel est insuffisant."
+  },
+  {
+    "id": 26,
+    "family": "Savoir et documents",
+    "title": "Transmission du savoir d’un expert",
+    "acceptance": "Le successeur réalise les tâches témoins et l’expert valide les corrections."
+  },
+  {
+    "id": 27,
+    "family": "Savoir et documents",
+    "title": "Indexation d’archives numérisées",
+    "acceptance": "Les documents de l’échantillon sont retrouvables et leurs références contrôlées."
+  },
+  {
+    "id": 28,
+    "family": "Savoir et documents",
+    "title": "Parcours de formation à un outil",
+    "acceptance": "Un groupe test effectue les exercices prévus sur la version convenue."
+  },
+  {
+    "id": 29,
+    "family": "Savoir et documents",
+    "title": "Analyse d’impact d’une nouvelle notice",
+    "acceptance": "Les modifications du jeu témoin sont repérées et reliées à leurs deux versions."
+  },
+  {
+    "id": 30,
+    "family": "Savoir et documents",
+    "title": "Dossier de réponse à un appel d’offres",
+    "acceptance": "Chaque exigence convenue renvoie à une pièce actuelle ou à un manque explicite."
+  },
+  {
+    "id": 31,
+    "family": "Savoir et documents",
+    "title": "Inventaire des droits documentaires",
+    "acceptance": "Chaque contenu présenté porte une source de droits et les inconnues sont signalées."
+  },
+  {
+    "id": 32,
+    "family": "Savoir et documents",
+    "title": "Préparation d’une diffusion accessible",
+    "acceptance": "Les contrôles convenus au clavier et au lecteur d’écran passent sur le lot livré."
+  },
+  {
+    "id": 33,
+    "family": "Médias et créations",
+    "title": "Montages verticaux sur rushes d’agence",
+    "acceptance": "L’agence valide les plans, la durée, le son et les exports sur le canal prévu."
+  },
+  {
+    "id": 34,
+    "family": "Médias et créations",
+    "title": "Localisation de vidéos de formation",
+    "acceptance": "Un relecteur de la langue cible valide sens, prononciation et synchronisation."
+  },
+  {
+    "id": 35,
+    "family": "Médias et créations",
+    "title": "Audiodescription d’un catalogue vidéo",
+    "acceptance": "Écoute test avec le public concerné et correction des passages incompris."
+  },
+  {
+    "id": 36,
+    "family": "Médias et créations",
+    "title": "Micro-livres illustrés et sonorisés",
+    "acceptance": "L’éditeur valide le manuscrit, les scènes, la synchro et les droits."
+  },
+  {
+    "id": 37,
+    "family": "Médias et créations",
+    "title": "Prévisualisation de scènes",
+    "acceptance": "Le réalisateur accepte le découpage numéroté et la durée des séquences."
+  },
+  {
+    "id": 38,
+    "family": "Médias et créations",
+    "title": "Licence de séquences originales",
+    "acceptance": "L’acheteur reçoit les fichiers attendus et les pièces établissant les droits."
+  },
+  {
+    "id": 39,
+    "family": "Médias et créations",
+    "title": "Recalage du son après remontage",
+    "acceptance": "Le producteur valide la synchro image-son sur les repères et dans la tolérance convenue."
+  },
+  {
+    "id": 40,
+    "family": "Médias et créations",
+    "title": "Contrôle des livrables audiovisuels",
+    "acceptance": "Les anomalies connues du lot témoin sont signalées avec leur minutage."
+  },
+  {
+    "id": 41,
+    "family": "Réseaux, lieux et événements",
+    "title": "Campagnes locales pour enseignes",
+    "acceptance": "Chaque gérant valide ses informations et le réseau reçoit le relevé de diffusion."
+  },
+  {
+    "id": 42,
+    "family": "Réseaux, lieux et événements",
+    "title": "Licence d’animation locale ANANDA",
+    "acceptance": "Contrat signé avec droits disponibles et kit de l’édition remis à l’exploitant."
+  },
+  {
+    "id": 43,
+    "family": "Réseaux, lieux et événements",
+    "title": "Régie de préparation d’événement",
+    "acceptance": "Chaque poste critique a un responsable et un créneau confirmés avant ouverture."
+  },
+  {
+    "id": 44,
+    "family": "Réseaux, lieux et événements",
+    "title": "Billetterie pour organisateurs tiers",
+    "acceptance": "Le relevé réconcilie ventes, annulations, remboursements et billets utilisés."
+  },
+  {
+    "id": 45,
+    "family": "Réseaux, lieux et événements",
+    "title": "Dossier de réalisation pour sponsors",
+    "acceptance": "Chaque engagement du contrat est relié à une preuve ou à un écart documenté."
+  },
+  {
+    "id": 46,
+    "family": "Réseaux, lieux et événements",
+    "title": "Parcours de découverte sur place",
+    "acceptance": "Le lieu teste chaque étape sur site, vérifie les langues et valide la signalétique."
+  },
+  {
+    "id": 47,
+    "family": "Réseaux, lieux et événements",
+    "title": "Places financées pour un public défini",
+    "acceptance": "La commande rapproche droits ouverts, places utilisées et conditions des reliquats."
+  },
+  {
+    "id": 48,
+    "family": "Réseaux, lieux et événements",
+    "title": "Marché privé de prestataires locaux",
+    "acceptance": "Le commanditaire accepte la mission livrée et la ventilation des paiements."
+  },
+  {
+    "id": 49,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Licences de modèles professionnels",
+    "acceptance": "Le fichier s’ouvre sur l’outil convenu et l’acheteur reçoit la licence."
+  },
+  {
+    "id": 50,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Outils métier de créateurs",
+    "acceptance": "Le jeu d’essai convenu produit le résultat attendu sur la version livrée."
+  },
+  {
+    "id": 51,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Commandes groupées sur cahier des charges",
+    "acceptance": "Chaque acheteur reçoit sa part et valide les éléments convenus."
+  },
+  {
+    "id": 52,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Achats utiles chez un marchand tiers",
+    "acceptance": "Le marchand confirme la vente admissible après la période de retour."
+  },
+  {
+    "id": 53,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Accès financés par un commanditaire",
+    "acceptance": "Le commanditaire reçoit le nombre de droits délivrés et utilisables."
+  },
+  {
+    "id": 54,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Cofondateur IA sur ventes admissibles",
+    "acceptance": "Une vente admissible est encaissée et rapprochée après remises ou remboursements."
+  },
+  {
+    "id": 55,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Qualification de fournisseurs sur mandat",
+    "acceptance": "L’acheteur contrôle les pièces datées et accepte la sélection livrée."
+  },
+  {
+    "id": 56,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Études d’usage financées",
+    "acceptance": "Les sessions admissibles sont attestées et le commanditaire accepte la synthèse."
+  },
+  {
+    "id": 57,
+    "family": "Industrie, terrain et objets",
+    "title": "Consignes terrain hors ligne",
+    "acceptance": "Sur l’appareil convenu, un opérateur retrouve la consigne en mode avion."
+  },
+  {
+    "id": 58,
+    "family": "Industrie, terrain et objets",
+    "title": "Dossier de fin d’intervention",
+    "acceptance": "Le responsable accepte le dossier complet rattaché au bon équipement."
+  },
+  {
+    "id": 59,
+    "family": "Industrie, terrain et objets",
+    "title": "Réduction des chutes de matière",
+    "acceptance": "L’atelier repèse les chutes sur un lot comparable et valide l’écart mesuré."
+  },
+  {
+    "id": 60,
+    "family": "Industrie, terrain et objets",
+    "title": "Inventaire contradictoire d’un parc",
+    "acceptance": "Le client confirme les biens vus, les absents et les écarts non résolus."
+  },
+  {
+    "id": 61,
+    "family": "Industrie, terrain et objets",
+    "title": "Suivi des emballages consignés",
+    "acceptance": "Le partenaire confirme les retours et les avoirs associés aux références rapprochées."
+  },
+  {
+    "id": 62,
+    "family": "Industrie, terrain et objets",
+    "title": "Vente de kits MUKTI et accessoires",
+    "acceptance": "Le kit livré correspond à la commande et aux contrôles convenus."
+  },
+  {
+    "id": 63,
+    "family": "Industrie, terrain et objets",
+    "title": "Remise en état d’équipements MUKTI",
+    "acceptance": "Le matériel passe les contrôles prévus et le client accepte la restitution."
+  },
+  {
+    "id": 64,
+    "family": "Industrie, terrain et objets",
+    "title": "Reconditionnement pour un parc de prêt",
+    "acceptance": "Le client accepte l’état de chaque unité et les justificatifs d’effacement."
+  }
+]

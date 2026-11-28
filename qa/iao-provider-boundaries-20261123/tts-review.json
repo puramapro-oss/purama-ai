@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-23",
+  "reviewer": "/root/iao_offline_mobile_sources_20261123",
+  "status": "PASS",
+  "scope": [
+    "supabase/functions/voice-tts/index.ts",
+    "tests/voice-tts-boundaries.test.mjs",
+    "Lecture des helpers request-body.ts et request-deadline.ts",
+    "Lecture du SDK Supabase 2.91.0 installé et vérification de son adaptateur HTTP"
+  ],
+  "finding": {
+    "id": "TTS-AUTH-SDK-LOG-01",
+    "status": "CORRIGE",
+    "description": "Le SDK auth-js journalisait l'erreur réseau brute reçue par global.fetch avant la neutralisation du handler. Le premier harness simulait getUser sans exercer cet adaptateur.",
+    "reproduction": "Vrai handler et vrai SDK 2.91.0, transport entièrement simulé : le marqueur privé apparaissait dans console.error de Node, malgré la réponse HTTP neutre.",
+    "fix_reviewed": "Le try englobe new Request, fetch et lecture du corps ; le catch relance uniquement Authentication transport unavailable, sans cause ni message original. La deadline externe conserve la priorité de 408/504.",
+    "red_evidence": "auth-sdk-red.txt",
+    "red_result": { "tests": 5, "passed": 4, "failed": 1, "exit_code": 1 }
+  },
+  "identity_finding": {
+    "id": "TTS-AUTH-IDENTITY-02",
+    "status": "CORRIGE",
+    "description": "Le contrôle de présence de user acceptait les objets truthy fournis par le SDK pour une réponse HTTP 200 sans identifiant valide.",
+    "cases": [{}, { "id": null }, { "id": "" }],
+    "reproduction": "Avec le vrai SDK 2.91.0 et un transport simulé, chacun des trois cas produisait une réponse TTS HTTP 200 et une requête de génération.",
+    "red_evidence": "auth-identity-red.txt",
+    "red_result": { "tests": 3, "passed": 0, "failed": 3, "exit_code": 1 },
+    "fix_reviewed": "Avant lecture de l'entrée et génération, le handler exige un id de type string et non vide après trim ; sinon il renvoie 401.",
+    "green_cases_result": "Les trois cas renvoient maintenant HTTP 401 avec zéro requête de génération.",
+    "green_evidence": "tts-identity-green.txt"
+  },
+  "verified": [
+    "Budget partagé de 30 secondes entre authentification, entrée, transport et lecture audio.",
+    "Annulation client et expiration pendant l'authentification réelle ; réponse HTTP tardive annulée sans génération.",
+    "Contrat GET getUser réel, headers attendus et réponse reconstruite compatible avec le SDK.",
+    "Identité vide ou malformée refusée avant génération, même si le SDK retourne un objet user truthy.",
+    "OpenAI response_format=mp3 ; ElevenLabs output_format explicite et voice_settings.speed ; voix et types validés ; aucun repli fournisseur implicite.",
+    "Entrée bornée à 32768 octets, audio décodé borné à 8 Mio, refus des corps vides et des types inattendus, nettoyage non bloquant.",
+    "Diagnostics neutres, no-store sur réponses audio/JSON, absence de retry implicite du fournisseur TTS."
+  ],
+  "green_evidence": {
+    "file": "tts-identity-green.txt",
+    "previous_file": "tts-green.txt",
+    "executed_by": "/root",
+    "reviewer_read_result": true,
+    "tests": 82,
+    "passed": 82,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "duration_ms": 723.901852
+  },
+  "limitations": [
+    "Aucun appel réel à Supabase, OpenAI ou ElevenLabs ; tous les transports des tests sont simulés.",
+    "Runtime Deno natif non disponible localement ; validation native confiée par root à la CI.",
+    "Le contrôle du corps audio porte sur transport, taille et type MIME ; il ne prouve pas sa décodabilité MP3 ni sa qualité perceptuelle.",
+    "Cette revue ne constitue pas une certification générale de sécurité ou de disponibilité."
+  ]
+}

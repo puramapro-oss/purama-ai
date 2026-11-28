@@ -1,0 +1,34 @@
+Changes: 71 files, 430 symbols
+Affected processes: 212
+Risk level: critical
+
+Changed symbols:
+  Section Résultats privés de recherche, de synthèse et de simulation → docs/iao-private-results.md
+  Section Livraison et validation → docs/iao-private-results.md
+  Section Extension du 25 novembre 2026 : synthèse des lectures programmatiques → docs/iao-private-results.md
+  Function execution-profile.ts → karta/src/claude/execution-profile.ts
+  Interface ModelExecutionCapability → karta/src/claude/execution-profile.ts
+  Property programmaticToolCalling → karta/src/claude/execution-profile.ts
+  Function normalizeModelCatalog → karta/src/claude/execution-profile.ts
+  Function loadAnthropicModelCatalog → karta/src/claude/model-catalog.ts
+  Const PROGRAMMATIC_CODE_VERSION → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_CALLS → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_TOTAL_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_HISTORY_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_RESPONSE_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_CONTENT_BLOCKS → karta/src/claude/programmatic.ts
+... and 415 more
+
+Affected execution flows:
+  • HandleRequest → Entries (10 steps) — changed: map
+  • HandleRequest → Entries (10 steps) — changed: map
+  • HandleRequest → Query (8 steps) — changed: map
+  • HandleRequest → From (8 steps) — changed: map
+  • Ecosystem → From (8 steps) — changed: map
+  • #prepare → Trap (7 steps) — changed: trap
+  • LoadSelectedPrivateToolResults → Record (4 steps) — changed: parsePrivateToolResult, validProgrammaticReport
+  • RunProgrammaticReads → Invalid (3 steps) — changed: runProgrammaticReads, containerFrom, invalid
+  • RunProgrammaticReads → Identifier (3 steps) — changed: runProgrammaticReads
+  • RunProgrammaticReads → TokenCount (3 steps) — changed: runProgrammaticReads
+... and 202 more

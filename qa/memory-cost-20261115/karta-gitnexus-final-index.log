@@ -1,0 +1,38 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2K
+Index lock: OS socket lock unavailable here — using the file lock.
+[2K
+  Skipped 2 large files (>512KB, likely generated/vendored)
+[2K
+  - qa/iao-runtime-finalization-20261110/verification.json
+[2K
+  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K
+  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+{"level":40,"time":1794752431906,"name":"gitnexus","msg":"[scope-resolution] 3041 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (javascript/typescript), children (typescript), command (typescript), data (javascript/typescript), env (javascript/typescript), errors (javascript/typescript), label (javascript/typescript), lines (typescript), messages (javascript/typescript), pending (javascript/kotlin/swift/typescript), …"}
+{"level":40,"time":1794752432374,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1791,"entryPointsUnexplored":0,"walksCutByBudget":40,"tracesDepthCapped":0,"calleesDropped":5655,"processesDropped":0},"msg":"[processes] 561 flows reported, but whole flows are MISSING: 1791 of 1991 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 5655 callee(s) skipped at maxBranching, 40 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+Rebuilt the graph and FTS while reusing cached parser output for 997 file(s) (parse cache 99+1.6.12). For same-version capture/query development changes, increment SCHEMA_BUMP in src/storage/parse-cache.ts to invalidate parser output.
+{"level":40,"time":1794752446668,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. extension install for fts failed with exit code 1: Error: IO exception: Failed to download extension: fts at URL https://extension.ladybugdb.com/v0.18.1/linux_amd64/fts/libfts.lbug_extension (ERROR: Failed to read connection); LOAD fts had failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+[2K
+FTS extension unavailable; skipping search-index creation. Full-text/BM25 search will be disabled until the LadybugDB FTS extension is installed once with network access (GITNEXUS_LBUG_EXTENSION_INSTALL=auto) or pre-installed for offline use. Run `gitnexus doctor` for details.
+{"level":30,"time":1794752446818,"name":"gitnexus","msg":"name-fallback resolution: 284 call sites (68 distinct caller-file/name pairs), 691 refused as impossible (guessed/refused by language: javascript 279/691, typescript 5/0)"}
+{"level":40,"time":1794752447844,"name":"gitnexus","msg":"Preserved customized skill /workspace/scratch/dbbe217d403a/purama-ai/.claude/skills/gitnexus/gitnexus-exploring/SKILL.md; delete the file to refresh from the bundled template, or pass --skip-skills to skip skill install."}
+{"level":40,"time":1794752447846,"name":"gitnexus","msg":"Preserved customized skill /workspace/scratch/dbbe217d403a/purama-ai/.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md; delete the file to refresh from the bundled template, or pass --skip-skills to skip skill install."}
+{"level":40,"time":1794752447848,"name":"gitnexus","msg":"Preserved customized skill /workspace/scratch/dbbe217d403a/purama-ai/.claude/skills/gitnexus/gitnexus-debugging/SKILL.md; delete the file to refresh from the bundled template, or pass --skip-skills to skip skill install."}
+{"level":40,"time":1794752447852,"name":"gitnexus","msg":"Preserved customized skill /workspace/scratch/dbbe217d403a/purama-ai/.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md; delete the file to refresh from the bundled template, or pass --skip-skills to skip skill install."}
+{"level":40,"time":1794752447858,"name":"gitnexus","msg":"Preserved customized skill /workspace/scratch/dbbe217d403a/purama-ai/.claude/skills/gitnexus/gitnexus-cli/SKILL.md; delete the file to refresh from the bundled template, or pass --skip-skills to skip skill install."}
+[2K
+Parse cache: pruned 4 stale chunk entries
+
+  Repository indexed successfully (32.3s)
+
+  26,613 nodes | 81,395 edges | 1157 clusters | 561 flows
+  /workspace/scratch/dbbe217d403a/purama-ai
+
+  Warning: full-text/BM25 search is disabled — the LadybugDB FTS extension was unavailable.
+  Install it once with network access (GITNEXUS_LBUG_EXTENSION_INSTALL=auto), then run
+  `gitnexus analyze --repair-fts` to build the search indexes. Run `gitnexus doctor` for details.

@@ -1,0 +1,235 @@
+{
+  "base_commit": "5df79859548d8732317bc89f9ca837435beaccf2",
+  "branch": "fix/iao-quality-reliability-20261123",
+  "target_branch": "audit/reliability-oauth-20261110",
+  "local_status": "PASS for executed local gates; browser assertions require CI",
+  "source_sha256": {
+    "karta/src/claude/consultation-host.ts": "7e8aa5e90659c1634059b6de235251f72c92c9a9e4ab097be1c21b6cdcbe7b27",
+    "karta/src/claude/consultation.ts": "fb83034ff0c1af53539402e91d6ca7594cafb89ec71ce4ac68f7b4fc2c2dedad",
+    "karta/test/consultationHost.test.ts": "ed18358d073fe55dd8bbafe3c06d35551c9054779bee89707c2f3c1811fcd48b",
+    "karta/test/modelConsultation.test.ts": "06cdbd0a353149db36bcc76b102a0000e346647b6c6f5dca3b66a1b2fd31c98c",
+    "karta/test/consultationTransport.test.ts": "75f1e0a031a83c8a667ed47e67b3dc085a9d25a2c068ee9b419991153445c9b6",
+    "src/components/ChatbotWidget.tsx": "9559c55565b88393e933975d4215becc04e25a8afa57b035e4512e21cca7c888",
+    "src/components/ChatbotWidget.consultation.test.tsx": "87744028d240d6cd46094414203bc4d0ff879bd65630e617779181c8bceeda84",
+    "tests/chat/lifecycle.spec.ts": "86f63975f628913fe3e435c006c75c397a3aca375008e1d38215cc9bf804f824",
+    "vercel.json": "f0c0e1e276a6be3ee205a851372461fb96793bc28362668edde58c71d938bbdb"
+  },
+  "checks": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "site-typecheck.log"
+    },
+    {
+      "command": [
+        "./node_modules/.bin/eslint",
+        "src/components/ChatbotWidget.tsx",
+        "src/components/ChatbotWidget.consultation.test.tsx",
+        "tests/chat/lifecycle.spec.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "site-lint.log"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "karta",
+      "exit_code": 0,
+      "log": "karta-build.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": ".",
+      "exit_code": 0
+    }
+  ],
+  "detail_manifests": [
+    "catalog-policy-manifest.json",
+    "conclusion-red.json",
+    "conclusion-green.json",
+    "conclusion-review.json",
+    "chat-manifest.json",
+    "chat-independent-review.json"
+  ],
+  "test_counts": {
+    "chat_react": 29,
+    "chat_new_react_included": 18,
+    "catalog_targeted": 60,
+    "conclusion_targeted": 102,
+    "browser_collected_not_executed_locally": 24
+  },
+  "ci": "The pull request checks are the authoritative record for CI execution and tested SHA. No CI result is asserted in this pre-publication artifact.",
+  "deployment": "Disabled for this branch in vercel.json; no production deployment performed.",
+  "limitations": [
+    "No authenticated external model calls or live production database qualification.",
+    "Chat identity persists in the mounted widget only; no reload/crash recovery or conversation-creation idempotence added.",
+    "An assistant write still indeterminate after readback is reported; there is no new persistent retry queue.",
+    "Previously stored malformed consultation results are not migrated.",
+    "Explicit model retries can be charged; no exactly-once inference claim."
+  ],
+  "evidence": {
+    "README.md": {
+      "bytes": 5740,
+      "sha256": "c4580afa89172b7b2b2ebe0fc87fa1202e313d41ddfad8db50f5642ebc8cc40e"
+    },
+    "catalog-policy-green.log": {
+      "bytes": 220,
+      "sha256": "d25a48dd9e04fa86d154833502f4b0213db8aca8d7a15d33afdc106426321b5b"
+    },
+    "catalog-policy-impacts.log": {
+      "bytes": 21097,
+      "sha256": "195977d9a909a62df706ef82df624cd6302020a5c6c05dd3cf1b2bea70f64ea4"
+    },
+    "catalog-policy-manifest.json": {
+      "bytes": 3912,
+      "sha256": "d994aa720205872eb989cb5c661732ad7e83f2ef619d658dbe37ed9d5f39e326"
+    },
+    "catalog-policy-native-red.log": {
+      "bytes": 950,
+      "sha256": "a30218991980c731d70b45fdb50f9ebb2eb9ffc3a0862207dc8ca468423f30f0"
+    },
+    "catalog-policy-red.log": {
+      "bytes": 2281,
+      "sha256": "524e2fb74db2ee5160941b9521c6629bbd17cda5613f690abcdb1b32ac06e5a8"
+    },
+    "catalog-policy-typecheck.log": {
+      "bytes": 214,
+      "sha256": "1ec69788b3cdadf508e02dfbc57a867f46cb26ef267d4d55cee0799fb6ce3ce8"
+    },
+    "chat-browser-collection.log": {
+      "bytes": 2438,
+      "sha256": "da900b043892b500de3d9c3759d293ccae9d3e934cbafd5ae8872c1042cd0258"
+    },
+    "chat-browser-native.log": {
+      "bytes": 5274,
+      "sha256": "ec87ae7df86e90aee90497e1fe46f8b6ed8fce11330feb0aafb11e01f115d09b"
+    },
+    "chat-browser-types-green.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "chat-browser-types.log": {
+      "bytes": 974,
+      "sha256": "b50263b70cd6c53e846ecbfd8799290d33291e3e2b864fd0a2e13d44b8220083"
+    },
+    "chat-definitive-throw-red.log": {
+      "bytes": 11758,
+      "sha256": "e9272e85f77133a2968328bdfe7e2f378774658b204199623cf4cdda998dafa7"
+    },
+    "chat-green-final.log": {
+      "bytes": 5678,
+      "sha256": "c3ad02b6ffffd078ae845258eb138e053825bc7ecf134902ec83aead7d957398"
+    },
+    "chat-green-initial.log": {
+      "bytes": 3002,
+      "sha256": "0551091b8ab07795191e6693f2db5b4da394ff44c6461ada0ba8c45b7f4581e0"
+    },
+    "chat-green.log": {
+      "bytes": 5160,
+      "sha256": "8ee6380d071cf306bbf87decf153cd3e385674d7e45417ba429849d0912a89b3"
+    },
+    "chat-impacts-preedit.json": {
+      "bytes": 11018,
+      "sha256": "f084d88238b698dcb173a57190e86c06e1b07468b6f9a02e60f35a18e27d1546"
+    },
+    "chat-independent-review.json": {
+      "bytes": 3816,
+      "sha256": "e8c43d966614a3de63b2ef725faa6ddfbe4229d5c6f9d3122b59b2eed3aaf0f2"
+    },
+    "chat-manifest.json": {
+      "bytes": 6560,
+      "sha256": "11d6f37dd11153bee7e4761ae33cf2b4e76c8d24530eaf7492ef4afffd4c9fb4"
+    },
+    "chat-red.log": {
+      "bytes": 5755,
+      "sha256": "909008734b301ac30e030ba33d2dd575e70e7e84a00e585fb5eacd28e0b62ec9"
+    },
+    "conclusion-diff-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "conclusion-green.json": {
+      "bytes": 909,
+      "sha256": "e688df9d3ddb6a08809ccb79d127205808999c37a093f94844a2399e38063cac"
+    },
+    "conclusion-green.log": {
+      "bytes": 15796,
+      "sha256": "4c81cb3a48a71cb81a66c0220d0eb97c6e11412508bd022e8738e483533f121c"
+    },
+    "conclusion-impact.json": {
+      "bytes": 777,
+      "sha256": "f3869360e5eff70cf60c0488dcdb4e4c87fbc714c61cf86e335434a8962e8421"
+    },
+    "conclusion-impact.log": {
+      "bytes": 4374,
+      "sha256": "d45446afcdbb4856b5dd98db367f995208facd2819eb7fd12222021ba88a34d8"
+    },
+    "conclusion-red.json": {
+      "bytes": 692,
+      "sha256": "83c66a143ef44a6a3bffac5225236028a48b19311047beac850a379396d0f814"
+    },
+    "conclusion-red.log": {
+      "bytes": 21719,
+      "sha256": "41cfc7f455524d50965af0cf2794d58cd33572a5dde1d00701f0ec7cc3dd70e9"
+    },
+    "conclusion-review.json": {
+      "bytes": 1128,
+      "sha256": "4d2c0ce9d034abf43f35fc2474100212d5a05915908d64f8b271b9a05a2c032e"
+    },
+    "gitnexus-compare-main.txt": {
+      "bytes": 3030,
+      "sha256": "3b78861c6876f88320ff584a6bd01bad5ae73ac5e02aaf60fb01c699813b4f9e"
+    },
+    "gitnexus-receipt.json": {
+      "bytes": 955,
+      "sha256": "1b7779981a85e06747f415a8c16ee32c6dfeeca67950aff9e30f23b6f0e078a5"
+    },
+    "gitnexus-staged.txt": {
+      "bytes": 1484,
+      "sha256": "96baa7499d9fd3f5345aad3501278a2a12247523c9203a32ecba8719e425b919"
+    },
+    "karta-build.log": {
+      "bytes": 207,
+      "sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05"
+    },
+    "raw-terminal-output.json": {
+      "bytes": 113993,
+      "sha256": "450dcda52f192f3c20cb0c7949160d230125adb94f6847d12e6888c71d5304bc"
+    },
+    "site-lint.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "site-typecheck.log": {
+      "bytes": 226,
+      "sha256": "c513767613fcb91a791f33763c943a7559174c3f440e4bb1f488608c75f2cbae"
+    },
+    "terminal-output-normalization.json": {
+      "bytes": 5795,
+      "sha256": "947593a3a76789d06e8a1d2ebc2b65bf6a34736f650ed0c3f15a78b2a70c264a"
+    }
+  },
+  "gitnexus": {
+    "staged": "LOW",
+    "compare_main": "CRITICAL",
+    "compare_main_historical_files": 2310,
+    "compare_main_symbols": 21307,
+    "compare_main_processes": 541,
+    "record": "gitnexus-receipt.json",
+    "specific_catalog_impact": "HIGH",
+    "limitations": "FTS unavailable; indexed flows are lower bounds supplemented by source review."
+  }
+}

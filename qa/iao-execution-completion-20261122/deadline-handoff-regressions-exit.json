@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "npm",
+    "test",
+    "--",
+    "test/iao-facade.test.ts",
+    "test/localComputeFabricCancellation.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/apiIaoIntegration.test.ts",
+    "--maxWorkers=1"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 1
+}

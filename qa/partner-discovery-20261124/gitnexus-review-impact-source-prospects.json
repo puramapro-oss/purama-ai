@@ -1,0 +1,40 @@
+{
+  "target": {
+    "id": "Function:supabase/functions/partner-find-prospects/index.ts:sourcedProspects",
+    "name": "sourcedProspects",
+    "type": "Function",
+    "filePath": "supabase/functions/partner-find-prospects/index.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:supabase/functions/partner-find-prospects/index.ts",
+        "name": "index.ts",
+        "filePath": "supabase/functions/partner-find-prospects/index.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

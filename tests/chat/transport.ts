@@ -1,5 +1,5 @@
-export type Plan = { hold?: boolean; stream?: boolean; text?: string; status?: number; json?: unknown };
-export type Call = { key: string; body: Record<string, unknown>; url: string; aborted: boolean };
+export type Plan = { hold?: boolean; stream?: boolean; text?: string; status?: number; json?: unknown; headers?: Record<string, string> };
+export type Call = { key: string; body: Record<string, unknown>; url: string; method: string; retryCount: number; aborted: boolean };
 type Identity = { id: string; email: string } | null;
 export const harness = {
   calls: [] as Call[], plans: {} as Record<string, Plan[]>,
@@ -17,7 +17,8 @@ window.fetch = async (input, init) => {
   const key = url.includes('/functions/v1/') ? url.split('/').pop()!
     : url.includes('/chat_conversations') ? method === 'POST' ? 'create' : 'history'
       : url.includes('/chat_messages') ? method === 'POST' ? 'write' : 'messages' : 'other';
-  const call: Call = { key, body, url, aborted: false }; harness.calls.push(call);
+  const retryCount = Number(new Headers(init?.headers).get('X-Retry-Count') ?? '0');
+  const call: Call = { key, body, url, method, retryCount, aborted: false }; harness.calls.push(call);
   const signal = init?.signal;
   signal?.addEventListener('abort', () => { call.aborted = true; }, { once: true });
   const defaultPlan = (): Plan => {
@@ -28,16 +29,16 @@ window.fetch = async (input, init) => {
     return { json: [] };
   };
   const makeResponse = (plan: Plan) => {
-    if (plan.status && plan.status >= 400) return new Response(JSON.stringify(plan.json ?? { error: 'test failure' }), { status: plan.status });
+    if (plan.status && plan.status >= 400) return new Response(JSON.stringify(plan.json ?? { error: 'test failure' }), { status: plan.status, headers: plan.headers });
     if (key !== 'chatbot' && key !== 'ai-demo') return new Response(JSON.stringify(plan.json ?? []), {
-      status: 200, headers: { 'Content-Type': 'application/json' },
+      status: 200, headers: { 'Content-Type': 'application/json', ...plan.headers },
     });
     const delta = `data: ${JSON.stringify({ choices: [{ delta: { content: plan.text ?? '' } }] })}\n\n`;
-    if (!plan.stream) return new Response(delta + 'data: [DONE]\n\n');
+    if (!plan.stream) return new Response(delta + 'data: [DONE]\n\n', { headers: plan.headers });
     return new Response(new ReadableStream<Uint8Array>({ start(controller) {
       controller.enqueue(new TextEncoder().encode(delta));
       signal?.addEventListener('abort', () => controller.error(new DOMException('Aborted', 'AbortError')), { once: true });
-    } }));
+    } }), { headers: plan.headers });
   };
   const plan = harness.plans[key]?.shift() ?? defaultPlan();
   // Deliberately allow a held fake response to arrive after abort to exercise stale-response guards.

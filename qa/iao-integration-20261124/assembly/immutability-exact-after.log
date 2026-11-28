@@ -1,0 +1,19 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-runtime-before-ncpt9psu
+
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not renew the original lease when the same final receipt is repeated 7ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > ignores a later preview instead of replacing an already completed stale result 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not replace completed work with a later blocked result 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > returns completed stale work unchanged on cancel without signalling an uncertain effect 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > also treats a stale proof-only result as internally completed 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not redeliver a completed stale export through a repeated final callback 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > protects a draining port without renewing the completed lease when it finally returns 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > still cancels genuinely pending work and refines its effect when a valid receipt arrives 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > keeps a preview without a final proof open to its later completion 1ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  02:46:49
+   Duration  297ms (transform 66%, tests 15%, import 9%, setup 5%, worker 4%)
+
+JSON report written to /workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/immutability-exact-after-report.json

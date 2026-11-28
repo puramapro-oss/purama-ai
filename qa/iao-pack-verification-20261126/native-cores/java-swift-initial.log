@@ -1,0 +1,13 @@
+[Reading 6 new lines (total: 6 lines)]
+
+DIGEST_TEST_ROOT /tmp/purama-digest-core-20261126.fa5_jvuz
+SOURCE_SHA256 {"README.md": "22ea9db163628814f03856a7a40db3a78c74e1381438490fabe81b7c52fcb952", "android/build.gradle": "3fde354f0fdb8e2b145fb22dfdb8329e2fcf42220dfc2c90b611286a4ada2d51", "android/src/main/AndroidManifest.xml": "343d5be1ac17cdd45d1a2f2ddc616c509290e655869125a9422a96d88aa66066", "android/src/main/java/expo/modules/puramalocaldigest/PuramaLocalDigestModule.kt": "8a751a907a0c11e9c59f5242db9de4d7c39305a91517c60668c34fab9347cfe0", "android/src/main/java/expo/modules/puramalocaldigest/Sha256Core.java": "fe9e96ba7df11eed26cf99697abf0b9ee153ac7e12b2d41ee5d800737c74f36b", "apple/PuramaLocalDigest.podspec": "cd341ebbc0f84f98dfa0663291b3ca0320eb375a19bee162544057bb369647a1", "apple/PuramaLocalDigestModule.swift": "5a42d10f10665773fcc71ebb95b85c2cdbbb2941a4e4b035c27b5e80faeef93f", "apple/Sha256Core.swift": "7e98f3e5ab5e94d377193d214372b39b08b23c15016b1491cd2943f95535c136", "contract.ts": "6d8279ae013eb413f747dc737e8dd9dc850e844843ed542266a9670b7d20c163", "expo-module.config.json": "2e5a093a4aac9a15ed51011752ab80a13ccb28c49441786efef990d5a47a1c0a", "index.ts": "02be9c8f0b949db3753e75e10aa6ce26fd3227bfcfec39105ae4615e1a13fd40", "package.json": "a869e69010b5281eb15723e9b8def652fecbc61f7dd71be99af154b3bd66a8a9", "tests/Sha256CoreTest.java": "63de35adf324286326e6a954bc2b337a44fc76a61ad2a2527f1323f17c4aad13", "tests/Sha256CoreTests.swift": "5fa350e63036d6943a50a2a47f405e2bfc70b78a4e2a756a6dcd3884dc02432b", "tests/module-contract.test.cjs": "b7b5b0c0884ae61b491f27f2ecff9a7766b9712f4b5814e7368731fcc2a375ed", "tests/run-core-tests.sh": "ae2dbba47470c2faa386f7efadf97ee6a62532db99ff82bee283c723631afa84"}
+PASS Java SHA-256 core: 26 assertions
+<unknown>:0: error: unable to load standard library for target 'arm64-apple-macosx26.0'
+CORE_TEST_EXIT 1
+
+✅ Process completed with exit code 1 (runtime: 33.86s)
+
+
+[executed on device: mac.home (5b532c75-ad8a-421c-8e01-5b2e96c3cecf)]
+

@@ -2,6 +2,11 @@
 // All tables live in the `purama_ai` schema (default of the supabase client).
 import { supabase } from '@/integrations/supabase/client';
 import { parseOutreachResult, type OutreachResult, type OutreachStep } from './partner-outreach-result';
+import { parsePartnerContractResult, type PartnerContractResult } from './partner-contract-result';
+import { parsePartnerDiscoveryResult, readPartnerDiscoveryError } from './partner-discovery-result';
+export { contractFeedback } from './partner-contract-result';
+export { partnerDiscoveryFeedback } from './partner-discovery-result';
+export type { PartnerContractResult, PartnerContractApproval } from './partner-contract-result';
 export { outreachFeedback, outreachStepForStatus } from './partner-outreach-result';
 export type { OutreachResult, OutreachApproval, OutreachStep } from './partner-outreach-result';
 
@@ -19,6 +24,20 @@ export type ProspectStatus =
 
 export type ProspectType =
   | 'influencer' | 'website' | 'association' | 'media' | 'commerce' | 'other';
+
+export type PartnerContactRole = 'unknown' | 'editorial' | 'commercial' | 'creator' | 'venue';
+export type PartnerOutreachProfile = 'legacy' | 'media_affiliate' | 'editorial';
+
+export interface PartnerQualification {
+  profile: PartnerOutreachProfile;
+  role: Exclude<PartnerContactRole, 'unknown'>;
+  source_url: string;
+  country: string;
+  language: string;
+  consent_reference: string;
+  consent_at: string;
+  offer?: { name: string; url: string; summary: string };
+}
 
 export type EmailType =
   | 'outreach' | 'relance_1' | 'relance_2' | 'relance_3'
@@ -42,6 +61,7 @@ export interface PartnerConfig {
   outreach_hours_start: string;
   outreach_hours_end: string;
   outreach_days: string[];
+  outreach_timezone: string;
   relance_1_delay_days: number;
   relance_2_delay_days: number;
   relance_3_delay_days: number;
@@ -57,6 +77,8 @@ export interface PartnerConfig {
   target_languages: string[];
   outreach_tone: string;
   custom_tone_prompt: string | null;
+  outreach_identity_mode?: 'assistant' | 'human_reviewed';
+  media_contract_terms?: Record<string, string>;
   require_approval_new_prospect: boolean;
   require_approval_outreach: boolean;
   require_approval_contract: boolean;
@@ -90,6 +112,10 @@ export interface PartnerProspect {
   has_replied: boolean;
   reply_sentiment: string | null;
   reply_summary: string | null;
+  reply_received_at?: string | null;
+  reply_gmail_message_id?: string | null;
+  reply_gmail_thread_id?: string | null;
+  reply_kind?: 'human' | 'refusal' | 'automatic' | null;
   contract_sent_at: string | null;
   contract_signed_at: string | null;
   contract_url: string | null;
@@ -99,6 +125,17 @@ export interface PartnerProspect {
   tags: string[];
   source: string | null;
   found_by_ai: boolean;
+  contact_role?: PartnerContactRole;
+  contact_evidence?: Record<string, unknown>;
+  outreach_profile?: PartnerOutreachProfile;
+  contact_qualification?: {
+    email?: string; source_url?: string; country?: string; language?: string;
+    verified_at?: string; qualified_by?: string;
+  } | null;
+  email_permission?: {
+    status?: string; email?: string; reference?: string; consented_at?: string; recorded_at?: string;
+  } | null;
+  outreach_offer?: { name?: string; url?: string; summary?: string } | null;
   created_at: string;
   updated_at: string;
 }
@@ -148,6 +185,8 @@ export interface PartnerActive {
   joined_at: string;
   last_activity_at: string | null;
   created_at: string;
+  /** Read-only projection from the linked prospect, never a financial entitlement. */
+  outreach_profile?: PartnerOutreachProfile;
 }
 
 export interface PartnerCommission {
@@ -245,6 +284,7 @@ const DEFAULT_CONFIG: Omit<PartnerConfig, 'user_id'> = {
   outreach_hours_start: '09:00',
   outreach_hours_end: '18:00',
   outreach_days: ['MO', 'TU', 'WE', 'TH', 'FR'],
+  outreach_timezone: 'UTC',
   relance_1_delay_days: 3,
   relance_2_delay_days: 7,
   relance_3_delay_days: 14,
@@ -361,16 +401,48 @@ export async function deleteProspect(id: string): Promise<void> {
 // =============================================================
 // PROSPECT FINDER (delegated to edge function — Tavily + Claude)
 // =============================================================
+export type PartnerQualificationResult =
+  | { status: 'qualified'; prospect: PartnerProspect }
+  | { status: 'permission_withdrawn'; prospect?: PartnerProspect }
+  | { status: 'blocked'; reason?: string };
+
+/** Qualification is server-owned and bound to auth.uid(), never a table patch. */
+export async function qualifyProspect(
+  prospectId: string,
+  qualification: PartnerQualification | { withdraw_permission: true },
+): Promise<PartnerQualificationResult> {
+  const client = supabase as unknown as {
+    rpc: (name: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: Error | null }>;
+  };
+  const { data, error } = await client.rpc('partner_prospect_qualify', {
+    p_prospect_id: prospectId, p_qualification: qualification,
+  });
+  if (error) throw error;
+  if (!data || typeof data !== 'object' || !('status' in data) ||
+    !['qualified', 'permission_withdrawn', 'blocked'].includes(String(data.status))) {
+    throw new Error('La qualification du contact n’a pas été confirmée.');
+  }
+  if (data.status === 'qualified' && (!('prospect' in data) || !data.prospect ||
+    typeof data.prospect !== 'object' || !('id' in data.prospect) || data.prospect.id !== prospectId)) {
+    throw new Error('Le contact qualifié n’a pas été confirmé.');
+  }
+  return data as PartnerQualificationResult;
+}
+
 export async function findProspects(
   query: string,
   niche?: string,
   type?: ProspectType,
-): Promise<{ inserted: number; prospects: PartnerProspect[] }> {
-  const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
-    body: { query, niche, type },
-  });
-  if (error) throw error;
-  return data as { inserted: number; prospects: PartnerProspect[] };
+): Promise<{ inserted: number; skipped?: number; prospects: PartnerProspect[] }> {
+  try {
+    const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
+      body: { query, niche, type },
+    });
+    if (error) throw error;
+    return parsePartnerDiscoveryResult(data);
+  } catch (error) {
+    throw await readPartnerDiscoveryError(error);
+  }
 }
 
 // =============================================================
@@ -394,16 +466,37 @@ export async function approveOutreach(emailId: string, approvalVersion: string):
 }
 
 // =============================================================
-// Generate + send partnership contract via DocuSeal
+// Prepare, inspect and explicitly approve one immutable partnership contract.
 // =============================================================
+// An older partner-generate-contract deployment ignores action and sends at once.
+// A distinct entry point makes a partial rollout fail closed with HTTP 404.
+const CONTRACT_FUNCTION = 'partner-contract-action';
+
 export async function generateContract(
   prospectId: string,
-): Promise<{ pdf_url: string; signing_url: string | null }> {
-  const { data, error } = await supabase.functions.invoke('partner-generate-contract', {
-    body: { prospect_id: prospectId },
+): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'prepare', prospect_id: prospectId },
   });
   if (error) throw error;
-  return data as { pdf_url: string; signing_url: string | null };
+  return parsePartnerContractResult(data);
+}
+
+/** Refreshes the link to the stored PDF; never regenerates or sends a contract. */
+export async function previewContract(prospectId: string): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'preview', prospect_id: prospectId },
+  });
+  if (error) throw error;
+  return parsePartnerContractResult(data);
+}
+
+export async function approveContract(prospectId: string, approvalVersion: string, pdfSha256: string): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'approve', prospect_id: prospectId, approval_version: approvalVersion, pdf_sha256: pdfSha256 },
+  });
+  if (error) throw error;
+  return parsePartnerContractResult(data);
 }
 
 // =============================================================
@@ -434,11 +527,17 @@ export async function listActivePartners(
 ): Promise<PartnerActive[]> {
   const { data, error } = await sb()
     .from('partner_active')
-    .select('*')
+    .select('*, prospect:partner_prospects(user_id,outreach_profile)')
     .eq('user_id', userId)
     .order('total_revenue_generated', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as PartnerActive[];
+  return (data ?? []).filter((value: PartnerActive) => value.user_id === userId)
+    .map((value: PartnerActive & { prospect?: { user_id?: unknown; outreach_profile?: unknown } | null }) => {
+      const { prospect, ...partner } = value;
+      const profile = prospect?.user_id === userId ? prospect.outreach_profile : undefined;
+      return { ...partner, outreach_profile: profile === 'legacy' || profile === 'media_affiliate'
+        || profile === 'editorial' ? profile : undefined };
+    });
 }
 
 // =============================================================
@@ -475,6 +574,11 @@ export async function partnerStats(userId: string): Promise<{
     sb().from('partner_active').select('total_revenue_generated', { count: 'exact' }).eq('user_id', userId).eq('is_active', true),
     sb().from('partner_commissions').select('amount,status', { count: 'exact' }).eq('user_id', userId),
   ]);
+  // A failed read is not an empty dataset. Let the account-scoped view offer a
+  // retry instead of presenting fabricated zero activity or balances.
+  if ([prospects, emails, partners, commissions].some(result => result.error)) {
+    throw new Error('Les statistiques partenaires ne sont pas disponibles. Réessayez le chargement.');
+  }
   // deno-lint-ignore no-explicit-any
   const prosRows = (prospects.data ?? []) as Array<{ status: string }>;
   // deno-lint-ignore no-explicit-any

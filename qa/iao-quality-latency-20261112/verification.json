@@ -1,0 +1,189 @@
+{
+  "verifiedAt": "2026-11-12T04:55:41.404603+00:00",
+  "candidateBase": "cbd60006552f27771ef0f8b67623087c296fcf67",
+  "initialBase": "8259b84e65ca89b01bd1b1fc46576cb60bb8a1ec",
+  "nodeVersion": "v24.22.1",
+  "sdkVersion": "0.65.0",
+  "newTests": 62,
+  "gates": [
+    {
+      "name": "context-baseline",
+      "cwd": "karta",
+      "command": "npm test -- test/agentContextContract.test.ts",
+      "exitCode": 1,
+      "result": "Expected reproduction:21 failed,12 passed",
+      "log": "evidence/context-baseline.txt",
+      "sha256": "679f1d3711b6c905730533711a9ce5bfaef4ac738ce59d1255904b9a34be3089",
+      "rawSha256": "95e37b336ddb981be46e2ed069fc6d400ac469304a3599f761ccf218deb3b9d0",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "context-targeted",
+      "cwd": "karta",
+      "command": "npm test -- test/agentContextContract.test.ts test/loopModelAdmission.test.ts test/agentsRegistry.test.ts test/actionAgentsMock.test.ts",
+      "exitCode": 0,
+      "result": "74 passed in4files",
+      "log": "evidence/context-targeted.txt",
+      "sha256": "2eaf49583bc9dd2be0980c28059fbe286df8707bb92d667f394d8fde2dba355f",
+      "rawSha256": "2225de208426299e4afce2267092a93ca1b10739ac1656151bdbcd1cf634fd4c",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "routing-baseline",
+      "cwd": "karta",
+      "command": "npm test -- test/modelQualityRouting.test.ts",
+      "exitCode": 1,
+      "result": "Expected reproduction:7 failed,2 passed",
+      "log": "evidence/routing-baseline.txt",
+      "sha256": "8fb4b8ce51f033f0d45c2c53af814fbdae96d13d5aaebacbcea4ba51349929d9",
+      "rawSha256": "6290f23bde24edceec7d6554b25594f89f226249e0e0965c80505380ae52dafe",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "routing-targeted",
+      "cwd": "karta",
+      "command": "npm test -- test/modelQualityRouting.test.ts test/real-claude.test.ts",
+      "exitCode": 0,
+      "result": "13 passed",
+      "log": "evidence/routing-targeted.txt",
+      "sha256": "cfb129d44ed02f686dfab1b20dbf07a1665ca8112c0112f312cf7f28175b3276",
+      "rawSha256": "f1ab9f6ba59c551a5ef4a3b32e5d8830ce077f4a0dd6830019dbf59f8a3bc785",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "transport-baseline",
+      "cwd": "karta",
+      "command": "./node_modules/.bin/vitest run test/claudeTransportDeadline.test.ts -t 'HTTP .*makes|pre-cancelled' --maxWorkers=1",
+      "exitCode": 1,
+      "result": "Expected reproduction:5 failed,15 unselected",
+      "log": "evidence/transport-baseline.txt",
+      "sha256": "af432adcc9ab35ce87d9d22791c4cc5ca3cd0599356b167c7a4df364a6dd3beb",
+      "rawSha256": "d3fba77dd9dbd4e850dd644bf0ee76177985127b205adf5a4250de5439381f5f",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "transport-targeted",
+      "cwd": "karta",
+      "command": "./node_modules/.bin/vitest run test/claudeTransportDeadline.test.ts test/claudeDecisionCompleteness.test.ts test/runtimeDeadline.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "result": "63 passed",
+      "log": "evidence/transport-targeted.txt",
+      "sha256": "b70ecad2faefb95bf9f9df97121fa423644a55dc8ee093415457dd4479a2be6e",
+      "rawSha256": "d6acf3a91659d71a0cf8846eed24ffa1485d9bc5a53639ab51b1fc7ff9b24195",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "full-first",
+      "cwd": "karta",
+      "command": "npm test",
+      "exitCode": 137,
+      "result": "SIGKILL:no complete result",
+      "log": "evidence/full-first.txt",
+      "sha256": "9c34ccaa4bf5e4e0cd93f94305010e589171910a8d483aadb7eed4fec6858d01",
+      "rawSha256": "9c34ccaa4bf5e4e0cd93f94305010e589171910a8d483aadb7eed4fec6858d01"
+    },
+    {
+      "name": "full-serial",
+      "cwd": "karta",
+      "command": "NODE_OPTIONS=--max-old-space-size=384 npm test -- --maxWorkers=1 --no-file-parallelism --reporter=dot",
+      "exitCode": 1,
+      "result": "1998passed,1fixturefailure,5workerSIGKILL;2115declared;not a green fullrun",
+      "log": "evidence/full-serial.txt",
+      "sha256": "12732d89c7ee4ed219d31b78502b002d78e8da4e2cef581fc08f05fdd485e659",
+      "rawSha256": "5f1ef425c1d3842036e4ee9b35a87cd1f460a659ba3c6979b81eca5849140e0c",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "recovery",
+      "cwd": "karta",
+      "command": "NODE_OPTIONS=--max-old-space-size=256 npm test -- --maxWorkers=1 --no-file-parallelism --reporter=verbose test/assistantPolicy.test.ts test/queueDeliveryIdentity.test.ts test/subscriptionRevision.test.ts test/approvalParentGuard.test.ts test/chefBudgetMigration.test.ts test/approval.test.ts",
+      "exitCode": 0,
+      "result": "173passed in6files:correctedfixture+all5interruptedfiles",
+      "log": "evidence/recovery.txt",
+      "sha256": "34afaf4ff28b46cf52b8edfa6ef4eb6d1116cb39018df78104803bbd9029ea1b",
+      "rawSha256": "acce4f1aa4f4502df7833b77c2e9f4c47b95a1ec7d1c510f6d7c51248c5c7f0b",
+      "normalization": "Trailing blank lines trimmed for repository whitespace checks; original digest retained."
+    },
+    {
+      "name": "typecheck",
+      "cwd": "karta",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "exitCode": 0,
+      "result": "PASS afterfixture correction",
+      "log": "evidence/typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build",
+      "cwd": "karta",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc -p tsconfig.build.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/build.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceSha256": {
+    "karta/.env.example": "e3469a43d64f15cc793790966f7a19f4aef5608b79cd38ee66d1dbff7e8d2186",
+    "karta/src/agents/comptaAgent.ts": "c0bed4d30277eff1f6f515d4a3c3828243da9936c1802205a69e8c8dcb716d94",
+    "karta/src/agents/legalAgent.ts": "b039331f570b4999a194abc687b36b4a879d704c6fd6c434ce22b11458fb9783",
+    "karta/src/agents/partnerAgent.ts": "b6dd32992188a88a0766cbb9fc632ffb9271a67a33226deda43759cf0795d823",
+    "karta/src/claude/real.ts": "17ee0262028400735bf9ffbc35c4d7518555bd55495dcb2ec3aa5ed57a421722",
+    "karta/src/claude/types.ts": "c5948a90ea8fd833168eed096945f2d3bef10c2124e551308406f3a07f909427",
+    "karta/src/config.ts": "c3e1397ef29c451d7be6e42343c62fc1dc51980ecea42d312780052eb841016a",
+    "karta/test/assistantPolicy.test.ts": "d78aa2bbc672dae36dc74db52fb5ac9f981402d7a814e71de0f102e7a4decc32",
+    "vercel.json": "48099c84e4a3b38d07fd21328870bd758d34c98be66d8b7de78df64ca1d6f505",
+    "karta/test/agentContextContract.test.ts": "f3e7479ca7699d85f2383d80747948b30bbc142dd7aed8ac98ad9f6236487f9c",
+    "karta/test/claudeTransportDeadline.test.ts": "c4bacdd296ffef885dc949ab423675e9524b83c7f15c30d2ad7c9bed7f951b41",
+    "karta/test/modelQualityRouting.test.ts": "ea713c3cd35cd2656681b5b8abd9082932e4d1957718f2699fe3c5d4f8e9ea4b"
+  },
+  "gitnexusStatus": "PARTIEL:all/staged HIGH,25 symbols,6processes;compare main CRITICAL with truncated symbol list;inherited graph and dynamic dispatch limitations retained",
+  "fullSuiteStatus": "PARTIEL as a single run:SIGKILLs;all6affectedfiles subsequently passed173tests;do not add overlapping counts",
+  "productionStatus": "NON TESTE",
+  "providerRequestsLive": 0,
+  "benchmarkScope": "inert25ms/read;not model latency;20samples pervariant",
+  "claimsNotEstablished": [
+    "global AI superiority",
+    "quality equivalence of fast/primary models",
+    "live p95 or cost savings",
+    "server-side cancellation/refund",
+    "Hostinger/Mac deployment of this candidate"
+  ],
+  "gitnexusReport": "gitnexus-detect.json",
+  "reviewStatus": "PASS independent static review of transport/routing;no blocking finding;tradeoffs retained in README",
+  "reviewRevision": {
+    "verifiedAt": "2026-11-12T05:22:31.310491+00:00",
+    "initialPublishedCommit": "804a1160c1ac47c9f430903eff1a5991cc5d78a7",
+    "reason": "Move only the review branch deployment exclusion after the consolidation rule to resolve concurrent upstream additions at the start and end of the map.",
+    "applicationAndTestHashesUnchanged": true,
+    "ownVercelJsonSemanticallyIdentical": true,
+    "upstreamVercelBlob": "9f064a819c698b7eb23c1cb0eed77b4d1567094f",
+    "baseVercelBlob": "d71b8cc450e89c1867a7f142e0a262a705e40772",
+    "originalThreeWayMerge": {
+      "exitCode": 1,
+      "conflictCount": 1
+    },
+    "revisedThreeWayMerge": {
+      "exitCode": 0,
+      "conflictCount": 0,
+      "mergedRuleCount": 24,
+      "mergedJsonExactlyUpstreamPlusOwnFalseRule": true
+    },
+    "command": "git merge-file -p CANDIDATE_VERCEL BASE_VERCEL UPSTREAM_VERCEL",
+    "firstGitHubCi": {
+      "runId": 43158678864,
+      "checkout": "76e4d66c4e5f791d1397884b807e78026aa1447e",
+      "kartaTests": 2115,
+      "kartaFiles": 121,
+      "jobs": [
+        "karta:success",
+        "site:success",
+        "subscription-concurrency:success"
+      ],
+      "npmAudit": "skipped on PR"
+    },
+    "scopeNote": "The recorded full CI qualifies the initial published composition. Moving one JSON key changes neither application sources nor deployment rule values; it does not qualify newly added upstream application code."
+  }
+}

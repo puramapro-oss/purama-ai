@@ -1,0 +1,171 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/claudeTransportCost.test.ts --maxWorkers=1 --reporter=verbose
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-ai/karta
+
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 408 21ms
+   → expected "vi.fn()" to be called 1 times, but got 3 times
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 409 5ms
+   → expected "vi.fn()" to be called 1 times, but got 3 times
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 429 4ms
+   → expected "vi.fn()" to be called 1 times, but got 3 times
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 500 4ms
+   → expected "vi.fn()" to be called 1 times, but got 3 times
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > does not repeat a request after an ambiguous connection failure 1382ms
+   → expected "vi.fn()" to be called 1 times, but got 3 times
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses the SDK's existing base URL setting without falling back to a different origin 5ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > keeps the default SDK endpoint available when no proxy is configured 2ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses only the explicit fixture API key and sends no ambient bearer credential 1ms
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged 8ms
+   → expected '{\n  "spaces": "  conserver   les esp…' to be '{"spaces":"  conserver   les espaces …' // Object.is equality
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request 8ms
+   → expected { model: 'fixture-fast-model', …(4) } to strictly equal { model: 'fixture-fast-model', …(4) }
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request 3ms
+   → expected { model: 'fixture-main-model', …(4) } to strictly equal { model: 'fixture-main-model', …(4) }
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves a valid complete tool decision through the real SDK 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > still rejects a partial tool response without repeating inference or executing the tool 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 408
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 409
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 429
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 500
+AssertionError: expected "vi.fn()" to be called 1 times, but got 3 times
+ ❯ test/claudeTransportCost.test.ts:115:23
+    113|     transport.mockImplementation(async () => errorResponse(status));
+    114|     await expect(createRealClaudeClient().decide(input())).rejects.toT…
+    115|     expect(transport).toHaveBeenCalledTimes(1);
+       |                       ^
+    116|     expect(capturedRequest().headers.get("x-stainless-retry-count")).t…
+    117|     expect(execute).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > does not repeat a request after an ambiguous connection failure
+AssertionError: expected "vi.fn()" to be called 1 times, but got 3 times
+ ❯ test/claudeTransportCost.test.ts:123:23
+    121|     transport.mockRejectedValue(new TypeError("Fixture connection ende…
+    122|     await expect(createRealClaudeClient().decide(input())).rejects.toT…
+    123|     expect(transport).toHaveBeenCalledTimes(1);
+       |                       ^
+    124|     expect(execute).not.toHaveBeenCalled();
+    125|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged
+AssertionError: expected '{\n  "spaces": "  conserver   les esp…' to be '{"spaces":"  conserver   les espaces …' // Object.is equality
+
+- Expected
++ Received
+
+- {"spaces":"  conserver   les espaces  ","lines":"première\nseconde\r\n\ttroisième","unicode":"Été — 東京 😀","timestamp":"2026-11-12T05:30:00.123456+01:00","items":[null,true,false,0,-12.5,"",{"exact":"  interne\n  "}],"nested":{"nullable":null,"array":["a","b"],"empty":{}}}
++ {
++   "spaces": "  conserver   les espaces  ",
++   "lines": "première\nseconde\r\n\ttroisième",
++   "unicode": "Été — 東京 😀",
++   "timestamp": "2026-11-12T05:30:00.123456+01:00",
++   "items": [
++     null,
++     true,
++     false,
++     0,
++     -12.5,
++     "",
++     {
++       "exact": "  interne\n  "
++     }
++   ],
++   "nested": {
++     "nullable": null,
++     "array": [
++       "a",
++       "b"
++     ],
++     "empty": {}
++   }
++ }
+
+ ❯ test/claudeTransportCost.test.ts:173:25
+    171|     expect(JSON.parse(transmitted)).toStrictEqual(context);
+    172|     expect(JSON.stringify(context)).toBe(original);
+    173|     expect(transmitted).toBe(original);
+       |                         ^
+    174|     expect(Buffer.byteLength(transmitted, "utf8"))
+    175|       .toBeLessThan(Buffer.byteLength(JSON.stringify(context, null, 2)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request
+AssertionError: expected { model: 'fixture-fast-model', …(4) } to strictly equal { model: 'fixture-fast-model', …(4) }
+
+- Expected
++ Received
+
+@@ -1,11 +1,13 @@
+  {
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "content": "Contexte actuel:
+- {\"label\":\"fixture\"}
++ {
++   \"label\": \"fixture\"
++ }
+
+  Décide quelle(s) action(s) prendre.",
+        "role": "user",
+      },
+    ],
+
+ ❯ test/claudeTransportCost.test.ts:185:36
+    183|     const value = input({ context });
+    184|     await createRealClaudeClient().decide(value);
+    185|     expect(capturedRequest().body).toStrictEqual({
+       |                                    ^
+    186|       model,
+    187|       max_tokens: 1024,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request
+AssertionError: expected { model: 'fixture-main-model', …(4) } to strictly equal { model: 'fixture-main-model', …(4) }
+
+- Expected
++ Received
+
+@@ -1,11 +1,13 @@
+  {
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "content": "Contexte actuel:
+- {\"details\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}
++ {
++   \"details\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"
++ }
+
+  Décide quelle(s) action(s) prendre.",
+        "role": "user",
+      },
+    ],
+
+ ❯ test/claudeTransportCost.test.ts:185:36
+    183|     const value = input({ context });
+    184|     await createRealClaudeClient().decide(value);
+    185|     expect(capturedRequest().body).toStrictEqual({
+       |                                    ^
+    186|       model,
+    187|       max_tokens: 1024,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 5 passed (13)
+   Start at  05:43:23
+   Duration  1.93s (tests 86%, transform 9%, import 5%)

@@ -1,0 +1,104 @@
+(node:13) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ TTS: default request trims text and sends OpenAI nova/1 with response_format mp3 (106.706624ms)
+✔ TTS: ElevenLabs uses the chosen voice, explicit MP3 output and voice_settings.speed (3.704928ms)
+▶ TTS: finite speed is clamped to each provider contract
+  ✔ openai: -1 -> 0.25 (3.252849ms)
+  ✔ openai: 99 -> 4 (3.309382ms)
+  ✔ elevenlabs: -1 -> 0.7 (3.086393ms)
+  ✔ elevenlabs: 99 -> 1.2 (2.767541ms)
+✔ TTS: finite speed is clamped to each provider contract (13.165572ms)
+▶ TTS: invalid JSON shapes and field types fail before provider generation
+  ✔ null body (2.656186ms)
+  ✔ array body (2.666622ms)
+  ✔ malformed JSON (2.550791ms)
+  ✔ missing text (2.374961ms)
+  ✔ empty text (2.268183ms)
+  ✔ whitespace text (2.254012ms)
+  ✔ non-string text (2.236937ms)
+  ✔ null text (2.760932ms)
+  ✔ text over 4000 (2.384805ms)
+  ✔ unknown provider (2.291998ms)
+  ✔ null provider (2.451264ms)
+  ✔ non-string provider (5.10716ms)
+  ✔ OpenAI refuses an ElevenLabs voice ID (2.880238ms)
+  ✔ voice traversal (2.673672ms)
+  ✔ voice query (3.278968ms)
+  ✔ voice slash (2.456361ms)
+  ✔ voice percent escape (2.412918ms)
+  ✔ voice empty (2.816484ms)
+  ✔ voice null (2.55711ms)
+  ✔ voice over 100 (2.846568ms)
+  ✔ voice non-string (2.466977ms)
+  ✔ speed string (2.303055ms)
+  ✔ speed null (2.540004ms)
+  ✔ speed object (2.652521ms)
+  ✔ speed array (2.419998ms)
+  ✔ speed overflow (2.363454ms)
+  ✔ negative speed overflow (2.197428ms)
+✔ TTS: invalid JSON shapes and field types fail before provider generation (75.955635ms)
+✔ TTS: ElevenLabs accepts text 4000 and a 100-character safe voice ID (2.686912ms)
+▶ TTS: the inbound byte cap accepts 32768 and rejects 32769 without truncation
+  ✔ 32768 bytes (2.984423ms)
+  ✔ 32769 bytes (2.848542ms)
+✔ TTS: the inbound byte cap accepts 32768 and rejects 32769 without truncation (6.634559ms)
+✔ TTS: inbound limits count UTF-8 bytes rather than JavaScript characters (3.293669ms)
+✔ TTS: malformed UTF-8 is rejected instead of synthesising replacement characters (3.334199ms)
+▶ TTS: missing selected provider key returns 503 with no fallback to the other provider
+  ✔ openai (3.298346ms)
+  ✔ elevenlabs (2.807541ms)
+✔ TTS: missing selected provider key returns 503 with no fallback to the other provider (6.380973ms)
+▶ TTS: absent or invalid identity never starts provider generation
+  ✔ missing token (2.255975ms)
+  ✔ rejected token (2.371125ms)
+✔ TTS: absent or invalid identity never starts provider generation (4.936367ms)
+▶ TTS: audio/mpeg, audio/mp3 and octet-stream are accepted and returned as MP3
+  ✔ audio/mpeg (2.920918ms)
+  ✔ audio/mp3 (3.534084ms)
+  ✔ application/octet-stream (2.843634ms)
+✔ TTS: audio/mpeg, audio/mp3 and octet-stream are accepted and returned as MP3 (9.631618ms)
+✔ TTS: exact 8 MiB audio is accepted (28.091147ms)
+▶ TTS: declared and streamed audio oversize are refused with non-blocking cancellation
+  ✔ declared oversize (5.907653ms)
+  ✔ streamed oversize (7.432067ms)
+✔ TTS: declared and streamed audio oversize are refused with non-blocking cancellation (25.00161ms)
+▶ TTS: empty audio, JSON, HTML and followed redirects are refused
+  ✔ empty audio (2.823815ms)
+  ✔ JSON (3.156015ms)
+  ✔ HTML (2.918995ms)
+  ✔ redirected response (2.625872ms)
+✔ TTS: empty audio, JSON, HTML and followed redirects are refused (12.009704ms)
+✔ TTS: HTTP failure does not read a stalled private error body or retry (2.822994ms)
+▶ TTS: upstream failure details and transport exceptions stay out of client and logs
+  ✔ HTTP error (2.640173ms)
+  ✔ transport exception (2.781462ms)
+✔ TTS: upstream failure details and transport exceptions stay out of client and logs (5.658324ms)
+✔ TTS: the 30-second deadline bounds non-cooperative authentication (2.934027ms)
+✔ TTS: the 30-second deadline bounds stalled inbound text and cancellation (2.811266ms)
+✔ TTS: expired provider fetch settles even if abort is ignored; a late response is cancelled (3.157298ms)
+✔ TTS: audio read and non-cooperative cleanup remain inside the same deadline (3.22057ms)
+✔ TTS: inbound/auth/provider/audio share one 30-second budget without phase resets (3.114014ms)
+✔ TTS: late provider completion is rejected even before the timer callback runs (4.199158ms)
+✔ TTS: an already-aborted request performs no authentication or generation (2.064622ms)
+✔ TTS: caller cancellation during authentication prevents late generation (2.235515ms)
+✔ TTS: caller cancellation interrupts a non-cooperative provider fetch (3.069367ms)
+✔ TTS: caller cancellation interrupts streamed audio without waiting for cleanup (3.849741ms)
+✔ TTS SDK: actual getUser authenticates through the bounded adapter before generation (7.118304ms)
+✔ TTS SDK: authentication transport errors cannot leak through SDK console.error (3.262793ms)
+✔ TTS SDK: authentication timeout aborts transport and cancels a non-cooperative late response (3.620983ms)
+✔ TTS SDK: caller cancellation during authentication discards a late transport response (3.541526ms)
+✔ TTS SDK: authentication response body shares the overall deadline (3.640201ms)
+✔ TTS SDK identity: rejects an empty object before generation (3.540925ms)
+ℹ HTTP status=401; generation requests=0
+✔ TTS SDK identity: rejects a null user id before generation (3.635575ms)
+ℹ HTTP status=401; generation requests=0
+✔ TTS SDK identity: rejects an empty user id before generation (3.493945ms)
+ℹ HTTP status=401; generation requests=0
+ℹ tests 82
+ℹ suites 0
+ℹ pass 82
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 723.901852

@@ -1,0 +1,339 @@
+{
+  "at_utc": "2026-11-25T18:46:42.248103+00:00",
+  "status": "PARTIEL_LOCAL_NATIVE_AND_BROWSER_PENDING_CI",
+  "scope": "Reconciliation of existing PR116 with PR119 and PR120. No new product algorithm and no production activation.",
+  "source_tree": "88f2832d13d5078512ed08860da26b1dbffaa98b",
+  "consolidation_head": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "pr116_head": "450cf098c8a5cc716ba079773ae06d2a0fd27baa",
+  "mechanical_review": {
+    "common_council_files_equal_consolidation": 5,
+    "pr116_specific_files_preserved": 64,
+    "merged_blobs_different_from_both_parents": 0,
+    "manual_conflict_resolution": false
+  },
+  "checks": {
+    "karta_full": {
+      "numTotalTests": 5710,
+      "numPassedTests": 5675,
+      "numFailedTests": 35,
+      "numPendingTests": 0,
+      "success": false
+    },
+    "karta_environment_failures": [
+      {
+        "file": "localComputeFabricCancellation.test.ts",
+        "failed": 14,
+        "all_listen_eperm": true
+      },
+      {
+        "file": "localComputeFabricProvider.test.ts",
+        "failed": 10,
+        "all_listen_eperm": true
+      },
+      {
+        "file": "localComputeFabricResponseBoundary.test.ts",
+        "failed": 11,
+        "all_listen_eperm": true
+      }
+    ],
+    "karta_focused_included_in_full": [
+      {
+        "file": "claudeProgrammaticTransport.test.ts",
+        "tests": 82,
+        "passed": 82,
+        "failed": 0
+      },
+      {
+        "file": "consultationHost.test.ts",
+        "tests": 30,
+        "passed": 30,
+        "failed": 0
+      },
+      {
+        "file": "loopProgrammaticReads.test.ts",
+        "tests": 78,
+        "passed": 78,
+        "failed": 0
+      },
+      {
+        "file": "modelConsultation.test.ts",
+        "tests": 57,
+        "passed": 57,
+        "failed": 0
+      },
+      {
+        "file": "modelConsultationStore.test.ts",
+        "tests": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "modelConsultationStoreSql.test.ts",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "privateToolResults.test.ts",
+        "tests": 59,
+        "passed": 59,
+        "failed": 0
+      },
+      {
+        "file": "privateToolResultsExecution.test.ts",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "privateToolResultsSql.test.ts",
+        "tests": 84,
+        "passed": 84,
+        "failed": 0
+      },
+      {
+        "file": "programmaticBriefCompletion.test.ts",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "programmaticFlowIntegration.test.ts",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "programmaticInputValidation.test.ts",
+        "tests": 28,
+        "passed": 28,
+        "failed": 0
+      },
+      {
+        "file": "programmaticModelQualification.test.ts",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "programmaticUsage.test.ts",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "programmaticUsageMigration.test.ts",
+        "tests": 26,
+        "passed": 26,
+        "failed": 0
+      }
+    ],
+    "frontend_full": {
+      "numTotalTests": 872,
+      "numPassedTests": 872,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "frontend_typecheck_build": {
+      "name": "frontend-type-build",
+      "cwd": "/workspace/scratch/b2c640d17a9a/purama-ai-audit",
+      "runs": [
+        {
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "started_epoch": 1795631774.9005175,
+          "finished_epoch": 1795631806.2423725,
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "started_epoch": 1795631806.242394,
+          "finished_epoch": 1795631826.9653528,
+          "exit_code": 0
+        }
+      ]
+    },
+    "karta_typecheck_build": {
+      "name": "karta-type-build",
+      "cwd": "/workspace/scratch/b2c640d17a9a/purama-ai-audit/karta",
+      "runs": [
+        {
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "started_epoch": 1795632222.9326205,
+          "finished_epoch": 1795632235.7456815,
+          "exit_code": 0
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "started_epoch": 1795632235.7456868,
+          "finished_epoch": 1795632241.005631,
+          "exit_code": 0
+        }
+      ]
+    },
+    "browser_local": {
+      "status": "BLOCKED_ENVIRONMENT",
+      "reasons": [
+        "Playwright expected Chromium headless shell missing",
+        "System /usr/bin/chromium has no /usr/lib/chromium/chromium binary",
+        "Official browser download returned HTTP403; no access-control workaround attempted"
+      ],
+      "tests_passed": 0
+    },
+    "native_postgresql": "NON_TESTE_LOCALLY_EXISTING_CI_REQUIRED"
+  },
+  "graph": {
+    "baseline_nodes": 35364,
+    "candidate_nodes": 35911,
+    "candidate_edges": 125679,
+    "candidate_flows": 669,
+    "staged_files": 71,
+    "staged_symbols": 430,
+    "staged_flows": 212,
+    "staged_risk": "CRITICAL",
+    "compare_main_files": 3330,
+    "compare_main_symbols": 19480,
+    "compare_main_flows": 655,
+    "compare_main_risk": "CRITICAL",
+    "limits": [
+      "Flow extraction is bounded; 2345 candidate entry points and 11086 callees not traced; 55 walks cut by budget",
+      "FTS unavailable; named context and impact work",
+      "Main comparison includes the historical consolidation; printed symbol listing is capped",
+      "SQL/native boundaries require dedicated tests"
+    ],
+    "source_staged_files": 64,
+    "staged_scope": "Includes the seven current reconciliation evidence files; product source remains the tested source_tree."
+  },
+  "source_sha256": {
+    "docs/iao-private-results.md": "708707e37c089865b6cfd0021afeb4f1baee5bdcae13ee3cbdc44059875b6bed",
+    "karta/.env.example": "13b9f4c7ea12af37d1aca9d1a4c6e686f2f719e511c7843024b267908d3efaeb",
+    "karta/migrations/033_programmatic_model_usage.sql": "18575b5d7c8c33871c0ae65fadf91e8fbf5fb820287a29aec024e9c7bf5f1e41",
+    "karta/migrations/034_programmatic_private_reports.sql": "f8a5d9049ba340b9d0f1a10d1f9da49b5ee2e76aca266eaa4d202e0c47c6067c",
+    "karta/migrations/035_programmatic_report_brief_completion.sql": "129711fdfbd16c87649e096bd633e73db468b4cad3177314927c21b6586f1b74",
+    "karta/src/claude/execution-profile.ts": "793ce02300b8229fb8476e18455b07a8e70803366fdfc3e71d23fc759267ce4e",
+    "karta/src/claude/model-catalog.ts": "c7a2f48e9069c35d096c192c612be2857866968089cec89765da22afe9481d79",
+    "karta/src/claude/programmatic.ts": "ce7434dddb69872fd42c8fa0d7148002ccf057404e76dbff795945162ebcf4bc",
+    "karta/src/claude/real.ts": "057bf6a006417773eb00f86a59e7e1d97b4bcc41e6fadb7ec1c55699bc0d3def",
+    "karta/src/claude/types.ts": "84fe9df968c29be360fdcf89c391786f579d4c285143fc77f6032a88b2df7bf2",
+    "karta/src/claude/usage.ts": "83410127667c3f2b0bee2afc6f951cac90b45781aa7e5978626214326b9b8c73",
+    "karta/src/config.ts": "83000a053abdd17d6f0580680b03d9bb05a96398c1f54df5c42aaf9457b2f095",
+    "karta/src/engine/logger.ts": "3c65e4c6fbf6924c588c9b1cf1a4200251e4777bd69b3504a762baac6c3d4a6f",
+    "karta/src/engine/loop.ts": "db9740a44ea356821b38c2609ffaa462061ceb142e24bdb60ce031f296c6ddcb",
+    "karta/src/engine/private-tool-results.ts": "e4877d1dd2d8a8a941b830b7fb39152948ae8327c0f3252b85251493f4315244",
+    "karta/src/engine/tool-input.ts": "91f67e4c1148cf55ca3c28678c7791d8c56ff6183fa2dc366b58cd20a5ef315e",
+    "karta/src/engine/types.ts": "94c9205e6b7d58acaca17664d3e00e0083cb1918555bcd4ec0b59e9cf12f6326",
+    "karta/src/knowledge/private-result-view.ts": "d91ab79c81d4d6c806bb3fc5305bf7ff14a626ec1a82564cfc8881b337da50c4",
+    "karta/src/tools/knowledge-search.ts": "20e0c6d189a601866510ce4fd79be71b5a2275b6b66bd57af1772a2cdd8fbd6c",
+    "karta/src/tools/websearch.ts": "f1bf9358911d3029312f2080dc86b84c739102a2c3e51fd75ecb42a227479215",
+    "karta/test/claudeProgrammaticTransport.test.ts": "51a627af4c15d6652c05512f3051e7ce8be464ee2897b16e8b9560be58b79b1e",
+    "karta/test/loopProgrammaticReads.test.ts": "bf37778a28e6bd9eaa7ec615271d70c1649810f4157ebfc8d9be3a7faecac3e8",
+    "karta/test/privateToolResults.native.mjs": "ae5a53383e60133ba7d8796ae2667f5906a172b43ea6d53ebb22b27d31e76f07",
+    "karta/test/privateToolResults.test.ts": "0c8196a8830820b6ed55ef548d13c3c3b2bc766752a87edd26e7e02fb4d5d463",
+    "karta/test/privateToolResultsSql.test.ts": "8ede14049a90d06f0c5ba469ae0e740c8ae18a8eff6b7a25efb2c79daf602f2f",
+    "karta/test/programmaticBriefCompletion.test.ts": "0452991ced9c4b25e942e770fddfa6ffaad0e37a2910a85ecd43365d75b77fc6",
+    "karta/test/programmaticFlowIntegration.test.ts": "e6102f6ced2057d6910e1033af07f2687925b5e0700de4b45587f28c15abb743",
+    "karta/test/programmaticInputValidation.test.ts": "bbd150a31f9a178ee16ede08d6367cb37dc5b7702255d9fb89beef3bb5b5f4ea",
+    "karta/test/programmaticModelQualification.test.ts": "acc07a3753a9a3b2274889a9a740f9add6206d6f8cb133e3cdbd3b337ccadc6c",
+    "karta/test/programmaticUsage.test.ts": "0986e57c6c966cd9b93676a6dfb6f18fd52366830656b0a1dc3e6c6fef33c66f",
+    "karta/test/programmaticUsageMigration.test.ts": "41fb587aa8056373aaf571ecee186da3f39e22543bde5c9c7ab6ea698444e243",
+    "qa/code-mode-20261124/README.md": "0a128e6a8c518c41c9bd91a9dba8056d0b7c9d1600439277432181dec0c3d536",
+    "qa/code-mode-20261124/programmatic-reads-20261125/brief-sql-receipt.json": "99b4b5c80d582f108457b0a80a83b0cba8501433ccac2fc2b97daade35762e87",
+    "qa/code-mode-20261124/programmatic-reads-20261125/brief-sql-results.json": "4f89a515bafcb4a5e4a573c81b91463e3ae16cc043f9beb151041f6fd1fcbbe5",
+    "qa/code-mode-20261124/programmatic-reads-20261125/build-receipt.json": "e310989490037d98b13f3f9041a4fa83c08fa98ff382baa55d1cd00d2b19bbf5",
+    "qa/code-mode-20261124/programmatic-reads-20261125/core-tests-receipt.json": "7a9ae93cf4c27b8434e59900fb68716f6d9c786c13f19544bbea800ecf2c9952",
+    "qa/code-mode-20261124/programmatic-reads-20261125/core-tests-results.json": "690cc186c9b429f44e91fd3297f8c8a03bfc67e1c7575b31c9990eb3adf67bbb",
+    "qa/code-mode-20261124/programmatic-reads-20261125/detect-main.json": "1cfc9aee7be1b65fa31a8e15e7645fe558d77e717ddc5add21db06d5eb061a83",
+    "qa/code-mode-20261124/programmatic-reads-20261125/detect-main.txt": "a41dd5a153e339732aff8e3f9d99a0dbab553e72cc137290c5efb3f69bc609a2",
+    "qa/code-mode-20261124/programmatic-reads-20261125/detect-staged.json": "7335ccdb45148b30861b6be61e7cc522fb84801bd7355fd4bb56a82768fe7e03",
+    "qa/code-mode-20261124/programmatic-reads-20261125/detect-staged.txt": "6496eb9ace1a1c655e82223abbe7083e8b0de854cd363d8382de793e5f2f00c3",
+    "qa/code-mode-20261124/programmatic-reads-20261125/edge-tests-receipt.json": "03f7805154a373700473ea825cf6bbe3fda01539b8860f20c885ef7dee9f6f69",
+    "qa/code-mode-20261124/programmatic-reads-20261125/edge-tests.txt": "8cfd2ec534dc8a9bf0058929c2b558aa15111fc583cb38752c346e1057a48662",
+    "qa/code-mode-20261124/programmatic-reads-20261125/hosting-readonly.json": "1fe1636be04625ab5aa2d2b4e64f8291fe0958a36c3c7353cba6c2cc35f8df27",
+    "qa/code-mode-20261124/programmatic-reads-20261125/impact-runProgrammaticReads.txt": "5b0b246cb0d2e644d6fbc4c2b5da17ef4e9c21c7ee2894648c960e1ef863203d",
+    "qa/code-mode-20261124/programmatic-reads-20261125/impact-useProgrammaticReads.txt": "d351dbb0d08d4c88dc9599ed751614c0ceea651c748c1feb7df9a050a0fd539b",
+    "qa/code-mode-20261124/programmatic-reads-20261125/independent-shared-review.json": "c06dea61eec2d75e25472920a0dad5a6321942461e582903bb7349b8b1387f1e",
+    "qa/code-mode-20261124/programmatic-reads-20261125/index-receipt.json": "f8bed4b539488b0d6e1b9adffb04afddb6490f05354fe8105e49359eee668134",
+    "qa/code-mode-20261124/programmatic-reads-20261125/index.txt": "90411cdd158ef7fab01bd971c9557c81c143a5ee6c924fcd02ac0bf82877a437",
+    "qa/code-mode-20261124/programmatic-reads-20261125/migration034-reproduction.json": "f12ce57c5a4ecf07f7f77013d7f0605a94313cfb84e97625068426c4b0bdfa38",
+    "qa/code-mode-20261124/programmatic-reads-20261125/models-metadata-readonly.json": "ef7d706633857e99a865fada25fc4df002c14a7fe4d07fb4c137879ce6af7ddc",
+    "qa/code-mode-20261124/programmatic-reads-20261125/private-delivery-receipt.json": "ce8bd026d0d2815d6de99554206a3c6e96cb6e243ba2396cdadf262356bca035",
+    "qa/code-mode-20261124/programmatic-reads-20261125/private-results-sql-results.json": "ecf8563d848527f99a6e26d3be7464daca057a8e09d7394ca62c23ca694b8d7c",
+    "qa/code-mode-20261124/programmatic-reads-20261125/private-results-tests.json": "b969b39d769395a3e21ab816d413c210b2bcdab3a7937010f30a1703d105e7e2",
+    "qa/code-mode-20261124/programmatic-reads-20261125/typecheck-receipt.json": "3432d48372b6c588e7c07589fa03104c9ee44198e29bfac457cb72e11201a9e2",
+    "qa/code-mode-20261124/programmatic-reads-20261125/usage-sql-receipt.json": "a2364ad9ecd2697d91cd0323bd37bed51008c2274e512a60840c39264db2f8f1",
+    "qa/code-mode-20261124/programmatic-reads-20261125/usage-sql-results.json": "cf6ccc82cf19fac488dc3924646e05e2727990877fdc66e79836da88fd3c2941",
+    "qa/code-mode-20261124/programmatic-reads-20261125/verification.json": "5db3b2a976169f3b862bddde0009243ed7e1798d2b23be08696d60e36262254a",
+    "src/components/karta/PrivateToolResults.test.tsx": "5b3b4bbe2489a438f8144f1b57259e7307e80ea6fcf1a9c45af08b46e0f212aa",
+    "src/components/karta/PrivateToolResults.tsx": "dabf8b3078fcf97ddb8b9d879f109e83bc4b62aa2f569377633d1135e73e9305",
+    "src/lib/private-tool-results.test.ts": "f9d394d675e74eef7da4cf02ab8060844a442b66ee23b7ca64c756e98b547a9d",
+    "supabase/functions/_shared/private-tool-results.ts": "abc5d2a639d7ea5dd5cbc66c141f37b1dcb443e5ea6754f9b180b7b7fbcf3ee8",
+    "tests/creator-chat-authorization.test.mjs": "e4b4fb9b6dcaac49769fbe61990fc73317e68d39a28df4ad135f197054ccb90b",
+    "vercel.json": "0e5537c7acaa5fbbd40e4e7b6c39a809ceb0459c83f1aae95e92f3dd4fc6e1dd"
+  },
+  "production": {
+    "deployed": false,
+    "migrations_applied": false,
+    "programmatic_reads_default": "off",
+    "real_provider_inference_tested": false
+  },
+  "receipt_policy": "Do not add overlapping focused tests to the full suite count. Earlier PR116 CI applies to earlier versions.",
+  "source_sha256_scope": "Every source_sha256 entry hashes the corresponding blob in source_tree 88f2832d13d5078512ed08860da26b1dbffaa98b, the product assembly exercised by these tests. Subsequent README reception text and reconciliation evidence files are documentary additions and are not claimed to be part of that tested tree.",
+  "portable_test_evidence": {
+    "path_base": "repository_root",
+    "artifacts": [
+      {
+        "path": "qa/code-mode-20261124/reconciliation-20261125/karta-full-results.json.gz",
+        "format": "gzip",
+        "uncompressed_filename": "karta-full-results.json",
+        "uncompressed_sha256": "03f92512a006a17d502b00ef2cb3bb5e0363a9d6a7ea9a6af447e6e4ce67591f",
+        "compressed_sha256": "d145092b8e887b36caca1e4b1f3e11f9dbe26669364b57bcbadad1a1382c1679",
+        "uncompressed_bytes": 2268971,
+        "compressed_bytes": 213101,
+        "gzip_mtime": 0,
+        "gzip_original_filename": ""
+      },
+      {
+        "path": "qa/code-mode-20261124/reconciliation-20261125/frontend-full-results.json.gz",
+        "format": "gzip",
+        "uncompressed_filename": "frontend-full-results.json",
+        "uncompressed_sha256": "467be708706a04459988fec16cc5bec764973e4848fc366a67d45b5e4df91b23",
+        "compressed_sha256": "d933b542a3d828ec803c3ec5bd1f8cd37dc924d113bada1bf38d473becc487b7",
+        "uncompressed_bytes": 316423,
+        "compressed_bytes": 35031,
+        "gzip_mtime": 0,
+        "gzip_original_filename": ""
+      }
+    ],
+    "original_commands": "Absolute cwd and outputFile paths in command receipts record the execution location. The repository-relative gzip paths above contain the complete original JSON outputs, byte-identical after decompression.",
+    "content_review": {
+      "status": "NO_REAL_SECRET_IDENTIFIED",
+      "method": "Reviewed JSON schema, failure messages and token-pattern matches; checked every credential-shaped URL and Bearer match against its committed test source.",
+      "fixture_matches": "Matches occur exclusively in assertion titles/fullName strings for negative tests and are literal fixtures in the corresponding test sources; URL hosts are example or localhost domains.",
+      "real_secret_pattern_matches": {
+        "private_key": 0,
+        "openai_anthropic_key": 0,
+        "github_token": 0,
+        "aws_access_key": 0,
+        "jwt": 0
+      },
+      "sanitized": false,
+      "note": "Outputs are retained in full; no result or failure was removed or rewritten."
+    }
+  }
+}

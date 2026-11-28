@@ -1,0 +1,269 @@
+{
+  "scope": "Qualification complémentaire bornée des profils de consultation IAO",
+  "baseline": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "branch": "fix/iao-release-qualification-20261123",
+  "generated_at": "2026-11-23T21:07:45.735322+00:00",
+  "status": {
+    "implementation_and_transport": "PASS",
+    "commercial_model_quality": "NON TESTÉ",
+    "native_postgresql_multi_connection": "NON TESTÉ",
+    "deployment_readiness": "PARTIEL",
+    "identifier_with_revision": "PASS (refus précoce natif)"
+  },
+  "production_changes": [
+    {
+      "path": "karta/src/claude/consultation-host.ts",
+      "change": "Ajouter la grammaire d’identifiant native représentable et filtrer les modèles après validation de politique, avant cache/catalogue/allocation.",
+      "scope": "models() uniquement ; autres frontières inchangées."
+    }
+  ],
+  "test_additions": [
+    {
+      "path": "karta/test/consultationProfileMatrix.test.ts",
+      "cases": 65,
+      "purpose": "Relier les composants de production auparavant qualifiés séparément, sans relancer toute la suite KARTA."
+    }
+  ],
+  "actual_axes": {
+    "model": "Modèle exact présent dans l’intersection catalogue fournisseur et politique opérateur. Aucun modèle public imaginaire ni remplacement silencieux.",
+    "reflection": [
+      "auto",
+      "standard",
+      "deep",
+      "maximum"
+    ],
+    "auto_semantics": "auto résout standard dans execution-profile.ts ; cette voie ne choisit pas un niveau selon la taille ou la difficulté de la tâche.",
+    "speed": [
+      "standard",
+      "fast",
+      "ultra_fast"
+    ],
+    "public_profiles": "FLASH / EXPERT / APEX ne sont pas qualifiés par cette matrice de paramètres internes.",
+    "model_orchestration": "Un seul fournisseur natif Anthropic pour cette composition ; zéro relecteur = une synthèse. 1 à 3 relecteurs selon le profil ; pas un routeur général OpenAI/Claude.",
+    "timeout_ms": {
+      "standard": 60000,
+      "fast": 30000,
+      "ultra_fast": 15000
+    },
+    "input_limit": "8000 unités de code UTF-16 pour question, avec un plafond supplémentaire en octets sur le contexte selon la politique opérateur."
+  },
+  "matrix": [
+    {
+      "family": "Sans réflexion",
+      "model": "qualified-none",
+      "cap": 1024,
+      "reflections": [
+        "auto",
+        "standard"
+      ],
+      "speeds": 3,
+      "advertised_and_executed": 6
+    },
+    {
+      "family": "Réflexion par budget",
+      "model": "qualified-budget",
+      "cap": 16384,
+      "reflections": [
+        "auto",
+        "standard",
+        "deep",
+        "maximum"
+      ],
+      "speeds": 3,
+      "advertised_and_executed": 12
+    },
+    {
+      "family": "Réflexion adaptative",
+      "model": "qualified-adaptive",
+      "cap": 16384,
+      "reflections": [
+        "auto",
+        "standard",
+        "deep",
+        "maximum"
+      ],
+      "speeds": 3,
+      "advertised_and_executed": 12
+    },
+    {
+      "family": "Budget insuffisant pour réflexion approfondie",
+      "model": "qualified-tiny-budget",
+      "cap": 1024,
+      "reflections": [
+        "auto",
+        "standard"
+      ],
+      "speeds": 3,
+      "advertised_and_executed": 6
+    }
+  ],
+  "coverage": [
+    {
+      "cases": 1,
+      "assertion": "Le catalogue publie exactement les 36 profils supportés des quatre familles contrôlées, sans inférence."
+    },
+    {
+      "cases": 36,
+      "assertion": "Chaque profil traverse le vrai serveur HTTP, le vrai catalogue et host, le SDK installé et les migrations SQL. Modèle exact, plafond de sortie, réflexion, vitesse, usage, source privée et reprise sans nouvelle inférence sont vérifiés."
+    },
+    {
+      "cases": 2,
+      "assertion": "Réflexion maximum refusée avant allocation pour une capacité absente ou un budget de sortie trop petit."
+    },
+    {
+      "cases": 3,
+      "assertion": "1, 2 et 3 relecteurs donnent respectivement 3, 6 et 8 appels réellement observés au serveur fournisseur contrôlé ; propositions, critiques et synthèse correspondent aux lignes SQL."
+    },
+    {
+      "cases": 1,
+      "assertion": "Ultra-fast refuse un relecteur au lieu de le supprimer silencieusement ou de dépenser."
+    },
+    {
+      "cases": 6,
+      "assertion": "Tailles 1, 1000, 4000 et 8000 unités simples, 8000 caractères CJK et 4000 caractères Unicode supplémentaires conservés à l’identique dans HTTP, SDK et SQL puis après nouvelle instance de host."
+    },
+    {
+      "cases": 1,
+      "assertion": "8001 caractères refusés avant catalogue, allocation et appel."
+    },
+    {
+      "cases": 1,
+      "assertion": "Le plafond de contexte en octets peut empêcher une demande valide de terminer ; zéro dispatch et zéro dépense observés et persistés dans ce cas."
+    },
+    {
+      "cases": 5,
+      "assertion": "Droits de ressources absents, expirés, compte inactif, tokens insuffisants et coût insuffisant refusent l’appel avant allocation."
+    },
+    {
+      "cases": 1,
+      "assertion": "Un autre propriétaire ne voit pas le résultat et ne réutilise pas les ressources du premier."
+    },
+    {
+      "cases": 1,
+      "assertion": "Deux requêtes HTTP identiques simultanées ont un seul dispatch, une seule réservation et un seul résultat ; conflit de demande refusé ; répéter la réconciliation n’ajoute pas une seconde consommation."
+    },
+    {
+      "cases": 3,
+      "assertion": "Refus du fournisseur, conclusion invalide et modèle substitué donnent un échec durable, gardent l’usage observé et ne réessaient pas à la reprise."
+    },
+    {
+      "cases": 1,
+      "assertion": "429 fournisseur : aucune nouvelle tentative payante ; tokens et coût inconnus restent NULL et ne sont pas inventés à zéro."
+    },
+    {
+      "cases": 1,
+      "assertion": "Une seconde opération changeant de modèle préserve la première réponse et les deux réservations indépendantes."
+    },
+    {
+      "cases": 2,
+      "assertion": "Catalogue seulement @ et catalogue mixte valide + @ : catalogue HTTP exploitable, choix incompatible refusé directement avant allocation/appel, aucun fallback ; le modèle valide du catalogue mixte reste utilisable."
+    }
+  ],
+  "proof_boundary": {
+    "real": [
+      "Sockets HTTP locaux pour le point d’entrée API et le serveur fournisseur contrôlé",
+      "Autorisations internes et parsing du contrat de production",
+      "Découverte et projection du catalogue de production",
+      "Host, résolveur, runner de consultation et SDK Anthropic installé",
+      "Moteur SQL PostgreSQL PGlite, migrations et contraintes de production",
+      "Écritures, lectures et réconciliation du journal existant"
+    ],
+    "simulated": [
+      "Catalogue du compte fournisseur",
+      "Texte et compteurs de réponse fournisseur",
+      "Identités et clé de fixture",
+      "Observation de coût 31 micros pour le seul test explicite de réconciliation"
+    ],
+    "not_claimed": [
+      "Qualité intellectuelle d’un vrai LLM",
+      "Authentification JWT Supabase réelle",
+      "Disponibilité Anthropic publique",
+      "Facture réellement débitée",
+      "Concurrence native PostgreSQL multi-connexions",
+      "Charge mondiale, toutes familles de tâches, tous appareils, fonctionnement hors ligne intégral",
+      "Aucun benchmark commercial ni latence LLM déduits de la durée du test",
+      "Reprise après redémarrage complet du processus, de la base ou de la machine : seules de nouvelles instances de host dans le même processus sont couvertes."
+    ]
+  },
+  "observed_limit": {
+    "status": "PARTIEL",
+    "case": "Politique maxInputTokens=32768 => maxContextBytes=16384 ; question CJK de8000unités =24000octets avant l’enveloppe JSON.",
+    "result": "HTTP200 contenant opération failed et raison interrupted ; réponse null ; zéro appel et compteurs/coût explicitement connus à0.",
+    "interpretation": "Limite technique vérifiée, pas réussite d’une tâche énorme. Le motif public reste générique ; amélioration éventuelle du diagnostic et découpage des longs travaux à concevoir dans un lot distinct.",
+    "product_fix": "Aucun élargissement de limite ou contournement de budget."
+  },
+  "existing_proofs_not_recounted": [
+    "Qualification PR101 : catalogue partagé et coupures après await",
+    "Tests unitaires existants du résolveur, catalogue et SDK",
+    "Tests existants du transport Edge et des frontières HTTP",
+    "Tests SQL et natifs PostgreSQL de concurrence et RLS existants"
+  ],
+  "receipts": {
+    "tests": "profile-matrix-receipt.json",
+    "test_results": "profile-matrix.json",
+    "test_log": "profile-matrix.log",
+    "typecheck": "model-revision-typecheck-receipt.json",
+    "identifier_with_revision": "model-revision-diagnostic-receipt.json",
+    "current_tests": "model-revision-green-receipt.json",
+    "current_test_results": "model-revision-green.json",
+    "red_before_fix": "model-revision-red-receipt.json"
+  },
+  "source_sha256": {
+    "karta/src/api/consultation.ts": "2b19ae82022be85c7efd865d5d2e1704b774f98a680b83bb6f0684fe90c42c96",
+    "karta/src/api/consultation-contract.ts": "5c101c2b1554409c75bff2fd82c4922ec6b5a961b4b29d5989e44e8b98db128a",
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/claude/execution-profile.ts": "c49a8a216bef3ff059f75562044b46716c54a70481e75bb1e0737920d5d46ce5",
+    "karta/src/claude/consultation-host.ts": "51c2ae0bc5b6a1432541fe9bd2f69c4f2669e8a195d331d6d81d580f316f26b4",
+    "karta/src/claude/consultation.ts": "fb83034ff0c1af53539402e91d6ca7594cafb89ec71ce4ac68f7b4fc2c2dedad",
+    "karta/src/claude/consultation-store.ts": "b5e5fd5f91985502f6ef20795fb66f6aa66e09ae9d5982458eec6b330a726cfd",
+    "karta/src/claude/model-catalog.ts": "a0bb8b39783217c73e1c80399a59392ea804fa80eaa09a98924d61cdce013d18",
+    "karta/src/claude/real.ts": "d48318fa1e388e83ae0ea135b4e588a717520f32797faeed8f4f8224ba607cef",
+    "karta/migrations/032_model_consultation.sql": "28992c117e5e5fc7d92af4088d896ec1d52636f1cb5feff71ba86219bdcc0802",
+    "karta/test/consultationSqlFixture.ts": "c05bb4844c39657f284093cdca1cde385daaf58196c4e57c5bf1899ad417e941",
+    "karta/test/consultationProfileMatrix.test.ts": "f92748dd14afac058466db1391f109d3dcd7a0021cb2e3db98fd052a47d21597"
+  },
+  "independent_review": {
+    "reviewer": "/root/qual_release",
+    "status": "PASS",
+    "scope": "Read-only review of test composition and qualification evidence; no separate test rerun.",
+    "finding": "No blocking defect. Same-process host recreation comment clarified. Unknown counters versus zero, provider simulation and idempotent reconciliation explicitly checked.",
+    "reviewed_case_count": 63
+  },
+  "identifier_with_revision_finding": "model-revision-finding.json",
+  "execution_runs": [
+    {
+      "purpose": "Matrice initiale",
+      "passed": 63,
+      "receipt": "profile-matrix-receipt.json"
+    },
+    {
+      "purpose": "Caractérisation historique du défaut, pas correction",
+      "passed": 1,
+      "skipped": 63,
+      "receipt": "model-revision-diagnostic-receipt.json"
+    },
+    {
+      "purpose": "Régressions avant correctif",
+      "failed": 2,
+      "skipped": 63,
+      "receipt": "model-revision-red-receipt.json"
+    },
+    {
+      "purpose": "Validation après filtre natif",
+      "passed": 94,
+      "new_matrix_cases": 65,
+      "existing_host_cases": 29,
+      "receipt": "model-revision-green-receipt.json"
+    }
+  ],
+  "independent_review_after_native_fix": {
+    "reviewer": "/root/qual_release",
+    "status": "PASS",
+    "evidence": "native-model-filter-independent-review.json",
+    "scope": "Read-only review; no duplicate test run. Source hashes and unchanged boundaries match executed receipts.",
+    "limitations": [
+      "Historical incompatible operations are not migrated.",
+      "Policy-before-filter order independently reviewed; no extra loader-outside-policy test claimed."
+    ]
+  }
+}

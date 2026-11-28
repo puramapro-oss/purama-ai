@@ -1,0 +1,10 @@
+✔ compatibility retries preserve the command ID and original revision after a committed response is lost (13.601913ms)
+✔ a definitive business refusal releases the pending intent and a later action gets a new identity (5.521749ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 178.599959

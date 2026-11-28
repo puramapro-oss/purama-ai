@@ -1,0 +1,59 @@
+{
+  "base": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "main": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "index": {
+    "path": "/dev/shm/iao-quality-index-20261123",
+    "alias": "iao-quality-20261123",
+    "graph_nodes": 30146,
+    "graph_edges": 98698,
+    "processes_reported": 565,
+    "analysis_exit": 0
+  },
+  "command": {
+    "module": "gitnexus/dist/mcp/local/local-backend.js",
+    "api": "LocalBackend.callTool",
+    "method": "detect_changes",
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 0
+  },
+  "staged": {
+    "params": {
+      "scope": "staged",
+      "repo": "iao-quality-20261123"
+    },
+    "summary": {
+      "changed_count": 78,
+      "affected_count": 5,
+      "changed_files": 75,
+      "risk_level": "medium"
+    },
+    "result_truncated": false,
+    "proof": "gitnexus-staged.json",
+    "stage_note": "Includes explicitly versioned audit logs; the generated graph receipt is staged after this analysis."
+  },
+  "compare_main": {
+    "params": {
+      "scope": "compare",
+      "base_ref": "main",
+      "repo": "iao-quality-20261123"
+    },
+    "summary": {
+      "changed_count": 21440,
+      "affected_count": 548,
+      "changed_files": 2374,
+      "risk_level": "critical"
+    },
+    "result_truncated": true,
+    "proof": "gitnexus-compare-main.json.gz",
+    "uncompressed_sha256": "71ce4e955c9f0b40b0fda812ee53d4281614ca0c3a6deeb097e0e93faf5b7e94",
+    "compressed_sha256": "2a205592852401f5c06d232f33557e246686c1f11a926704e7dfa01e52680c69",
+    "lossless_roundtrip_verified": true
+  },
+  "limits": [
+    "FTS unavailable",
+    "Process enumeration is bounded and may omit flows",
+    "Historical main comparison is truncated and critical; not a complete historical regression audit",
+    "Graph changed-files count covers represented file changes, not every evidence artifact staged for publication"
+  ],
+  "interpretation": "Exact product diff and callers reviewed; targeted tests and independent reviews complement the graph. This commit targets the existing consolidation branch, not main."
+}

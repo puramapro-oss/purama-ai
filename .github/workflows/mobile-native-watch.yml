@@ -1,0 +1,317 @@
+name: Native accessibility watch verification
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - 'shared/smarana.ts'
+      - '.github/workflows/mobile-native-watch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-watch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-network:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+      - name: Test the preparation boundary and unchanged offline observer
+        run: node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs mobile/tests/watch-native/data-settings-qualification.test.cjs
+      - name: Enable the hosted runner emulator accelerator
+        run: |
+          test -c /dev/kvm
+          sudo chmod a+rw /dev/kvm
+      - name: Verify network preparation before compiling the application
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          ram-size: 4096M
+          disk-size: 6G
+          heap-size: 512M
+          cores: 2
+          emulator-boot-timeout: 300
+          disable-animations: true
+          disable-spellchecker: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          working-directory: mobile
+          script: >-
+            bash -c 'set +e; bash scripts/qualify-android-network.sh;
+            purama_network_result=$?;
+            if [ "$purama_network_result" -ne 0 ]; then
+            python3 -B scripts/qualify-android-data-settings.py --artifact-dir "$PWD/qa/android-network-preflight" --allow-settings-transition || true;
+            fi;
+            exit "$purama_network_result"'
+      - name: Preserve the network-only receipt and Android state
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: android-network-preflight-${{ github.sha }}
+          path: mobile/qa/android-network-preflight/
+          if-no-files-found: error
+          retention-days: 14
+
+  android:
+    needs: android-network
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_DOTENV: '1'
+      NODE_OPTIONS: --max-old-space-size=2048
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx3072m -Dorg.gradle.workers.max=2
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install the existing mobile lock
+        run: npm ci --no-audit --no-fund
+      - name: Qualify the JS boundary
+        run: |
+          mkdir -p qa/watch-native
+          git rev-parse HEAD HEAD^{tree} > qa/watch-native/android-checkout.txt
+          node --test tests/watch-native/*.test.cjs 2>&1 | tee qa/watch-native/android-js-tests.log
+          node --test tests/iao-local-pack.test.cjs tests/iao-local-digest.test.cjs modules/purama-local-digest/tests/module-contract.test.cjs 2>&1 | tee qa/watch-native/android-digest-js-tests.log
+          bash modules/purama-local-digest/tests/run-core-tests.sh --java 2>&1 | tee qa/watch-native/java-digest-tests.log
+          npm run typecheck
+      - name: Generate existing phone and companion projects
+        run: |
+          npx expo prebuild --no-install --platform all 2>&1 | tee qa/watch-native/android-prebuild.log
+          node scripts/verify-watch-native-prebuild.cjs
+          npx expo-modules-autolinking resolve --platform android --json > qa/watch-native/android-autolinking.json
+      - name: Compile phone module and Wear companion and run Kotlin protocol tests
+        id: android_native_build
+        run: |
+          cd android
+          ./gradlew :app:assembleDebug :puramaAccessibilityWatch:assembleDebug :purama-accessibility-watch:testDebugUnitTest --no-daemon --max-workers=2 --info --stacktrace 2>&1 | tee ../qa/watch-native/android-build.log
+      - name: Diagnose Android dependency resolution failure
+        if: ${{ failure() && steps.android_native_build.outcome == 'failure' }}
+        timeout-minutes: 2
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import re
+          import subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          root = Path.cwd().resolve()
+          report = {
+              "recorded_at": datetime.now(timezone.utc).isoformat(),
+              "scope": "diagnostics_only_after_android_build_failure",
+              "files": [],
+              "pom_requests": [],
+          }
+          # Record bounded metadata, never whole configuration files or credentials.
+          for relative in (
+              "android/settings.gradle",
+              "android/build.gradle",
+              "android/gradle.properties",
+              "android/gradle/wrapper/gradle-wrapper.properties",
+              "node_modules/@react-native/gradle-plugin/settings.gradle.kts",
+              "node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml",
+          ):
+              entry = {"path": relative}
+              try:
+                  path = root / relative
+                  if path.is_symlink() or not path.resolve().is_relative_to(root):
+                      entry["status"] = "skipped_nonlocal_path"
+                  elif not path.is_file():
+                      entry["status"] = "missing"
+                  else:
+                      with path.open("rb") as source:
+                          data = source.read(65537)
+                      if len(data) > 65536:
+                          entry["status"] = "skipped_size_limit"
+                      else:
+                          source = data.decode("utf-8", errors="replace")
+                          entry.update(status="recorded", bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                          entry["marker_lines"] = {
+                              marker: [number for number, line in enumerate(source.splitlines(), 1) if marker in line]
+                              for marker in (
+                                  "mavenCentral()", "google()", "gradlePluginPortal()",
+                                  "com.facebook.react.settings", "expo-autolinking-settings",
+                                  "org.gradle.toolchains.foojay-resolver-convention",
+                              )
+                          }
+                          foojay = re.search(r'foojay-resolver-convention[\'\"]\s*\)?\s*version\s*[\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"]', source)
+                          if foojay:
+                              entry["foojay_version"] = foojay.group(1)
+                          distribution = re.search(r'https(?:\\)?:\/\/services\.gradle\.org/distributions/gradle-[0-9.]+-(?:bin|all)\.zip', source)
+                          if distribution:
+                              entry["gradle_distribution"] = distribution.group(0).replace("\\:", ":")
+              except OSError:
+                  entry["status"] = "unreadable"
+              report["files"].append(entry)
+
+          # Probe only the three exact public POM URLs from the failed resolution.
+          # No redirects, retries, response bodies, stderr, or environment dumps.
+          for url in (
+              "https://repo.maven.apache.org/maven2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+              "https://dl.google.com/dl/android/maven2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+              "https://plugins.gradle.org/m2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+          ):
+              entry = {"url": url, "method": "GET", "redirects_followed": False}
+              try:
+                  request = subprocess.run(
+                      ["curl", "--disable", "--silent", "--output", "/dev/null", "--proto", "=https",
+                       "--connect-timeout", "5", "--max-time", "15", "--max-filesize", "65536", "--retry", "0",
+                       "--write-out", "%{http_code} %{time_total}", url],
+                      stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=20, check=False,
+                  )
+                  entry["curl_exit"] = request.returncode
+                  metrics = re.fullmatch(r"([0-9]{3}) ([0-9]+(?:\.[0-9]+)?)", request.stdout.strip())
+                  if metrics:
+                      entry.update(http_status=int(metrics.group(1)), seconds=float(metrics.group(2)))
+              except subprocess.TimeoutExpired:
+                  entry["status"] = "process_timeout"
+              except OSError:
+                  entry["status"] = "curl_unavailable"
+              report["pom_requests"].append(entry)
+
+          output = root / "qa/watch-native/android-dependency-diagnostics.json"
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps(report, indent=2) + "\n")
+          print(output.read_text())
+          PY
+      - name: Prepare debug APKs for physical qualification
+        run: |
+          artifact_dir="$RUNNER_TEMP/native-watch-debug-apks"
+          mkdir -p "$artifact_dir/phone" "$artifact_dir/wear"
+          cp android/app/build/outputs/apk/debug/*.apk "$artifact_dir/phone/"
+          cp watch/wear/build/outputs/apk/debug/*.apk "$artifact_dir/wear/"
+          (
+            cd "$artifact_dir"
+            sha256sum phone/*.apk wear/*.apk > SHA256SUMS
+          )
+          cp "$artifact_dir/SHA256SUMS" qa/watch-native/android-apk-sha256.txt
+          git rev-parse HEAD HEAD^{tree} > "$artifact_dir/checkout.txt"
+      - name: Preserve debug phone and Wear APKs with SHA-256 manifest
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-debug-apks-${{ github.sha }}
+          path: ${{ runner.temp }}/native-watch-debug-apks/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+      - name: Bundle the offline qualification APK for the disposable x86_64 emulator
+        env:
+          EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1'
+        run: |
+          cd android
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2 --stacktrace 2>&1 | tee ../qa/watch-native/offline-qualification-build.log
+          test -f app/build/outputs/apk/release/app-release.apk
+      - name: Enable the hosted runner emulator accelerator
+        run: |
+          test -c /dev/kvm
+          sudo chmod a+rw /dev/kvm
+      - name: Qualify real local inference and encrypted memory after an offline process restart
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          ram-size: 4096M
+          disk-size: 6G
+          heap-size: 512M
+          cores: 2
+          emulator-boot-timeout: 300
+          disable-animations: true
+          disable-spellchecker: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          working-directory: mobile
+          script: |
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            bash scripts/qualify-offline-android.sh
+      - name: Preserve native offline inference, SQLCipher and restart evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: purama-offline-native-${{ github.sha }}
+          path: mobile/qa/offline-native/
+          retention-days: 14
+      - name: Preserve qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-android-${{ github.sha }}
+          path: |
+            mobile/qa/watch-native/
+            mobile/modules/purama-accessibility-watch/android/build/test-results/
+          retention-days: 14
+
+  apple:
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_DOTENV: '1'
+      NODE_OPTIONS: --max-old-space-size=2048
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Record Apple toolchain and compile protocol tests
+        run: |
+          mkdir -p qa/watch-native
+          git rev-parse HEAD HEAD^{tree} > qa/watch-native/apple-checkout.txt
+          xcodebuild -version | tee qa/watch-native/xcode-version.log
+          xcrun swiftc modules/purama-accessibility-watch/apple/WatchWire.swift tests/watch-native/apple/main.swift -o "$RUNNER_TEMP/purama-watch-protocol-tests"
+          "$RUNNER_TEMP/purama-watch-protocol-tests" | tee qa/watch-native/swift-protocol-tests.log
+          bash modules/purama-local-digest/tests/run-core-tests.sh --swift 2>&1 | tee qa/watch-native/swift-digest-tests.log
+      - name: Install the existing mobile lock
+        run: npm ci --no-audit --no-fund
+      - name: Generate existing phone and companion projects
+        run: |
+          npx expo prebuild --no-install --platform all 2>&1 | tee qa/watch-native/apple-prebuild.log
+          node scripts/verify-watch-native-prebuild.cjs
+          npx expo-modules-autolinking resolve --platform apple --json > qa/watch-native/apple-autolinking.json
+          cd ios
+          pod install 2>&1 | tee ../qa/watch-native/cocoapods.log
+      - name: Compile watchOS and existing iOS app for simulators without signing
+        run: |
+          node scripts/verify-watch-native-apple-build.cjs 2>&1 | tee qa/watch-native/apple-build.log
+      - name: Preserve qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-apple-${{ github.sha }}
+          path: mobile/qa/watch-native/
+          retention-days: 14

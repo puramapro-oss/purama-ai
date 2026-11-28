@@ -1,0 +1,1110 @@
+{
+  "schema_version": 1,
+  "campaign": "aether-model-admission-20261110",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+  "base_tree": "8f58e3ad7fdc5ea029cba33fcfad5081ec01cc81",
+  "branch": "audit/aether-model-admission-20261110",
+  "local_status": "PARTIEL",
+  "scope": "Revalidate global stop and agent state after asynchronous context and authorization reads, before model access",
+  "changed_executable_files": {
+    "karta/src/engine/loop.ts": "a0f5e8e4326c683e83e75eafa50e157276285ce0ff1b5d6e8175c2e5b8583aef",
+    "karta/test/loopModelAdmission.test.ts": "c2a653f94d98a7a60570019ed1b48eaf21a72515873cf32af271377d23a1434f",
+    "karta/test/briefDatabaseCycle.test.ts": "24893c5d2bda45a4a7bf73905a966410328acbd112cd7ea5dcb6a97310f261d3"
+  },
+  "frozen_repository_snapshot_sha256": "4ea59edd45554e7cfa8cfeee2f75783f78bfb8085f5d10d924f221565d1dcc41",
+  "frozen_repository_paths": 1164,
+  "post_test_additions": [
+    "IAO-EVALUATION-PROTOCOL.md appendix",
+    "This evidence JSON"
+  ],
+  "dependencies": {
+    "node": "22.23.4",
+    "vitest": "5.0.3",
+    "pglite": "0.5.8",
+    "karta_lock_sha256": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+    "root_lock_sha256": "7d6aa7a9cc26f6cdb8738d06eff6de1c3bcd77031ccd1ae5789ef3ba0d511d63",
+    "locks_and_26_active_migrations_unchanged": true
+  },
+  "regression_counterexamples": [
+    {
+      "file": "karta/test/loopModelAdmission.test.ts",
+      "passed": 9,
+      "failed": 24,
+      "report_sha256": "bdfdcd56cfe8dd2ad252a6bf9e2ab3a3854f80b9e218712c6df1716e766ba129",
+      "case_scope": "This complete file only; other interrupted suites are excluded"
+    },
+    {
+      "file": "karta/test/briefDatabaseCycle.test.ts",
+      "passed": 8,
+      "failed": 5,
+      "report_sha256": "77cb9e182f862817a80a4d8a7f4aef4e7d249ffe5c14c245ccd2a83e2604d627",
+      "case_scope": "This complete file only; other interrupted suites are excluded"
+    }
+  ],
+  "new_cases": {
+    "model_admission": 33,
+    "durable_brief": 5,
+    "total": 38,
+    "all_new_cases_passed": true,
+    "targeted_file_cases": 46,
+    "counting": "38 new cases and 46 targeted-file cases are included in the 1216 accepted local cases, not added to them"
+  },
+  "local_campaign": {
+    "status": "PARTIEL",
+    "passed_cases": 1216,
+    "accepted_files": 72,
+    "expected_files": 95,
+    "nonqualified_files": [
+      "test/briefSubmissionFlow.test.ts",
+      "test/chatHistoryIsolation.test.ts",
+      "test/chefBudgetAdmission.test.ts",
+      "test/chefBudgetMigration.test.ts",
+      "test/chefBudgetReservations.test.ts",
+      "test/chefControlPlane.test.ts",
+      "test/chefEstimates.test.ts",
+      "test/chefEvidenceFreshness.test.ts",
+      "test/chefEvidenceGate.test.ts",
+      "test/chefHardening.test.ts",
+      "test/chefIndependentReview.test.ts",
+      "test/chefMission.test.ts",
+      "test/chefProcessQuarantine.test.ts",
+      "test/chefRuntimePolicy.test.ts",
+      "test/commercePrivileges.test.ts",
+      "test/connectPermissions.test.ts",
+      "test/executionOriginMigration.test.ts",
+      "test/loggerFinalization.test.ts",
+      "test/overageCredit.test.ts",
+      "test/partnerOutreach.test.ts",
+      "test/queueDeliveryIdentity.test.ts",
+      "test/runtimeHardening.test.ts",
+      "test/walletRpcPermissions.test.ts"
+    ],
+    "duplicate_files": [],
+    "failed_assertions_in_accepted_reports": 0,
+    "skipped_or_pending_assertions_in_accepted_reports": 0,
+    "source_unchanged": true,
+    "runtime_unchanged": true,
+    "files": [
+      {
+        "file": "karta/test/actionAgentsMock.test.ts",
+        "sha256": "22fecb6272ee3947c7ac571b38ac84ab26ddbc5830bab4868466ca3414cc5196",
+        "passed_cases": 4,
+        "case_identity_sha256": "dedb7c34189e76432eea599545ffb58f89837f9a9ee85895efdf1679dc0d2b75",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/agentsRegistry.test.ts",
+        "sha256": "5e3a2fde6e1d5ef2e48d67ef6e38098813b513412a3cc48cd9c84153e5d79ea1",
+        "passed_cases": 4,
+        "case_identity_sha256": "ac7023d034016bc34d773e9d9088b72a3cfe6784ec63cfe0309ad77d85914c3e",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/apiDeliveryIdentity.test.ts",
+        "sha256": "c849f885defe62383dbf1ec05b5d554c3ee8c5373d89d5c09171e442be4dbd91",
+        "passed_cases": 4,
+        "case_identity_sha256": "e109385b86e78c369551a0b7803b0f7475cc07d4715d590d5c4a002ed9624d48",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/apiSafety.test.ts",
+        "sha256": "6bef39fe6de4fbdf7a14085750d9ecbb899dbffab4c1a10c1ec145abeec8cd23",
+        "passed_cases": 9,
+        "case_identity_sha256": "b66205c6df7c4346bac2ed7c675b026ae38548e83529077f6d4462c3857d63df",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/approval.test.ts",
+        "sha256": "bb889694a23739838520ecd899723501ff22904b2f2c93d472121e2dc19911d7",
+        "passed_cases": 15,
+        "case_identity_sha256": "1a1761b9e5ffd95416658f4037d1b0188a69400c4e03bb2902f34d6c0d3f47fe",
+        "receipt": "sql-01-approval"
+      },
+      {
+        "file": "karta/test/approvalContinuation.test.ts",
+        "sha256": "5846b9e3db2d9fbed95bcdd8b17ec883a93fd19b3f1d46391cf966498c410b1f",
+        "passed_cases": 42,
+        "case_identity_sha256": "a4aa04fadacc87b0dc8aaec019911d69e25199f25dfe157fa097492f39313757",
+        "receipt": "sql-02-approvalContinuation"
+      },
+      {
+        "file": "karta/test/approvalParentGuard.test.ts",
+        "sha256": "d0acc521b4f15a9e24cc1709c3e691318266cf8767aed6797c51e9304b70e023",
+        "passed_cases": 48,
+        "case_identity_sha256": "08bed65c84614dfa4d1389dfa747f0564c51a94bb1b3e42d6635120db5eb00e3",
+        "receipt": "sql-03-approvalParentGuard"
+      },
+      {
+        "file": "karta/test/approvalTracePrivacy.test.ts",
+        "sha256": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+        "passed_cases": 20,
+        "case_identity_sha256": "56a70bc710793c10621aed9d599bb3773103cdd3fa7a193b710d59214e9da6d0",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/approvalTriggerContext.test.ts",
+        "sha256": "9c24760d57fc7998a698f668e5a8ae2028a634c19fc794fc6ee058c9fbf3ba4d",
+        "passed_cases": 8,
+        "case_identity_sha256": "7f01f57461f869a6fcd2bd98236094dfc04055c95cff31b9b77d720ef8f81ad8",
+        "receipt": "sql-04-approvalTriggerContext"
+      },
+      {
+        "file": "karta/test/assistantPolicy.test.ts",
+        "sha256": "c8e4c1ac35afa545857617cc65c2eefe50fd32faa4a6b76267974836562757ac",
+        "passed_cases": 55,
+        "case_identity_sha256": "e79a0345379782a73f46405a185855624b5c30be6d8555189be489c5a6b61cf3",
+        "receipt": "assistant-policy-isolated"
+      },
+      {
+        "file": "karta/test/autonomy.test.ts",
+        "sha256": "e5a0d76e960f52f93bb6451278db36363b7873223e3033d05280e0715b47e7cc",
+        "passed_cases": 7,
+        "case_identity_sha256": "d2e10e98031e6c03e6ad2b3717594a8f7cf67ad45968288bdf97ea16f8806012",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/brief.test.ts",
+        "sha256": "eee065e24c15e9388f16c88fb3bfb430718f371b981ecb072708171307c4d2c0",
+        "passed_cases": 18,
+        "case_identity_sha256": "f92384bc137823d1ce593596696c4987ccf3f283aac89edb33a504c020084d68",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/briefClaims.test.ts",
+        "sha256": "a751b52931ae7d1a33f5454641c21c28e438460d545777788adc99cd4ebe8fee",
+        "passed_cases": 57,
+        "case_identity_sha256": "682071b2f6f2ceced3ce866425242edd919434c62603295368d719a44355ac0d",
+        "receipt": "sql-05-briefClaims"
+      },
+      {
+        "file": "karta/test/briefDatabaseCycle.test.ts",
+        "sha256": "24893c5d2bda45a4a7bf73905a966410328acbd112cd7ea5dcb6a97310f261d3",
+        "passed_cases": 13,
+        "case_identity_sha256": "8587b65834e00a2bca7dfa64f0dedb33b24f36d57d852490c0f4bcc5c8440d68",
+        "receipt": "brief-after-wasm1"
+      },
+      {
+        "file": "karta/test/briefSubmission.test.ts",
+        "sha256": "c3b6347abe81cff123fc20c476a6ba1bd6db51873bc6b65aa614cb592787c153",
+        "passed_cases": 32,
+        "case_identity_sha256": "80ea00bf43070468d4204db2df61f29311c899d388a6b5708bdceced96a1f83d",
+        "receipt": "sql-06-briefSubmission"
+      },
+      {
+        "file": "karta/test/briefSubmissionClient.test.ts",
+        "sha256": "318307b2b329bff6d839f03293f6302824ca1faa1f2096a0f376a054d539fd9b",
+        "passed_cases": 4,
+        "case_identity_sha256": "65d6d264a0f3311e184f14632b2a8e1f8650ff5b13c36182af98b6d59380e1d7",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chatEscalation.test.ts",
+        "sha256": "2fb4a5fbfecd6339c7c516ba22bec45fd649d92e89df63d8b4b660859b473604",
+        "passed_cases": 49,
+        "case_identity_sha256": "66043ec2f28f857c7ce37e31a0388401c172f0b6934fac15082f73502bd59b33",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chatRequestScope.test.ts",
+        "sha256": "2fdfb39e67512bec0c387128199c3262a0984e9f0b93523ccf16bb3a5b58f9fe",
+        "passed_cases": 17,
+        "case_identity_sha256": "bcb36c868c32f6acd7537108b64be2e1163622b2127638ab43bab6b5a29c2f81",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefBrief.test.ts",
+        "sha256": "0462b9ac48bc37b4085d08fd522886ba1dd11191051ddb750ae85b24bfef9c6c",
+        "passed_cases": 9,
+        "case_identity_sha256": "d9361d16952f2bc89dbc0d7efcf3c98660aae191685897f84e671e61a57c7149",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefBudgetAccounting.test.ts",
+        "sha256": "1febc751e001e1b77217e113140093ef95c27d64bde40860c5322ed73d5a7dd8",
+        "passed_cases": 12,
+        "case_identity_sha256": "eda48e23ef61ddc4ac183d0fce47799fa5395c63af210571a45da905a7e75436",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefBudgetAdapter.test.ts",
+        "sha256": "53c08cb6a19e224ee19d0403661f2b1eaf221a43d87097b348f8c78aa9e54ca1",
+        "passed_cases": 7,
+        "case_identity_sha256": "c436de648c8bf8337552d2b4e882b3fad66d3d804b2c020e5d80984f96aa3f2c",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefCancellation.test.ts",
+        "sha256": "906d25543f935d5dc14857ea3959bf318960fea5cf569dd17e241bc675fc6660",
+        "passed_cases": 7,
+        "case_identity_sha256": "d6a5760dca04d2629b141372567fb93122037613b8bcf1f86923afd904b72cd2",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefCostGovernor.test.ts",
+        "sha256": "b9261deed222048a4dba4220efc3862da69bb98f74263bf603a0e00ae9b9c84e",
+        "passed_cases": 7,
+        "case_identity_sha256": "0711883bd4ef4e68a6f7d8cf38a71223186d5298748a038c06cc769371fadf31",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefDriver.test.ts",
+        "sha256": "fbffc6f028e9665d782b625744ba97350f0c367e02490d940118541a262e790a",
+        "passed_cases": 6,
+        "case_identity_sha256": "2d3fb2fe1be937de2aca3cdc297b3bde654f9b17a2be74c04d9c3159bd540cd9",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefEvidenceAdapter.test.ts",
+        "sha256": "b5b5ef523055ac241d0f9316c79688fc54f213c7c684668550d2f9e01a092575",
+        "passed_cases": 20,
+        "case_identity_sha256": "b13ba4ec6fdaa75abe6a4b06cc0436070bbd90a3c73d3d0fd554f85b0e7bfb4e",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefGitState.test.ts",
+        "sha256": "d89c2358428f6ade2ab4dc20c0236fa8391784957f2365f1f6a4028b8a303151",
+        "passed_cases": 4,
+        "case_identity_sha256": "92c922ca2b6daf83522f2eeb74c99724e3b7ff9bdb400b4452acf15e5a5d33ac",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefProcess.test.ts",
+        "sha256": "5a896138972d696a19dc9bd99a6a593642356ef0d01112c6312a206cccceab4f",
+        "passed_cases": 5,
+        "case_identity_sha256": "8e6a77883c410bfa85b0a397250c8d8007caf3ea3b7fe4a16437c99079273600",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefProtocol.test.ts",
+        "sha256": "89d86199cc36be049024b8783296960642755ccfb4965d9f9afbc16322b1c429",
+        "passed_cases": 5,
+        "case_identity_sha256": "12c25b8377484010ee00f48c231dc72f29196833125185cd8d7b9a778d8366da",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefQuarantineAdapter.test.ts",
+        "sha256": "809dd2c001021dcab5061a970509b60f3b800d5e8c3c6c99804265f47f424985",
+        "passed_cases": 15,
+        "case_identity_sha256": "51b8a7b72eae04dfc17e31f42666ae17e5b8e64633e388d27d577cee34d255ed",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefSupervisor.test.ts",
+        "sha256": "a06aea88e80dfdd4b9bf5581f816e254c911c949e9f0f63a21dbd7e293bbecc5",
+        "passed_cases": 20,
+        "case_identity_sha256": "c3cf35b9af95632121b8d6d665bc4e086a956202e4611f566a2e98e3cb1a6686",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefSupervisorCancellation.test.ts",
+        "sha256": "e4600959c5717b15d5e1255650f2c6041aaad1d1abcc8a2d0b982a830a8c66fc",
+        "passed_cases": 1,
+        "case_identity_sha256": "0b7492cea4d47d1d987f25d33ea62bcda87ae78201f9e9d4d99974c554fc8592",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefVerificationGitIntegration.test.ts",
+        "sha256": "831840f0b3bd034c593f3cfbbfdf2d2bf0ad179369b01e4bc4262305c21548b0",
+        "passed_cases": 3,
+        "case_identity_sha256": "dd882c3cb0bb4ef70ffbf960bb3f4d511b1efc7791ecbe771baa51ade594be34",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefVerifier.test.ts",
+        "sha256": "8275064a082ecb272ab10880cedb121364fd2d523d0213585acbc293704a3ecb",
+        "passed_cases": 4,
+        "case_identity_sha256": "79039c53d6c91ec2a1a708d5fac0db8ee251313dbed2caa5cc5a5889ce3ec5f1",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/chefWorkerShutdown.test.ts",
+        "sha256": "14980e76f83165484930b165fbbddc259aca68fe2c8a580bfe45f01296c39492",
+        "passed_cases": 4,
+        "case_identity_sha256": "a251e5c818b04404d70127b5545c91403ebeb3d37539d5767e9ee294703fdfe6",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/claudeDecisionCompleteness.test.ts",
+        "sha256": "c77af0111255ad06190cdd062c2dceb58e92cf9f286ac2b23022376047ec2210",
+        "passed_cases": 34,
+        "case_identity_sha256": "1a6cd5dbf131b37fae7429b54b1d3c53ffc46be41cc840bf8017b446cc8f2ad7",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customAgent.test.ts",
+        "sha256": "325ef10bb81b6cd7343142b35c95ac3713e222f3f2341c45013a2db6f110a82a",
+        "passed_cases": 4,
+        "case_identity_sha256": "536d1ecfbd992b4c146c4cdb9a38317de1b7f89bc4ab856d35d14688a675a44f",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customAgentScanAbort.test.ts",
+        "sha256": "d61ae014b3d856064d2cdd8e3e589482d3f6076149e32011b4d2aa870bd14a54",
+        "passed_cases": 2,
+        "case_identity_sha256": "516fbd89dcdcff7a4eb42c93c0fe349fa6eda4b19e67037a9152fc16e3864522",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customAgentScheduler.test.ts",
+        "sha256": "b9d644216f828dde016a132d6ffbbf2dc521117392cd76d539f7d78e585786bc",
+        "passed_cases": 13,
+        "case_identity_sha256": "e35d9c502b0fe67162f7a64e69a5005c761d92bb924df007a376b1bdcbeb3d1d",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customAgentSchedulerCron.test.ts",
+        "sha256": "8828fb740e4fd0b9830c9be7285d19f307d9d2cebeabd15a8fc1965530432ccc",
+        "passed_cases": 3,
+        "case_identity_sha256": "0557a640305e199ddc107cb6ce598d3fe3241d9f83e5f44a499594b580bfdfc2",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customAuthorization.test.ts",
+        "sha256": "0f9882278e83e70099e95fd114a1077da2b0d0c5e648e7af80d35718c09fa838",
+        "passed_cases": 46,
+        "case_identity_sha256": "8f7c27a7c8e882beea7f25d0eb7afa2aaba14ab068de6bbe43e194473b7c184a",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/customRegistry.test.ts",
+        "sha256": "38c4e83de5e13c26084c7902437168c9e18db6159a64458c07403bf3e819d471",
+        "passed_cases": 4,
+        "case_identity_sha256": "932cd50f54c624ac28c78115170c9df886ffac8abe7767a3d4849b6a2513258a",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/cycleAdmissionPrivacy.test.ts",
+        "sha256": "792b61bd91b627d40421e274e77306c4cd12941b44541f563fc03ef68097ae3b",
+        "passed_cases": 10,
+        "case_identity_sha256": "b6b5cec8164fb8ceaae4b983a8e7397626b5bed29915e939f5de4e2a7a389fc2",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/delegate.test.ts",
+        "sha256": "6c4badca6d001472266dfaa72bd633601dc52a147fbe39fd1998acf6112e40a6",
+        "passed_cases": 16,
+        "case_identity_sha256": "5fd09cf1a5c17d23f0d3b33f5d6017620072dfff93eea3af618d4bb32e6da840",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/executionOrigin.test.ts",
+        "sha256": "1c9af3c3570565ad021f3f6695753c622e06310b21fb92c213f9e228168293b9",
+        "passed_cases": 29,
+        "case_identity_sha256": "309019cd1ffad9a1aee14b931ade13ba50f19241fac14e987949f2f0e8fad5a5",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/generative.test.ts",
+        "sha256": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+        "passed_cases": 4,
+        "case_identity_sha256": "83abd5be5d93b2cdc7027b83033490f4d7ef69dd6920831a774312387cb00ed6",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/gmail-token-crypto.test.ts",
+        "sha256": "19a7f099188a7ff6d50014cda11b03594d5af3e7bd0abe6269dffd05797a3879",
+        "passed_cases": 3,
+        "case_identity_sha256": "5e41553754afa0fb06cdf52854b729b8231d12e876e6db2fefbe886678b0569f",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/gmailTool.test.ts",
+        "sha256": "5508b81a89b41e6227833cc07c7c62aa6f8f88ae1339c7d2baebd1b42478e095",
+        "passed_cases": 5,
+        "case_identity_sha256": "08fd21fef727488a8efd515e83c246cc3122b1a751e4744538d07aec0d714c4c",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/jev-client.test.ts",
+        "sha256": "4c2b9e51cc5f50590f5da94451a86bfb1bdc0b5d75edc6043797ac6f129761e2",
+        "passed_cases": 19,
+        "case_identity_sha256": "51c55ae3b860e1b5981d32d35e6757fca3d563941a91ae68dc932df098a60269",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/jev-schema.test.ts",
+        "sha256": "5bb7c143167e98325d057da54b14744bb4564aa92204c298e0a35d04124e6c0d",
+        "passed_cases": 30,
+        "case_identity_sha256": "d94487ce182f498038943534d24a18891564f4040a24e4bf79cf901e097e632d",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/jev-tool.test.ts",
+        "sha256": "d87eb889a55fdf5201d5b189a2b0c526afd25db9de2047794e1d28dc6dc29523",
+        "passed_cases": 34,
+        "case_identity_sha256": "47ab2a99e0b9b7722ca53bbba150be5ff0a353e97468dd5c9c0ba7ea7dc6faeb",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/kartaTriggerEdge.test.ts",
+        "sha256": "43c5649db9497e1799987df1624ecc8d3a3a81c49d6588998d465d585a75a04f",
+        "passed_cases": 87,
+        "case_identity_sha256": "4bdd2d87f8fde125b012ac352954aa0d396b0f7dc94c66fe0d4310b2f43fc953",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/logger.test.ts",
+        "sha256": "1c4ae55915f47f4b3d204096d78054ecfcfe0f3fbec3540b93bb5d8af5b81eb5",
+        "passed_cases": 4,
+        "case_identity_sha256": "000afe6515a27ef16f229ea7f33e5697b16ea9d7229912a2fd7cc50eaf2cfec3",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loggerCycleFinalization.test.ts",
+        "sha256": "51e63589bb9048c9485d1370c9335dd6ae7b5d160f303a07e9effd325da29e38",
+        "passed_cases": 6,
+        "case_identity_sha256": "d79a90db2235fb33ce448868219916391ae2360fb26fc863f9596f60066662eb",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loop.test.ts",
+        "sha256": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+        "passed_cases": 14,
+        "case_identity_sha256": "56c0c4fa698869555822591779229249f4c18b34e10fe575eb2c082f9fe5fb33",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loopBriefLifecycle.test.ts",
+        "sha256": "970abaf06fe2351f5bc18537e8fdf630cc0902ea9648b1ba3977a8366c118f39",
+        "passed_cases": 35,
+        "case_identity_sha256": "d3204905803cfe0004bb506b07340c3117afa0393502d488ccca161c1132db26",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loopJevTracePrivacy.test.ts",
+        "sha256": "0b762fc968e1c504c477ebb9af2957fb1ce455cb3bb4f280b38b78bd071fb4e3",
+        "passed_cases": 3,
+        "case_identity_sha256": "cad4f9b199100f3b11b3002d5238a713ce7dad07d56ffb37abf4a72d8226bf44",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loopModelAdmission.test.ts",
+        "sha256": "c2a653f94d98a7a60570019ed1b48eaf21a72515873cf32af271377d23a1434f",
+        "passed_cases": 33,
+        "case_identity_sha256": "edcb4df4b9816b28f54bc28a6254463cb199f2cbfa3dc1570d98d488d63bcb53",
+        "receipt": "model-after-node22"
+      },
+      {
+        "file": "karta/test/loopTracePrivacy.test.ts",
+        "sha256": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+        "passed_cases": 22,
+        "case_identity_sha256": "c85c2759a3b863e579f30c0f72fbb0d303c8e3623e8424c62127085a1c15c5aa",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/loopTriggerContext.test.ts",
+        "sha256": "83c144902c37247ed65ed959748052c678b82aabe74bba445f40e4e3d55e9b25",
+        "passed_cases": 29,
+        "case_identity_sha256": "321fe0cf0e033b4d6e745086db5c1cd27475e44b9708e0f9d84b259f29a260c9",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/mockClaude.test.ts",
+        "sha256": "ec536b52e6bae91d0a188f41495121e4617209ee3b5ae2d780a6844d3e64c1e2",
+        "passed_cases": 7,
+        "case_identity_sha256": "dda7bc860185abf723d2d2b1985e87d842017dd15aca2e245800fd61ec32d0d3",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/publicChatAdmission.test.ts",
+        "sha256": "1720db0ba1b8f29d47809f5dcf890a5679f098bc5c14b3b76edb73d99f01d363",
+        "passed_cases": 11,
+        "case_identity_sha256": "1280bd3d1183e74ee47df84e3ce78192f493ad7d03e9f78e19f2ea29955db654",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/real-claude.test.ts",
+        "sha256": "584ae5f16dcbe3ed9177c87ea334dc3a7ca39f85c8fcf68277518c554cac2258",
+        "passed_cases": 4,
+        "case_identity_sha256": "111746a655cd45f7cd22b0888983f0cf82a55ed48882f301724524faf7243f19",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/sseConsumer.test.ts",
+        "sha256": "018c567bd4f18ab21c79aa4f66630052d95bbb1d3b1ca4253528a95cb5611767",
+        "passed_cases": 5,
+        "case_identity_sha256": "117faace415fed6ee5765c42ab3ea2da04e4b08c0ec1e153400a5888a0fc3ad3",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/sseFraming.test.ts",
+        "sha256": "fe0214fb8e94e26a093fbe970159116e8895ec0d6e1bdac6e2e824f70e878b85",
+        "passed_cases": 10,
+        "case_identity_sha256": "186f75b66c2fdf3a48e502ab7eca4fbe1fe933c36953f25a9c14e11b2bc5c31e",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/streamCompletionAudit.test.ts",
+        "sha256": "3a626a97559422a4de9653bf0633eac43af8cc4755550bed86a1f0671cd273ed",
+        "passed_cases": 23,
+        "case_identity_sha256": "423c239e02b913a283441c4e7f78b3d06a082a36546ef7183c942e740acc2e2c",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/streaming.test.ts",
+        "sha256": "1655830589904825e9c7df888e285b987146adeb23ffa73fe9016e6930373334",
+        "passed_cases": 10,
+        "case_identity_sha256": "a35e17d36d0d8afbf2c519880b9b56796fbba5a0def88b171a26b7e95f62323b",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/stripeIsolation.test.ts",
+        "sha256": "b0be0a80abaed4fad07522e315a2e208c5f3098fddcdeeccbdc0c0183ae22572",
+        "passed_cases": 3,
+        "case_identity_sha256": "66976c4612ce4b16b3a23925fba3dfd8ac603c075d4a8371ba396af1d62d4056",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/supabaseTool.test.ts",
+        "sha256": "d78e86585dbe85e586ff497c2f961b0fe809aa1f6a84ef682478e5d0bac1529f",
+        "passed_cases": 5,
+        "case_identity_sha256": "d59d23f4908f0af4d8257dc14cb9d7e26aba87cd2b90aff3fc516d7d4bb4e989",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/toolResult.test.ts",
+        "sha256": "d832688736f0722ae3e86ab589efa9cd397719b817dcae6d8c6f792fd7d74a7d",
+        "passed_cases": 16,
+        "case_identity_sha256": "04401c0357c0ec15905ea7fe5888b71a2e7fca433ef1f8f62aabfecea3fdb51f",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/webAccessPlanTool.test.ts",
+        "sha256": "0c52026db7dcab8aa46cd6edab25593068e5f9c20109f76643819b61a3b04158",
+        "passed_cases": 10,
+        "case_identity_sha256": "d1cd028e624f745a04138ab5d5598c6d792d4a963ae1e741c5640ac32fd7f17d",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/webCapabilityPlan.test.ts",
+        "sha256": "08d6c015447d91146bcaee77e055b9e29ab6e1dd0d720c25ebf4f6586e1a6a98",
+        "passed_cases": 47,
+        "case_identity_sha256": "ed8ab5310809f93ae0b255cbe0d4da82f0c2664c34c2fc5564dd2199d052f396",
+        "receipt": "non-sql-63"
+      },
+      {
+        "file": "karta/test/webSearchValidation.test.ts",
+        "sha256": "630b0a235490f58f2f4e0883d64cd617f8f3f5eb7cc564f6178ec876e81e32d0",
+        "passed_cases": 41,
+        "case_identity_sha256": "df53499d056bf04330bb4b988ab9111a2345e674fab977177a810b5b7cabab4c",
+        "receipt": "non-sql-63"
+      }
+    ],
+    "receipts": [
+      {
+        "label": "model-after-node22",
+        "status": "PASS",
+        "cases": 33,
+        "files": [
+          "test/loopModelAdmission.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/loopModelAdmission.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/checks/model-after-node22.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 1.424579381942749,
+        "report_sha256": "8c424149ef7e9cbc42e56324df595b825221df6e16543d3b20b69353a055cbce",
+        "command_receipt_sha256": "bca3d706bfbedfff918afee2bb3ef4948cff3dac1293f4611c0edbb248798a78",
+        "source_unchanged": true
+      },
+      {
+        "label": "brief-after-wasm1",
+        "status": "PASS",
+        "cases": 13,
+        "files": [
+          "test/briefDatabaseCycle.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefDatabaseCycle.test.ts",
+          "--maxWorkers=1",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/checks/brief-after-wasm1.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 4.4880218505859375,
+        "report_sha256": "96330ff52fb27a1427f4e7650365aa847e96e9057934bf62a38f825a2ab13d8d",
+        "command_receipt_sha256": "3f6dffc5f39bae295fdac653d9bc020138b63c5fe91cd8c5ed51b4140e135a1d",
+        "source_unchanged": true
+      },
+      {
+        "label": "assistant-policy-isolated",
+        "status": "PASS",
+        "cases": 55,
+        "files": [
+          "test/assistantPolicy.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/assistantPolicy.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/assistant-policy-isolated.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 3.0790674109957763,
+        "report_sha256": "21b636f66fc97c00caefa55f5bf87dfe9d36ee99582bdbcf49a4f3f69c2bdb49",
+        "command_receipt_sha256": "b0061e9aaae98dfdaca68e4682ec8c39fe59404aec8d7fb1198326545267e3ea",
+        "source_unchanged": true
+      },
+      {
+        "label": "non-sql-63",
+        "status": "PASS",
+        "cases": 913,
+        "files": [
+          "test/actionAgentsMock.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/apiDeliveryIdentity.test.ts",
+          "test/apiSafety.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "test/autonomy.test.ts",
+          "test/brief.test.ts",
+          "test/briefSubmissionClient.test.ts",
+          "test/chatEscalation.test.ts",
+          "test/chatRequestScope.test.ts",
+          "test/chefBrief.test.ts",
+          "test/chefBudgetAccounting.test.ts",
+          "test/chefBudgetAdapter.test.ts",
+          "test/chefCancellation.test.ts",
+          "test/chefCostGovernor.test.ts",
+          "test/chefDriver.test.ts",
+          "test/chefEvidenceAdapter.test.ts",
+          "test/chefGitState.test.ts",
+          "test/chefProcess.test.ts",
+          "test/chefProtocol.test.ts",
+          "test/chefQuarantineAdapter.test.ts",
+          "test/chefSupervisor.test.ts",
+          "test/chefSupervisorCancellation.test.ts",
+          "test/chefVerificationGitIntegration.test.ts",
+          "test/chefVerifier.test.ts",
+          "test/chefWorkerShutdown.test.ts",
+          "test/claudeDecisionCompleteness.test.ts",
+          "test/customAgent.test.ts",
+          "test/customAgentScanAbort.test.ts",
+          "test/customAgentScheduler.test.ts",
+          "test/customAgentSchedulerCron.test.ts",
+          "test/customAuthorization.test.ts",
+          "test/customRegistry.test.ts",
+          "test/cycleAdmissionPrivacy.test.ts",
+          "test/delegate.test.ts",
+          "test/executionOrigin.test.ts",
+          "test/generative.test.ts",
+          "test/gmail-token-crypto.test.ts",
+          "test/gmailTool.test.ts",
+          "test/jev-client.test.ts",
+          "test/jev-schema.test.ts",
+          "test/jev-tool.test.ts",
+          "test/kartaTriggerEdge.test.ts",
+          "test/logger.test.ts",
+          "test/loggerCycleFinalization.test.ts",
+          "test/loop.test.ts",
+          "test/loopBriefLifecycle.test.ts",
+          "test/loopJevTracePrivacy.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/loopTriggerContext.test.ts",
+          "test/mockClaude.test.ts",
+          "test/publicChatAdmission.test.ts",
+          "test/real-claude.test.ts",
+          "test/sseConsumer.test.ts",
+          "test/sseFraming.test.ts",
+          "test/streamCompletionAudit.test.ts",
+          "test/streaming.test.ts",
+          "test/stripeIsolation.test.ts",
+          "test/supabaseTool.test.ts",
+          "test/toolResult.test.ts",
+          "test/webAccessPlanTool.test.ts",
+          "test/webCapabilityPlan.test.ts",
+          "test/webSearchValidation.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/actionAgentsMock.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/apiDeliveryIdentity.test.ts",
+          "test/apiSafety.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "test/autonomy.test.ts",
+          "test/brief.test.ts",
+          "test/briefSubmissionClient.test.ts",
+          "test/chatEscalation.test.ts",
+          "test/chatRequestScope.test.ts",
+          "test/chefBrief.test.ts",
+          "test/chefBudgetAccounting.test.ts",
+          "test/chefBudgetAdapter.test.ts",
+          "test/chefCancellation.test.ts",
+          "test/chefCostGovernor.test.ts",
+          "test/chefDriver.test.ts",
+          "test/chefEvidenceAdapter.test.ts",
+          "test/chefGitState.test.ts",
+          "test/chefProcess.test.ts",
+          "test/chefProtocol.test.ts",
+          "test/chefQuarantineAdapter.test.ts",
+          "test/chefSupervisor.test.ts",
+          "test/chefSupervisorCancellation.test.ts",
+          "test/chefVerificationGitIntegration.test.ts",
+          "test/chefVerifier.test.ts",
+          "test/chefWorkerShutdown.test.ts",
+          "test/claudeDecisionCompleteness.test.ts",
+          "test/customAgent.test.ts",
+          "test/customAgentScanAbort.test.ts",
+          "test/customAgentScheduler.test.ts",
+          "test/customAgentSchedulerCron.test.ts",
+          "test/customAuthorization.test.ts",
+          "test/customRegistry.test.ts",
+          "test/cycleAdmissionPrivacy.test.ts",
+          "test/delegate.test.ts",
+          "test/executionOrigin.test.ts",
+          "test/generative.test.ts",
+          "test/gmail-token-crypto.test.ts",
+          "test/gmailTool.test.ts",
+          "test/jev-client.test.ts",
+          "test/jev-schema.test.ts",
+          "test/jev-tool.test.ts",
+          "test/kartaTriggerEdge.test.ts",
+          "test/logger.test.ts",
+          "test/loggerCycleFinalization.test.ts",
+          "test/loop.test.ts",
+          "test/loopBriefLifecycle.test.ts",
+          "test/loopJevTracePrivacy.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/loopTriggerContext.test.ts",
+          "test/mockClaude.test.ts",
+          "test/publicChatAdmission.test.ts",
+          "test/real-claude.test.ts",
+          "test/sseConsumer.test.ts",
+          "test/sseFraming.test.ts",
+          "test/streamCompletionAudit.test.ts",
+          "test/streaming.test.ts",
+          "test/stripeIsolation.test.ts",
+          "test/supabaseTool.test.ts",
+          "test/toolResult.test.ts",
+          "test/webAccessPlanTool.test.ts",
+          "test/webCapabilityPlan.test.ts",
+          "test/webSearchValidation.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/non-sql-63.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 33.323486986002536,
+        "report_sha256": "bab1954c05ceb53ef591fb4fdd93a07fc5b4c8ff9012faeed01272c4c8d91922",
+        "command_receipt_sha256": "6cee8ee4d406a768a17c9c0459aef234f7b0325cbb633d56fde07010ca258306",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-01-approval",
+        "status": "PASS",
+        "cases": 15,
+        "files": [
+          "test/approval.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approval.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-01-approval.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 5.764132108997728,
+        "report_sha256": "9e09462f147b5c4f295e7a1005f29828724d2eebde1d6a4cd3537f09713a877c",
+        "command_receipt_sha256": "664b5ae4635a9f87646ef28192721e3a6139054804b1ad25078748822d0b8e87",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-02-approvalContinuation",
+        "status": "PASS",
+        "cases": 42,
+        "files": [
+          "test/approvalContinuation.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approvalContinuation.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-02-approvalContinuation.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 6.627147276005417,
+        "report_sha256": "f394ebb68b256ee733eaeedd9cd420ef52358b3f88281f93d57f14580d047b8d",
+        "command_receipt_sha256": "343ccbe81bb9e413cba037437b9641246923577d426053f56ec959703922d6ed",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-03-approvalParentGuard",
+        "status": "PASS",
+        "cases": 48,
+        "files": [
+          "test/approvalParentGuard.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approvalParentGuard.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-03-approvalParentGuard.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 5.148569290002342,
+        "report_sha256": "7058615beee8c4244fce7185f7fb553ec9913ce569f21205ca177e771ca56200",
+        "command_receipt_sha256": "d8f3adc07eb4408b272584222029e7d3c609c0b9583c00d2a390f198637b6843",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-04-approvalTriggerContext",
+        "status": "PASS",
+        "cases": 8,
+        "files": [
+          "test/approvalTriggerContext.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approvalTriggerContext.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-04-approvalTriggerContext.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 3.1341402800026117,
+        "report_sha256": "c7597b6e24fddea067e2f77bdd1bb2333b2b067e477eaff341db8755e2de5571",
+        "command_receipt_sha256": "1b0564847715f54c22b37b5fcf379b214b61c71e9374d4cafa24c772cbe01625",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-05-briefClaims",
+        "status": "PASS",
+        "cases": 57,
+        "files": [
+          "test/briefClaims.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefClaims.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-05-briefClaims.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 3.8835953309971956,
+        "report_sha256": "b12f9be73422db81f20a497f53c18aad6711d1859e1d9c1008f142f131be9bc7",
+        "command_receipt_sha256": "b80b44ed7c3f5405c5eb88c8a73ae5285f3c7c0ff422571dad74c94569550b45",
+        "source_unchanged": true
+      },
+      {
+        "label": "sql-06-briefSubmission",
+        "status": "PASS",
+        "cases": 32,
+        "files": [
+          "test/briefSubmission.test.ts"
+        ],
+        "command": [
+          "env",
+          "NODE_OPTIONS=--max-old-space-size=256",
+          "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmission.test.ts",
+          "--maxWorkers=1",
+          "--retry=0",
+          "--execArgv=--wasm-num-compilation-tasks=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/2b4ee4b3ae54/aether5-notes/partition-v2/checks/sql-06-briefSubmission.json"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 3.5528605810031877,
+        "report_sha256": "43097a140d03aac4a6ba6d49864d40b710522a5305ba150bf43b35d07ebcd119",
+        "command_receipt_sha256": "5ce2168d23549fe352e81fd52593212f8379cc79179fc1df760ef1e7c76e1c08",
+        "source_unchanged": true
+      }
+    ]
+  },
+  "checks": [
+    {
+      "label": "final-types",
+      "status": "PASS",
+      "command": [
+        "env",
+        "NODE_OPTIONS=--max-old-space-size=512",
+        "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.957850694656372,
+      "source_unchanged": true,
+      "receipt_sha256": "5eafe8fb80f3111a7b553fcd33d8b943d9eecc44eaae78b9ba8231beeda6c277"
+    },
+    {
+      "label": "final-build",
+      "status": "PASS",
+      "command": [
+        "env",
+        "NODE_OPTIONS=--max-old-space-size=512",
+        "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 3.935671329498291,
+      "source_unchanged": true,
+      "receipt_sha256": "33ba1e34e1f073e983043a64385f683ba76474ebaaf31ef0441acc4222edee88"
+    },
+    {
+      "label": "final-contracts",
+      "status": "PASS",
+      "command": [
+        "env",
+        "NODE_OPTIONS=--max-old-space-size=256",
+        "/workspace/scratch/2b4ee4b3ae54/aether5-runtime/node_modules/node/bin/node",
+        "scripts/generate-supabase-contracts.mjs",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 2.3960297107696533,
+      "source_unchanged": true,
+      "receipt_sha256": "d5bb7b449a70a7ad6c30026d09774017df37a53ea7f6474a8b64979b22ccadb8"
+    }
+  ],
+  "runtime_incidents": [
+    {
+      "label": "non-sql-64",
+      "status": "NON_CONCLUANT",
+      "accepted": false,
+      "exit_code": 1,
+      "timed_out": false,
+      "duration_seconds": 39.11826241399831,
+      "source_unchanged": true,
+      "observed_peak_group_rss_bytes": null,
+      "receipt_sha256": "b5b12a9976a1eacd8940bb9d802a70e64d54ba1b3b3757d909f4f364a2ed352d",
+      "cause": "Worker SIGKILL; cause not established"
+    },
+    {
+      "label": "sql-07-briefSubmissionFlow",
+      "status": "NON_CONCLUANT",
+      "accepted": false,
+      "exit_code": 1,
+      "timed_out": false,
+      "duration_seconds": 19.614273829000012,
+      "source_unchanged": true,
+      "observed_peak_group_rss_bytes": 678731776,
+      "receipt_sha256": "4243c43686d3a2877eff4d093933670aaeec71e5b46f93be34d30a43a68a8e52",
+      "cause": "Worker SIGKILL; cause not established"
+    }
+  ],
+  "earlier_runtime_incidents": [
+    "Several initial PGlite or whole-repository GitNexus processes exited with SIGKILL, cause unknown",
+    "One TypeScript check with a 256 MiB heap failed with a V8 heap error; the final 512 MiB check exited 0",
+    "An earlier successful typecheck crossed a fixture edit and is excluded from final evidence"
+  ],
+  "test_execution_policy": {
+    "max_workers": 1,
+    "automatic_retry": 0,
+    "sql_worker_exec_arg": "--wasm-num-compilation-tasks=1",
+    "original_vitest_timeouts_and_assertions_preserved": true,
+    "no_report_with_nonzero_exit_contributes_to_passed_counts": true
+  },
+  "gitnexus_pre_edit": {
+    "version": "1.6.12",
+    "scope": "KARTA only",
+    "scoped_index": "PASS",
+    "whole_repository_index": "PARTIEL; two SIGKILL interruptions",
+    "runAgentCycle_impact": "MEDIUM",
+    "test_helper_impact": "LOW or dynamic edges reviewed manually",
+    "final_detect_changes": "Required before commit; final receipt recorded in PR and canonical continuity"
+  },
+  "remote_ci": {
+    "status": "NON TESTÉ for the new commit at this evidence snapshot",
+    "next_gate": "Existing pull-request workflow after publication; result must identify exact head/merge tree",
+    "historical_base_run": {
+      "id": 42881227306,
+      "head_sha": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+      "status": "success",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/42881227306",
+      "not_a_result_for_this_change": true
+    }
+  },
+  "preserved": [
+    "KARTA/CHEF/SMARANA/AKASHA architecture",
+    "Existing brief/approval continuation guard",
+    "Immutable run completion and existing SQL brief recovery",
+    "199 EUR / 499 EUR / quote pricing and monthly quota policy",
+    "Hostinger and Cloudflare target",
+    "Parallel PR33 and PR36 branches"
+  ],
+  "limits": [
+    "State reads are not atomic with provider dispatch and cannot revoke a request already sent",
+    "No application-wide timeout for every SQL request is introduced here; real latency and load remain unmeasured",
+    "Complex approval continuation for a claimed brief remains guarded pending a durable lineage-transfer protocol",
+    "PGlite does not prove native PostgreSQL multiconnection concurrency",
+    "Both Mac bridge status calls returned MCP -32603; ONE end-to-end runtime remains blocked in this session",
+    "No real provider request, production migration, deployment or main merge was performed"
+  ]
+}

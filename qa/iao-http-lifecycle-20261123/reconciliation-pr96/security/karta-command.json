@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "audit",
+    "--package-lock-only",
+    "--audit-level=high",
+    "--omit=dev",
+    "--json"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 0,
+  "duration_seconds": 5.778
+}

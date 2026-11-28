@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "inspectPost",
+    "--direction",
+    "upstream",
+    "--repo",
+    "purama-social-reliability-20261123",
+    "--file",
+    "supabase/functions/_shared/zernio.ts",
+    "--summary-only"
+  ],
+  "env": {
+    "GITNEXUS_STORAGE_PATH": "/workspace/scratch/2c704d52ca75/work/gitnexus-social-index",
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728"
+  },
+  "exitCode": 0,
+  "stdout": "{\n  \"target\": {\n    \"id\": \"Function:supabase/functions/_shared/zernio.ts:inspectPost\",\n    \"name\": \"inspectPost\",\n    \"type\": \"Function\",\n    \"filePath\": \"supabase/functions/_shared/zernio.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": []\n}\n",
+  "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795389002269,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n",
+  "finishedAt": "2026-11-22T23:10:02.434268+00:00"
+}

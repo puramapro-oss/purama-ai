@@ -1,0 +1,68 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/gmailActionDeadline.test.ts (34 tests | 6 failed | 28 skipped) 38ms
+   ❯ Gmail draft has one action deadline (12)
+     × does not erase an explicit failure beside a receipt: {"ok":false} 26ms
+     × does not erase an explicit failure beside a receipt: {"success":false} 2ms
+     × does not erase an explicit failure beside a receipt: {"error":"provider-failure"} 2ms
+   ❯ Gmail send has one action deadline (12)
+     × does not erase an explicit failure beside a receipt: {"ok":false} 2ms
+     × does not erase an explicit failure beside a receipt: {"success":false} 2ms
+     × does not erase an explicit failure beside a receipt: {"error":"provider-failure"} 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > does not erase an explicit failure beside a receipt: {"ok":false}
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > does not erase an explicit failure beside a receipt: {"success":false}
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > does not erase an explicit failure beside a receipt: {"error":"provider-failure"}
+AssertionError: promise resolved "{ draftId: 'receipt-1' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftId": "receipt-1",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:133:46
+    131|     "does not erase an explicit failure beside a receipt: %j", async f…
+    132|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    133|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    134|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    135|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > does not erase an explicit failure beside a receipt: {"ok":false}
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > does not erase an explicit failure beside a receipt: {"success":false}
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > does not erase an explicit failure beside a receipt: {"error":"provider-failure"}
+AssertionError: promise resolved "{ messageId: 'receipt-1' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "receipt-1",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:133:46
+    131|     "does not erase an explicit failure beside a receipt: %j", async f…
+    132|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    133|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    134|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    135|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 28 skipped (34)
+   Start at  19:37:38
+   Duration  419ms (transform 61%, tests 20%, import 12%, setup 4%, worker 3%)

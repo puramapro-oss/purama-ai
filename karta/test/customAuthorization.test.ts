@@ -112,9 +112,10 @@ vi.mock("../src/db/supabase.js", () => ({
       };
       return query;
     },
-    rpc: async (name: string, params: Record<string, unknown>) => {
+    rpc: (name: string, params: Record<string, unknown>) => {
+      const response = (async () => {
       h.rpcCalls.push({ name, params: { ...params } });
-      if (name === "karta_claim_pending_action") {
+      if (name === "karta_claim_pending_action_bounded") {
         if (params.p_decision !== "approve" && params.p_decision !== "reject") {
           return { data: null, error: { message: "invalid decision" } };
         }
@@ -136,6 +137,8 @@ vi.mock("../src/db/supabase.js", () => ({
         return { data: null, error: null };
       }
       throw new Error(`Unexpected RPC in authority test: ${name}`);
+      })();
+      return Object.assign(response, { abortSignal: (_signal: AbortSignal) => response });
     },
   },
 }));
@@ -233,7 +236,7 @@ async function denyOldApproval(): Promise<void> {
   expect(h.enqueue).not.toHaveBeenCalled();
   expect(["failed", "cancelled"]).toContain(h.pending?.status);
   expect(h.rpcCalls.map(call => call.name)).toEqual([
-    "karta_claim_pending_action", "karta_finalize_pending_action",
+    "karta_claim_pending_action_bounded", "karta_finalize_pending_action",
   ]);
   // The same old approval cannot become executable merely by being submitted again.
   expect((await resolvePendingAction(pendingId, "approve")).ok).toBe(false);
@@ -465,22 +468,19 @@ describe("real loop revalidates custom authority after reasoning and before ever
 });
 
 describe("real approval binds the pending user and current custom authority", () => {
-  it("positively executes an authorised pending action and resumes only once", async () => {
+  it("executes and finalizes an authorised pending action once without direct queue publication", async () => {
     expect((await resolvePendingAction(pendingId, "approve")).ok).toBe(true);
     expect(h.pending?.status).toBe("executed");
     expect(h.probe).toHaveBeenCalledExactlyOnceWith({}, expect.objectContaining({
       userId: owner, agentType, mode: "live", operationId: pendingId,
     }));
-    expect(h.enqueue).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ userId: owner, agentType, trigger: expect.objectContaining({ source: "approval-resume" }) }),
-      expect.objectContaining({ dedupeKey: `approval-resume|${pendingId}|executed` })
-    );
+    expect(h.enqueue).not.toHaveBeenCalled();
     expect(h.rpcCalls.map(call => call.name)).toEqual([
-      "karta_claim_pending_action", "karta_finalize_pending_action",
+      "karta_claim_pending_action_bounded", "karta_finalize_pending_action",
     ]);
     expect((await resolvePendingAction(pendingId, "approve")).ok).toBe(false);
     expect(h.probe).toHaveBeenCalledOnce();
-    expect(h.enqueue).toHaveBeenCalledOnce();
+    expect(h.enqueue).not.toHaveBeenCalled();
   });
 
   it.each(["is_active", "karta_enabled", "owner", "tool"] as const)(
@@ -600,7 +600,7 @@ describe("custom agents enable metadata-only traces by default without changing 
       userId: owner, mode: "live", operationId: pendingId,
     }));
     expect(h.pending?.status).toBe("executed");
-    expect(h.enqueue).toHaveBeenCalledOnce();
+    expect(h.enqueue).not.toHaveBeenCalled();
     expectPrivateTraceAbsent(approved);
     expect(params).toEqual({ payload: PRIVATE_MARKER });
   });

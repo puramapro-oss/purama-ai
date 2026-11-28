@@ -1,0 +1,33 @@
+{
+  "reason": "The raw npm/GitNexus output ended in empty lines rejected by git diff --check. Preserve all substantive lines; original bytes remain in0685c1a and external execution logs. No result or exit status changed.",
+  "files": [
+    {
+      "path": "qa/iao-unlazy-reconciliation-20261125/composed-build.log",
+      "rawCommit": "0685c1a76e99d52f95cb840f14571f9f9f506d14",
+      "rawSha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd",
+      "normalizedSha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05",
+      "onlyRemovedFinalBlankLines": true
+    },
+    {
+      "path": "qa/iao-unlazy-reconciliation-20261125/composed-typecheck.log",
+      "rawCommit": "0685c1a76e99d52f95cb840f14571f9f9f506d14",
+      "rawSha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "normalizedSha256": "1ec69788b3cdadf508e02dfbc57a867f46cb26ef267d4d55cee0799fb6ce3ce8",
+      "onlyRemovedFinalBlankLines": true
+    },
+    {
+      "path": "qa/iao-unlazy-reconciliation-20261125/gitnexus-analyze.log",
+      "rawCommit": "0685c1a76e99d52f95cb840f14571f9f9f506d14",
+      "rawSha256": "dd3e25a63c6cd571ca9261bfbc4fe2dd59db885b3ce4857c81e07173a2098661",
+      "normalizedSha256": "3a280d2e626e7e684ec42c7fff1ba075f4ac63c3548332472a65bdf5eae50271",
+      "onlyRemovedFinalBlankLines": true
+    },
+    {
+      "path": "qa/iao-unlazy-reconciliation-20261125/gitnexus-composed.log",
+      "rawCommit": "0685c1a76e99d52f95cb840f14571f9f9f506d14",
+      "rawSha256": "df8679678966f0348e64fe2013bfaff20225463c86768642d7fc79cf2ce40f43",
+      "normalizedSha256": "fa30b9a66d6103e473308dc48c3be29b53985d820b831c3d341a327996e7062e",
+      "onlyRemovedFinalBlankLines": true
+    }
+  ]
+}

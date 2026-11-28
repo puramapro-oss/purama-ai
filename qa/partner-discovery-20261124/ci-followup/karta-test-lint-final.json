@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/eslint/bin/eslint.js",
+    "karta/test/partnerDiscovery.test.ts"
+  ],
+  "working_directory": ".",
+  "exit_code": 0,
+  "elapsed_seconds": 3.547,
+  "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff"
+}

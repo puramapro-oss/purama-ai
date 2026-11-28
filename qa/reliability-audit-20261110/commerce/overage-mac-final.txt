@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta
+
+ ✓ test/overageCredit.test.ts (38 tests) 6577ms
+
+ Test Files  1 passed (1)
+      Tests  38 passed (38)
+   Start at  22:46:11
+   Duration  7.78s (tests 87%, import 11%, transform 2%)

@@ -17,6 +17,8 @@ export default defineConfig(env => {
         input: [
           fileURLToPath(new URL('../../index.html', import.meta.url)),
           fileURLToPath(new URL('./commerce-ui-harness.html', import.meta.url)),
+          fileURLToPath(new URL('./billing-scope-harness.html', import.meta.url)),
+          fileURLToPath(new URL('./billing-dashboard-scope-harness.html', import.meta.url)),
         ],
       },
     },

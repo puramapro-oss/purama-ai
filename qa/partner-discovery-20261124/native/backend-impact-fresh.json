@@ -1,0 +1,29 @@
+{
+  "status": "UNKNOWN",
+  "base_commit": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "started_at": "2026-11-24T22:47:02.866078+00:00",
+  "elapsed_seconds": 1.274,
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "partner_discovery_import",
+    "--direction",
+    "upstream",
+    "--repo",
+    "purama-ai-partner-native-53633327",
+    "--include-tests",
+    "--limit",
+    "25"
+  ],
+  "exit_code": 1,
+  "log": "qa/partner-discovery-20261124/native/backend-impact-fresh.log.gz",
+  "output": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795560424056,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n{\n  \"error\": \"Target 'partner_discovery_import' not found\",\n  \"target\": {\n    \"name\": \"partner_discovery_import\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+  "manual_complement": [
+    "Actual SQL migration loaded unchanged by native fixture.",
+    "Service-only RPC ACL and account-specific transaction lock reviewed directly.",
+    "No product symbol changed; only new native test and existing workflow invocation added.",
+    "Runtime SQL/dynamic calls and workflow edges cannot be inferred from missing graph symbols."
+  ]
+}

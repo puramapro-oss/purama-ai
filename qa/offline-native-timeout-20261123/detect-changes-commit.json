@@ -1,0 +1,273 @@
+{
+  "summary": {
+    "changed_count": 23,
+    "affected_count": 8,
+    "changed_files": 5,
+    "risk_level": "high"
+  },
+  "changed_symbols": [
+    {
+      "id": "Const:lib/iao-local-engine.ts:INFERENCE_BUDGET_MS",
+      "name": "INFERENCE_BUDGET_MS",
+      "type": "Const",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:lib/iao-local-engine.ts:PREPARATION_BUDGET_MS",
+      "name": "PREPARATION_BUDGET_MS",
+      "type": "Const",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:lib/iao-local-engine.ts:processLease",
+      "name": "processLease",
+      "type": "Const",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-local-engine.ts:createIaoLocalEngine",
+      "name": "createIaoLocalEngine",
+      "type": "Function",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-local-engine.ts:createIaoLocalEngine.runExclusive@253:2",
+      "name": "runExclusive",
+      "type": "Function",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-local-engine.ts:createIaoLocalEngine.runExclusive@253:2.controller@271:21",
+      "name": "controller",
+      "type": "Property",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-local-engine.ts:createIaoLocalEngine.runExclusive@253:2.settled@271:33",
+      "name": "settled",
+      "type": "Property",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:lib/iao-local-engine.ts:createIaoLocalEngine.inspect@298:4#1",
+      "name": "inspect",
+      "type": "Method",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:lib/iao-local-engine.ts:createIaoLocalEngine.release@327:4#0",
+      "name": "release",
+      "type": "Method",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-local-engine.ts:validateMessages",
+      "name": "validateMessages",
+      "type": "Function",
+      "filePath": "lib/iao-local-engine.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:lib/iao-native-qualification.ts:CHECKPOINT",
+      "name": "CHECKPOINT",
+      "type": "Const",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-native-qualification.ts:runPhase",
+      "name": "runPhase",
+      "type": "Function",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-native-qualification.ts:runPhase.requiredMemoryBytes@112:6",
+      "name": "requiredMemoryBytes",
+      "type": "Property",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-native-qualification.ts:runPhase.title@139:8",
+      "name": "title",
+      "type": "Property",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-native-qualification.ts:runPhase.draft@140:8",
+      "name": "draft",
+      "type": "Property",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:lib/iao-native-qualification.ts:runPhase.messages@141:8",
+      "name": "messages",
+      "type": "Property",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-native-qualification.ts:inspectEncryptedFixture",
+      "name": "inspectEncryptedFixture",
+      "type": "Function",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-native-qualification.ts:inspectEncryptedFixture.needle@256:2",
+      "name": "needle",
+      "type": "Function",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:lib/iao-native-qualification.ts:verifyWrongKeyRejected",
+      "name": "verifyWrongKeyRejected",
+      "type": "Function",
+      "filePath": "lib/iao-native-qualification.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/iao-local-engine.test.cjs:fixture",
+      "name": "fixture",
+      "type": "Function",
+      "filePath": "tests/iao-local-engine.test.cjs",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/iao-local-engine.test.cjs:fixture.packFactory@81:4#1",
+      "name": "packFactory",
+      "type": "Method",
+      "filePath": "tests/iao-local-engine.test.cjs",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/iao-local-engine.test.cjs:fixture.packFactory@81:4.inspect@85:8#0",
+      "name": "inspect",
+      "type": "Method",
+      "filePath": "tests/iao-local-engine.test.cjs",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/iao-local-engine.test.cjs:fixture.packFactory@81:4.requireReady@92:8#0",
+      "name": "requireReady",
+      "type": "Method",
+      "filePath": "tests/iao-local-engine.test.cjs",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_40_complete",
+      "name": "Complete → RejectCancellation",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runExclusive",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_56_runiaonativequalific",
+      "name": "RunIaoNativeQualification → Complete",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "runPhase",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_57_runiaonativequalific",
+      "name": "RunIaoNativeQualification → Inspect",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "runPhase",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_58_runiaonativequalific",
+      "name": "RunIaoNativeQualification → Prepare",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "runPhase",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_59_runiaonativequalific",
+      "name": "RunIaoNativeQualification → Release",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "runPhase",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_113_inspect",
+      "name": "Inspect → IaoLocalError",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "inspect",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_114_inspect",
+      "name": "Inspect → RejectCancellation",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "inspect",
+          "step": 1
+        },
+        {
+          "symbol": "runExclusive",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_159_prepare",
+      "name": "Prepare → RejectCancellation",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runExclusive",
+          "step": 2
+        }
+      ]
+    }
+  ]
+}

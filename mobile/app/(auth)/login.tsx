@@ -5,10 +5,11 @@ import { Link, router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { AccountUnavailable } from "@/components/auth/AccountUnavailable";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function LoginScreen() {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle, initializationError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,8 @@ export default function LoginScreen() {
     setLoading(false);
   };
 
+  if (initializationError) return <AccountUnavailable message={initializationError} />;
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
@@ -54,6 +57,15 @@ export default function LoginScreen() {
             <Text className="text-white text-3xl font-bold">Purama AI</Text>
             <Text className="text-white/50 text-base mt-2">Tes agents IA au quotidien</Text>
           </View>
+
+          <Button
+            testID="login-communication"
+            title="Communiquer par écrit sans compte"
+            variant="secondary"
+            onPress={() => router.push("/communication")}
+            style={{ minHeight: 56, marginBottom: 24 }}
+            textStyle={{ fontSize: 18, textAlign: "center" }}
+          />
 
           {error ? (
             <View className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">

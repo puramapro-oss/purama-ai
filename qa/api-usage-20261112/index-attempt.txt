@@ -1,0 +1,9 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+[2K  Skipped 2 large files (>512KB, likely generated/vendored)
+[2K  - qa/iao-runtime-finalization-20261110/verification.json
+[2K  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.

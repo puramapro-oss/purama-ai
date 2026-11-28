@@ -1,0 +1,59 @@
+{
+  "kind": "real-auth-sdk-browser-probe-source-receipt",
+  "sdkVersion": "2.119.2",
+  "authSdkVersion": "2.119.2",
+  "sourceFiles": [
+    {
+      "path": "tests/chat/sdk-init.html",
+      "bytes": 437,
+      "sha256": "657188fd021e44dbab607a2671e9ddf0ae584848754c798e636548eb5cf7fe48"
+    },
+    {
+      "path": "tests/chat/sdk-init.ts",
+      "bytes": 3669,
+      "sha256": "1749c69e910a4431883f8d6aafd13d61f670dd41bf2ca4bfed6fa2f7fbae2b82"
+    },
+    {
+      "path": "tests/chat/auth-client.spec.ts",
+      "bytes": 7842,
+      "sha256": "5339eac6e0434f269a30db08d7620234b2be66f10c874631d3ba9c1e70ad0614"
+    }
+  ],
+  "scope": "New probe files only. Product client, dependency manifests, and matrix config are owned by root and were not modified by this agent.",
+  "realClient": "src/integrations/supabase/client.ts",
+  "realClientSha256": "c4c92076076fe01f4ad7747bc1085ceb000e60307258b0529148fb607296f076",
+  "composition": "Direct product-client import; no React, TestAuth, ChatbotWidget or Workshop.",
+  "transport": "Auth requests to supabase.example.invalid are fulfilled synthetically or aborted before navigation. All other non-local traffic remains blocked by tests/chat/fixtures.ts.",
+  "checks": [
+    {
+      "name": "Strict targeted TypeScript",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node,vite/client --skipLibCheck tests/chat/sdk-init.ts tests/chat/auth-client.spec.ts tests/chat/fixtures.ts"
+    },
+    {
+      "name": "Playwright collection",
+      "status": "PASS",
+      "exitCode": 0,
+      "collected": 3,
+      "command": "node --max-old-space-size=512 node_modules/@playwright/test/cli.js test --config tests/chat/playwright.config.ts auth-client.spec.ts --list"
+    },
+    {
+      "name": "Whitespace check",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "git diff --check"
+    }
+  ],
+  "scenarios": [
+    "Real SDK initialization without a session, three concurrent getSession reads, simulated hidden-to-visible lifecycle, no auth HTTP request and no pageerror.",
+    "Real SDK recovery from a synthetic persisted session, concurrent reads, signOut with the persisted synthetic bearer, storage cleared and subsequent sessions empty.",
+    "Real SDK refresh request held, signOut completed, older refresh response then delivered; AuthRefreshDiscardedError required and no session resurrection."
+  ],
+  "errorCapture": "pageerror listener installed before goto; strict empty assertion after asynchronous boot and after each complete scenario. No ignore/filter path.",
+  "asyncSettling": "Normal timer task followed by two animation frames; browser timers and Web Locks are not replaced.",
+  "visibilityQualification": "Document visibility is simulated explicitly and reported only when exercised. This does not qualify physical app backgrounding.",
+  "runtimeEvidence": "Each executed test attaches browser name/version, process platform, viewport, observed SDK events, session-read identities, synthetic endpoint metadata and page errors. Tokens are not attached.",
+  "browserExecutionByThisAgent": "NON TESTÉ; source handed to root for native execution and CI.",
+  "realServerQualification": "NON TESTÉ; no real Supabase/GoTrue server, session or account is used."
+}

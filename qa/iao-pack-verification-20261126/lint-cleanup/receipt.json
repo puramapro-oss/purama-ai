@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-26T05:31:11.029731+00:00",
+  "status": "PASS",
+  "scope": "Error propagation after mandatory cleanup; no rule disablement",
+  "failedCi": {
+    "head": "185c61922c9d40573b1ac1063bcf7a293e5e4dd4",
+    "run": 45760351416,
+    "job": 139708739757,
+    "step": "npm run lint",
+    "rule": "no-unsafe-finally",
+    "errors": 3
+  },
+  "behavior": {
+    "allCleanupAttemptsPreserved": true,
+    "firstThrownValuePreservedIncludingUndefined": true,
+    "cleanupOnlyErrorsStillFail": true,
+    "silentNativeFallbackAdded": false
+  },
+  "validation": {
+    "fullRootLint": {
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 22,
+      "evidence": "lint-after.json"
+    },
+    "packDigestEngine": {
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "pack-digest-engine.json"
+    },
+    "qualificationGuards": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "qualification-guards.json",
+      "normalBuildUiRoute": "Excluded locally because react-test-renderer 19.1.0 is absent; full Mobile SDK CI remains required."
+    }
+  },
+  "impact": {
+    "status": "PARTIEL",
+    "automated": "Digest unresolved; verifyAsset has no resolved callers and UNKNOWN risk. Qualification query matched an unrelated Notifications file and is rejected as applicable evidence. Index is stale and FTS unavailable.",
+    "manual": "Digest is called by pack verification and the native qualification probe. verifyAsset is internal to installed/prepare. The probe is called only by the qualification route. No public signatures, dependencies, manifests, workflow or native core changes."
+  },
+  "sources": [
+    {
+      "path": "mobile/lib/iao-local-digest.ts",
+      "sha256": "a01968850dd4a3a96e4975ae25dd3762119bdb319c344295b318ac4053d107d7"
+    },
+    {
+      "path": "mobile/lib/iao-local-pack.ts",
+      "sha256": "9c6b6197553cbc62d6220e27fbeffa231622df10e00b2fe5ae599813c596bb19"
+    },
+    {
+      "path": "mobile/lib/iao-native-qualification.ts",
+      "sha256": "77b59fa763a93a06a6917c86c74b5e5ef55fabb92e83b5f4cd6c03b973539ef8"
+    },
+    {
+      "path": "mobile/tests/iao-local-digest.test.cjs",
+      "sha256": "851addf5cbb006b1c0890ffecf12a1710b147f054f2b528947d5a4b6febf4864"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "impact-before.json",
+      "sha256": "d9bd827836a63a8b5d4d5df48f102f1d4696437b011a3b359448040ab7e3ee17"
+    },
+    {
+      "path": "lint-after.json",
+      "sha256": "3fec0a8437c7ad7a71ecefd8f71e2bc43298f1d4da5a58863e62509528b5c09c"
+    },
+    {
+      "path": "pack-digest-engine.json",
+      "sha256": "85b9e2d25c8956fb3c34f2df7ca6957e3a55189e5e2278ebe2b2227780d7f9cd"
+    },
+    {
+      "path": "qualification-guards.json",
+      "sha256": "e5e9d2dff842ab69413882c88d72c8b9f2c2983d816439378eed351c2163ea65"
+    }
+  ],
+  "limitations": [
+    "Local successful suites replace only the corresponding source-level checks, not a native device execution.",
+    "Prior receipts retain the earlier source identities; this receipt records the updated cleanup implementation."
+  ]
+}

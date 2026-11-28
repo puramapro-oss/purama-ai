@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+    "detect-changes",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "origin/main",
+    "--repo",
+    "iao-integration-root-karta-20261124",
+    "--limit",
+    "100"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 2.445,
+  "baseCommit": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "scope": "Comparison with the fetched default main branch across the entire existing consolidation; graph covers KARTA only and is not whole-product qualification."
+}

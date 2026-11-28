@@ -1,0 +1,24 @@
+{
+  "node": "24.22.3",
+  "sdk": "2.119.2",
+  "unit": {
+    "files": 33,
+    "passed": 646,
+    "failed": 0,
+    "pending": 0
+  },
+  "checks": [
+    {
+      "check": "unit",
+      "exit": 0,
+      "seconds": 29.152585695002927
+    },
+    {
+      "check": "typecheck",
+      "exit": 0,
+      "seconds": 14.133365165995201
+    }
+  ],
+  "archive": "local-unit-typecheck.zip",
+  "sha256": "c651b5f1844eaf35af43983f26dc6fbcd86085cd09d51b722f0b17821c9a1873"
+}

@@ -1,0 +1,331 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test-wealth-diff.py"
+  ],
+  "observed_at_utc": "2026-11-24T22:08:26.897180+00:00",
+  "exit_code": 1,
+  "stdout": {
+    "fixture": "qa/iao-release-qualification-20261123/root-typecheck.log",
+    "fixture_blob": "19d6618bdd08c543b5a101755910791a584b5885",
+    "fixture_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+    "total": 39,
+    "passed": 36,
+    "cases": [
+      {
+        "name": "unchanged clean tree",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "name": "first exact archived blob",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-proof.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-proof.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "unlisted new QA stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \n",
+        "stderr": ""
+      },
+      {
+        "name": "application source stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "src/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 0 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "one exemption cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 1 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting path stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable archived file stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "invalid revision is not accepted",
+        "expected_exit": 128,
+        "actual_exit": 128,
+        "pass": true,
+        "stdout": "",
+        "stderr": "fatal: ambiguous argument 'missing-iao-test-revision': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n"
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/immutability-before-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/immutability-before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-build-serial.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-typecheck-1024.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/assembly/karta-typecheck-serial.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/gitnexus/root-index.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-after.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-before-in-process.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/memory/projection-before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/after.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/before-complete.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/before.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/regressions-final.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR104 archived blob: qa/iao-integration-20261124/runtime/regressions.log",
+        "expected_exit": 0,
+        "actual_exit": 0,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR104 archive stays strict",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:212: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-integration-20261124/assembly/immutability-before-final.log:212: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "PR104 exemptions cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 15 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR108 archived blob: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 0,
+        "actual_exit": 2,
+        "pass": false,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:13: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:13: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting PR108 path stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "executable PR108 archive stays strict: qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\n",
+        "stderr": ""
+      },
+      {
+        "name": "first exact PR108 archived blob: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 0,
+        "actual_exit": 2,
+        "pass": false,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "modified PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:45: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:45: trailing whitespace.\n+modified evidence \n",
+        "stderr": ""
+      },
+      {
+        "name": "renamed PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/renamed-device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/renamed-device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/renamed-device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/renamed-device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/renamed-device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "preexisting PR108 path stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "executable PR108 archive stays strict: qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "exact PR104 and PR108 archives compose",
+        "expected_exit": 0,
+        "actual_exit": 2,
+        "pass": false,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-integration-20261124/assembly/immutability-before-final.log:211: new blank line at EOF.\nqa/iao-integration-20261124/assembly/immutability-before.log:239: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-build-serial.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-1024.log:5: new blank line at EOF.\nqa/iao-integration-20261124/assembly/karta-typecheck-serial.log:9: trailing whitespace.\n+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; \nqa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log:19: new blank line at EOF.\nqa/iao-integration-20261124/gitnexus/root-index.log:17: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-after.log:166: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before-in-process.log:248: new blank line at EOF.\nqa/iao-integration-20261124/memory/projection-before.log:250: new blank line at EOF.\nqa/iao-integration-20261124/runtime/after.log:26: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before-complete.log:782: new blank line at EOF.\nqa/iao-integration-20261124/runtime/before.log:756: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions-final.log:372: new blank line at EOF.\nqa/iao-integration-20261124/runtime/regressions.log:401: new blank line at EOF.\nRechecking all changes except 15 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \n",
+        "stderr": ""
+      },
+      {
+        "name": "PR108 exemptions cannot hide a bad source",
+        "expected_exit": 2,
+        "actual_exit": 2,
+        "pass": true,
+        "stdout": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log:12: new blank line at EOF.\nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:18: trailing whitespace.\n+2026-11-24T16:12:12.5737485Z   1) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:21: trailing whitespace.\n+2026-11-24T16:12:12.5754895Z   2) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:24: trailing whitespace.\n+2026-11-24T16:12:12.5768773Z   3) [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:28: trailing whitespace.\n+2026-11-24T16:12:12.5785066Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:36:1 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:29: trailing whitespace.\n+2026-11-24T16:12:12.5786633Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:80:1 › storage failure uses the fresh account-bound route and changing account clears its private draft \nqa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log:30: trailing whitespace.\n+2026-11-24T16:12:12.5788029Z     [firefox-desktop-1280x800] › tests/chat/workshop.spec.ts:104:1 › landscape keeps preparation and the composer reachable and excludes stopped provisional output \nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+        "stderr": ""
+      }
+    ]
+  },
+  "stderr": "",
+  "test_source_sha256": "5566145034013f37cc0d927c88fe96538e104ec7715a8e5c23dbcb3a9fd3a482"
+}

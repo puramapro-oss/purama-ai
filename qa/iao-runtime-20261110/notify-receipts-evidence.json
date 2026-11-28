@@ -1,0 +1,48 @@
+{
+  "baseline": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "scope": [
+    "karta/src/engine/notify.ts",
+    "karta/test/notifyReceipt.test.ts"
+  ],
+  "sourceBeforeSha256": "d5a68b63a3810f13e366843a196ba0970bb26ceef65db0962d4fafe8cc52ac43",
+  "sourceAfterSha256": "a6fb72caf0af8ab51b7a2f9d4d1cc82de9c87bac8ba135a3250e293104fea6d1",
+  "testSha256": "2a7cdc2becd6b27aa3b47f48f7612d8ee5ff1199b5aaaba6eacfa7e0fd27fd4a",
+  "command": "NODE_OPTIONS=--max-old-space-size=256 npm test -- --maxWorkers=1 test/notifyReceipt.test.ts --reporter=default --reporter=json --outputFile=../qa/iao-runtime-20261110/notify-receipts-{red|green}.json",
+  "cwd": "karta",
+  "validation": {
+    "red": {
+      "report": "qa/iao-runtime-20261110/notify-receipts-red.json",
+      "total": 39,
+      "passed": 2,
+      "failed": 37,
+      "exitCode": 1
+    },
+    "green": {
+      "report": "qa/iao-runtime-20261110/notify-receipts-green.json",
+      "total": 39,
+      "passed": 39,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "diffCheckExitCode": 0
+  },
+  "guarantees": [
+    "Edge receipt ok=true plus nonempty notification_id; no contradictory error.",
+    "Requested push requires a positive integer push_sent and push_failed=0.",
+    "Requested email requires an available recipient/provider and a nonempty Resend id.",
+    "A single 10000ms deadline includes transports, JSON bodies and auth lookup.",
+    "Fetches receive a shared AbortSignal; every awaited continuation checks expiration before any follow-up.",
+    "Errors omit provider payloads, credentials and recipient data; no automatic retry."
+  ],
+  "limitations": [
+    "External providers and auth are inert doubles in this suite; no real notification sent.",
+    "A provider receipt proves acceptance, not reading by a recipient.",
+    "The Supabase admin auth lookup has no AbortSignal in its current API; its late result cannot start an email.",
+    "Expiration does not prove that a remote effect did not occur."
+  ],
+  "baselineHttpReproduction": {
+    "script": "qa/iao-runtime-20261110/reproduce-baseline-http-shutdown.mjs",
+    "report": "qa/iao-runtime-20261110/baseline-http-shutdown.json",
+    "exitCode": 0
+  }
+}

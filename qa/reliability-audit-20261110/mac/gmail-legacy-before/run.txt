@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 tests/ui-state/email-lifecycle.spec.ts:126:1 › email dashboard: a legacy success query cannot claim an unconnected Gmail account is connected (5.8s)
+
+  1 passed (22.8s)

@@ -1,0 +1,10 @@
+{
+  "target": "private qualification clone only",
+  "sourceCommit": "7755d4745ed6e9561fb9743f3b2b5820878dff11",
+  "migration": "030_chef_capability_selection.sql",
+  "sha256": "a1af7443ff907eafaf14a7c30f1d7e8b910b5530430374ef25d521c94c49f1a9",
+  "renamedWorkshopMigrationUnchanged": true,
+  "workshopMigrationReplayed": false,
+  "exitCode": 0,
+  "durationSeconds": 1.08
+}

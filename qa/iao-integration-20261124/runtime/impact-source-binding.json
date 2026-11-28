@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-24T01:20:49.031654+00:00",
+  "base": "60a3f6bce721331566951dee59b4c7b9a4b17099",
+  "indexAlias": "iao-integration-karta-20261124",
+  "scope": "karta only; commit linkage supplied by code hashes, skip-git index",
+  "files": {
+    "karta/src/api/iaoRoutes.ts": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b",
+    "karta/src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5"
+  }
+}

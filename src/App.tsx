@@ -1,10 +1,10 @@
+import './i18n';
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
-import { Loader2 } from 'lucide-react';
-import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
+import { PageFallback } from '@/components/AppFallback';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
@@ -42,6 +42,7 @@ const GoRedirect = lazy(() => import('@/pages/GoRedirect'));
 const Concours = lazy(() => import('@/pages/Concours'));
 const Classement = lazy(() => import('@/pages/Classement'));
 const Forge = lazy(() => import('@/pages/Forge'));
+const Workshop = lazy(() => import('@/pages/Workshop'));
 const PuramaCompta = lazy(() => import('@/pages/PuramaCompta'));
 const SocialAgent = lazy(() => import('@/pages/SocialAgent'));
 const DashboardOverview = lazy(() => import('@/pages/DashboardOverview'));
@@ -79,6 +80,7 @@ const CreatorAgentPage = lazy(() => import('@/pages/CreatorAgent'));
 const CreatorAgentNew = lazy(() => import('@/pages/CreatorAgentNew'));
 const CreatorAgentDetail = lazy(() => import('@/pages/CreatorAgentDetail'));
 const CreatorAgentTemplates = lazy(() => import('@/pages/CreatorAgentTemplates'));
+const PublicCreatorModel = lazy(() => import('@/pages/PublicCreatorModel'));
 const CreatorAgentRuns = lazy(() => import('@/pages/CreatorAgentRuns'));
 const Wallet = lazy(() => import('@/pages/Wallet'));
 const Boutique = lazy(() => import('@/pages/Boutique'));
@@ -92,32 +94,7 @@ const Gratitude = lazy(() => import('@/pages/Gratitude'));
 const Financer = lazy(() => import('@/pages/Financer'));
 const Reglement = lazy(() => import('@/pages/Reglement'));
 const Fiscal = lazy(() => import('@/pages/Fiscal'));
-
-function PageFallback() {
-  return (
-    <div className="flex h-screen w-full items-center justify-center bg-background">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-    </div>
-  );
-}
-
-function ErrorFallback({ error }: FallbackProps) {
-  const message = error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="text-center max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-foreground">Une erreur est survenue</h1>
-        <p className="text-muted-foreground mb-4">{message}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
-        >
-          Recharger la page
-        </button>
-      </div>
-    </div>
-  );
-}
+const Entraide = lazy(() => import('@/pages/Entraide'));
 
 const queryClient = new QueryClient();
 
@@ -131,8 +108,7 @@ function DashboardRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <ThemeProvider attribute="class" defaultTheme="dark" storageKey="purama-theme">
+    <ThemeProvider attribute="class" defaultTheme="dark" storageKey="purama-theme">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <BrowserRouter>
@@ -144,6 +120,7 @@ export default function App() {
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/modeles/:id" element={<PublicCreatorModel />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
@@ -162,6 +139,7 @@ export default function App() {
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
+              <Route path="/dashboard/atelier" element={<DashboardRoute><Workshop /></DashboardRoute>} />
             <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
             <Route path="/dashboard/employees" element={<DashboardRoute><MyEmployees /></DashboardRoute>} />
             <Route path="/dashboard/auto-agents" element={<Navigate to="/dashboard/agents" replace />} />
@@ -203,6 +181,7 @@ export default function App() {
             <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
             <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
             <Route path="/dashboard/guide" element={<DashboardRoute><Guide /></DashboardRoute>} />
+            <Route path="/dashboard/entraide" element={<DashboardRoute><Entraide /></DashboardRoute>} />
             <Route path="/dashboard/breathe" element={<DashboardRoute><Breathe /></DashboardRoute>} />
             <Route path="/dashboard/gratitude" element={<DashboardRoute><Gratitude /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />
@@ -234,7 +213,6 @@ export default function App() {
           </BrowserRouter>
         </AuthProvider>
       </QueryClientProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    </ThemeProvider>
   );
 }

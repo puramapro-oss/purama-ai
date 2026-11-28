@@ -1,0 +1,8 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+
+ Test Files  3 passed (3)
+      Tests  108 passed (108)
+   Start at  20:51:18
+   Duration  4.72s (tests 72%, transform 14%, import 13%)

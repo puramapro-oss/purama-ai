@@ -1,0 +1,82 @@
+{
+  "observed_at_utc": "2026-11-24 16:25:35 UTC",
+  "source_head": "2dc63a47c189e8b18cf8d05db551ef95f3057f64",
+  "status": "BLOQUE: first CHEF workflow completed with three Firefox errors; identity and other CHEF jobs passed",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4966,
+      "sha256": "742a55e80b412395d45f4f1b7b6369a1ed7ef2c77e05f15b5021fe29ef29832c"
+    },
+    {
+      "path": "artifacts-final.json",
+      "bytes": 6999,
+      "sha256": "0a75d4d7454cc32d0c32a3b0a349dcaa992e7ffb3c7e79ff295588aec32ec9d9"
+    },
+    {
+      "path": "chat-report.json",
+      "bytes": 97361,
+      "sha256": "084fe7a6eb2b410ae085b1e55f1e0f8d825f30b5aa0c022264cc8de0c90069cb"
+    },
+    {
+      "path": "device-job-excerpts.log",
+      "bytes": 6619,
+      "sha256": "b746ff79f80c1183b0618e5ed6f558df414de2925c7cb0ce54c6d33a719ba74b"
+    },
+    {
+      "path": "device-matrix-receipt.json",
+      "bytes": 18765,
+      "sha256": "9d3dfcba0c25aeb249f866e95133a13b0c091d480ca19ba341d3e797a47612a0"
+    },
+    {
+      "path": "final-status.json",
+      "bytes": 1364,
+      "sha256": "18834136c988fcb83be8a76849089db3043f12dfcbb107bec39f657fea6ce23f"
+    },
+    {
+      "path": "firefox-page-errors.json",
+      "bytes": 23815,
+      "sha256": "7e1434432468b02b1d5474fffa321af6de413c764837d53ada6b8622419b6e61"
+    },
+    {
+      "path": "karta-and-concurrency-excerpts.log",
+      "bytes": 3019,
+      "sha256": "95d39807770fc6ef29a12cd0c4a42698aa763132dddf92624bf5c86ec1f80f76"
+    },
+    {
+      "path": "karta-receipt.json",
+      "bytes": 1436,
+      "sha256": "88ef37a66d23d17022e1d4f29d73efcc14b414ce100d0f84a611f69c54ae3155"
+    },
+    {
+      "path": "network-receipt.json",
+      "bytes": 224,
+      "sha256": "e35a0c10d0229f2a0f4dffeaf20ce8a971bc026be2c6a2afc2517988834e5898"
+    },
+    {
+      "path": "site-job-excerpts.txt",
+      "bytes": 12330,
+      "sha256": "afe2a550409404f3151d19a0e266b8e39d5c7ab920050895d66feaa7d721e94a"
+    },
+    {
+      "path": "source-and-artifact-receipt.json",
+      "bytes": 1697,
+      "sha256": "46b0bf7c9daf6c66a5c774d61c3e27ad6b71df7c2efcd29db6b04401fddc1b7e"
+    },
+    {
+      "path": "workflow-jobs-chef.json",
+      "bytes": 21824,
+      "sha256": "8fa3bde0ba2fa8c2f5bfc1967f87d5b708be1dedef26c85bd77cd125be43fa9f"
+    },
+    {
+      "path": "workflow-jobs-identity.json",
+      "bytes": 2005,
+      "sha256": "c7660a07d0174fea180a5d4c29983d96ff789c9e469212e608091c5e4a1d7889"
+    },
+    {
+      "path": "workflow-runs.json",
+      "bytes": 826,
+      "sha256": "d94241ecc5ea750dafa266a96b4c2ab1bb96349c2f9b7efb4d79982ec31d02e3"
+    }
+  ]
+}

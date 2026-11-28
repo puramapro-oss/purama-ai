@@ -1,0 +1,46 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/docusealTool.test.ts (45 tests | 6 failed | 33 skipped) 32ms
+   ❯ DocuSeal canonical tool-result envelope (12)
+     × refuses ok false even with a matching submission and signer 17ms
+     × refuses success false even with a matching submission and signer 2ms
+     × refuses contradictory ok even with a matching submission and signer 1ms
+     × refuses contradictory success even with a matching submission and signer 1ms
+     × refuses later ok false even with a matching submission and signer 4ms
+     × refuses later success false even with a matching submission and signer 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses ok false even with a matching submission and signer
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses success false even with a matching submission and signer
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses contradictory ok even with a matching submission and signer
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses contradictory success even with a matching submission and signer
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses later ok false even with a matching submission and signer
+ FAIL  test/docusealTool.test.ts > DocuSeal canonical tool-result envelope > refuses later success false even with a matching submission and signer
+AssertionError: promise resolved "{ submissionId: '42' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "submissionId": "42",
+  }
+
+ ❯ test/docusealTool.test.ts:101:28
+     99|   ])("refuses $label even with a matching submission and signer", asyn…
+    100|     send.mockResolvedValue(Response.json(entries));
+    101|     await expect(execute()).rejects.toThrow(unconfirmed);
+       |                            ^
+    102|     expect(send).toHaveBeenCalledOnce();
+    103|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 6 passed | 33 skipped (45)
+   Start at  19:37:40
+   Duration  387ms (transform 53%, tests 24%, import 13%, setup 8%, worker 3%)

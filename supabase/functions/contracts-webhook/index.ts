@@ -2,7 +2,7 @@
 // Receives DocuSeal webhooks on submission lifecycle events.
 // Authenticates Bearer or exact-body HMAC, updates contracts and acknowledges OTS delivery.
 
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
   DOCUSEAL_WEBHOOK_SECRET, docusealFetch,
@@ -94,6 +94,15 @@ Deno.serve(async (req) => {
 
     if (!contract) {
       console.warn(`[webhook] contract not found for submission ${submissionId}`);
+      // A partner dispatch reserves its hub row before calling DocuSeal, but its
+      // submission ID is only known when that call returns. Do not acknowledge
+      // and lose a lifecycle event that arrived before the receipt was committed.
+      const partnerExternalId = /^purama-partner-contract:[0-9a-f-]{36}:[0-9a-f-]{36}$/i;
+      const submitters = Array.isArray(data.submitters) ? data.submitters : [];
+      const belongsToPendingPartner = typeof data.external_id === "string" && partnerExternalId.test(data.external_id)
+        || submitters.some(value => value && typeof value === "object" &&
+          typeof value.external_id === "string" && partnerExternalId.test(value.external_id));
+      if (belongsToPendingPartner) return errorResponse("Contract association pending; retry delivery", 409);
       return corsResponse({ ok: true, skip: "contract not found" });
     }
     if (typeof contract.id !== "string" || typeof contract.status !== "string") {

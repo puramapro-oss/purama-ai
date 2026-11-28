@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/emailDraftSendOnce.test.ts",
+    "--maxWorkers=1",
+    "--no-cache",
+    "--reporter=json",
+    "--outputFile=/workspace/scratch/529e43e3c136/approval-snapshot-20261122/evidence/sender-tests.json"
+  ],
+  "cwd": "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/repo/karta",
+  "exit_code": 1,
+  "reported_success": true,
+  "total": 111,
+  "passed": 0,
+  "failed": 0,
+  "status": "NOT_PASS"
+}

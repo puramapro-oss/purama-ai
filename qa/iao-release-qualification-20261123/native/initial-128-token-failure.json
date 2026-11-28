@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-23T20:48:45.500230+00:00",
+  "transport": "real_local_http",
+  "backend": "Ollama",
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3.5:4b",
+  "input": {
+    "model": "qwen3.5:4b",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Calcule 6 × 7. Réponds uniquement par le nombre entier."
+      }
+    ],
+    "temperature": 0,
+    "max_tokens": 128,
+    "stream": false
+  },
+  "request_sha256": "98d082764b415b28b6d33af2983614c526212177ce3649fdd1e58af0a7807976",
+  "expected": "42",
+  "product_path": "direct provider probe, not IAO end-to-end",
+  "max_response_bytes": 1048576,
+  "http_status": 200,
+  "response": {
+    "id": "chatcmpl-179",
+    "object": "chat.completion",
+    "created": 1795466928,
+    "model": "qwen3.5:4b",
+    "system_fingerprint": "fp_ollama",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": ""
+        },
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 27,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens": 128,
+      "total_tokens": 155
+    }
+  },
+  "answer": "",
+  "pass": false,
+  "elapsed_ms": 3221.8,
+  "thinking_present": true,
+  "note": "Observation initiale conservée : réponse HTTP 200 incomplète ; le script exploratoire sortait 0, le cas lui-même est FAIL. Ce reçu ne qualifie pas IAO.",
+  "native_process": {
+    "pid": 66525,
+    "exit_code": 0
+  }
+}

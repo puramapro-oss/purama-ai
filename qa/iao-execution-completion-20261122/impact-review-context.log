@@ -1,0 +1,371 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795386541439,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Interface:karta/src/engine/types.ts:AgentContextInput",
+    "name": "AgentContextInput",
+    "type": "Interface",
+    "filePath": "karta/src/engine/types.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 60,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "CRITICAL",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "AgentContextInput is an interface with 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 1,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 49,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 49,
+    "2": 10,
+    "3": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "pagination": {
+    "limit": 24,
+    "offset": 0,
+    "truncated": true
+  },
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:karta/scripts/qualify-lmstudio.ts",
+        "name": "qualify-lmstudio.ts",
+        "filePath": "karta/scripts/qualify-lmstudio.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/actionAgents.ts",
+        "name": "actionAgents.ts",
+        "filePath": "karta/src/agents/actionAgents.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/comptaAgent.ts",
+        "name": "comptaAgent.ts",
+        "filePath": "karta/src/agents/comptaAgent.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/customAgent.ts",
+        "name": "customAgent.ts",
+        "filePath": "karta/src/agents/customAgent.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/emailAgent.ts",
+        "name": "emailAgent.ts",
+        "filePath": "karta/src/agents/emailAgent.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/index.ts",
+        "name": "index.ts",
+        "filePath": "karta/src/agents/index.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/legalAgent.ts",
+        "name": "legalAgent.ts",
+        "filePath": "karta/src/agents/legalAgent.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/agents/partnerAgent.ts",
+        "name": "partnerAgent.ts",
+        "filePath": "karta/src/agents/partnerAgent.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/api/server.ts",
+        "name": "server.ts",
+        "filePath": "karta/src/api/server.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/claude/mock.ts",
+        "name": "mock.ts",
+        "filePath": "karta/src/claude/mock.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/claude/real.ts",
+        "name": "real.ts",
+        "filePath": "karta/src/claude/real.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/claude/types.ts",
+        "name": "types.ts",
+        "filePath": "karta/src/claude/types.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/approval-continuation.ts",
+        "name": "approval-continuation.ts",
+        "filePath": "karta/src/engine/approval-continuation.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/approval.ts",
+        "name": "approval.ts",
+        "filePath": "karta/src/engine/approval.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/approved-execution.ts",
+        "name": "approved-execution.ts",
+        "filePath": "karta/src/engine/approved-execution.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/autonomy.ts",
+        "name": "autonomy.ts",
+        "filePath": "karta/src/engine/autonomy.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/brief.ts",
+        "name": "brief.ts",
+        "filePath": "karta/src/engine/brief.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/execution-origin.ts",
+        "name": "execution-origin.ts",
+        "filePath": "karta/src/engine/execution-origin.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/logger.ts",
+        "name": "logger.ts",
+        "filePath": "karta/src/engine/logger.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/loop.ts",
+        "name": "loop.ts",
+        "filePath": "karta/src/engine/loop.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/memory.ts",
+        "name": "memory.ts",
+        "filePath": "karta/src/engine/memory.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/notify.ts",
+        "name": "notify.ts",
+        "filePath": "karta/src/engine/notify.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/resolveDefinition.ts",
+        "name": "resolveDefinition.ts",
+        "filePath": "karta/src/engine/resolveDefinition.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/engine/tool-input.ts",
+        "name": "tool-input.ts",
+        "filePath": "karta/src/engine/tool-input.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/scripts/verify-knowledge-public.ts",
+        "name": "verify-knowledge-public.ts",
+        "filePath": "karta/scripts/verify-knowledge-public.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/claude/consultation-host.ts",
+        "name": "consultation-host.ts",
+        "filePath": "karta/src/claude/consultation-host.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/claude/consultation.ts",
+        "name": "consultation.ts",
+        "filePath": "karta/src/claude/consultation.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/claude/index.ts",
+        "name": "index.ts",
+        "filePath": "karta/src/claude/index.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/engine/brief-submission.ts",
+        "name": "brief-submission.ts",
+        "filePath": "karta/src/engine/brief-submission.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/index.ts",
+        "name": "index.ts",
+        "filePath": "karta/src/index.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/queue/delivery-guard.ts",
+        "name": "delivery-guard.ts",
+        "filePath": "karta/src/queue/delivery-guard.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/queue/delivery-identity.ts",
+        "name": "delivery-identity.ts",
+        "filePath": "karta/src/queue/delivery-identity.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/scheduler/customAgents.ts",
+        "name": "customAgents.ts",
+        "filePath": "karta/src/scheduler/customAgents.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/src/tools/registry.ts",
+        "name": "registry.ts",
+        "filePath": "karta/src/tools/registry.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "File:karta/src/claude/consultation-store.ts",
+        "name": "consultation-store.ts",
+        "filePath": "karta/src/claude/consultation-store.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ]
+  }
+}

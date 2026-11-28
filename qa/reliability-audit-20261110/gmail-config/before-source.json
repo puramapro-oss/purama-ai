@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-11-10T21:59:29.501Z",
+  "head": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "source_sha256": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+  "indexed_sha256": "6eea3d344c716d54bbc12866df74f823bbd4d0f1dcd768ea2982a5077377ca06",
+  "indexed_symbols_match": {
+    "getConfig": true,
+    "updateConfig": true,
+    "disconnectGmail": true
+  },
+  "preserved_oauth_start_sha256": "d39979a5a8a134403cad03b359ae603499ddeae26c68dc948226648bdeffde8c"
+}

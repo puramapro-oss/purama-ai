@@ -15,28 +15,34 @@ génères les contrats (DocuSeal) une fois un partenaire intéressé. L'envoi d'
 prospection en masse requiert toujours validation humaine en dessous du niveau d'autonomie 3.`,
   tools: [apolloSearchPeopleTool, webSearchTool, docusealCreateSubmissionTool, sendNotificationTool, supabaseSelectTool, supabaseUpsertTool, delegateToAgentTool],
   async buildContext(userId) {
-    const { data: partnerConfig } = await supabase
-      .from("partner_agent_config")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
+    try {
+      const { data: partnerConfig, error: configError } = await supabase
+        .from("partner_agent_config")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (configError) throw new Error("Lecture de la configuration indisponible");
 
-    if (!partnerConfig?.is_active) {
-      return { newProspects: [], reason: "partner_agent_config inactif ou absent" };
+      if (!partnerConfig?.is_active) {
+        return { newProspects: [], reason: "partner_agent_config inactif ou absent" };
+      }
+
+      const { data: identifiedProspects, error: prospectsError } = await supabase
+        .from("partner_prospects")
+        .select("id, name, email, niche, ai_score")
+        .eq("user_id", userId)
+        .eq("status", "identified")
+        .order("ai_score", { ascending: false })
+        .limit(partnerConfig.daily_outreach_limit ?? 20);
+      if (prospectsError) throw new Error("Lecture des prospects indisponible");
+
+      return {
+        targetNiches: partnerConfig.target_niches,
+        dailyOutreachLimit: partnerConfig.daily_outreach_limit,
+        newProspects: identifiedProspects ?? [],
+      };
+    } catch {
+      throw new Error("Contexte des partenariats temporairement indisponible");
     }
-
-    const { data: identifiedProspects } = await supabase
-      .from("partner_prospects")
-      .select("id, name, email, niche, ai_score")
-      .eq("user_id", userId)
-      .eq("status", "identified")
-      .order("ai_score", { ascending: false })
-      .limit(partnerConfig.daily_outreach_limit ?? 20);
-
-    return {
-      targetNiches: partnerConfig.target_niches,
-      dailyOutreachLimit: partnerConfig.daily_outreach_limit,
-      newProspects: identifiedProspects ?? [],
-    };
   },
 };

@@ -1,0 +1,132 @@
+{
+  "recorded_at": "2026-11-11T08:21:28.143472+00:00",
+  "owner": "/root/audit_portfolio",
+  "clone": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c",
+  "base_head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+  "source_pr23": "f69b2a9a4af0e866848bf3ab860817df8b97c527",
+  "route_donor_main": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "status": "PASS_SCOPED_LOCAL; composed gates owned by infra_readiness",
+  "files": [
+    {
+      "path": "src/App.tsx",
+      "sha256": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+      "bytes": 16648
+    },
+    {
+      "path": "src/components/dashboard/DashboardLayout.tsx",
+      "sha256": "db9764171cf1858fcf07dfb9dee311394a72e1c4c805c0aa5213a45b66b036cf",
+      "bytes": 7879
+    },
+    {
+      "path": "src/i18n/locales/fr.json",
+      "sha256": "c4f8672d7df2bc8be63dbdcced2fa9fa3556b2036960179f7470159815e4252c",
+      "bytes": 9873
+    },
+    {
+      "path": "src/i18n/locales/en.json",
+      "sha256": "786980e041168cb6437281ccc5b4ad88e7bbc9aefeab7ad431cc4a87bce10e59",
+      "bytes": 9243
+    },
+    {
+      "path": "src/pages/Entraide.tsx",
+      "sha256": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+      "bytes": 42020
+    },
+    {
+      "path": "tests/entraide/ui-account-scope.test.mjs",
+      "sha256": "b1857d57ab7c41a133e62e0062b483a3f50ec1d864ac746a52d265da25c3fa8f",
+      "bytes": 16031
+    }
+  ],
+  "route_patch": "4 files,6 insertions/1 deletion; inverse patch exactly reconstructs f766; AuthProvider/ProtectedRoute retained",
+  "regression": {
+    "before": {
+      "pass": 3,
+      "fail": 6,
+      "tests": 9
+    },
+    "after": {
+      "pass": 9,
+      "fail": 0,
+      "tests": 9,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "test_source_unchanged_between_final_before_and_after": true,
+    "symptoms_proven": [
+      "late success notice crosses A to B",
+      "late success notice crosses logout",
+      "A-B-A overwrites fresh profile cache and displayed field, emits notice and starts obsolete refetch",
+      "late contact/mission creation/mission action success crosses account change"
+    ],
+    "current_behavior_preserved": [
+      "current profile success",
+      "current server503 remains visible and draft retained",
+      "current mission retry keeps exact request_id and expected_revision"
+    ]
+  },
+  "mechanism": "Capture existing useRequestScope token for each mutation lifecycle. Guard all success/error effects before cache, drafts, notices or invalidation. Profile cancelQueries retains captured token and refuses an expired pre-request lifetime.",
+  "unchanged_sources": [
+    "src/components/auth/AuthProvider.tsx",
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/hooks/useRequestScope.ts"
+  ],
+  "all_seven_mutation_functions_unchanged": true,
+  "remaining_JSX_intents_revisions_unchanged": true,
+  "runtime": {
+    "node": "22.23.4",
+    "react": "18.3.1",
+    "react_dom": "18.3.1",
+    "react_query": "5.83.0",
+    "jsdom": "26.1.0",
+    "typescript": "5.8.3"
+  },
+  "command": "node --test --test-concurrency=1 --test-timeout=30000 tests/entraide/ui-account-scope.test.mjs",
+  "limits": {
+    "test_case_timeout_ms": 3000,
+    "file_timeout_ms": 30000,
+    "supervisor_timeout_seconds": 40,
+    "node_max_old_space_mb": 2048,
+    "no_network": "global fetch replaced with strict fixture; only explicit inert origin and actors accepted",
+    "render": "Real page, transport, React Query, Radix UI and components rendered in JSDOM; auth/toast/environment/HTTP and observer geometry boundaries are inert",
+    "browser": "No installed browser execution; not a visual or deployed-auth qualification",
+    "graph": "Existing index15c07706 is2 commits behind; unchanged App/Dashboard verified; App/DashboardRoute/DashboardLayout/EntraideWorkspace/useRequestScope UNKNOWN, navItems resolved with0edges/UNKNOWN; no new index by this agent"
+  },
+  "logs": {
+    "entraide-ui-account-before.log": {
+      "sha256": "66888f270e73503df1e1a8688d66fe22867d96dfdab5d4219f2b29e5af8f3105",
+      "counts": {
+        "tests": 5,
+        "pass": 2,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "entraide-ui-account-before-full.log": {
+      "sha256": "7869d284df41ceb812ed25350a3f2f879aa8ae1c419cea64cfabfc4f49d4e287",
+      "counts": {
+        "tests": 9,
+        "pass": 3,
+        "fail": 6,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "entraide-ui-account-after.log": {
+      "sha256": "99ec2eb96f7d4314260831f51f973253808aea4b3b4ed3597c08b7c9d9414e6d",
+      "counts": {
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  },
+  "independent_review": "infra_readiness reports PASS static review, hook unchanged and callback effects guarded; owns composed index/typecheck/build/lint gates",
+  "git_actions": "No stage, commit, push or CI trigger by this agent; six files frozen."
+}

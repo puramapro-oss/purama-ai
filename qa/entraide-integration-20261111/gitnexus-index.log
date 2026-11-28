@@ -1,0 +1,7 @@
+
+  GitNexus Analyzer (1.6.12)
+Warning: npm 11.x can crash while installing gitnexus via npx (npm/arborist "node.target is null"). Prefer: pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-build=tree-sitter dlx gitnexus@latest analyze or npm install -g gitnexus@latest. See https://github.com/abhigyanpatwari/GitNexus/issues/1939
+[2K  Skipped 2 large files (>512KB, likely generated/vendored)
+[2K  - qa/iao-runtime-finalization-20261110/verification.json
+[2K  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.

@@ -1,0 +1,30 @@
+{
+  "sha256": "a744bba1c4de96da093bf2df1039987786b31b2494e72a6d8efb1526ee679c01",
+  "path": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+  "real_provider_requests": 7,
+  "successful_oracles": 5,
+  "failed_oracles": 2,
+  "additional_initial_probe": {
+    "pass": false,
+    "reason": "128-token completion exhausted before final answer"
+  },
+  "external_diagnostic_request": {
+    "status": 501,
+    "error": "structured output is unavailable"
+  },
+  "scope": "Local Ollama component only, not IAO full path or global quality benchmark",
+  "device": "mac.home",
+  "model": "qwen3.5:4b",
+  "provider": "Ollama 0.40.11",
+  "weights_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+  "review": "qual_profiles reviewed oracles; requested wall deadline and metric attribution applied before execution",
+  "monetary_cost": "No paid external API called; local electricity/hardware costs not measured",
+  "remaining": [
+    "IAO Compute Fabric socket refuses connection",
+    "Native structured-output requests rejected",
+    "Cloud accounts and inference not qualified live",
+    "No end-to-end UI→identity→IAO→native-model proof",
+    "No world-scale load or exhaustive task coverage"
+  ],
+  "digest_source": "Reported by the existing Ollama server; weight files not independently hashed"
+}

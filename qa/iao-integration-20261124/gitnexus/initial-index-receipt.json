@@ -1,0 +1,45 @@
+{
+  "tool": "gitnexus",
+  "version": "1.6.12",
+  "logs": [
+    {
+      "file": "iao-gitnexus-index-20261124.log",
+      "bytes": 18270,
+      "sha256": "1bbf6894ba1cf07af44b8c30d0b7f1da6b82e40e0f6e5bf4c8ec3024ec25f92f"
+    },
+    {
+      "file": "iao-gitnexus-index-bounded-20261124.log",
+      "bytes": 17858,
+      "sha256": "502ba52eadea1b9aeba94a0b57f65abfaed9731ecb473d9919a74eba4bb54848"
+    },
+    {
+      "file": "iao-gitnexus-index-ram-20261124.log",
+      "bytes": 17140,
+      "sha256": "dcf9676ca0979d11365d936c196c395904886282e5a1e928faa18867d602a569"
+    },
+    {
+      "file": "iao-gitnexus-karta-20261124.log",
+      "bytes": 2740,
+      "sha256": "3e092b27e131c02466f7c2179732b48507913db698323f8e1e26224715023a34"
+    }
+  ],
+  "successfulIndex": {
+    "alias": "iao-integration-karta-20261124",
+    "scope": "karta only; not a whole repository index",
+    "exitCode": 0,
+    "files": 402,
+    "symbols": 10465,
+    "edges": 34435,
+    "clusters": 577,
+    "flows": 485,
+    "fts": false,
+    "lastCommit": "unknown (--skip-git)",
+    "baseCommit": "60a3f6bce721331566951dee59b4c7b9a4b17099"
+  },
+  "priorWholeRepositoryAttempts": "Failed; exit 1 or SIGKILL. Logs retained. Exact cause of SIGKILL not established. No complete whole-repository graph is claimed.",
+  "temporaryFailedIndexCleanup": {
+    "path": "/dev/shm/iao-integration-index-20261124",
+    "bytesRemoved": 249118078,
+    "scope": "Only the failed index created by this task; source, logs and successful KARTA index preserved."
+  }
+}

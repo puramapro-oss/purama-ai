@@ -1,0 +1,128 @@
+{
+  "status": "PASS",
+  "sdk": "2.119.2",
+  "queryCore": "5.83.0",
+  "node": "v24.22.3",
+  "timing": "real timers; no Retry-After; genuine SDK and QueryObserver; browser-default detection marker only",
+  "transport": "synthetic HTTP; no external network",
+  "outcomes": [
+    {
+      "dbRetry": "SDK default true",
+      "queryCalls": 4,
+      "httpCalls": 16,
+      "elapsedMs": 35112,
+      "finalStatus": "error",
+      "calls": [
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 13
+        },
+        {
+          "method": "GET",
+          "retry": 1,
+          "atMs": 1017
+        },
+        {
+          "method": "GET",
+          "retry": 2,
+          "atMs": 3022
+        },
+        {
+          "method": "GET",
+          "retry": 3,
+          "atMs": 7028
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 8040
+        },
+        {
+          "method": "GET",
+          "retry": 1,
+          "atMs": 9043
+        },
+        {
+          "method": "GET",
+          "retry": 2,
+          "atMs": 11051
+        },
+        {
+          "method": "GET",
+          "retry": 3,
+          "atMs": 15064
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 17074
+        },
+        {
+          "method": "GET",
+          "retry": 1,
+          "atMs": 18076
+        },
+        {
+          "method": "GET",
+          "retry": 2,
+          "atMs": 20079
+        },
+        {
+          "method": "GET",
+          "retry": 3,
+          "atMs": 24090
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 28101
+        },
+        {
+          "method": "GET",
+          "retry": 1,
+          "atMs": 29103
+        },
+        {
+          "method": "GET",
+          "retry": 2,
+          "atMs": 31106
+        },
+        {
+          "method": "GET",
+          "retry": 3,
+          "atMs": 35110
+        }
+      ]
+    },
+    {
+      "dbRetry": false,
+      "queryCalls": 4,
+      "httpCalls": 4,
+      "elapsedMs": 7011,
+      "finalStatus": "error",
+      "calls": [
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 2
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 1004
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 3007
+        },
+        {
+          "method": "GET",
+          "retry": 0,
+          "atMs": 7011
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "state": "PRET_A_CODER",
+  "source": "e81129a56e07535129827c95211d82815df8dc5a",
+  "authorization": "Référentiel IAO168 approuvé par Go intègre tout, demande actuelle de compléter IAO sans doublon, et conception DreamForge historique commun aux modes déjà définie.",
+  "owner": "/root",
+  "assignments": {
+    "/root/iao_runtime_gap_audit": [
+      "karta/src/integrations/localComputeFabricProvider.ts",
+      "karta/test/localComputeFabricMemoryProjection.test.ts",
+      "qa/iao-continuity-20261124/memory/"
+    ],
+    "/root/iao_capability_gap_audit": [
+      "src/lib/workshop.ts",
+      "src/lib/workshop.test.ts",
+      "src/pages/Workshop.tsx",
+      "src/pages/Workshop.test.tsx",
+      "src/components/OriginForgeDemo.tsx",
+      "src/components/ChatbotWidget.tsx",
+      "tests/workshop-state/",
+      "tests/chat/"
+    ],
+    "/root": [
+      "task_plan.md",
+      "docs/iao/IAO-INTERFACE-CONTRACT.md",
+      "qa/iao-continuity-20261124/",
+      "CI and publication"
+    ]
+  },
+  "acceptance": [
+    "Exact duplicate authorized memory excerpts do not consume the unique text budget; no stored data mutation.",
+    "Conversation prepares an editable existing Workshop request bound to account and transfer identity; no implicit mission/model execution.",
+    "No stale storage or route-state leak across accounts; repeated same-page handoffs preserve existing editable input.",
+    "DreamForge undo/redo uses its existing shared history, context revisions and guards; archive replaced only with current version guard.",
+    "Existing tests retained, before/after regressions, fresh impact, typecheck/build and target CI before consolidation integration."
+  ],
+  "limits": [
+    "No new auth authority, memory store, provider, paid service or production deployment.",
+    "Real canonical IAO runtime and ONE persistence require matching qualified ports; do not turn mere presence into ready."
+  ]
+}

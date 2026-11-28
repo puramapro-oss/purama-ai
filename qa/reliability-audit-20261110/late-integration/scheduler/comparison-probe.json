@@ -1,0 +1,12 @@
+{
+  "command": "node < qa/reliability-audit-20261110/late-integration/scheduler/comparison-probe.js.txt",
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+  "result": {
+    "chunk_id": "dec495",
+    "wall_time_seconds": 0.294261494,
+    "exit_code": 0,
+    "original_token_count": 114,
+    "output": "{\n  \"PR39\": {\n    \"delayedSlot\": \"cron|email|user-a|2026-11-10T12:01\",\n    \"enqueueAfterDestroy\": 1,\n    \"providerDetailLogged\": true,\n    \"registryAfterStop\": 17,\n    \"statuses\": [\n      \"stopped\"\n    ]\n  },\n  \"PR40\": {\n    \"delayedSlot\": \"cron|email|user-a|2026-11-10T12:00\",\n    \"enqueueAfterDestroy\": 0,\n    \"providerDetailLogged\": false,\n    \"registryAfterStop\": 0,\n    \"statuses\": [\n      \"destroyed\"\n    ]\n  },\n  \"actualCronRegistryEmpty\": true\n}\n"
+  },
+  "scope": "Exact PR39/PR40 source compiled in memory; inert database/queue ports, actual node-cron for registry observation; no product source edited by this probe"
+}

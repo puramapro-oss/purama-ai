@@ -1,0 +1,31 @@
+Changes: 6 files, 33 symbols
+Affected processes: 8
+Risk level: high
+
+Changed symbols:
+  Function handleIaoRoute → karta/src/api/iaoRoutes.ts
+  Function isActive → karta/src/api/iaoRoutes.ts
+  Function canAdmit → karta/src/api/iaoRoutes.ts
+  Function unavailable → karta/src/api/iaoRoutes.ts
+  Function handleRequest → karta/src/api/server.ts
+  Function isActive → karta/src/api/server.ts
+  Interface KartaIaoPort → karta/src/iao/iaoFacade.ts
+  Method executionBudgetMs → karta/src/iao/iaoFacade.ts
+  Const MAX_EXECUTION_BUDGET_MS → karta/src/iao/iaoFacade.ts
+  Class IaoFacade → karta/src/iao/iaoFacade.ts
+  Method executionBudgetMs → karta/src/iao/iaoFacade.ts
+  Class KartaRuntimeIaoPort → karta/src/iao/kartaRuntimePort.ts
+  Method executionBudgetMs → karta/src/iao/kartaRuntimePort.ts
+  Function prepare → karta/test/apiIaoIntegration.test.ts
+  Function authenticate → karta/test/apiIaoIntegration.test.ts
+... and 18 more
+
+Affected execution flows:
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest
+  • HandleRequest → Identity (5 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → IaoAuthenticationError (4 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → IsJson (4 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → Authenticate (4 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → IaoValidationError (4 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → Json (4 steps) — changed: handleIaoRoute, handleRequest
+  • HandleRequest → IsIaoPath (3 steps) — changed: handleIaoRoute, handleRequest

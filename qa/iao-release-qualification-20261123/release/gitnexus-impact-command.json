@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--input-type=module"
+  ],
+  "stdin_summary": "Import LocalBackend; init; callTool context(name=main,file_path=karta/scripts/qualify-lmstudio.ts,include_content=false); callTool impact(target=main,file_path=karta/scripts/qualify-lmstudio.ts,direction=upstream); write evidence; dispose",
+  "repo": "iao-quality-20261123",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "evidence": "gitnexus-impact.json",
+  "evidence_sha256": "e1aed9f901617b7090b286ccbbd1d2c221ed6f3d462a0690f1d0b64232318692",
+  "risk": "LOW",
+  "direct_callers": 1,
+  "affected_processes": 0,
+  "limitation": "FTS unavailable, exact indexed target resolved. Downstream decide links resolve to test fixtures and are not treated as real callees."
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "index_exit": 0,
+  "main_ref": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "main_comparison_includes_inherited_consolidation": true,
+  "analyses": {
+    "gitnexus-staged.log": {
+      "exit_code": 0,
+      "files": 8,
+      "symbols": 18,
+      "processes": 1,
+      "risk": "medium",
+      "sha256": "30fabf40a65e5efbfd48e31368edc8db0d0d8155a7c91bc8f920fe25205b34d3",
+      "output": "\n  GitNexus Detect Changes (1.6.12)\n{\"level\":40,\"time\":1795391115162,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\nChanges: 8 files, 18 symbols\nAffected processes: 1\nRisk level: medium\n\nChanged symbols:\n  Class KartaRuntimeIaoPort → karta/src/iao/kartaRuntimePort.ts\n  Method prepare → karta/src/iao/kartaRuntimePort.ts\n  Section IAO — lecture sociale et achèvement borné → qa/iao-execution-completion-20261122/README.md\n  Section Dépendances de l'activation complète → qa/iao-execution-completion-20261122/README.md\n  Function createSocialConnectHandler → supabase/functions/_shared/social-connection-core.ts\n  Function socialInputRequest → tests/social-connection/connection.test.ts\n  Method start → tests/social-connection/connection.test.ts\n  Method cancel → tests/social-connection/connection.test.ts\n  Method start → tests/social-connection/connection.test.ts\n  Method pull → tests/social-connection/connection.test.ts\n  Method cancel → tests/social-connection/connection.test.ts\n  Method pull → tests/social-connection/connection.test.ts\n  Function value → tests/social-connection/connection.test.ts\n  Method pull → tests/social-connection/connection.test.ts\n  Const cancelled → tests/social-connection/connection.test.ts\n... and 3 more\n\nAffected execution flows:\n  • CreateSocialConnectHandler → SocialConnectionError (4 steps) — changed: createSocialConnectHandler\n"
+    },
+    "gitnexus-main.log": {
+      "exit_code": 0,
+      "files": 1999,
+      "symbols": 20287,
+      "processes": 529,
+      "risk": "critical",
+      "sha256": "8115816c4f9ae8072c02a255673538e8212794e0395236020e115170d0ba5f9a",
+      "output": "\n  GitNexus Detect Changes (1.6.12)\n{\"level\":40,\"time\":1795391116296,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\nLISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.\n\nChanges: 1999 files, 20287 symbols\nAffected processes: 529\nRisk level: critical\n\nChanged symbols:\n  Section ERRORS.md — Purama AI → ERRORS.md\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md\n  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md\n  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md\n  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md\n  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md\n  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md\n  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md\n  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md\n  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md\n  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md\n  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md\n  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n... and 20272 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized\n  • HandleRequest → Identity (5 steps) — changed: authenticateIdentity, handleIaoRoute, handleRequest, authenticate, identity\n  • HandleRequest → IaoAuthenticationError (4 steps) — changed: IaoAuthenticationError, authenticateIdentity, handleIaoRoute, handleRequest\n  • HandleRequest → IsJson (4 steps) — changed: isJson, authenticateIdentity, handleIaoRoute, handleRequest\n  • HandleRequest → Authenticate (4 steps) — changed: authenticate, authenticateIdentity, handleIaoRoute, handleRequest\n  • HandleRequest → IaoValidationError (4 steps) — changed: IaoValidationError, parseRequest, handleIaoRoute, handleRequest\n  • HandleRequest → Json (4 steps) — changed: sendError, handleIaoRoute, handleRequest\n  • Evaluate → Choice (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, choice\n  • Evaluate → Id (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, id\n  • HandleRequest → IsIaoPath (3 steps) — changed: handleIaoRoute, isIaoPath, handleRequest\n... and 519 more\n"
+    }
+  }
+}

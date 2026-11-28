@@ -1,0 +1,28 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795374546806,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 10 files, 183 symbols
+Affected processes: 2
+Risk level: medium
+
+Changed symbols:
+  Const UNCONFIRMED_SUBMISSION → karta/src/tools/docuseal.ts
+  Function readSubmissionId → karta/src/tools/docuseal.ts
+  Const docusealCreateSubmissionTool → karta/src/tools/docuseal.ts
+  Property description → karta/src/tools/docuseal.ts
+  Method execute → karta/src/tools/docuseal.ts
+  Property submissionId → karta/src/tools/docuseal.ts
+  Const GMAIL_ACTION_TIMEOUT_MS → karta/src/tools/gmail.ts
+  Function gmailCredentialDeadline → karta/src/tools/gmail.ts
+  Function getGmailAccessToken → karta/src/tools/gmail.ts
+  Const gmailCreateDraftTool → karta/src/tools/gmail.ts
+  Method execute → karta/src/tools/gmail.ts
+  Property draftId → karta/src/tools/gmail.ts
+  Function gmailReplyHeaders → karta/src/tools/gmail.ts
+  Const gmailSendTool → karta/src/tools/gmail.ts
+  Method execute → karta/src/tools/gmail.ts
+... and 168 more
+
+Affected execution flows:
+  • Execute → AssertHeader (4 steps) — changed: execute
+  • Execute → AssertHeader (4 steps) — changed: execute

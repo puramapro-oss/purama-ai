@@ -1,0 +1,43 @@
+{
+  "base_head": "02bbf30348b9c7f12d6f35ce59eacaedc4a648a7",
+  "files": [
+    {
+      "path": "src/integrations/supabase/client.ts",
+      "before_sha256": "c4c92076076fe01f4ad7747bc1085ceb000e60307258b0529148fb607296f076",
+      "after_sha256": "4e15ee9eded5d53225ac65961af71b8f3441a2ce5b0a23f5a7a22b4d2e58511e"
+    },
+    {
+      "path": "tests/chat/lifecycle.spec.ts",
+      "before_sha256": "4589757719119753598c17e1c43a2ccc49f320acf3766973b1fb5f7c913ce568",
+      "after_sha256": "36556fd32ad6622bdcefb9e62d33e9d596668b1c40264454131a8dce2acb063c"
+    },
+    {
+      "path": "tests/chat/sdk-init.ts",
+      "before_sha256": "1749c69e910a4431883f8d6aafd13d61f670dd41bf2ca4bfed6fa2f7fbae2b82",
+      "after_sha256": "e62f3c20bedac643e97e5a861c905b0c26d60d4bc55e5369d835d7c074bdefc6"
+    },
+    {
+      "path": "tests/chat/auth-client.spec.ts",
+      "before_sha256": "5339eac6e0434f269a30db08d7620234b2be66f10c874631d3ba9c1e70ad0614",
+      "after_sha256": "b729b996fb423a8b18927afbe8c3b029bc68894b11f0a51665d8d2ee2b82870c"
+    },
+    {
+      "path": "qa/iao-devices-20261124/browser/chat.playwright.config.ts",
+      "before_sha256": "f1a0ec971b7afba5f06ce7203dbca94a9faed887e0b87b7afedd18dcae981800",
+      "after_sha256": "fd4d28a7d6a259d026f23250627e0f6abef68955f6ff18dc682187d43622d779"
+    },
+    {
+      "path": "tests/voice-consent/accessibility.spec.ts",
+      "before_sha256": "1b934f37634093fcfde4008e3ebec2a22c77613157d133280ed03f5eb17ed430",
+      "after_sha256": "1529ca0034a39c80f0e3df43775d91ab173a1e24e7aba2d09dc35aac0a7ca0d9",
+      "exact_one_line_replacement": true,
+      "mac_chord": "Meta+ArrowDown",
+      "other_platforms_chord": "Control+End",
+      "documentation": [
+        "https://support.apple.com/en-us/102650",
+        "https://playwright.dev/docs/api/class-keyboard"
+      ]
+    }
+  ],
+  "quality_source_files_unchanged": true
+}

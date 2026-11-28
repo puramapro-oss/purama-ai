@@ -1,0 +1,18 @@
+{
+  "phase": "before-product-correction-in-process-transport",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/localComputeFabricMemoryProjection.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 1,
+  "durationSeconds": 0.778,
+  "productSha256": "46ad324197ea8d1456767571904f916e7f92970e1b9511ada74a5c9948ab53b1",
+  "testSha256": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea",
+  "log": "projection-before-in-process.log",
+  "scope": "Deterministic projection and in-process transport fixture; no native socket or live model qualification."
+}

@@ -1,0 +1,29 @@
+{
+  "source_base": "812830f9bba392f8fcb109a844f083638520a273",
+  "preserved_current_base": "2890f3c78665b19dde08272aec170709e08225fd",
+  "preserved_upstream_tree": "ef9e6794b0592a170fa0f73920bb970e37c90058",
+  "review_branch": "codex/automation-reliability-20261122-529e",
+  "automatic_git_deployment_disabled": true,
+  "existing_deployment_flags_preserved": 36,
+  "native_local_status": "BLOQUE",
+  "native_scenarios_executed": 0,
+  "native_test_scenarios_pending_ci": 8,
+  "native_harness_sha256": "32b5af36e15e077c7008ef468895f2034d1c04b22710205662c9eacd7ca117b4",
+  "migration_expected_sha256": "5bcba773e889db61727562c863cac1eec6c337abd709d925193d0ff1e4a67a04",
+  "external_side_effects_executed": 0,
+  "first_ci": {
+    "commit": "d45cc3bed9f267b3162619ed50891d141e8ac988",
+    "checkout": "39780a2a78d5b45cc8cc4a76e4af4c19db93bfd5",
+    "checkout_files_identical_to_head": true,
+    "run": 44964459198,
+    "karta_tests_passed": 3744,
+    "karta_test_files": 173,
+    "native_sql_scenarios_completed": 8,
+    "native_postgres": "16.16",
+    "native_report_status_collision_corrected": true,
+    "site_status": "FAIL",
+    "site_lint_errors": 8,
+    "site_lint_rule": "no-control-regex",
+    "deno": "SKIPPED_AFTER_LINT_FAILURE"
+  }
+}

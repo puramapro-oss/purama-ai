@@ -1,0 +1,9 @@
+import { test } from 'node:test';
+import { pathToFileURL } from 'node:url';
+
+globalThis.fetch = async () => { throw new Error('Unexpected network access in isolated social review'); };
+globalThis.Deno = { test };
+const sourceRoot = process.env.SOCIAL_REVIEW_SOURCE;
+if (!sourceRoot) throw new Error('SOCIAL_REVIEW_SOURCE is required');
+await import(pathToFileURL(sourceRoot + '/tests/social-publish/scheduled.test.ts').href);
+if (process.env.SOCIAL_REVIEW_BASELINE === '1') await import(pathToFileURL(sourceRoot + '/tests/social-publish/fairness-regressions.test.ts').href);

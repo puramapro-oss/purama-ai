@@ -1,0 +1,125 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795534852752,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:buildMemoryPrompt",
+    "name": "buildMemoryPrompt",
+    "type": "Function",
+    "filePath": "karta/src/integrations/localComputeFabricProvider.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 2
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1
+  },
+  "affected_processes": [
+    {
+      "name": "prepare",
+      "type": "Function",
+      "filePath": "karta/src/iao/kartaRuntimePort.ts",
+      "affected_process_count": 4,
+      "total_hits": 8,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Iao",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Integrations",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:karta/src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+        "name": "complete",
+        "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_4_prepare",
+            "label": "Prepare → Trap",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_8_prepare",
+            "label": "Prepare → AssertFabricCurrent",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_9_prepare",
+            "label": "Prepare → FinishError",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_13_prepare",
+            "label": "Prepare → SafeLabel",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Method:karta/src/iao/kartaRuntimePort.ts:KartaRuntimeIaoPort.prepare#2",
+        "name": "prepare",
+        "filePath": "karta/src/iao/kartaRuntimePort.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_8_prepare",
+            "label": "Prepare → AssertFabricCurrent",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_9_prepare",
+            "label": "Prepare → FinishError",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_13_prepare",
+            "label": "Prepare → SafeLabel",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_4_prepare",
+            "label": "Prepare → Trap",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}

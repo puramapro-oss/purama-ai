@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-22T22:48:53.894767+00:00",
+  "status": "PARTIEL",
+  "base_commit": "5a01da79e810c8f4a900ebc95ae544006b9333d6",
+  "branch": "fix/iao-runtime-deadline-20261122",
+  "design_status": "PRET_A_CODER",
+  "production_deployed": false,
+  "real_provider_calls": false,
+  "new_product_dependencies": false,
+  "tests": {
+    "runtime_targeted": {
+      "passed": 55,
+      "failed": 0
+    },
+    "social_deno": {
+      "passed": 113,
+      "failed": 0,
+      "files": 5
+    },
+    "social_reader": {
+      "passed": 68,
+      "failed": 0
+    },
+    "social_cycle": {
+      "passed": 14,
+      "failed": 0
+    },
+    "admission_context_history": {
+      "passed": 126,
+      "failed": 0,
+      "files": 6
+    },
+    "full_karta": {
+      "collected": 4299,
+      "passed": 4236,
+      "failed": 24,
+      "worker_errors": 1,
+      "unreported_tests": 39,
+      "files_collected": 189,
+      "exit_code": 1,
+      "failure_reason": "24 Unix listen EPERM; chatHistoryIsolation worker SIGKILL"
+    },
+    "typecheck_exit": 0,
+    "build_exit": 0
+  },
+  "counting_note": "Focused suites overlap the full suite and must not be added to it.",
+  "independent_review": {
+    "runtime_cases": 18,
+    "runtime_failed": 0,
+    "social_context": "reviewed after fixing lost results",
+    "model_admission": "reviewed after restoring pre-client authorization"
+  },
+  "limits": [
+    "Stored social metadata only, no live provider health check",
+    "First UUID-ordered pages, not exhaustive or necessarily recent",
+    "Social deadline per HTTP request, IAO deadline per stage",
+    "Private SMARANA, IAO authentication and local Compute Fabric implementation not activated",
+    "Local full run remains partial until CI qualification"
+  ],
+  "files": {
+    "karta/src/agents/actionAgents.ts": {
+      "sha256": "9335cb3a78879867840ca591a03ba99b18294906e066b1771baa411cd1163955",
+      "bytes": 10040
+    },
+    "karta/src/agents/social-status-context.ts": {
+      "sha256": "80d28d47b13b307c908ab7d34b14a8b101c53e4bc4b26078d4e8014d3c0617aa",
+      "bytes": 2126
+    },
+    "karta/src/engine/loop.ts": {
+      "sha256": "70f2992401422d5af0ccf2bbc998c7966ed76b9117bfc56ca98a88cfaa4202f2",
+      "bytes": 20260
+    },
+    "karta/src/engine/types.ts": {
+      "sha256": "dc80a25e8f4d8b81c61049ba2ac24afbc0edf0f83c685a34c53d5b4c76b582f9",
+      "bytes": 6793
+    },
+    "karta/src/iao/kartaRuntimePort.ts": {
+      "sha256": "9d6e1f3c29d7fe0a597a1f6a2226849b1f69f0b4e52036b8f7f4a2bfae01d949",
+      "bytes": 10808
+    },
+    "karta/src/tools/registry.ts": {
+      "sha256": "836fcdc262fef8406e12a3cb60ff141bb0b55eb9041d1b9ed41c5dd616225eed",
+      "bytes": 1426
+    },
+    "karta/src/tools/social-status.ts": {
+      "sha256": "f39434523edc5a3324c470bb7bb0b833e3b62a6af51f296b9339281170aaa164",
+      "bytes": 11604
+    },
+    "karta/test/kartaRuntimeDeadline.test.ts": {
+      "sha256": "0b8a6d7c1b60061e480c709717be10480991720e7ce2299a8268da01d8359ecc",
+      "bytes": 13172
+    },
+    "karta/test/loopBriefLifecycle.test.ts": {
+      "sha256": "d4697b8e6889225d3156ed85c566f41756ad01b12c98ea0fd21b58c2a2b37f52",
+      "bytes": 18477
+    },
+    "karta/test/socialStatusCycle.test.ts": {
+      "sha256": "da5dd3938d37c794fc7e075d0ebd48b6fdd9be330778ca603956205598965fe0",
+      "bytes": 17341
+    },
+    "karta/test/socialStatusRegistry.test.ts": {
+      "sha256": "51ceec9110e98bb8aff892ee013acd395115ce1eae3beddbc802be92304b8698",
+      "bytes": 1821
+    },
+    "karta/test/socialStatusSdk.test.ts": {
+      "sha256": "7ae1d0474bf046183cfbb94980e689ea2db9edd67eb5d82b051f3918f6ce6af5",
+      "bytes": 3961
+    },
+    "karta/test/socialStatusTool.test.ts": {
+      "sha256": "9131d3966fdec94c7b42ac04fe1efc79b3ec349f731c5ebbe8b593f515f49fc4",
+      "bytes": 17351
+    },
+    "supabase/functions/_shared/social-connection-provider.ts": {
+      "sha256": "0013d58cdfe918592db122d17ac3f02e37d181ea8a43788202cca1748eb11667",
+      "bytes": 11280
+    },
+    "tests/social-connection/connection.test.ts": {
+      "sha256": "d5bbac0a7223a83ed89531d739e0ca5ee69836590acf4299428273a974430e7b",
+      "bytes": 29215
+    },
+    "vercel.json": {
+      "sha256": "237f058b32cc862141b86f149b43d2cca2e1f8c1894582d18d28e73cbd55319c",
+      "bytes": 2375
+    }
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "index_nodes": 28672,
+    "index_edges": 91590,
+    "index_flows": 548,
+    "fts_enabled": false,
+    "before_shared_type_change_risk": "CRITICAL",
+    "precommit": {
+      "gitnexus-final-staged.log": {
+        "files": 81,
+        "symbols": 369,
+        "processes": 4,
+        "risk": "medium",
+        "raw_sha256": "9406058ac188dd1b9a855be7599154a882596d23a3c8d6907b7ee3559e192939",
+        "saved_sha256": "9406058ac188dd1b9a855be7599154a882596d23a3c8d6907b7ee3559e192939"
+      },
+      "gitnexus-compare-main.log": {
+        "files": 1993,
+        "symbols": 20274,
+        "processes": 529,
+        "risk": "critical",
+        "raw_sha256": "b92e3ad083b3c63668d8eafc0508ed4141a6419aaef3dd8fc1a0ea10ad49bbca",
+        "saved_sha256": "b92e3ad083b3c63668d8eafc0508ed4141a6419aaef3dd8fc1a0ea10ad49bbca"
+      }
+    },
+    "main_commit": "ae84415be0b9516422805910be999a2c1e6350c0",
+    "main_comparison_includes_inherited_consolidation": true
+  }
+}

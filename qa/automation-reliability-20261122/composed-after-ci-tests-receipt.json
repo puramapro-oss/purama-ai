@@ -1,0 +1,31 @@
+{
+  "at_utc": "2026-11-22T00:08:38.595082+00:00",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/calendarTool.test.ts",
+    "test/actionAgentsMock.test.ts",
+    "test/customAuthorization.test.ts",
+    "test/gmailTool.test.ts",
+    "test/gmailReply.test.ts",
+    "test/gmailMessage.test.ts",
+    "test/emailDraftSendOnce.test.ts",
+    "--maxWorkers=1",
+    "--no-cache",
+    "--fsModuleCachePath",
+    "/workspace/scratch/529e43e3c136/composition-vitest-cache",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=/workspace/scratch/529e43e3c136/composition-after-ci-test-report.json"
+  ],
+  "exit_code": 1,
+  "tests": {
+    "success": true,
+    "numTotalTests": 212,
+    "numPassedTests": 122,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "provider_calls": "mocked"
+}

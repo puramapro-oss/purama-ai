@@ -1,0 +1,120 @@
+{
+  "startedAt": "2026-11-10T22:15:13.684Z",
+  "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code",
+  "sources": {
+    "src/pages/OAuthCallback.tsx": "5701e64ad335157e606ac386582d359f192c1939ab41addbaa3e13d99f7a11fd",
+    "src/hooks/useUserConnections.ts": "b7b7aa1ff6083873fff1d965015646eb97e34978267233635a237e692c255e46",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "src/lib/email-agent.ts": "8055d9c73909d9725562c03f2ca1b4d67c48810bd3ce09eecad66af5aaf26bfa",
+    "src/lib/oauth-google.ts": "c869b6fc624981518a9f0a94e467be97f81e494f8dccd612d17ba8df13568a87",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  "checks": [
+    {
+      "name": "leaving a rejected callback cancels its pending redirect",
+      "status": "PASS"
+    },
+    {
+      "name": "late callback success cannot cross an account change",
+      "status": "PASS"
+    },
+    {
+      "name": "double initiation admits only one session read",
+      "status": "PASS"
+    },
+    {
+      "name": "HTTP 200 without an explicit success receipt is rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "a session read from another account cannot start authorization",
+      "status": "PASS"
+    },
+    {
+      "name": "a network rejection during initiation is handled and can be retried",
+      "status": "PASS"
+    },
+    {
+      "name": "a current explicit success clears only its state and navigates internally",
+      "status": "PASS"
+    },
+    {
+      "name": "Gmail uses the same authenticated browser callback with its own purpose",
+      "status": "PASS"
+    },
+    {
+      "name": "an older callback cannot erase a newer connection state",
+      "status": "PASS"
+    },
+    {
+      "name": "callback completion after unmount cannot notify or redirect",
+      "status": "PASS"
+    },
+    {
+      "name": "StrictMode does not let an expired session read exchange the code",
+      "status": "PASS"
+    },
+    {
+      "name": "an A-B-A identity cycle never revives the first callback",
+      "status": "PASS"
+    },
+    {
+      "name": "authorization returned after unmount cannot leave for Google",
+      "status": "PASS"
+    },
+    {
+      "name": "untrusted authorization destinations never replace the stored state",
+      "status": "PASS"
+    },
+    {
+      "name": "connection metadata query does not request provider credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "timed-out authorization releases the lock and rejects a late session",
+      "status": "PASS"
+    },
+    {
+      "name": "a timed-out callback ignores a provider result arriving afterward",
+      "status": "PASS"
+    },
+    {
+      "name": "callback rejects a foreign return destination despite success true",
+      "status": "PASS"
+    },
+    {
+      "name": "partial consent asks the user to review permissions without claiming success",
+      "status": "PASS"
+    },
+    {
+      "name": "Gmail initiation stores the returned actor-bound purpose and state",
+      "status": "PASS"
+    },
+    {
+      "name": "Gmail initiation rejects a foreign URL without replacing the prior state",
+      "status": "PASS"
+    },
+    {
+      "name": "cancelled Gmail initiation cannot store a late response",
+      "status": "PASS"
+    }
+  ],
+  "externalRequests": [],
+  "bundleSha256": "e3db59ea82e1043fc5277542b11a8be36ba5c49c24299b6f32e499c86b4d0cfb",
+  "browser": "157.0.8103.39",
+  "sourcesAfter": {
+    "src/pages/OAuthCallback.tsx": "5701e64ad335157e606ac386582d359f192c1939ab41addbaa3e13d99f7a11fd",
+    "src/hooks/useUserConnections.ts": "b7b7aa1ff6083873fff1d965015646eb97e34978267233635a237e692c255e46",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "src/lib/email-agent.ts": "8055d9c73909d9725562c03f2ca1b4d67c48810bd3ce09eecad66af5aaf26bfa",
+    "src/lib/oauth-google.ts": "c869b6fc624981518a9f0a94e467be97f81e494f8dccd612d17ba8df13568a87",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-11-10T22:16:45.665Z",
+  "status": "PASS"
+}

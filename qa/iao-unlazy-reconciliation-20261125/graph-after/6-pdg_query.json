@@ -1,0 +1,70 @@
+{
+  "mode": "controls",
+  "anchor": {
+    "file": "karta/src/chef/verification-feedback.ts",
+    "symbol": "validateChefVerificationFeedback",
+    "startLine": 99,
+    "endLine": 114
+  },
+  "results": [
+    {
+      "functionLine": 99,
+      "controller": {
+        "line": 101
+      },
+      "dependent": {
+        "line": 107,
+        "text": "throw new Error(\"Retour de vérification périmé ou hors périmètre\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 99,
+      "controller": {
+        "line": 101
+      },
+      "dependent": {
+        "line": 108,
+        "text": "const failedProfiles = v.failedProfiles.map(failedProfile);"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 99,
+      "controller": {
+        "line": 101
+      },
+      "dependent": {
+        "line": 109,
+        "text": "(failedProfiles.some(p => !task.verificationProfiles.includes(p.profile))\n    || new Set(failedProfiles.map(p => p.profile)).size !== failedProfiles.length)"
+      },
+      "label": "F"
+    },
+    {
+      "functionLine": 99,
+      "controller": {
+        "line": 109
+      },
+      "dependent": {
+        "line": 110,
+        "text": "throw new Error(\"Profil de reprise incohérent\");"
+      },
+      "label": "T",
+      "guard": true
+    },
+    {
+      "functionLine": 99,
+      "controller": {
+        "line": 109
+      },
+      "dependent": {
+        "line": 111,
+        "text": "return { schemaVersion: 1, taskId: task.id, missionId: task.missionId, briefHash: task.briefHash,\n    attempt: Number(v.attempt), fencingToken: Number(v.fencingToken), scopeHash: String(v.scopeHash),\n    outputSha: v.outputSha, failedProfiles };"
+      },
+      "label": "F",
+      "guard": true
+    }
+  ],
+  "total": 5
+}

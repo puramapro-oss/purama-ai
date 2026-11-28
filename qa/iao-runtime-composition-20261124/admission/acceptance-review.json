@@ -1,0 +1,140 @@
+{
+  "createdAt": "2026-11-24T19:48:17.078363+00:00",
+  "status": "PASS",
+  "baselineHead": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "baselineRed": {
+    "file": "qualified-red.json",
+    "passed": 4,
+    "failed": 4,
+    "testCopy": "apiIaoGlobalStop.qualified-red.test.ts",
+    "testSHA256": "245275d953f26c3b36f286d50983cfdb8d160d7f12e38e1022ff94c2bfde9e2a",
+    "productSHA256": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae"
+  },
+  "unchangedOriginalGreen": {
+    "file": "original-eight-green.json",
+    "passed": 8,
+    "failed": 0,
+    "sameTestSHA256": true
+  },
+  "expandedGreen": {
+    "file": "expanded-green.json",
+    "passed": 15,
+    "failed": 0,
+    "uniqueCases": 15,
+    "originalEightIncluded": true,
+    "testSHA256": "17d2ae9be9dc635ae5edcc8b519ed69f77d96583de1d57dd2fa1defdd21935a0",
+    "productSHA256": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0"
+  },
+  "failToPass": [
+    {
+      "name": "IAO admission under the existing global stop refuses new work when the stop is already active on /iao/requests",
+      "before": "failed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop refuses new work when the stop is already active on /pura/requests",
+      "before": "failed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop refuses a stop observed at the final admission probe on /iao/requests",
+      "before": "failed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop refuses a stop observed at the final admission probe on /pura/requests",
+      "before": "failed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop admits work while the global stop is inactive",
+      "before": "passed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop keeps authenticated lookup and cancellation available during the global stop",
+      "before": "passed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop reports a deliberate stop as healthy dependencies rather than a dependency outage",
+      "before": "passed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    },
+    {
+      "name": "IAO admission under the existing global stop keeps the original admission deadline while the final stop probe is pending",
+      "before": "passed",
+      "afterOriginal": "passed",
+      "afterExpanded": "passed"
+    }
+  ],
+  "fixtureAlignment": {
+    "files": [
+      {
+        "file": "karta/test/apiIaoIntegration.test.ts",
+        "changedReadinessObjects": 8,
+        "onlyAdded": ", globalKillSwitch: false",
+        "assertionsAndDeadlinesUnchanged": true,
+        "sha256": "c8c7a0a523ab278834cde4679fe07a7a289bb63ff8245eb3e50715bbbf095d15"
+      },
+      {
+        "file": "karta/test/apiIaoTransportBudget.test.ts",
+        "changedReadinessObjects": 2,
+        "onlyAdded": ", globalKillSwitch: false",
+        "assertionsAndDeadlinesUnchanged": true,
+        "sha256": "9e91aaaa997994032025f7416bc9a751877771882a877c3444639db2be46f7d8"
+      }
+    ],
+    "totalObjects": 10,
+    "otherIaoRuntimeTestFiles": [
+      "karta/test/apiIaoGlobalStop.test.ts"
+    ],
+    "directHandleIaoRouteTestsUnchanged": true
+  },
+  "gitnexus": {
+    "alias": "iao-runtime-composition-20261124",
+    "indexPartial": true,
+    "ftsAvailable": false,
+    "impacts": [
+      {
+        "file": "karta/test/apiIaoIntegration.test.ts",
+        "symbols": [
+          "ready",
+          "listen"
+        ],
+        "result": "UNKNOWN: symbols not found"
+      },
+      {
+        "file": "karta/test/apiIaoGlobalStop.test.ts",
+        "symbols": [
+          "call"
+        ],
+        "result": "UNKNOWN: symbol not found"
+      },
+      {
+        "file": "karta/test/apiIaoTransportBudget.test.ts",
+        "symbols": [
+          "listen"
+        ],
+        "result": "UNKNOWN: symbol not found"
+      }
+    ],
+    "manualImpact": "Local test helpers and readiness fixtures only; product server patch belongs to parent."
+  },
+  "limits": [
+    "Actual startApiServer request listener, handleIaoRoute and IaoFacade execute, but Server.listen is disabled.",
+    "No real HTTP transport, database, provider/model or paid service tested here.",
+    "Integration and transport-budget files are ready for native/CI execution; only their fixtures were changed.",
+    "Original setup failure and synthetic request harness failure are preserved but excluded from product regression evidence.",
+    "Eight original cases and their later repetitions are not additional unique tests.",
+    "No assertion of atomic stop/effect ordering after the final readiness probe.",
+    "Public-repository session/startup review does not certify absent private canonical authorities."
+  ]
+}

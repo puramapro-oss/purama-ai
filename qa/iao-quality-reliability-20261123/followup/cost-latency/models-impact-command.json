@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "--uid",
+    "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@134:2",
+    "--repo",
+    "iao-quality-20261123",
+    "--direction",
+    "upstream",
+    "--include-tests"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0
+}

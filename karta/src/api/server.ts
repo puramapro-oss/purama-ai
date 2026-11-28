@@ -2,16 +2,22 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { createHash, timingSafeEqual } from "node:crypto";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
-import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
+import { setGlobalKillSwitch } from "../engine/killswitch.js";
+import type { RuntimeReadiness } from "../runtime/lifecycle.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { CycleDeliveryConflictError, getQueuedExecutionKey } from "../queue/delivery-identity.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import { BriefSubmissionError, dispatchBrief, getBriefStatus, listBriefs, submitBrief } from "../engine/brief-submission.js";
+import { handleWorkshopRequest, WorkshopError } from "../chef/workshop-service.js";
 import type { StaticAgentType } from "../engine/types.js";
+import { handleConsultationRequest } from "./consultation.js";
+import type { ConsultationHost } from "./consultation-contract.js";
+import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
+const CUSTOM_TRIGGER_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -60,34 +66,73 @@ function readIdempotencyKey(req: IncomingMessage): string | undefined {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer() {
+export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, options: {
+  consultationHost?: ConsultationHost | null;
+  iaoRuntime?: IaoRouteRuntime;
+  lifetime?: AbortSignal;
+} = {}) {
+  let host: Promise<ConsultationHost | null> | undefined;
+  const activeRequests = new Set<Promise<void>>();
+  const consultationHost = () => host ??= Object.hasOwn(options, "consultationHost")
+    ? Promise.resolve(options.consultationHost ?? null)
+    : import("../claude/consultation-host.js").then(module => module.createConsultationHost()).catch(() => null);
   const server = createServer((req, res) => {
-    void handleRequest(req, res).catch((error) => {
+    const active = handleRequest(req, res, readiness, consultationHost, options.iaoRuntime, options.lifetime).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
+      else if (error instanceof WorkshopError) json(res, error.status, { ok: false, code: error.code, error: error.message });
       else if (error instanceof BriefSubmissionError) json(res, error.status, { error: error.message, code: error.code });
       else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
+    activeRequests.add(active);
+    const finished = () => { activeRequests.delete(active); };
+    void active.then(finished, finished);
   });
 
   server.requestTimeout = 15_000;
   server.headersTimeout = 10_000;
   server.setTimeout(15_000, socket => socket.destroy());
   server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
-  return server;
+  return Object.assign(server, {
+    async drainRequests(): Promise<void> { await Promise.allSettled(activeRequests); },
+  });
 }
 
-async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+async function handleRequest(req: IncomingMessage, res: ServerResponse,
+  readiness: (() => Promise<RuntimeReadiness>) | undefined,
+  consultationHost: () => Promise<ConsultationHost | null>, iaoRuntime?: IaoRouteRuntime, lifetime?: AbortSignal): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
+  if (req.method === "GET" && url.pathname === "/live") {
+    json(res, 200, { status: "alive" });
+    return;
+  }
   if (req.method === "GET" && url.pathname === "/health") {
-    const globalKillSwitch = await isGlobalKillSwitchActive();
-    json(res, 200, {
-      status: "ok",
+    const observed = await readiness?.().catch(() => ({ ready: false, phase: "failed" as const }))
+      ?? { ready: false, phase: "starting" as const };
+    const state = observed.ready && lifetime?.aborted ? { ...observed, ready: false, phase: "stopping" } : observed;
+    json(res, state.ready ? 200 : 503, {
+      status: state.ready ? "ok" : "unavailable",
+      ...state,
       mockClaude: config.mockClaude,
-      globalKillSwitch,
       timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  const readyForWork = async () => !readiness || (await readiness().catch(() => ({ ready: false }))).ready;
+
+  if (isIaoPath(req.method, url.pathname)) {
+    const host = iaoRuntime && readiness && !lifetime?.aborted ? iaoRuntime : undefined;
+    await handleIaoRoute(req, res, host, readBody, json, {
+      isActive: () => !lifetime?.aborted,
+      canAdmit: async () => {
+        // New IAO work requires an explicitly inactive global stop. Keep this
+        // separate from dependency readiness so an administrator can lift it.
+        const state = await readiness?.();
+        return state?.ready === true && state.globalKillSwitch === false;
+      },
     });
     return;
   }
@@ -97,9 +142,19 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
+  const requireReady = async (): Promise<boolean> => {
+    if (!await readyForWork() || lifetime?.aborted) {
+      json(res, 503, { error: "KARTA temporairement indisponible" });
+      return false;
+    }
+    return true;
+  };
+
   if (req.method === "POST" && url.pathname === "/kill-switch/global") {
     const body = await readBody(req);
     const active = readActive(body);
+    // Emergency stops remain available when Redis or the relay is down.
+    if (!active && !await requireReady()) return;
     await setGlobalKillSwitch(active);
     json(res, 200, { ok: true, active });
     return;
@@ -113,9 +168,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       return;
     }
     const body = await readBody(req);
+    const active = readActive(body);
+    if (!active && !await requireReady()) return;
     const { error } = await supabase
       .from("karta_agent_state")
-      .update({ kill_switch: readActive(body), updated_at: new Date().toISOString() })
+      .update({ kill_switch: active, updated_at: new Date().toISOString() })
       .eq("user_id", userId)
       .eq("agent_type", agentType);
     if (error) {
@@ -125,6 +182,25 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     json(res, 200, { ok: true });
     return;
   }
+
+  // Authenticated proxy supplies the owner in the path. Cancel/status remain
+  // available during degraded queue readiness; no browser can send the admin key.
+  const workshopMatch = url.pathname.match(/^\/workshop\/([0-9a-f-]{36})$/i);
+  if (req.method === "POST" && workshopMatch) {
+    if (url.search) throw new RequestError(400, "Paramètres atelier invalides");
+    const body = await readBody(req);
+    if (body.action === "start" && !await requireReady()) return;
+    res.setHeader("Cache-Control", "no-store");
+    json(res, 200, await handleWorkshopRequest(workshopMatch[1]!, body));
+    return;
+  }
+
+  // Private reads and cancellation remain available during an unrelated queue
+  // outage. Only new consultation work additionally requires runtime readiness.
+  if (await handleConsultationRequest(req, res, url, consultationHost, async () =>
+    !readiness || (await readiness().catch(() => ({ ready: false }))).ready)) return;
+
+  if (!await requireReady()) return;
 
   const briefsMatch = url.pathname.match(/^\/briefs\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "GET" && briefsMatch) {
@@ -176,12 +252,23 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
-  const triggerCustomMatch = url.pathname.match(/^\/trigger-custom\/([0-9a-f-]+)$/);
+  // The Edge binds the authenticated owner in this route. The unsuffixed
+  // administrative route remains compatible with existing internal callers.
+  const triggerCustomMatch = url.pathname.match(/^\/trigger-custom\/([0-9a-f-]+)(?:\/owner\/([0-9a-f-]+))?$/);
   if (req.method === "POST" && triggerCustomMatch) {
-    const [, agentId] = triggerCustomMatch;
+    const [, agentId, expectedOwnerId] = triggerCustomMatch;
+    if (expectedOwnerId !== undefined && (!CUSTOM_TRIGGER_UUID.test(agentId)
+      || !CUSTOM_TRIGGER_UUID.test(expectedOwnerId) || url.search !== "")) {
+      json(res, 400, { error: "Contrat de déclenchement invalide" });
+      return;
+    }
     const row = await loadCustomAgent(agentId);
     if (!row) {
       json(res, 404, { error: "Agent introuvable" });
+      return;
+    }
+    if (expectedOwnerId !== undefined && row.user_id !== expectedOwnerId) {
+      json(res, 403, { error: "Accès refusé" });
       return;
     }
     if (!row.karta_enabled) {

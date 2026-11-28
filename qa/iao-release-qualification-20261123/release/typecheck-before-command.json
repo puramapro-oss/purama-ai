@@ -1,0 +1,14 @@
+{
+  "stage": "shared typecheck before product fix",
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0,
+  "elapsed_seconds": 8.415,
+  "log": "typecheck-before.log",
+  "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+  "test_sha256": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6"
+}

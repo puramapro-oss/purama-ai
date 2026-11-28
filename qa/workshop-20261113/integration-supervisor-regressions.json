@@ -1,0 +1,9 @@
+{
+  "base": "7755d4745ed6e9561fb9743f3b2b5820878dff11",
+  "testFiles": 6,
+  "testsPassed": 84,
+  "exitCode": 0,
+  "durationSeconds": 16.76,
+  "command": "Node22 vitest run test/chefSupervisor.test.ts test/chefSupervisorCancellation.test.ts test/chefCapabilityRuntime.test.ts test/chefVerificationGitIntegration.test.ts test/chefGitCancellation.test.ts test/chefBudgetAccounting.test.ts --maxWorkers=2 --testTimeout=30000 --hookTimeout=30000",
+  "fixtureAdjustment": "Capability supervisor fixtures now initialize real clean Git repos; assertions preserved"
+}

@@ -1,0 +1,27 @@
+{
+  "phase": "after-immutability-correction",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/iaoCompletedImmutability.test.ts",
+    "test/iaoCompletedRetention.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/iao-facade.test.ts",
+    "test/iaoAdmissionRevalidation.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iaoAdmissionDeadline.test.ts",
+    "test/kartaRuntimeDeadline.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/runtime-targeted-report.json"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 1,
+  "durationSeconds": 1.931,
+  "productSha256": "5fdde33ec6e3119c059d3e4c7b17ca2985a1ea6b575fb09ad2793b70b7cdb5ab",
+  "testSha256": "28e87be2dcc414dba7a5dbd68d53d725ca663dfc23c639d900be89e8925b36cd",
+  "log": "immutability-after.log",
+  "report": "runtime-targeted-report.json"
+}

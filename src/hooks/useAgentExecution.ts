@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useLayoutEffect } from 'react';
 import { useAuth } from './useAuth';
-import { getAgentConfig, AgentFieldConfig } from '@/config/agentConfigs';
+import type { AgentFieldConfig } from '@/config/agentConfigs';
+import { createRequestScope } from '@/lib/request-scope';
+import { useScopedState } from './useRequestScope';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 
@@ -21,29 +23,48 @@ interface UseAgentExecutionReturn {
 
 export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<ExecutionResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const ownerId = user?.id;
+  const scopeKey = JSON.stringify([ownerId ?? null, agentSlug]);
+  const [requests] = useState(createRequestScope);
+  const [isLoading, setIsLoading] = useScopedState(scopeKey, false);
+  const [result, setResult] = useScopedState<ExecutionResult | null>(scopeKey, null);
+  const [error, setError] = useScopedState<string | null>(scopeKey, null);
 
   const reset = useCallback(() => {
+    requests.invalidate();
     setResult(null);
     setError(null);
     setIsLoading(false);
-  }, []);
+  }, [requests, setResult, setError, setIsLoading]);
+
+  useLayoutEffect(() => {
+    reset();
+    return () => requests.invalidate();
+  }, [scopeKey, requests, reset]);
 
   const execute = useCallback(async (formData: Record<string, unknown>): Promise<ExecutionResult> => {
-    if (!user) {
+    if (!ownerId) {
       const err = 'Vous devez être connecté pour utiliser cet agent';
       setError(err);
       return { success: false, error: err };
     }
 
+    const request = requests.begin('execution');
+    if (!request) return { success: false, error: 'Une exécution est déjà en cours.' };
+    const cancelled = (): ExecutionResult => ({
+      success: false, error: 'Cette exécution ne concerne plus la session ou le formulaire courant.',
+    });
     setIsLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const agentConfig = getAgentConfig(agentSlug);
+      // Capture this owner's bearer before the SDK can select a successor session.
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (!request.current()) return cancelled();
+      if (sessionError || !session?.access_token || session.user.id !== ownerId) {
+        throw new Error('Le compte actif a changé. Relancez la demande depuis ce compte.');
+      }
 
       // Check if we have file uploads - for now, files not supported via proxy
       const hasFile = Object.values(formData).some(v => v instanceof File);
@@ -57,7 +78,10 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
           agentSlug,
           formData,
         },
+        headers: { Authorization: 'Bearer ' + session.access_token },
+        signal: request.signal,
       });
+      if (!request.current()) return cancelled();
 
       if (proxyError) {
         throw new Error(proxyError.message || 'Erreur lors de l\'appel au proxy');
@@ -75,7 +99,10 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
           .from('agents')
           .select('id')
           .eq('slug', agentSlug)
+          .setHeader('Authorization', 'Bearer ' + session.access_token)
+          .abortSignal(request.signal)
           .maybeSingle();
+        if (!request.current()) return cancelled();
 
         if (agentData?.id) {
           const sanitizedFormData: Record<string, Json> = {};
@@ -93,16 +120,17 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
           };
 
           await supabase.from('agent_usage').insert([{
-            user_id: user.id,
+            user_id: ownerId,
             agent_id: agentData.id,
             action_type: 'execution',
             status: 'completed',
             metadata,
-          }]);
+          }]).setHeader('Authorization', 'Bearer ' + session.access_token).abortSignal(request.signal);
         }
       } catch (logError) {
-        console.warn('Failed to log agent usage:', logError);
+        if (request.current()) console.warn('Failed to log agent usage:', logError);
       }
+      if (!request.current()) return cancelled();
 
       const successResult: ExecutionResult = {
         success: true,
@@ -114,6 +142,7 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
       return successResult;
 
     } catch (err) {
+      if (!request.current()) return cancelled();
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
       setError(errorMessage);
       
@@ -125,9 +154,9 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
       setResult(errorResult);
       return errorResult;
     } finally {
-      setIsLoading(false);
+      if (request.finish()) setIsLoading(false);
     }
-  }, [agentSlug, user]);
+  }, [agentSlug, ownerId, requests, setResult, setError, setIsLoading]);
 
   return {
     execute,

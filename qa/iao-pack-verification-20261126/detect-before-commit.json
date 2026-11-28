@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "/tmp/iao-quality-0414-p1it5pwv/repo",
+      "--scope",
+      "all",
+      "--limit",
+      "40"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": "\n  GitNexus Detect Changes (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1795669687156,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+  },
+  {
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "/tmp/iao-quality-0414-p1it5pwv/repo",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "main",
+      "--limit",
+      "40"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": "\n  GitNexus Detect Changes (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1795669687520,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+  }
+]

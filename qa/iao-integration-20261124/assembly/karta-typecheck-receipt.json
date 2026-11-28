@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 137,
+  "durationSeconds": 2.287,
+  "log": "karta-typecheck.log",
+  "scope": "Global package.json KARTA typecheck, no option overrides or suppressed errors."
+}

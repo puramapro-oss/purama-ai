@@ -1,0 +1,26 @@
+UI VOCALE — REÇU RED
+Date : 2026-11-23
+Auteur : /root/iao_offline_mobile_sources_20261123
+Provenance : transcription des résultats déjà obtenus dans la session ; pas de nouvelle exécution lors de la sauvegarde de ce reçu.
+Sortie outil de référence : chunk c36ff5.
+
+Répertoire : /workspace/scratch/ccfbf7e5800b/purama-ai
+Commande : node node_modules/vitest/vitest.mjs run src/components/voice/VoiceMode.accessibility.test.tsx --maxWorkers=1 --no-file-parallelism
+Version : Vitest 4.1.12
+Début affiché : 02:52:10
+Durée affichée : 3.25s
+Code de sortie : 1
+
+Test Files : 1 failed (1)
+Tests : 7 failed | 14 passed (21)
+
+Les 13 tests vocaux préexistants sont restés verts. Sur les 8 nouveaux cas,
+le maintien des bornes OpenAI passait déjà ; les 7 échecs attendus étaient :
+- Trois bascules vers ElevenLabs : sauvegarde de provider seul, sans voice_id ni speed borné.
+- Une bascule vers OpenAI : sauvegarde de provider seul, sans voix Nova ni vitesse cohérente.
+- Curseur ElevenLabs : minimum 0.5 observé au lieu de 0.7.
+- Aperçu encore actif pendant une sauvegarde en attente, scénario succès.
+- Aperçu encore actif pendant une sauvegarde en attente, scénario erreur.
+
+Le composant VoiceSettingsCard.tsx n'avait pas encore été modifié lors de cette exécution.
+React et Radix réels ; useVoice, persistance et notifications simulés. Aucun appel fournisseur.

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--experimental-transform-types",
+    "--test",
+    "--test-concurrency=1",
+    "/workspace/scratch/2c704d52ca75/work/run-social-composed.mjs"
+  ],
+  "cwd": "/workspace/scratch/2c704d52ca75/work/purama-social-fairness",
+  "runtime": "Node adapter for Deno.test; not native Deno",
+  "started_at": "2026-11-22T23:13:08.861168+00:00",
+  "hashes_before": {
+    "supabase/functions/_shared/zernio.ts": "ac5de6d77263950cf1a8f357abe33a4decd66ffcc11f67b3bd9843ce57e9ded7",
+    "supabase/functions/social-publish-scheduled/handler.ts": "1e8ecf245cd1f71168ede7c510e7fbdd47457dc1b4505507786c4f2cd93899c9",
+    "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+    "tests/social-publish/scheduled.test.ts": "4bfc95e133b433c54ae4640a4b401b104ae1fc819d3cf9fb9158652ac017dcc8"
+  },
+  "exit_code": 0,
+  "ended_at": "2026-11-22T23:13:09.896310+00:00",
+  "hashes_after": {
+    "supabase/functions/_shared/zernio.ts": "ac5de6d77263950cf1a8f357abe33a4decd66ffcc11f67b3bd9843ce57e9ded7",
+    "supabase/functions/social-publish-scheduled/handler.ts": "1e8ecf245cd1f71168ede7c510e7fbdd47457dc1b4505507786c4f2cd93899c9",
+    "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+    "tests/social-publish/scheduled.test.ts": "4bfc95e133b433c54ae4640a4b401b104ae1fc819d3cf9fb9158652ac017dcc8"
+  }
+}

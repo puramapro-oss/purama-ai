@@ -1,0 +1,39 @@
+{
+  "numTotalTests": 93,
+  "numPassedTests": 93,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true,
+  "files": [
+    {
+      "name": "chefBudgetAccounting.test.ts",
+      "tests": 12,
+      "status": "passed"
+    },
+    {
+      "name": "chefBudgetAdmission.test.ts",
+      "tests": 18,
+      "status": "passed"
+    },
+    {
+      "name": "chefBudgetReservations.test.ts",
+      "tests": 28,
+      "status": "passed"
+    },
+    {
+      "name": "consultationIntegration.test.ts",
+      "tests": 5,
+      "status": "passed"
+    },
+    {
+      "name": "modelConsultationStore.test.ts",
+      "tests": 13,
+      "status": "passed"
+    },
+    {
+      "name": "modelConsultationStoreSql.test.ts",
+      "tests": 17,
+      "status": "passed"
+    }
+  ]
+}

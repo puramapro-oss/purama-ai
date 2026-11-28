@@ -1,0 +1,67 @@
+{
+  "status": "PASS within qualified local scope",
+  "change": "Explicit completeness and delimiter-safe JSON projection of eligible SMARANA memory; UTF-16 code-point-safe truncation.",
+  "changedProductSymbols": [
+    "buildMemoryPrompt"
+  ],
+  "productFile": "karta/src/integrations/localComputeFabricProvider.ts",
+  "newTestFile": "karta/test/localComputeFabricMemoryProjection.test.ts",
+  "productSha256Before": "46ad324197ea8d1456767571904f916e7f92970e1b9511ada74a5c9948ab53b1",
+  "productSha256After": "6106e335c105bb2b3f912c01a781289baf50bda60f8441501a5ef0a3d6a3556f",
+  "unchangedRegressionTestSha256": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea",
+  "before": {
+    "passed": 4,
+    "failed": 10,
+    "scope": "14 deterministic regression cases, in-process transport fixture"
+  },
+  "after": {
+    "passed": 154,
+    "failed": 0,
+    "skipped": 0,
+    "files": {
+      "test/iao-facade.test.ts": 45,
+      "test/kartaRuntimeDeadline.test.ts": 55,
+      "test/localComputeFabricMemoryProjection.test.ts": 14,
+      "test/localComputeFabricMemoryBoundary.test.ts": 40
+    },
+    "newRegressionCases": 14,
+    "existingRegressionCases": 140
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "receipt": "typecheck.json"
+  },
+  "impact": {
+    "repository": "iao-integration-karta-20261124",
+    "risk": "HIGH",
+    "impactedSymbols": 11,
+    "direct": 5,
+    "productionDirectCallers": [
+      "LocalComputeFabricProvider.complete"
+    ],
+    "scope": "karta only; exact-symbol outside-karta scan returned no matches",
+    "limitation": "FTS disabled; exact context/impact available, semantic query yielded no results"
+  },
+  "preserved": [
+    "SMARANA authority and IaoContextSource contract",
+    "authorized normal source filter",
+    "relevance order",
+    "existing text and message caps",
+    "complete passive-data validation before transport",
+    "local_only execution and forbidden paid fallback",
+    "no new storage or provenance assertion"
+  ],
+  "limitations": [
+    "Native Unix socket listen denied by the environment with EPERM; first attempt retained in projection-before.log. No bypass or native socket pass claim.",
+    "Transport serialization/response acceptance exercised with in-process I/O, no live model.",
+    "Semantic model quality, prompt-injection resistance, live provider performance and exact token/cost impact remain unqualified.",
+    "UTF-16 surrogate pairs are preserved; extended grapheme clusters are not guaranteed indivisible.",
+    "Context cap remains a text budget in UTF-16 code units, not an exact token or full JSON-envelope budget."
+  ],
+  "versions": {
+    "node": "v24.22.3",
+    "vitest": "5.0.3",
+    "typescript": "5.9.3"
+  },
+  "ownership": "No Git, lockfile, runtime/composition, production or Mac changes by this subtask. Root owns final repository diff/detect_changes and integration."
+}

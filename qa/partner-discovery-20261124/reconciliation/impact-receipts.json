@@ -1,0 +1,170 @@
+[
+  {
+    "target": "PartnerAgentProspects",
+    "file": "src/pages/PartnerAgentProspects.tsx",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "PartnerAgentProspects",
+      "--file",
+      "src/pages/PartnerAgentProspects.tsx",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 1.065,
+    "proof": "impact-PartnerAgentProspects.log.gz"
+  },
+  {
+    "target": "handleFind",
+    "file": "src/pages/PartnerAgentProspects.tsx",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "handleFind",
+      "--file",
+      "src/pages/PartnerAgentProspects.tsx",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.512,
+    "proof": "impact-handleFind.log.gz"
+  },
+  {
+    "target": "parsePartnerDiscoveryResult",
+    "file": "src/lib/partner-discovery-result.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "parsePartnerDiscoveryResult",
+      "--file",
+      "src/lib/partner-discovery-result.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.546,
+    "proof": "impact-parsePartnerDiscoveryResult.log.gz"
+  },
+  {
+    "target": "readPartnerDiscoveryError",
+    "file": "src/lib/partner-discovery-result.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "readPartnerDiscoveryError",
+      "--file",
+      "src/lib/partner-discovery-result.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.622,
+    "proof": "impact-readPartnerDiscoveryError.log.gz"
+  },
+  {
+    "target": "count",
+    "file": "src/lib/partner-discovery-result.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "count",
+      "--file",
+      "src/lib/partner-discovery-result.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.544,
+    "proof": "impact-count.log.gz"
+  },
+  {
+    "target": "createPartnerDiscoveryHandler",
+    "file": "supabase/functions/partner-find-prospects/handler.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "createPartnerDiscoveryHandler",
+      "--file",
+      "supabase/functions/partner-find-prospects/handler.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.551,
+    "proof": "impact-createPartnerDiscoveryHandler.log.gz"
+  },
+  {
+    "target": "candidates",
+    "file": "supabase/functions/partner-find-prospects/handler.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "candidates",
+      "--file",
+      "supabase/functions/partner-find-prospects/handler.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.804,
+    "proof": "impact-candidates.log.gz"
+  },
+  {
+    "target": "observedAddresses",
+    "file": "supabase/functions/partner-find-prospects/handler.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "observedAddresses",
+      "--file",
+      "supabase/functions/partner-find-prospects/handler.ts",
+      "--direction",
+      "upstream",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 0,
+    "seconds": 0.633,
+    "proof": "impact-observedAddresses.log.gz"
+  }
+]

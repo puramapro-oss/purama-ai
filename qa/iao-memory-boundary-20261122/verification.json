@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-22",
+  "base_commit": "d356eb3224f266fb9006dd7ad4ca45e2cdd9ffa0",
+  "before": {
+    "passed": 2,
+    "failed": 38
+  },
+  "after": {
+    "passed": 40,
+    "failed": 0
+  },
+  "neighbor": {
+    "passed": 90,
+    "failed": 24,
+    "reason": "listen EPERM"
+  },
+  "baseline_neighbor": {
+    "passed": 50,
+    "failed": 24,
+    "reason": "listen EPERM"
+  },
+  "same_failure_list": true,
+  "typecheck_exit": 0,
+  "build_exit": 0,
+  "independent_post_change_review": "blocked by sub-agent automatic content control",
+  "production_deployment": false,
+  "files": {
+    "karta/src/integrations/localComputeFabricProvider.ts": {
+      "bytes": 9523,
+      "sha256": "2a755bc48ca5a58f5dd1605c47bee734674a79e6d6469a1964f8c7dccc6e284d"
+    },
+    "karta/test/localComputeFabricMemoryBoundary.test.ts": {
+      "bytes": 6327,
+      "sha256": "1a154629daeedd527572f69b12f04601eadda1233633a4237e3d47e2725c8570"
+    },
+    "qa/iao-memory-boundary-20261122/baseline-neighbor-tests.log": {
+      "bytes": 17711,
+      "sha256": "8149694c4f3e2eed0aa92dce388b8627527829fb5a30df31d4297c341d91ee0c"
+    },
+    "qa/iao-memory-boundary-20261122/build.log": {
+      "bytes": 207,
+      "sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05"
+    },
+    "qa/iao-memory-boundary-20261122/neighbor-tests.log": {
+      "bytes": 17855,
+      "sha256": "d8568a1859f29e5d19c8a28ca0e010db325778a6ff3804baa75074da52c30fa1"
+    },
+    "qa/iao-memory-boundary-20261122/regression-after.log": {
+      "bytes": 552,
+      "sha256": "d9db52c9342702af37bf39484536bfcbdef4439df5143f2bff3091d00ea012f7"
+    },
+    "qa/iao-memory-boundary-20261122/regression-before.log": {
+      "bytes": 18386,
+      "sha256": "e05f36c74eb81c1db73232e1e470a7c47972aa4a53e9cc420b321c34e8dcdb1a"
+    },
+    "qa/iao-memory-boundary-20261122/typecheck.log": {
+      "bytes": 214,
+      "sha256": "1ec69788b3cdadf508e02dfbc57a867f46cb26ef267d4d55cee0799fb6ce3ce8"
+    }
+  },
+  "log_normalization": "trailing blank lines removed; test content unchanged",
+  "gitnexus": {
+    "impact_before_edit": {
+      "risk": "LOW",
+      "impacted": 6
+    },
+    "staged_before_commit": {
+      "risk": "medium",
+      "files": 10,
+      "symbols": 22,
+      "processes": 4
+    },
+    "compare_main": {
+      "risk": "critical",
+      "files": 1921,
+      "symbols": 12387,
+      "processes": 427
+    },
+    "limitations": [
+      "FTS disabled",
+      "graph execution flows are not exhaustive",
+      "generic test helper names can produce heuristic flow associations",
+      "main comparison includes prior consolidation history"
+    ]
+  }
+}

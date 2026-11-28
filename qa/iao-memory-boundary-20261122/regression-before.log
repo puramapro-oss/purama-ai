@@ -1,0 +1,361 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 test
+> vitest run --reporter=dot test/localComputeFabricMemoryBoundary.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx··
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 38 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ("false")
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ("0")
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (1)
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ([])
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ({})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (null)
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (undefined)
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:13:70
+     11| describe("local compute fabric memory data boundary", () => {
+     12|   it.each(["false", "0", 1, [], {}, null, undefined].map((value) => [v…
+     13|     expect(() => prompt({ sources: [{ ...source(), authorized }] })).t…
+       |                                                                      ^
+     14|   });
+     15|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"text":7})
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'source.text.slice is not a function'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "source.text.slice is not a function"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:20:71
+     18|     { relevance: Infinity }, { sensitivity: "public" }, { sensitivity:…
+     19|   ])("rejects malformed source data (%j)", (override) => {
+     20|     expect(() => prompt({ sources: [{ ...source(), ...override }] })).…
+       |                                                                       ^
+     21|   });
+     22|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"text":null})
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of null (readi…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of null (reading 'slice')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:20:71
+     18|     { relevance: Infinity }, { sensitivity: "public" }, { sensitivity:…
+     19|   ])("rejects malformed source data (%j)", (override) => {
+     20|     expect(() => prompt({ sources: [{ ...source(), ...override }] })).…
+       |                                                                       ^
+     21|   });
+     22|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":"1"})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":null})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":null})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"sensitivity":"public"})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"sensitivity":null})
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:20:71
+     18|     { relevance: Infinity }, { sensitivity: "public" }, { sensitivity:…
+     19|   ])("rejects malformed source data (%j)", (override) => {
+     20|     expect(() => prompt({ sources: [{ ...source(), ...override }] })).…
+       |                                                                       ^
+     21|   });
+     22|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure (null)
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of null (readi…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of null (reading 'sources')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:25:37
+     23|   it.each([null, undefined, [], {}, { sources: null }, { sources: {} }…
+     24|     "rejects malformed context structure (%j)", (context) => {
+     25|       expect(() => prompt(context)).toThrow(denied);
+       |                                     ^
+     26|     },
+     27|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure (undefined)
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of undefined (…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of undefined (reading 'sources')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:25:37
+     23|   it.each([null, undefined, [], {}, { sources: null }, { sources: {} }…
+     24|     "rejects malformed context structure (%j)", (context) => {
+     25|       expect(() => prompt(context)).toThrow(denied);
+       |                                     ^
+     26|     },
+     27|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ([])
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":null})
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":{}})
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'context.sources is not iterable'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "context.sources is not iterable"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:25:37
+     23|   it.each([null, undefined, [], {}, { sources: null }, { sources: {} }…
+     24|     "rejects malformed context structure (%j)", (context) => {
+     25|       expect(() => prompt(context)).toThrow(denied);
+       |                                     ^
+     26|     },
+     27|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":[null]})
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of null (readi…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of null (reading 'authorized')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:25:37
+     23|   it.each([null, undefined, [], {}, { sources: null }, { sources: {} }…
+     24|     "rejects malformed context structure (%j)", (context) => {
+     25|       expect(() => prompt(context)).toThrow(denied);
+       |                                     ^
+     26|     },
+     27|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own text field
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of undefined (…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of undefined (reading 'slice')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:32:48
+     30|     const value: Record<string, unknown> = source();
+     31|     delete value[key];
+     32|     expect(() => prompt({ sources: [value] })).toThrow(denied);
+       |                                                ^
+     33|   });
+     34|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own authorized field
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own sensitivity field
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own relevance field
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:32:48
+     30|     const value: Record<string, unknown> = source();
+     31|     delete value[key];
+     32|     expect(() => prompt({ sources: [value] })).toThrow(denied);
+       |                                                ^
+     33|   });
+     34|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects inherited authorization and custom prototypes
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:37:52
+     35|   it("rejects inherited authorization and custom prototypes", () => {
+     36|     const inherited = Object.assign(Object.create({ authorized: true, …
+     37|     expect(() => prompt({ sources: [inherited] })).toThrow(denied);
+       |                                                    ^
+     38|     expect(() => prompt(Object.create({ sources: [source()] }))).toThr…
+     39|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active text field without executing it
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active authorized field without executing it
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active sensitivity field without executing it
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'private-getter-content'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "private-getter-content"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:45:48
+     43|     const value = source();
+     44|     Object.defineProperty(value, key, { get: getter });
+     45|     expect(() => prompt({ sources: [value] })).toThrow(denied);
+       |                                                ^
+     46|     expect(getter).not.toHaveBeenCalled();
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active relevance field without executing it
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:45:48
+     43|     const value = source();
+     44|     Object.defineProperty(value, key, { get: getter });
+     45|     expect(() => prompt({ sources: [value] })).toThrow(denied);
+       |                                                ^
+     46|     expect(getter).not.toHaveBeenCalled();
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects context and array accessors without invoking them
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:51:81
+     49|   it("rejects context and array accessors without invoking them", () =…
+     50|     const getter = vi.fn(() => [source()]);
+     51|     expect(() => prompt(Object.defineProperty({}, "sources", { get: ge…
+       |                                                                                 ^
+     52|     const sources = [source()];
+     53|     Object.defineProperty(sources, "0", { get: getter });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > does not execute a custom array iterator
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:62:39
+     60|     const sources: unknown[] = [];
+     61|     Object.defineProperty(sources, Symbol.iterator, { value: iterator …
+     62|     expect(() => prompt({ sources })).toThrow(denied);
+       |                                       ^
+     63|     expect(iterator).not.toHaveBeenCalled();
+     64|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects sparse arrays and array subclasses
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot read properties of undefined (…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot read properties of undefined (reading 'authorized')"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:67:53
+     65|
+     66|   it("rejects sparse arrays and array subclasses", () => {
+     67|     expect(() => prompt({ sources: new Array(1) })).toThrow(denied);
+       |                                                     ^
+     68|     class ActiveSources extends Array<ReturnType<typeof source>> {}
+     69|     expect(() => prompt({ sources: new ActiveSources(source()) })).toT…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a context proxy without calling traps
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a array proxy without calling traps
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a source proxy without calling traps
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'private-proxy-content'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "private-proxy-content"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:77:35
+     75|     const context = level === "context" ? new Proxy({ sources: [source…
+     76|       : { sources: level === "array" ? new Proxy([source()], handler) …
+     77|     expect(() => prompt(context)).toThrow(denied);
+       |                                   ^
+     78|     expect(trap).not.toHaveBeenCalled();
+     79|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a revoked proxy with the generic error
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'Cannot perform \'get\' on a proxy tha…'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "Cannot perform 'get' on a proxy that has been revoked"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:84:48
+     82|     const { proxy, revoke } = Proxy.revocable(source(), {});
+     83|     revoke();
+     84|     expect(() => prompt({ sources: [proxy] })).toThrow(denied);
+       |                                                ^
+     85|   });
+     86|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/38]⎯
+
+ FAIL  test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > validates the whole pack before transport, including a late malformed source
+AssertionError: expected [Function] to throw error including 'memory-denied:compute-fabric-input' but got 'transport-must-not-run'
+
+Expected: "memory-denied:compute-fabric-input"
+Received: "transport-must-not-run"
+
+ ❯ test/localComputeFabricMemoryBoundary.test.ts:93:8
+     91|       requestId: "boundary", idempotencyKey: `iao:${"a".repeat(64)}`, …
+     92|       context: { sources: [{ ...source(), text: "x".repeat(1_000) }, {…
+     93|     })).rejects.toThrow(denied);
+       |        ^
+     94|     expect(request).not.toHaveBeenCalled();
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/38]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  38 failed | 2 passed (40)
+   Start at  21:28:30
+   Duration  536ms (transform 40%, tests 37%, import 13%, setup 6%, worker 4%)

@@ -1,0 +1,77 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/modelQualityRouting.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-performance/karta
+
+ ❯ test/modelQualityRouting.test.ts (9 tests | 7 failed) 14ms
+   ❯ model routing preserves the primary model for consequential decisions (9)
+     × does not infer that a short legal request requires less quality 7ms
+     × does not infer that a short compta request requires less quality 1ms
+     × does not infer that a short facture-pro request requires less quality 2ms
+     × does not infer that a short rapports-financiers request requires less quality 1ms
+     × does not infer that a short chasseur-de-paiements request requires less quality 1ms
+     × keeps the primary model for an unqualified custom agent with a short prompt 1ms
+     × keeps the primary model when even one available action is sensitive 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short legal request requires less quality
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short compta request requires less quality
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short facture-pro request requires less quality
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short rapports-financiers request requires less quality
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short chasseur-de-paiements request requires less quality
+AssertionError: expected 'claude-haiku-4-5-20251001' to be 'claude-sonnet-4-6' // Object.is equality
+
+Expected: "claude-sonnet-4-6"
+Received: "claude-haiku-4-5-20251001"
+
+ ❯ test/modelQualityRouting.test.ts:19:51
+     17|   it.each(["legal", "compta", "facture-pro", "rapports-financiers", "c…
+     18|     "does not infer that a short %s request requires less quality", ag…
+     19|       expect(selectModel(request({ agentType }))).toBe(config.anthropi…
+       |                                                   ^
+     20|     },
+     21|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > keeps the primary model for an unqualified custom agent with a short prompt
+AssertionError: expected 'claude-haiku-4-5-20251001' to be 'claude-sonnet-4-6' // Object.is equality
+
+Expected: "claude-sonnet-4-6"
+Received: "claude-haiku-4-5-20251001"
+
+ ❯ test/modelQualityRouting.test.ts:24:77
+     22|
+     23|   it("keeps the primary model for an unqualified custom agent with a s…
+     24|     expect(selectModel(request({ agentType: "custom:unqualified-agent"…
+       |                                                                             ^
+     25|   });
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > keeps the primary model when even one available action is sensitive
+AssertionError: expected 'claude-haiku-4-5-20251001' to be 'claude-sonnet-4-6' // Object.is equality
+
+Expected: "claude-sonnet-4-6"
+Received: "claude-haiku-4-5-20251001"
+
+ ❯ test/modelQualityRouting.test.ts:31:13
+     29|       name: "send", description: "Action sensible", sensitive: true,
+     30|       execute: async () => ({ ok: true }),
+     31|     }] }))).toBe(config.anthropicModelMain);
+       |             ^
+     32|   });
+     33|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 2 passed (9)
+   Start at  05:41:45
+   Duration  374ms (transform 62%, import 25%, tests 7%, setup 3%, worker 2%)
