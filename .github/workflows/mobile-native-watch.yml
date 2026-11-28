@@ -298,6 +298,9 @@ jobs:
           bash modules/purama-local-digest/tests/run-core-tests.sh --swift 2>&1 | tee qa/watch-native/swift-digest-tests.log
       - name: Install the existing mobile lock
         run: npm ci --no-audit --no-fund
+      - name: Verify the isolated iOS digest fixture and receipt guards
+        run: |
+          node --test --test-concurrency=1 tests/iao-digest-qualification.test.cjs tests/iao-digest-qualification-screen.test.cjs tests/iao-native-qualification.test.cjs tests/watch-native/digest-ios.test.cjs 2>&1 | tee qa/watch-native/ios-digest-guards.log
       - name: Generate existing phone and companion projects
         run: |
           npx expo prebuild --no-install --platform all 2>&1 | tee qa/watch-native/apple-prebuild.log
@@ -308,6 +311,9 @@ jobs:
       - name: Compile watchOS and existing iOS app for simulators without signing
         run: |
           node scripts/verify-watch-native-apple-build.cjs 2>&1 | tee qa/watch-native/apple-build.log
+      - name: Execute native SHA-256 in Hermes in the existing iOS simulator app
+        timeout-minutes: 12
+        run: node scripts/qualify-digest-ios.cjs
       - name: Preserve qualification receipts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -59,6 +59,39 @@ dans Hermes. La réception native doit vérifier séparément le module lié à 
 les vues `Uint8Array.subarray()`, le refus des autres TypedArray, la libération réelle,
 le hachage du modèle épinglé et la durée des blocs sur appareil.
 
+### Qualification du digest dans Hermes sur simulateur iOS
+
+Le harnais `mobile/lib/iao-digest-qualification.ts` réutilise la route de qualification
+existante et le module de production. Il requiert le flag de build exact
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION=1`, un UUID de campagne sous
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION_RUN_ID` et le commit complet sous
+`EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION_COMMIT`. L'activation simultanée du harnais
+hors ligne Android est refusée. Un build normal n'importe pas cette fixture depuis
+la route, et le harnais refuse les flags ou identités invalides avant tout import natif
+ou fichier.
+
+La fixture exige iOS, Hermes et un bundle `main.jsbundle` embarqué dans l'application.
+Elle vérifie les vecteurs vide, `abc`, bloc maximal et million d'octets, les vues décalées,
+la consommation synchrone des données, les transitions d'état et les nettoyages.
+Les types incompatibles sont soumis directement à la méthode native `update()` : le garde de
+l'adaptateur JavaScript ne peut pas masquer un défaut de conversion Expo. Le harnais
+contrôle également l'adaptateur réellement utilisé par le vérificateur de pack.
+
+Le contrat JSON `mobile/lib/iao-digest-qualification-contract.json` définit le fichier
+de reçu et les quinze contrôles obligatoires. Le script hôte reçoit le fichier dans le
+conteneur du simulateur jetable et rapproche la campagne et le commit du bundle
+construit. La fixture écrit et relit un temporaire dans le même dossier avant son
+déplacement vers le nom final ; elle refuse d'écraser un reçu existant. Un résultat
+de compilation, un reçu ancien, une exécution Metro ou un résultat
+partiel ne valent pas qualification native. Les tests Node du harnais simulent les
+frontières natives et de fichiers ; leurs résultats restent distincts du reçu réel iOS.
+
+Cette qualification porte sur le module digest et son adaptateur dans le simulateur.
+Elle n'exécute ni le modèle, ni SMARANA, ni l'appairage watchOS, et ne mesure pas les
+performances d'un appareil physique. La libération explicite est exercée, sans appel
+natif après `release()` ; elle ne prouve pas l'absence de fuite mémoire ou le calendrier
+du ramasse-miettes.
+
 ## API de référence
 
 La compatibilité vise Expo SDK 54 : `Class`, `SharedObject`, `sharedObjectDidRelease`,

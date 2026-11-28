@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "receiptFile": "iao-digest-qualification.json",
+  "checks": [
+    "emptyVector",
+    "offsetViewVector",
+    "splitVector",
+    "maximumBlockVector",
+    "multiBlockVector",
+    "synchronousConsumption",
+    "unsupportedTypesRejected",
+    "oversizedBlockRejected",
+    "finalizedStateRejected",
+    "destroyedStateRejected",
+    "destroyIsIdempotent",
+    "nativeReleaseCompleted",
+    "adapterNativeRequired",
+    "adapterOffsetViewVector",
+    "adapterCleanupCompleted"
+  ]
+}

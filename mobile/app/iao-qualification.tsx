@@ -3,21 +3,30 @@ import { ScrollView, Text, View } from "react-native";
 
 /** This route has no native/storage import or fixture capability in a normal build. */
 export default function IaoQualificationScreen() {
-  const enabled = process.env.EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION === "1";
+  const offlineEnabled = process.env.EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION === "1";
+  const digestEnabled = process.env.EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION === "1";
+  const conflicting = offlineEnabled && digestEnabled;
+  const enabled = (offlineEnabled || digestEnabled) && !conflicting;
   const [status, setStatus] = useState("Initialisation de la qualification native…");
   const [result, setResult] = useState<string | null>(null);
   useEffect(() => {
     if (!enabled) return;
     let mounted = true;
-    void import("../lib/iao-native-qualification").then(module => module.runIaoNativeQualification(value => {
+    const onStatus = (value: string) => {
       if (mounted) setStatus(value);
-    })).then(receipt => {
+    };
+    const qualification = digestEnabled
+      ? import("../lib/iao-digest-qualification").then(module => module.runIaoDigestQualification(onStatus))
+      : import("../lib/iao-native-qualification").then(module => module.runIaoNativeQualification(onStatus));
+    void qualification.then(receipt => {
       if (mounted) setResult(JSON.stringify(receipt, null, 2));
     }).catch(() => { if (mounted) setStatus("Qualification native indisponible."); });
     return () => { mounted = false; };
-  }, [enabled]);
+  }, [enabled, digestEnabled]);
   if (!enabled) return <View style={{ flex: 1, backgroundColor: "#0A0A0F", padding: 24 }}>
-    <Text style={{ color: "#FFFFFF" }}>Cette qualification n’est pas disponible dans cette application.</Text>
+    <Text style={{ color: "#FFFFFF" }}>{conflicting
+      ? "La configuration de qualification est incompatible."
+      : "Cette qualification n’est pas disponible dans cette application."}</Text>
   </View>;
   return <ScrollView contentContainerStyle={{ padding: 24, gap: 16, backgroundColor: "#0A0A0F", flexGrow: 1 }}>
     <Text accessibilityRole="header" style={{ color: "#FFFFFF", fontSize: 24 }}>Qualification native PURAMA</Text>
