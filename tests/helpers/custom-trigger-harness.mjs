@@ -105,6 +105,11 @@ export function customTriggerHarness(options = {}) {
     '../chef/workshop-service.js': { WorkshopError: class extends Error {}, handleWorkshopRequest: unused },
     './consultation.js': { handleConsultationRequest: async () => false },
     './iaoRoutes.js': { isIaoPath: () => false, handleIaoRoute: unused },
+    // Routines are unrelated to custom-agent dispatch. Keep their route closed
+    // here; its authentication and delivery contracts have dedicated tests.
+    '../routines/http.js': { handleRoutinePhoneRoute: async () => false },
+    '../routines/service.js': { createRoutineService: unused },
+    '../routines/store.js': { RoutineError: class extends Error {} },
   }, globals);
   apiExports.startApiServer(undefined, { consultationHost: null });
   const apiFetch = (url, init) => new Promise(resolve => {

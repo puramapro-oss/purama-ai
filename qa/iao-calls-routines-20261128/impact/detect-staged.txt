@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795832543845,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 112 files, 833 symbols
+Affected processes: 98
+Risk level: critical
+
+Changed symbols:
+  Function startApiServer → karta/src/api/server.ts
+  Function server → karta/src/api/server.ts
+  Function active → karta/src/api/server.ts
+  Function handleRequest → karta/src/api/server.ts
+  Function isActive → karta/src/api/server.ts
+  Function phoneCommandToken → karta/src/routines/commands.ts
+  Function verifyPhoneCommandToken → karta/src/routines/commands.ts
+  Const ROUTINE_CHANNELS → karta/src/routines/contracts.ts
+  TypeAlias RoutineChannel → karta/src/routines/contracts.ts
+  TypeAlias Schedule → karta/src/routines/contracts.ts
+  TypeAlias RoutineSchedule → karta/src/routines/contracts.ts
+  Interface RoutineInput → karta/src/routines/contracts.ts
+  Property name → karta/src/routines/contracts.ts
+  Property instruction → karta/src/routines/contracts.ts
+  Property enabled → karta/src/routines/contracts.ts
+... and 818 more
+
+Affected execution flows:
+  • StartSchedulers → List (3 steps) — changed: list, runDailyReport, startSchedulers
+  • StartSchedulers → Preferences (3 steps) — changed: preferences, runDailyReport, startSchedulers
+  • Tick → RoutineValidationError (10 steps) — changed: RoutineValidationError, refresh, invoke, tick, processOccurrence, normalizeRoutineInput, keys, fail, requestIaoRoutines, requestBody
+  • NotificationSettings → RoutineClientError (9 steps) — changed: RoutineClientError, NotificationSettings, refresh, invoke, useIaoRoutines, RoutinesPanel, IaoRoutinesSettings, requestIaoRoutines, requestBody
+  • NotificationSettings → Current (8 steps) — changed: current, NotificationSettings, refresh, invoke, useIaoRoutines, RoutinesPanel, IaoRoutinesSettings, requestIaoRoutines
+  • NotificationSettings → Current (7 steps) — changed: current, NotificationSettings, refresh, invoke, useIaoRoutines, RoutinesPanel, IaoRoutinesSettings
+  • NotificationSettings → CaptureOwner (6 steps) — changed: NotificationSettings, refresh, captureOwner, useIaoRoutines, RoutinesPanel, IaoRoutinesSettings
+  • BuildRoutineReport → RoutineReportError (5 steps) — changed: RoutineReportError, buildRoutineReport, parseRun, summary, fail
+  • StartSchedulers → RoutineError (5 steps) — changed: list, RoutineError, database, runDailyReport, startSchedulers
+  • StartSchedulers → Record (5 steps) — changed: list, database, record, runDailyReport, startSchedulers
+... and 88 more

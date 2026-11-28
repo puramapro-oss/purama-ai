@@ -1,0 +1,8 @@
+PASS Create, preview, activate, pause and inspect the same routine
+PASS Mobile editor exposes real choices without activating an unavailable phone
+PASS Changing settings invalidates an earlier preview
+PASS An ambiguous request is not automatically repeated and keeps its identity
+PASS Account changes discard private drafts and late save responses
+PASS Loading failure is visible and retry restores the actual list
+PASS Event schedules and voice requests remain truthful
+PASS One-time schedules interpret local input in the selected timezone

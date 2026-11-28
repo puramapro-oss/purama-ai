@@ -1,0 +1,42 @@
+src/routines/store.ts(93,36): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { kill_switch: any; }, false>'.
+src/routines/store.ts(104,79): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { id: any; user_id: any; revision: any; config: any; created_at: any; updated_at: any; last_occurrence_at: any; } | null, false>'.
+src/routines/store.ts(136,79): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { id: any; user_id: any; routine_id: any; revision: any; slot: any; scheduled_at: any; expires_at: any; status: any; report: any; } | null, false>'.
+src/routines/store.ts(142,46): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { id: any; user_id: any; routine_id: any; revision: any; slot: any; scheduled_at: any; expires_at: any; status: any; report: any; } | null, false>'.
+src/routines/store.ts(147,109): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { id: any; user_id: any; routine_id: any; revision: any; slot: any; scheduled_at: any; expires_at: any; status: any; report: any; } | null, false>'.
+src/routines/store.ts(219,55): error TS2339: Property 'abortSignal' does not exist on type 'PostgrestBuilder<any, { user_id: any; email_enabled: any; daily_report_enabled: any; task_completed_enabled: any; question_enabled: any; alert_enabled: any; } | null, false>'.
+test/iaoRoutinesEdge.test.ts(4,73): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+test/iaoRoutinesEdge.test.ts(4,73): error TS6059: File '/workspace/scratch/3eae3578944a/purama-ai/supabase/functions/iao-routines/handler.ts' is not under 'rootDir' '/workspace/scratch/3eae3578944a/purama-ai/karta'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because '/workspace/scratch/3eae3578944a/purama-ai/package.json' has field "type" with value "module"
+test/iaoRoutinesEdge.test.ts(282,12): error TS18046: 'body' is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(283,12): error TS18046: 'body' is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(284,12): error TS18046: 'body' is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(300,44): error TS2571: Object is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(303,45): error TS2571: Object is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(316,110): error TS2345: Argument of type '(occurrences: string) => Promise<void>' is not assignable to parameter of type '(...args: [string, string] | [string]) => Awaitable<void>'.
+  Types of parameters 'occurrences' and 'args' are incompatible.
+    Type '[string, string] | [string]' is not assignable to type '[occurrences: string]'.
+      Type '[string, string]' is not assignable to type '[occurrences: string]'.
+        Source has 2 element(s) but target allows only 1.
+test/iaoRoutinesEdge.test.ts(325,12): error TS2571: Object is of type 'unknown'.
+test/iaoRoutinesEdge.test.ts(327,12): error TS2571: Object is of type 'unknown'.
+test/routineHttp.test.ts(12,5): error TS2322: Type 'Mock<() => Promise<{ channel: string; status: string; providerId: string; updatedAt: string; details: {}; }[]>>' is not assignable to type '((occurrence: RoutineOccurrence) => Promise<RoutineDelivery[]>) | undefined'.
+  Type 'Mock<() => Promise<{ channel: string; status: string; providerId: string; updatedAt: string; details: {}; }[]>>' is not assignable to type '(occurrence: RoutineOccurrence) => Promise<RoutineDelivery[]>'.
+    Type 'Promise<{ channel: string; status: string; providerId: string; updatedAt: string; details: {}; }[]>' is not assignable to type 'Promise<RoutineDelivery[]>'.
+      Type '{ channel: string; status: string; providerId: string; updatedAt: string; details: {}; }[]' is not assignable to type 'RoutineDelivery[]'.
+        Type '{ channel: string; status: string; providerId: string; updatedAt: string; details: {}; }' is not assignable to type 'RoutineDelivery'.
+          Types of property 'channel' are incompatible.
+            Type 'string' is not assignable to type '"push" | "email" | "in_app" | "call"'.
+test/routineWorker.test.ts(75,74): error TS2345: Argument of type '() => Promise<{ phone: null; email: null; }>' is not assignable to parameter of type '() => Promise<{ phone: string; email: string; }>'.
+  Type 'Promise<{ phone: null; email: null; }>' is not assignable to type 'Promise<{ phone: string; email: string; }>'.
+    Type '{ phone: null; email: null; }' is not assignable to type '{ phone: string; email: string; }'.
+      Types of property 'phone' are incompatible.
+        Type 'null' is not assignable to type 'string'.
+test/routineWorker.test.ts(93,36): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.
+../supabase/functions/iao-routines/handler.ts(1,85): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+../supabase/functions/iao-routines/handler.ts(2,52): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+../supabase/functions/iao-routines/handler.ts(2,52): error TS6059: File '/workspace/scratch/3eae3578944a/purama-ai/supabase/functions/_shared/request-body.ts' is not under 'rootDir' '/workspace/scratch/3eae3578944a/purama-ai/karta'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because '/workspace/scratch/3eae3578944a/purama-ai/package.json' has field "type" with value "module"
+../supabase/functions/iao-routines/handler.ts(3,84): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+../supabase/functions/iao-routines/handler.ts(3,84): error TS6059: File '/workspace/scratch/3eae3578944a/purama-ai/supabase/functions/_shared/request-deadline.ts' is not under 'rootDir' '/workspace/scratch/3eae3578944a/purama-ai/karta'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because '/workspace/scratch/3eae3578944a/purama-ai/package.json' has field "type" with value "module"
+../supabase/functions/iao-routines/handler.ts(312,51): error TS2353: Object literal may only specify known properties, and 'cache' does not exist in type 'RequestInit'.

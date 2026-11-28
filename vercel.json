@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "feat/iao-calls-routines-20261128-3eae": false,
       "fix/iao-notifications-20261127-b643": false,
       "audit/unlazy-reconciliation-20261125": false,
       "test/partner-discovery-postgres-20261124": false,

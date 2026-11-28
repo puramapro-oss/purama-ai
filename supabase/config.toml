@@ -33,6 +33,11 @@ verify_jwt = false
 [functions.iao-consultation]
 verify_jwt = false
 
+# The proxy verifies the current bearer with auth.getUser and revalidates the
+# same account immediately before forwarding any mutation to the internal API.
+[functions.iao-routines]
+verify_jwt = false
+
 [functions.social-callback]
 verify_jwt = false
 

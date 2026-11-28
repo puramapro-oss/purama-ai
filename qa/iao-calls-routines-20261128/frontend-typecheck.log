@@ -1,0 +1,13 @@
+karta/src/routines/contracts.ts(55,85): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/hooks/useIaoRoutines.ts(38,5): error TS2322: Type '() => boolean' is not assignable to type '() => false'.
+  Type 'boolean' is not assignable to type 'false'.
+src/lib/iao-routines-client.ts(115,38): error TS2339: Property 'title' does not exist on type 'unknown'.
+src/lib/iao-routines-client.ts(115,68): error TS2339: Property 'body' does not exist on type 'unknown'.
+src/lib/iao-routines-client.ts(157,35): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(157,100): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(163,16): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(165,14): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(168,16): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(169,16): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(171,14): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.
+src/lib/iao-routines-client.ts(221,20): error TS2550: Property 'hasOwn' does not exist on type 'ObjectConstructor'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2022' or later.

@@ -1,0 +1,40 @@
+
+ RUN  v4.1.12 /workspace/scratch/3eae3578944a/purama-ai
+
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > hides private routines on logout and does not make anonymous requests 33ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > does not start retained actions across A to B to A 6ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > does not start a retained refresh in a later account lifetime 4ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > ignores a late mutation and does not refresh or announce success for another account 5ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > allows a new account to act while a retired account request is unresolved 4ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > ignores an older read that finishes after a newer refresh 2ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > requires a preview of the exact active settings before saving 7ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > permits an inactive draft without a scheduling preview 2ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > refuses two concurrent writes before a second request can start 3ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > keeps the same identity after an unconfirmed run and never retries automatically 4ms
+ ✓ src/hooks/useIaoRoutines.test.tsx > routines account lifetimes and confirmation > does not accept a previous lifetime preview when account A returns 3ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > binds the explicit session token and never sends a browser-selected owner 18ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > does not send a retained callback from an expired session 2ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects a late response after the session changes 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects another account row without rendering it 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects malformed or contradictory public data 0 1ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects malformed or contradictory public data 1 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects malformed or contradictory public data 2 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects malformed or contradictory public data 3 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects malformed or contradictory public data 4 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > does not convert a null reply or a false success into confirmed delivery 1ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > validates a saved revision and the actual saved config before announcing success 2ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > requires revision one for creation and refuses older or skipped versions 1ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > accepts an unchanged pause revision only when the requested settings already apply 1ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > refuses a pause receipt that leaves the routine enabled 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > preserves an accepted call as accepted, without inventing that a person heard it 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > does not retry an ambiguous mutation or expose a provider diagnostic 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > classifies a conflict as rejected and asks for current state 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects unrecognized input fields before transmission 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > rejects duplicate or unsorted occurrence previews 0ms
+ ✓ src/lib/iao-routines-client.test.ts > routine API client boundaries > reports only cancellation of waiting sends, not cancellation of an accepted call 0ms
+
+ Test Files  2 passed (2)
+      Tests  31 passed (31)
+   Start at  02:58:23
+   Duration  1.32s (transform 124ms, setup 0ms, import 203ms, tests 106ms, environment 726ms)
+

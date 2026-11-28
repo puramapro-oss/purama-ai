@@ -1,0 +1,71 @@
+{
+  "status": "ambiguous",
+  "message": "Found 2 symbols matching 'NotificationSettings'. Blast radius differs per candidate (max 1 impacted at risk UNKNOWN; LOW among the candidates that resolved, and at least one could not be walked). Disambiguate with target_uid (or file_path/kind) for a single authoritative result.",
+  "target": {
+    "name": "NotificationSettings"
+  },
+  "direction": "upstream",
+  "totalCandidates": 2,
+  "impactedCount": null,
+  "risk": "UNKNOWN",
+  "maxImpactedCount": 1,
+  "maxRisk": "UNKNOWN",
+  "knownMaxRisk": "LOW",
+  "candidates": [
+    {
+      "uid": "Function:src/App.tsx:NotificationSettings",
+      "name": "NotificationSettings",
+      "kind": "Function",
+      "filePath": "src/App.tsx",
+      "line": 28,
+      "score": 0.56,
+      "impactedCount": 1,
+      "risk": "LOW",
+      "riskSharedAxes": "LOW",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 1
+    },
+    {
+      "uid": "Function:src/pages/NotificationSettings.tsx:NotificationSettings",
+      "name": "NotificationSettings",
+      "kind": "Function",
+      "filePath": "src/pages/NotificationSettings.tsx",
+      "line": 22,
+      "score": 0.56,
+      "impactedCount": 0,
+      "risk": "UNKNOWN",
+      "riskSharedAxes": "UNKNOWN",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 0,
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    }
+  ]
+}
+
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795829698820,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

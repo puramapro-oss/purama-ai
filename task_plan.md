@@ -1,5 +1,11 @@
 # PURAMA AI — Task Plan V3
 
+## Appels et routines IAO v1 — 28 novembre 2026
+
+État de conception `PRET_A_CODER` : Matiss répond « Parfait … fonctionnelle entièrement » à la demande explicite de validation du périmètre décrit dans cette conversation et le dossier du 26 novembre. Base `f95c4f472621fbf0335763b594add58d79175195`, préservant les PR126 et PR128. Travail isolé sur `feat/iao-calls-routines-20261128-3eae` ; les sources et worktrees Mac ne sont pas modifiés. Périmètre, responsables et critères : `qa/iao-calls-routines-20261128/scope.json`. Le résultat du code, les tests locaux et la qualification des services réels seront rapportés séparément. Aucune autorité de session n'est inventée pour le canal téléphonique.
+
+Réception logicielle locale : 489 tests ciblés KARTA (dont38 SQL),104 tests React/client et115 contrôles de déclenchement PASS ;8 parcours routines et12 parcours notifications PASS dans Chromium, sources et captures conservées. Typage KARTA, frontend et proxy PASS. La migration040 préserve039 déjà réservée dans PR129. Le service est désactivé par défaut ; la capture vocale reste pending_confirmation jusqu’au raccordement de l’autorité canonique. La concurrence PostgreSQL native et les suites CI complètes seront reçues sur la proposition publiée. Aucun appel réel, migration distante ou déploiement de production. Les limites du graphe et les tentatives interrompues restent dans le dossier de preuve.
+
 ## Admission IAO et raccordements canoniques — 24 novembre 2026, reprise après 18c40d0e
 
 État : `REALISE_ET_TESTE_LOCALEMENT`, réception de l'arbre publié encore requise avant intégration. La demande actuelle de Matiss prolonge le référentiel IAO de 168 capacités approuvé et la conception existante du cycle de vie KARTA. Ce lot corrige un écart reproduit à la politique d'arrêt global déjà appliquée aux admissions manuelles Atelier et consultation. Il ne crée aucune nouvelle autorité de session, mémoire ou calcul. Base : `18c40d0eb59b48636dd8d8fb54c0516b700ed746`, PR108 intégrée à la consolidation après réception de sa tête `4c54eb0c7fc281083fc69237d36ccad25765fb39`. Branche isolée : `feat/iao-runtime-composition-20261124`.

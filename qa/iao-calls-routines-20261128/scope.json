@@ -1,0 +1,28 @@
+{
+  "project": "puramapro-oss/purama-ai",
+  "scope": "IAO appels et routines multicanaux v1",
+  "design_state": "PRET_A_CODER",
+  "design_source": "IAO_Appels_Routines_Integration_2026-11-26.pdf; réponse détaillée précédente de cette conversation",
+  "validation": "28 novembre 2026 : réponse Parfait ... fonctionnelle entièrement à la demande explicite de validation du périmètre v1",
+  "base_commit": "f95c4f472621fbf0335763b594add58d79175195",
+  "branch": "feat/iao-calls-routines-20261128-3eae",
+  "owner": "/root 3eae3578944a",
+  "preserved": ["PR126", "PR128", "tous les worktrees Mac", "les autorités IAO existantes", "les connecteurs et politiques de permissions"],
+  "acceptance": [
+    "Routines persistantes par utilisateur, édition révisionnée, pause et arrêt avant nouvel envoi",
+    "Horaire local, fuseau, changements d'heure, aperçu des occurrences et absence de rattrapage massif",
+    "Bilan unique fondé sur les exécutions, simulations et blocages distincts",
+    "Livraisons indépendantes et persistantes ; aucun renvoi automatique après résultat inconnu",
+    "Téléphone réservé au numéro vérifié et au mandat courant, budget et heures calmes",
+    "Callbacks signés, rattachés et dédupliqués ; autorité IAO préservée",
+    "Interface raccordée aux préférences existantes avec chargement, erreurs et isolation des comptes",
+    "Tests métier, SQL, API et navigateur sur les sources finales"
+  ],
+  "external_activation": "Aucun appel réel, achat, envoi tiers, migration distante ou déploiement pendant les tests locaux. Qualifier les prérequis effectifs avant activation.",
+  "ownership": {
+    "root": ["API KARTA", "proxy authentifié", "stockage et traitement des livraisons", "raccordement planificateur", "rapport quotidien", "preuves et intégration"],
+    "schedule_data": ["contrats purs", "calcul des occurrences", "migration040", "tests SQL et horaires"],
+    "phone_contract": ["adaptateur Bland et signatures", "tests de transport"],
+    "routines_ui": ["client et hook routines", "composant réglages", "tests UI et navigateur"]
+  }
+}

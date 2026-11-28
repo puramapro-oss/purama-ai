@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 /workspace/scratch/3eae3578944a/purama-ai/karta
+
+
+ Test Files  17 passed (17)
+      Tests  489 passed (489)
+   Start at  03:13:27
+   Duration  10.53s (tests 77%, transform 11%, import 10%, setup 1%, worker 1%)
+
+    Isolate  17 workers spawned · ~132ms startup each (spawn + environment, per file)
+             at least ~2.12s faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,0 +1,17 @@
+PASS Create, preview, activate, pause and inspect the same routine
+FAIL Mobile editor exposes real choices without activating an unavailable phone: page.screenshot: Timeout 6500ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m    - disabled all CSS animations[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+PASS Changing settings invalidates an earlier preview
+PASS An ambiguous request is not automatically repeated and keeps its identity
+PASS Account changes discard private drafts and late save responses
+PASS Loading failure is visible and retry restores the actual list
+FAIL Event schedules and voice requests remain truthful: page.goto: Page crashed
+Call log:
+[2m  - navigating to "http://127.0.0.1:46719/", waiting until "load"[22m
+
+PASS One-time schedules interpret local input in the selected timezone

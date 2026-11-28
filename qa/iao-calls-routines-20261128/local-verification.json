@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "base_commit": "f95c4f472621fbf0335763b594add58d79175195",
+  "branch": "feat/iao-calls-routines-20261128-3eae",
+  "created_at": "2026-11-28T02:23:26.896374+00:00",
+  "candidate_sha256": {
+    ".github/workflows/karta-iao-identity.yml": "888f59d597fc5668c1df8a1ba8a5dad5af90d0d3bea92571a17b8bfeb415e909",
+    ".github/workflows/notifications-quality.yml": "9e6a4297cb173fa5467a3d2bf48c9098416805fa5a814abfbbbd046ebe5fba92",
+    "karta/.env.example": "5ae28dafb1d43ffd9d8ed13c1f822975a10b7a4bf2f18a781eddd8b7d5b3799a",
+    "karta/migrations/040_iao_routines.sql": "20489e7a6d71c61731716c9a2cab4935cc58dcd8b3ec9533e4eece6259f7bfb3",
+    "karta/src/api/server.ts": "55f5160eb1202938e76ecc65ef1f74fbbe81ab4c4ab197ec4e6338287c15228d",
+    "karta/src/routines/commands.ts": "825373ec5c1c25ba0ad119bc9ccde9e7aa35e6be147d8a0c066de4d059c21dc5",
+    "karta/src/routines/contracts.ts": "4c62030eea17da4ef153794a3974d3ca883df4b45f6f984035630161c6cc0885",
+    "karta/src/routines/http.ts": "87e2afbe34d5c40d206e87a1fae5386c01c37ae1187f727a84666082fbefab98",
+    "karta/src/routines/phone.ts": "287d1d6e715de3df001bc2b9558f816815935f3157d1d7504c532727126156ea",
+    "karta/src/routines/report.ts": "60b6aeef9089ce1f0509cd8b4f6868882d06a0537fcd7309aa0abc7d5952c8f0",
+    "karta/src/routines/runtime.ts": "7bc8705a11a5fddd462a90001eaa93d24f98c8282ff90417d1ff84119499783a",
+    "karta/src/routines/schedule.ts": "a556b69d061bec0ea717830820856570271028a74d6a9698006a8dc1bb216aba",
+    "karta/src/routines/service.ts": "7b0854437b4b601ba6b8ea71d50c1728708238bbcf791f6a882c003fa3e30628",
+    "karta/src/routines/store.ts": "31e5b4853d2abd61cfe650e758f9e540d07ef1bc0041ca1f21f66e54603222fd",
+    "karta/src/routines/transports.ts": "5e93aed3b8c6da82d938c44beb4c7503e695dcece9209b3c806563b9c1a51a15",
+    "karta/src/routines/worker.ts": "25d9dee6f6af51970421b6e107d36f1f0798b46bcbe930cef555e8abeeeb4e32",
+    "karta/src/scheduler/cron.ts": "ae86f191120fc2ebc3648083c97b7defb1602612dc7b00b09be2698714e6bbc2",
+    "karta/src/scheduler/dailyReport.ts": "af6430cb52af3744d003223d5430faa14081704041e487b29aee1141b0ecf13a",
+    "karta/test/dailyReportRoutines.test.ts": "185c5dff8ee369f9114738258a2f0842b13603801e54a10c7c8ed7fa7e239d85",
+    "karta/test/iaoRoutinesEdge.test.ts": "27dea46c9c0fc5c25e93318c82d75ebfa314672ff6154a307ab000fabf6f507b",
+    "karta/test/routineCommands.test.ts": "3592e000d99d464f7bbbd16dd79e01ffe82a9c920385ae03ea06136a6df2a68f",
+    "karta/test/routineDatabase.native.mjs": "90668941f3d5c58eb830fd8a6f54a2f6ec9c5eb5be6b563998ddbda26490c813",
+    "karta/test/routineDatabase.test.ts": "32ae095e6b0bd5ebe20f5fd5d7f170846d773cd79af77dcb4c3c3ce900bb426f",
+    "karta/test/routineFixtures.ts": "3e21fd1d0ddc82169fd1d638d6c5856fadb9b534a699f111bb1421139d7fc75d",
+    "karta/test/routineHttp.test.ts": "96d1b0e21fccdce568657081a50c12f38b2f0ea8875091e7020251076e468ce1",
+    "karta/test/routinePhone.test.ts": "abd7ef89b46f5a1ce51a45ffea9f857116d33cf6383f66200bd375a93bdaf08e",
+    "karta/test/routineReport.test.ts": "e4d5c19eb8dab4cd3d1462b9108b6d965de62901cf79560a0838bf6309c0a6b3",
+    "karta/test/routineSchedule.test.ts": "602e3d8e10a3694b3069e5df3e732066459431ae181ddcfce721ba3e9ba2cde6",
+    "karta/test/routineService.test.ts": "ee5b706c110bfa2df6b451b0698f85e67c284c6ada332921909160c9d659670b",
+    "karta/test/routineStore.test.ts": "16fb23966f4e5b90fe88ee8bc066d6df9c37ef3c25d0d2b92e8a23c0c5184ebb",
+    "karta/test/routineTransports.test.ts": "662fcac1e79bea0b2aed9bbdbc48fb7fe12157aeb5f80ccb1ee895842acc4c52",
+    "karta/test/routineWorker.test.ts": "9e4c2650ce8c919ef8aa409e5845f08a08c6cf42f6a2802f2ff222008eb826d9",
+    "src/components/notifications/IaoRoutinesSettings.tsx": "c40b017ada1943c484d8ba36d481f078384cc3d68f05e70237a73963a47b8e22",
+    "src/hooks/useIaoRoutines.test.tsx": "0b76c5ed85adddb9037ffc072dc13492cce24e659ec87ae5028628e35d855d0e",
+    "src/hooks/useIaoRoutines.ts": "e85828f14a6ff9d77d2047166bb809770f41ab5ea88d286cb0450f08e7c0d0c1",
+    "src/lib/iao-routines-client.test.ts": "63aa41ebe346fd135056cc80ddc48477c9e9ba70e7e56d2655d976df2ee65bdb",
+    "src/lib/iao-routines-client.ts": "aff1a3f5622dc4ebf7c61ccf107a4db6b3326990f2d055c0513485e3bd1dbf12",
+    "src/pages/NotificationSettings.tsx": "9097db5f679fbb2b82287c4332389c735301702305a7d3d54b8f55d515dd8dff",
+    "supabase/config.toml": "18a7740f58f8df3018b850071e4bd5caba89b33018d2c7ba3546ff8a42d10a16",
+    "supabase/functions/iao-routines/handler.ts": "66a6b452c268b0e38bc20aad8a75b77fbc4e1ca6e454614e4412900cbddfbd9f",
+    "supabase/functions/iao-routines/index.ts": "dd63e2826d315df67e6d89bf3ebd45cdf410a922b944926a9e1293ed0c0b9f54",
+    "tests/helpers/custom-trigger-harness.mjs": "cb969fdbd82fac5e9c94431e8250f77fe6c8cea53c1114fce106a28acfa1e24e",
+    "tests/routines/browser/entry.tsx": "dccff5c2d801d8fc704f678693d87a5aa6f2d9335ddfe978259b2d93252d9caa",
+    "tests/routines/browser/fixture.ts": "e56825f3fbae61a4e45100e3706b78208dd738b29d11c2a4b36cf6048a687b80",
+    "tests/routines/browser/run.mjs": "824fd5f39bc595416918403d4734edb09efe631818cc21b453ccf9dd68c39694",
+    "tests/routines/edge-tsconfig.json": "df58b8f92e149f7b0a9a210700fc9df11a2da508f405fd2bb72e9d01a56f58f6",
+    "vercel.json": "c71ed76110246514d745ab5c7ca8b14cf48f8c584cc0ee7e245f41c478e18af3"
+  },
+  "local_receipts": {
+    "karta_targeted": {
+      "status": "PASS",
+      "tests": 489,
+      "files": 17,
+      "log": "karta-tests-final.log"
+    },
+    "sql_pglite": {
+      "status": "PASS",
+      "tests": 38,
+      "included_in": "karta_targeted",
+      "log": "sql-final.log"
+    },
+    "frontend": {
+      "status": "PASS",
+      "tests": 104,
+      "files": 4,
+      "log": "frontend-tests-final.log"
+    },
+    "node_regressions": {
+      "status": "PASS",
+      "tests": 115,
+      "log": "trigger-after.log"
+    },
+    "routines_browser": {
+      "status": "PASS",
+      "scenarios": 8,
+      "receipt": "browser/results.json"
+    },
+    "notifications_browser": {
+      "status": "PASS",
+      "scenarios": 12,
+      "receipt": "notifications-browser/results.json"
+    },
+    "typechecks": {
+      "status": "PASS",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "logs": [
+        "karta-typecheck-final.log",
+        "frontend-typecheck-final.log",
+        "edge-typecheck.log"
+      ]
+    },
+    "builds": {
+      "status": "PASS",
+      "exit_codes": [
+        0,
+        0
+      ],
+      "logs": [
+        "frontend-build-final.log",
+        "karta-build.log"
+      ]
+    },
+    "lint": {
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "lint-final.log"
+    },
+    "native_postgres_concurrency": {
+      "status": "NON TESTÉ",
+      "reason": "CI PostgreSQL isolated service pending at initial publication"
+    },
+    "production_and_providers": {
+      "status": "NON TESTÉ",
+      "reason": "No remote migration, deployment, paid call or real email/push"
+    }
+  },
+  "qualification_limits": [
+    "Candidate hashes identify the prepared files; hosted CI must qualify the published commit.",
+    "Last server-only changes after local runtime tests are four explanatory ESLint comments; no expression changed.",
+    "Browser local receipts precede equivalent ES2020 own-property checks and static type fixes; hosted CI reruns current sources.",
+    "SQL/PGlite does not replace native concurrent connections.",
+    "Voice requests persist pending_confirmation; canonical IAO task execution is not composed.",
+    "No production delivery, live audio, load, SMS or WhatsApp qualification."
+  ]
+}

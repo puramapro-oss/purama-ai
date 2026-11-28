@@ -1,0 +1,17 @@
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+[2Kanalyzer runner identity changed (stamped schema 4, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.
+{"level":40,"time":1795831861465,"name":"gitnexus","msg":"[scope-resolution] 139 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: ANTHROPIC_API_KEY (javascript), KARTA_ADMIN_TOKEN (javascript), auth (javascript), created_at (javascript), label (javascript), url (javascript), adminToken (typescript), at (typescript), body (typescript), code (typescript), …"}
+{"level":40,"time":1795831861504,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":0,"entryPointsUnexplored":138,"walksCutByBudget":9,"tracesDepthCapped":0,"calleesDropped":689,"processesDropped":0},"msg":"[processes] 98 flows reported, but whole flows are MISSING: 0 of 178 candidate entry point(s) never ranked in, 138 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 689 callee(s) skipped at maxBranching, 9 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KRebuilt the graph and FTS while reusing cached parser output for 8 file(s) (parse cache 99+1.6.12). For same-version capture/query development changes, increment SCHEMA_BUMP in src/storage/parse-cache.ts to invalidate parser output.
+[2KFTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+[2KParse cache: pruned 9 stale chunk entries
+
+  Repository indexed successfully (8.6s)
+
+  1,513 nodes | 4,027 edges | 54 clusters | 98 flows
+  /workspace/scratch/3eae3578944a/purama-ai
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+
