@@ -1,0 +1,12 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795825399526,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 1 files, 3 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Function customTriggerHarness → tests/helpers/custom-trigger-harness.mjs
+  Function apiFetch → tests/helpers/custom-trigger-harness.mjs
+  Const replyHeaders → tests/helpers/custom-trigger-harness.mjs
