@@ -74,13 +74,17 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
           await parentRequiresPrivateTrace(pending, definition.tools);
         if (!tool) throw new Error("Outil introuvable pour cet agent");
         validateToolParams(tool, pending.tool_params);
-        // Recheck after definition loading, immediately before dispatch.
+        const gmailInboxBinding = definition.prepareInboxCycle
+          ? await (await import("../tools/gmail-inbox-cycle.js")).getApprovedGmailInboxBinding(pending.user_id, pending.run_id, pending.id)
+          : undefined;
+        // Recheck after definition and mailbox authorization, immediately before dispatch.
         const latest = await loadAgentState(pending.user_id, pending.agent_type as AgentType);
         if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
           status = "cancelled";
           resultSummary = "Action annulée : arrêt ou autorisation modifiée";
         } else {
           const result = await executeClaimedTool(tool, pending.tool_params, {
+            ...(gmailInboxBinding ? { gmailInboxBinding } : {}),
             userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", trigger: executionTrigger, operationId: pending.id,
           });
           const delivery = await persistPrivateToolResult({

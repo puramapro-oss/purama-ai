@@ -60,6 +60,8 @@ jobs:
       - name: Gmail manual draft reservations on private native PostgreSQL
         id: email_draft_native
         run: node test/emailDraftSendOnce.native.mjs
+      - name: Gmail inbox claims across independent PostgreSQL connections
+        run: PG_BIN="$(pg_config --bindir)" node test/gmailInboxReceipts.native.mjs
       - name: Preserve Gmail native reservation evidence
         if: ${{ always() && steps.email_draft_native.outcome != '' && steps.email_draft_native.outcome != 'skipped' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -22,6 +22,7 @@ import {
   AUTONOMY_LEVELS, ACTION_META, CATEGORY_META,
   type EmailAgentConfig, type EmailAgentLog, type AutonomyLevel,
 } from '@/lib/email-agent';
+import EmailInboxReviews from '@/components/email/EmailInboxReviews';
 import { AgentChatTab } from '@/components/voice/AgentChatTab';
 
 export default function EmailAgent() {
@@ -142,7 +143,7 @@ export default function EmailAgent() {
     );
   }
 
-  if (!config) {
+  if (!user || !config || config.user_id !== user.id) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">Aucune configuration disponible</p>
@@ -183,7 +184,7 @@ export default function EmailAgent() {
             )}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Ton agent IA qui lit, trie et répond à tes emails en continu.
+            À la première synchronisation, IAO reprend les messages non lus. Ensuite, il suit les nouveaux messages reçus, même si tu les as déjà lus. Les anciens messages déjà lus restent hors de cette reprise initiale.
           </p>
         </div>
         <div className="flex gap-2">
@@ -239,6 +240,8 @@ export default function EmailAgent() {
           </CardContent>
         </Card>
       )}
+
+      <EmailInboxReviews key={JSON.stringify([user.id, config.gmail_email])} userId={user.id} />
 
       {/* Master toggle + autonomy */}
       <Card className="bg-card border-border" data-tuto="email-toggle">

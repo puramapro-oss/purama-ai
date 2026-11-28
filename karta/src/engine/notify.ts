@@ -31,6 +31,10 @@ function hasReceipt(value: unknown, idField: string): value is Record<string, un
  * l'acceptation par les fournisseurs demandés, jamais la lecture par le destinataire.
  */
 export async function notify(input: NotifyInput): Promise<void> {
+  await notifyWithReceipt(input);
+}
+
+export async function notifyWithReceipt(input: NotifyInput): Promise<string> {
   const channels: NonNullable<NotifyInput["channels"]> = [...(input.channels ?? ["in_app"])];
   const request = { ...input, channels };
   const controller = new AbortController();
@@ -88,12 +92,13 @@ export async function notify(input: NotifyInput): Promise<void> {
       throw new Error("Livraison push non confirmée");
     }
     if (channels.includes("email")) await sendEmail(request, controller.signal, assertActive);
+    return receipt.notification_id as string;
   };
 
   try {
     // One budget covers both fetches, their response bodies and the auth lookup.
     // A timeout cannot prove non-delivery, so never retry automatically here.
-    await Promise.race([deliver(), expired]);
+    return await Promise.race([deliver(), expired]);
   } catch {
     throw new Error(inAppConfirmed
       ? "Notification enregistrée ; livraison demandée non confirmée : vérifier son état avant toute reprise"

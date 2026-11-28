@@ -94,7 +94,7 @@ function approvedRaw():string {
     +"MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nApproved body";
 }
 function harness(options:Options={}) {
-  const sends:{url:string;body:Row;headers:Headers}[]=[];
+  const sends:{url:string;body:Row;headers:Headers;redirect?:RequestInit["redirect"]}[]=[];
   const profiles:string[]=[];
   const draftReads:string[]=[];
   let remoteRaw=options.rawDraft??Buffer.from(approvedRaw()).toString("base64url");
@@ -136,7 +136,7 @@ function harness(options:Options={}) {
       }
       expect(init?.method).toBe("POST");
       expect(["https://gmail.googleapis.com/gmail/v1/users/me/drafts/send","https://gmail.googleapis.com/gmail/v1/users/me/messages/send"]).toContain(url);
-      sends.push({url,body:JSON.parse(String(init?.body)) as Row,headers:new Headers(init?.headers)});
+      sends.push({url,body:JSON.parse(String(init?.body)) as Row,headers:new Headers(init?.headers),redirect:init?.redirect});
       await options.onSend?.();
       if(options.provider==="timeout") throw new Error("possible acceptance then disconnect");
       if(options.provider==="server") return new Response("unavailable",{status:500});
@@ -193,6 +193,22 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     const first=harness();await first.handler(request());
     const replay=harness();expect((await replay.handler(request())).status).toBe(200);
     expect(replay.sends).toHaveLength(0);expect(replay.profiles).toHaveLength(0);expect(await count()).toBe(1);
+  });
+  it.each(["drafts/send", "messages/send"] as const)("forbids redirecting the approved POST at %s", async (endpoint) => {
+    if (endpoint === "messages/send") {
+      await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1", [log]);
+      await reviewCurrent();
+    }
+    const h = harness({ onSend: async () => { throw new TypeError("Fetch rejected a redirect"); } });
+    const response = await h.handler(request());
+    expect(h.sends.map(({ url, redirect }) => ({ url, redirect }))).toEqual([
+      { url: `https://gmail.googleapis.com/gmail/v1/users/me/${endpoint}`, redirect: "error" },
+    ]);
+    expect(response.status).toBe(409);
+    expect(await state()).toMatchObject({ status: "unknown", provider_message_id: null });
+    expect((await h.handler(request())).status).toBe(409);
+    expect(h.sends).toHaveLength(1);
+    expect(await count()).toBe(0);
   });
   it.each(["timeout","server","throttled","missing_id","malformed"] as const)("retains unknown after %s and never retries",async(provider)=>{
     const h=harness({provider});expect((await h.handler(request())).status).toBe(409);

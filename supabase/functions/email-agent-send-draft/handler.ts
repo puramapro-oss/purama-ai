@@ -181,7 +181,8 @@ export function createDraftSender(deps: DraftSenderDependencies): (req: Request)
     let provider: Response;
     try {
       provider = await deps.fetch(outbound.url, {
-        method: "POST", headers: { Authorization: `Bearer ${access.accessToken}`, "Content-Type": "application/json" },
+        method: "POST", redirect: "error",
+        headers: { Authorization: `Bearer ${access.accessToken}`, "Content-Type": "application/json" },
         body: JSON.stringify(outbound.body), signal: AbortSignal.timeout(20_000),
       });
     } catch { return uncertain(); }

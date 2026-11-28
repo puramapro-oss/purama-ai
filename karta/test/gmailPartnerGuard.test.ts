@@ -46,6 +46,37 @@ beforeEach(() => {
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("shared KARTA Gmail partner guard", () => {
+  it.each([
+    ["Facture", "Je conteste les 24 € facturés en supplément."],
+    ["Facture", "Les pièces de mon dossier font apparaître un écart de 30,00 €. Je vous demande de vérifier cette ligne et de corriger la facture. Merci de me confirmer la suite donnée."],
+    ["Contestation de la facture de 120 EUR", "Je joins le devis."],
+    ["Régularisation", "Je sollicite le remboursement de 80,50 euros."],
+    ["Débit", "Remboursez-moi cinquante euros."],
+    ["Invoice", "I dispute the £24.50 charge."],
+    ["Échéancier", "Nous acceptons votre proposition d’échelonnement."],
+    ["Réponse", "Bon pour accord."],
+    ["Paiement", "Je reconnais vous devoir cette somme."],
+    ["Confirmation", "I acknowledge that I owe you this debt."],
+    ["Agreement", "We accept your settlement offer."],
+  ])("prepares explicit commitments for human review in Gmail: %s / %s", async (subject, body) => {
+    const context = { ...custom, operationId: "claimed-by-caller", requiresApproval: false };
+    await expect(gmailSendTool.execute({ ...input, subject, body }, context)).rejects.toThrow(/brouillon.*Gmail/i);
+    expect(h.quota).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "Pouvez-vous me transmettre le détail de cette facture de 24 € ?",
+    "Pouvez-vous me transmettre le détail de la ligne de 30,00 € et le justificatif d’acceptation correspondant ?",
+    "Pouvez-vous me préciser la date de remboursement des 24 € annoncés ?",
+    "Je vous confirme le rendez-vous de lundi.",
+    "Pouvons-nous discuter de votre proposition de règlement ?",
+    "Could you send me a copy of the £24 invoice?",
+  ])("keeps factual correspondence available: %s", async body => {
+    await expect(gmailSendTool.execute({ ...input, body }, custom)).resolves.toEqual({ messageId: "sent-1" });
+    expect(posts()).toHaveLength(1);
+  });
+
   it("keeps an ordinary standalone email and checks the exact account and recipient twice", async () => {
     await expect(gmailSendTool.execute(input, custom)).resolves.toEqual({ messageId: "sent-1" });
     expect(h.guard).toHaveBeenCalledTimes(2);

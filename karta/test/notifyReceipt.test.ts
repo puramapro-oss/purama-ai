@@ -16,7 +16,7 @@ vi.mock("../src/db/supabase.js", () => ({
   supabase: { auth: { admin: { getUserById: h.getUser } } },
 }));
 
-import { notify } from "../src/engine/notify.js";
+import { notify, notifyWithReceipt } from "../src/engine/notify.js";
 
 const DEADLINE_MS = 10_000;
 const PRIVATE_MARKER = "PRIVATE_PROVIDER_OR_USER_DATA";
@@ -71,6 +71,12 @@ afterEach(() => {
 });
 
 describe("notification receipts", () => {
+  it("returns the actual notification ID only after the requested email channel confirms", async () => {
+    await expect(notifyWithReceipt(input(["in_app", "email"]))).resolves.toBe("notification-receipt");
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    h.fetch.mockResolvedValueOnce(json(receipt)).mockResolvedValueOnce(json({ id: "" }));
+    await expect(notifyWithReceipt(input(["in_app", "email"]))).rejects.toThrow(/non confirmée/);
+  });
   it("accepts the actual edge receipt for the default in-app channel", async () => {
     await expect(notify(input())).resolves.toBeUndefined();
     expect(h.fetch).toHaveBeenCalledOnce();
