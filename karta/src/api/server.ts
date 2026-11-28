@@ -15,6 +15,8 @@ import type { StaticAgentType } from "../engine/types.js";
 import { handleConsultationRequest } from "./consultation.js";
 import type { ConsultationHost } from "./consultation-contract.js";
 import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
+import { handlePublicApiRequest, isPublicApiPath } from "./public-api-routes.js";
+import { createPublicApiRuntime, type PublicApiRuntime } from "./public-api-runtime.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
@@ -68,15 +70,18 @@ function readIdempotencyKey(req: IncomingMessage): string | undefined {
 export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, options: {
   consultationHost?: ConsultationHost | null;
   iaoRuntime?: IaoRouteRuntime;
+  publicApiRuntime?: PublicApiRuntime | null;
   lifetime?: AbortSignal;
 } = {}) {
   let host: Promise<ConsultationHost | null> | undefined;
   const activeRequests = new Set<Promise<void>>();
+  const publicApi = Object.hasOwn(options, "publicApiRuntime") ? options.publicApiRuntime ?? undefined
+    : process.env.KARTA_PUBLIC_API_ENABLED === "true" ? createPublicApiRuntime() : undefined;
   const consultationHost = () => host ??= Object.hasOwn(options, "consultationHost")
     ? Promise.resolve(options.consultationHost ?? null)
     : import("../claude/consultation-host.js").then(module => module.createConsultationHost()).catch(() => null);
   const server = createServer((req, res) => {
-    const active = handleRequest(req, res, readiness, consultationHost, options.iaoRuntime, options.lifetime).catch((error) => {
+    const active = handleRequest(req, res, readiness, consultationHost, options.iaoRuntime, options.lifetime, publicApi).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
       else if (error instanceof WorkshopError) json(res, error.status, { ok: false, code: error.code, error: error.message });
@@ -94,13 +99,17 @@ export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, opti
   server.setTimeout(15_000, socket => socket.destroy());
   server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
   return Object.assign(server, {
-    async drainRequests(): Promise<void> { await Promise.allSettled(activeRequests); },
+    async drainRequests(): Promise<void> {
+      await Promise.allSettled(activeRequests);
+      await publicApi?.drain?.();
+    },
   });
 }
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse,
   readiness: (() => Promise<RuntimeReadiness>) | undefined,
-  consultationHost: () => Promise<ConsultationHost | null>, iaoRuntime?: IaoRouteRuntime, lifetime?: AbortSignal): Promise<void> {
+  consultationHost: () => Promise<ConsultationHost | null>, iaoRuntime?: IaoRouteRuntime, lifetime?: AbortSignal,
+  publicApi?: PublicApiRuntime): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/live") {
@@ -121,6 +130,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
   }
 
   const readyForWork = async () => !readiness || (await readiness().catch(() => ({ ready: false }))).ready;
+
+  if (isPublicApiPath(url.pathname)) {
+    await handlePublicApiRequest(req, res, url, publicApi, async () => {
+      const state = await readiness?.().catch(() => ({ ready: false, globalKillSwitch: true }));
+      return state?.ready === true && state.globalKillSwitch === false && !lifetime?.aborted;
+    }, lifetime);
+    return;
+  }
 
   if (isIaoPath(req.method, url.pathname)) {
     const host = iaoRuntime && readiness && !lifetime?.aborted ? iaoRuntime : undefined;

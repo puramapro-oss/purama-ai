@@ -1,0 +1,1395 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "IAO API — consultations du Conseil",
+    "version": "2026-11-28-draft",
+    "description": "Contrat du code de la tranche développeur IAO. Authentification par clé de service et scopes internes ; aucune compatibilité OpenAI, diffusion SSE, facture commerciale ou disponibilité de production n’est affirmée. Le projet et le propriétaire sont résolus par le serveur. Tous les paramètres de query sont refusés. Les réponses JSON sont bornées à 524 288 octets. Le préfixe /v1/iao reste fermé avec HTTP 503 lorsque le runtime est absent."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Origine de l’installation autorisée ; aucun domaine de production n’est présumé."
+    }
+  ],
+  "security": [
+    {
+      "IaoServiceKey": []
+    }
+  ],
+  "paths": {
+    "/v1/iao/models": {
+      "get": {
+        "operationId": "listIaoModels",
+        "summary": "Lister les modèles autorisés",
+        "description": "Corps vide. La lecture reste disponible en cas de dégradation des dépendances, sous réserve du runtime et de l’autorité de clé.",
+        "security": [
+          {
+            "IaoServiceKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "catalog"
+        ],
+        "x-admission-timeout-ms": 10000,
+        "x-execution-timeout-ms": 10000,
+        "responses": {
+          "200": {
+            "description": "Résultat ou état durable disponible.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "405": {
+            "description": "Méthode incorrecte ; en-tête Allow fourni.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              },
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "GET"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error502"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error504"
+          }
+        },
+        "x-request-body": "must-be-empty"
+      }
+    },
+    "/v1/iao/consultations": {
+      "post": {
+        "operationId": "createIaoConsultation",
+        "summary": "Créer ou retrouver une consultation",
+        "description": "operationId est obligatoire et sert à la reprise idempotente dans le projet. Une demande identique retrouve son opération ; un contenu contradictoire est refusé avec HTTP 409. La création exige une disponibilité vérifiée après authentification et lecture complète du corps. Le budget CHEF et les droits sont contrôlés avant les effets.",
+        "security": [
+          {
+            "IaoServiceKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "create"
+        ],
+        "x-admission-timeout-ms": 10000,
+        "x-execution-timeout-ms": 135000,
+        "responses": {
+          "200": {
+            "description": "Résultat ou état durable disponible.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsultationResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "L’état durable est running ; conserver operationId pour la lecture ultérieure.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsultationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "description": "Méthode incorrecte ; en-tête Allow fourni.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              },
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error502"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error504"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultationInput"
+              }
+            }
+          }
+        },
+        "x-max-request-body-bytes": 65536
+      }
+    },
+    "/v1/iao/consultations/{operationId}": {
+      "get": {
+        "operationId": "getIaoConsultation",
+        "summary": "Lire une consultation",
+        "description": "Corps vide. Le scope read est nécessaire pour recevoir la réponse et ses sources. La recherche reste limitée au projet authentifié.",
+        "security": [
+          {
+            "IaoServiceKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "read"
+        ],
+        "x-admission-timeout-ms": 10000,
+        "x-execution-timeout-ms": 10000,
+        "responses": {
+          "200": {
+            "description": "Résultat ou état durable disponible.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsultationResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "L’état durable est running ; conserver operationId pour la lecture ultérieure.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsultationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "description": "Méthode incorrecte ; en-tête Allow fourni.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              },
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "GET"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error502"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error504"
+          }
+        },
+        "x-request-body": "must-be-empty",
+        "parameters": [
+          {
+            "name": "operationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OperationId"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/iao/consultations/{operationId}/cancel": {
+      "post": {
+        "operationId": "cancelIaoConsultation",
+        "summary": "Demander une annulation",
+        "description": "Corps strictement vide, y compris absence de {}. Le reçu ne donne jamais accès au contenu de la réponse. Le scope cancel ne confère pas le scope read. Une opération déjà terminée conserve son état réel.",
+        "security": [
+          {
+            "IaoServiceKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "cancel"
+        ],
+        "x-admission-timeout-ms": 10000,
+        "x-execution-timeout-ms": 10000,
+        "responses": {
+          "200": {
+            "description": "Résultat ou état durable disponible.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "L’état durable est running ; conserver operationId pour la lecture ultérieure.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "description": "Méthode incorrecte ; en-tête Allow fourni.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/PrivateNoStore"
+              },
+              "X-Content-Type-Options": {
+                "$ref": "#/components/headers/NoSniff"
+              },
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error502"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error504"
+          }
+        },
+        "x-request-body": "must-be-empty",
+        "parameters": [
+          {
+            "name": "operationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OperationId"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "IaoServiceKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "iao_sk_<uuid>.<base64url-32-octets>",
+        "description": "Un seul en-tête Authorization: Bearer <clé>. Scopes internes catalog/create/read/cancel déclarés par x-required-scopes ; ce schéma n’est pas OAuth. Le serveur valide la forme canonique, le hash, l’expiration et la révocation. Ne jamais utiliser un jeton administrateur KARTA."
+      }
+    },
+    "schemas": {
+      "OperationId": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$(?![\\s\\S])",
+        "description": "UUID fourni par le client. La représentation est normalisée en minuscules.",
+        "maxLength": 36
+      },
+      "OperationStatus": {
+        "type": "string",
+        "enum": [
+          "running",
+          "complete",
+          "partial",
+          "failed",
+          "blocked",
+          "cancelled",
+          "reconciliation_required"
+        ]
+      },
+      "ResearchLimits": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "maxSearches": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "maxPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "maxReviewers": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "maxRounds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2
+          },
+          "concurrency": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          }
+        },
+        "required": [
+          "maxSearches",
+          "maxPages",
+          "maxReviewers",
+          "maxRounds",
+          "concurrency"
+        ]
+      },
+      "ConsultationPreferences": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "reflection": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "standard",
+              "deep",
+              "maximum"
+            ]
+          },
+          "speed": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "fast",
+              "ultra_fast"
+            ]
+          }
+        },
+        "required": [
+          "model"
+        ]
+      },
+      "ConsultationInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationId": {
+            "$ref": "#/components/schemas/OperationId"
+          },
+          "question": {
+            "type": "string",
+            "pattern": "\\S",
+            "maxLength": 8000
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/ConsultationPreferences"
+          },
+          "reviewerModels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+              "maxLength": 200
+            },
+            "maxItems": 3,
+            "uniqueItems": true,
+            "description": "Modèles distincts du modèle principal et autorisés pour le projet."
+          },
+          "research": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "queries": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "\\S",
+                  "maxLength": 2000
+                },
+                "maxItems": 3
+              },
+              "urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL HTTPS absolue, sans identifiants ni espaces ; le serveur effectue cette validation supplémentaire.",
+                  "maxLength": 8192
+                },
+                "maxItems": 6
+              }
+            },
+            "required": [
+              "queries",
+              "urls"
+            ]
+          }
+        },
+        "required": [
+          "operationId",
+          "question",
+          "preferences"
+        ],
+        "description": "Corps borné à 65 536 octets UTF-8. Aucun propriétaire, tenant, projet, budget, prix, endpoint fournisseur ou action supplémentaire n’est accepté. Les limites textuelles du serveur sont exprimées en unités UTF-16 JavaScript ; les maxLength JSON Schema sont des bornes complémentaires."
+      },
+      "ConsultationPlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "reflection": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "deep",
+              "maximum"
+            ]
+          },
+          "speed": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "fast",
+              "ultra_fast"
+            ]
+          },
+          "maxOutputTokens": {
+            "type": "integer",
+            "minimum": 1024,
+            "maximum": 65536
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120000
+          },
+          "research": {
+            "$ref": "#/components/schemas/ResearchLimits"
+          }
+        },
+        "required": [
+          "model",
+          "reflection",
+          "speed",
+          "maxOutputTokens",
+          "timeoutMs",
+          "research"
+        ]
+      },
+      "ConsultationSource": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "provider": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "retrievedAt": {
+            "type": "string",
+            "pattern": "\\S",
+            "maxLength": 40
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL HTTPS absolue, sans identifiants ni espaces ; le serveur effectue cette validation supplémentaire.",
+            "maxLength": 8192
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "contentKind": {
+            "type": "string",
+            "enum": [
+              "search_excerpt",
+              "page_markdown"
+            ]
+          },
+          "verificationStatus": {
+            "type": "string",
+            "const": "unverified"
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "retrievedAt",
+          "url",
+          "title",
+          "text",
+          "contentKind",
+          "verificationStatus",
+          "truncated"
+        ],
+        "description": "Extrait non vérifié indépendamment. retrievedAt doit être interprétable comme une date. Le cumul des textes de source est borné à 32 000 unités UTF-16."
+      },
+      "ConsultationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "failed",
+              "blocked"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "some_calls_unavailable",
+              "synthesis_unavailable",
+              "already_claimed",
+              "interrupted",
+              "accounting_unavailable"
+            ]
+          },
+          "plan": {
+            "$ref": "#/components/schemas/ConsultationPlan"
+          },
+          "answer": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "\\S",
+                "maxLength": 32000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "citedSourceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S",
+              "maxLength": 200
+            },
+            "maxItems": 32,
+            "uniqueItems": true,
+            "description": "Chaque identifiant désigne une source présente dans sources."
+          },
+          "disagreements": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S",
+              "maxLength": 2000
+            },
+            "maxItems": 32
+          },
+          "uncertainties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S",
+              "maxLength": 2000
+            },
+            "maxItems": 32
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsultationSource"
+            },
+            "maxItems": 32
+          },
+          "verificationStatus": {
+            "type": "string",
+            "const": "unverified"
+          }
+        },
+        "required": [
+          "status",
+          "reason",
+          "plan",
+          "answer",
+          "citedSourceIds",
+          "disagreements",
+          "uncertainties",
+          "sources",
+          "verificationStatus"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "complete",
+                    "partial"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "answer": {
+                  "type": "string",
+                  "pattern": "\\S",
+                  "maxLength": 32000
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "answer": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ConsultationOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationId": {
+            "$ref": "#/components/schemas/OperationId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OperationStatus"
+          },
+          "cancelRequested": {
+            "type": "boolean"
+          },
+          "result": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConsultationResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "operationId",
+          "status",
+          "cancelRequested",
+          "result"
+        ],
+        "description": "État durable de l’opération. reconciliation_required indique une comptabilité encore incomplète ; aucun coût inconnu n’est transformé en zéro."
+      },
+      "CancellationAcknowledgement": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationId": {
+            "$ref": "#/components/schemas/OperationId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OperationStatus"
+          },
+          "cancelRequested": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "operationId",
+          "status",
+          "cancelRequested"
+        ],
+        "description": "Reçu minimal de la demande d’annulation. Aucun résultat, réponse ou source n’est communiqué avec le seul scope cancel. L’état réel est conservé, y compris complete si l’opération était déjà terminée. Une action fournisseur déjà envoyée ne peut pas être rappelée."
+      },
+      "ModelProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reflection": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "standard",
+              "deep",
+              "maximum"
+            ]
+          },
+          "speed": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "fast",
+              "ultra_fast"
+            ]
+          },
+          "research": {
+            "$ref": "#/components/schemas/ResearchLimits"
+          }
+        },
+        "required": [
+          "reflection",
+          "speed",
+          "research"
+        ]
+      },
+      "ModelCapability": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "provider": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\\s\\S])",
+            "maxLength": 200
+          },
+          "maxOutputTokens": {
+            "type": "integer",
+            "minimum": 1024,
+            "maximum": 65536
+          },
+          "reflections": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "auto",
+                "standard",
+                "deep",
+                "maximum"
+              ]
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "speeds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "standard",
+                "fast",
+                "ultra_fast"
+              ]
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "profiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelProfile"
+            },
+            "maxItems": 12,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "model",
+          "provider",
+          "maxOutputTokens",
+          "reflections",
+          "speeds",
+          "profiles"
+        ],
+        "description": "Les combinaisons autorisées sont énumérées dans profiles ; les listes reflections et speeds ne garantissent pas leur produit cartésien."
+      },
+      "ModelCatalog": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "not_configured",
+              "simulation_enabled",
+              "account_unavailable",
+              "budget_unavailable",
+              "model_unavailable",
+              "paused",
+              "service_unavailable"
+            ]
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelCapability"
+            },
+            "maxItems": 32
+          },
+          "research": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "search": {
+                "type": "boolean"
+              },
+              "scrape": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "search",
+              "scrape"
+            ]
+          }
+        },
+        "required": [
+          "available",
+          "reason",
+          "models",
+          "research"
+        ],
+        "description": "Catalogue filtré par les modèles autorisés du projet. Un HTTP 200 avec available=false ne permet pas de lancer une consultation.",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "available": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "reason": {
+                  "const": "ready"
+                },
+                "models": {
+                  "minItems": 1
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "reason": {
+                  "not": {
+                    "const": "ready"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ConsultationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ConsultationOperation"
+          }
+        },
+        "required": [
+          "ok",
+          "operation"
+        ]
+      },
+      "CancellationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "operation": {
+            "$ref": "#/components/schemas/CancellationAcknowledgement"
+          }
+        },
+        "required": [
+          "ok",
+          "operation"
+        ]
+      },
+      "CatalogResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "catalog": {
+            "$ref": "#/components/schemas/ModelCatalog"
+          }
+        },
+        "required": [
+          "ok",
+          "catalog"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": false
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "IAO_API_INVALID",
+              "IAO_API_UNAUTHORIZED",
+              "IAO_API_FORBIDDEN",
+              "IAO_API_NOT_FOUND",
+              "IAO_API_METHOD",
+              "IAO_API_TOO_LARGE",
+              "IAO_API_MEDIA_TYPE",
+              "IAO_API_RATE_LIMIT",
+              "IAO_API_LIMIT",
+              "IAO_API_INVALID_RESPONSE",
+              "IAO_API_UNAVAILABLE",
+              "IAO_API_TIMEOUT",
+              "IAO_INVALID",
+              "IAO_FORBIDDEN",
+              "IAO_CONFLICT",
+              "IAO_BUDGET",
+              "IAO_UNAVAILABLE"
+            ]
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ok",
+          "code",
+          "error"
+        ],
+        "description": "Code public stable et message générique ; jamais de détail brut de fournisseur, clé, grant ou erreur SQL."
+      }
+    },
+    "headers": {
+      "PrivateNoStore": {
+        "schema": {
+          "type": "string",
+          "const": "no-store, private"
+        }
+      },
+      "NoSniff": {
+        "schema": {
+          "type": "string",
+          "const": "nosniff"
+        }
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Demande invalide ; paramètres de requête et champs inconnus refusés.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Clé absente, invalide, expirée ou révoquée.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "Permission ou modèle non autorisé.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Limite de requêtes ou ressources autorisées insuffisantes.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error502": {
+        "description": "Résultat amont incompatible avec le contrat public.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error503": {
+        "description": "Runtime, autorité ou dépendance nécessaire indisponible.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error504": {
+        "description": "Délai dépassé ; consulter le même identifiant avant toute reprise.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Opération absente dans le projet authentifié.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "Identifiant déjà lié à une demande différente.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Corps supérieur à 65 536 octets.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error415": {
+        "description": "Corps de création autre que JSON UTF-8.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/PrivateNoStore"
+          },
+          "X-Content-Type-Options": {
+            "$ref": "#/components/headers/NoSniff"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-runtime-limits": {
+    "admissionMs": 10000,
+    "consultationExecutionMs": 135000,
+    "otherExecutionMs": 10000,
+    "requestBodyBytes": 65536,
+    "responseBodyBytes": 524288
+  }
+}

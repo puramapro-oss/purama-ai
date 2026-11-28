@@ -1,0 +1,41 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> vite_react_shadcn_ts@0.0.0 test:distribution:unit
+> vitest run src/hooks/useCreatorAgentKarta.trigger.test.tsx
+
+
+ RUN  v4.1.12 /workspace/scratch/2f20c0e02406/purama-ai
+
+ ❯ src/hooks/useCreatorAgentKarta.trigger.test.tsx (37 tests | 1 failed) 256ms
+     × integrates the actual hook and handler/API/queue through loss of acknowledgement and manual retry 155ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/hooks/useCreatorAgentKarta.trigger.test.tsx > custom trigger delivery continuity > integrates the actual hook and handler/API/queue through loss of acknowledgement and manual retry
+AssertionError: Unexpected import ./public-api-routes.js from karta/src/api/server.ts
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ require tests/helpers/custom-trigger-harness.mjs:32:14
+     30|     AbortController, Buffer, setTimeout, clearTimeout, performance, ..…
+     31|     require: name => {
+     32|       assert.ok(Object.hasOwn(imports, name), `Unexpected import ${nam…
+       |              ^
+     33|       return imports[name];
+     34|     },
+ ❯ karta/src/api/server.ts:18:32
+ ❯ execute tests/helpers/custom-trigger-harness.mjs:26:10
+ ❯ Module.customTriggerHarness tests/helpers/custom-trigger-harness.mjs:97:22
+ ❯ src/hooks/useCreatorAgentKarta.trigger.test.tsx:380:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  01:21:59
+   Duration  1.57s (transform 305ms, setup 0ms, import 736ms, tests 256ms, environment 354ms)

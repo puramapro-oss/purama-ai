@@ -1,0 +1,61 @@
+TAP version 13
+# {"event":"disposable_native_cluster_verified","database":"postgres","username":"postgres","data":"/home/agent/iao-api-pg-tools/disposable-api-4Qq1ce/data","listen":"127.0.0.1","version":180007,"address":"127.0.0.1","recovery":false,"testDatabase":"purama_api_test_408251b67c1a47418c021b59e3da79c8"}
+# {"event":"native_lock_wait_observed","backends":[{"pid":67,"wait_event_type":"Lock"},{"pid":68,"wait_event_type":"Lock"}]}
+# Subtest: concurrent keys consume exactly the last project rate slot
+ok 1 - concurrent keys consume exactly the last project rate slot
+  ---
+  duration_ms: 221.199645
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":70,"wait_event_type":"Lock"},{"pid":71,"wait_event_type":"Lock"}]}
+# Subtest: concurrent keys create one immutable external-to-internal binding
+ok 2 - concurrent keys create one immutable external-to-internal binding
+  ---
+  duration_ms: 67.225213
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":73,"wait_event_type":"Lock"}]}
+# Subtest: revocation commits before a waiting reserve and prevents provider admission
+ok 3 - revocation commits before a waiting reserve and prevents provider admission
+  ---
+  duration_ms: 64.855339
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":75,"wait_event_type":"Lock"}]}
+# Subtest: revocation waits behind an admitted reserve and rejects every later reserve
+ok 4 - revocation waits behind an admitted reserve and rejects every later reserve
+  ---
+  duration_ms: 68.788576
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":77,"wait_event_type":"Lock"},{"pid":78,"wait_event_type":"Lock"}]}
+# Subtest: separate projects cannot both reserve the final shared CHEF budget
+ok 5 - separate projects cannot both reserve the final shared CHEF budget
+  ---
+  duration_ms: 67.116317
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":80,"wait_event_type":"Lock"}]}
+# Subtest: a committed project model restriction stops a waiting provider reserve
+ok 6 - a committed project model restriction stops a waiting provider reserve
+  ---
+  duration_ms: 65.310613
+  type: 'test'
+  ...
+# {"event":"native_lock_wait_observed","backends":[{"pid":82,"wait_event_type":"Lock"}]}
+# Subtest: a committed project ceiling restriction stops a waiting provider reserve
+ok 7 - a committed project ceiling restriction stops a waiting provider reserve
+  ---
+  duration_ms: 61.844566
+  type: 'test'
+  ...
+# {"event":"disposable_test_database_removed","database":"purama_api_test_408251b67c1a47418c021b59e3da79c8"}
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 752.514128

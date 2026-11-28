@@ -105,8 +105,12 @@ export function customTriggerHarness(options = {}) {
     '../chef/workshop-service.js': { WorkshopError: class extends Error {}, handleWorkshopRequest: unused },
     './consultation.js': { handleConsultationRequest: async () => false },
     './iaoRoutes.js': { isIaoPath: () => false, handleIaoRoute: unused },
+    './public-api-routes.js': { isPublicApiPath: () => false, handlePublicApiRequest: unused },
+    './public-api-runtime.js': { createPublicApiRuntime: unused },
   }, globals);
-  apiExports.startApiServer(undefined, { consultationHost: null });
+  // Keep unrelated public API ports closed without exposing the host process
+  // or reading its environment inside this trigger-only VM.
+  apiExports.startApiServer(undefined, { consultationHost: null, publicApiRuntime: null });
   const apiFetch = (url, init) => new Promise(resolve => {
     const headers = Object.fromEntries(new Headers(init.headers));
     let status, replyHeaders;

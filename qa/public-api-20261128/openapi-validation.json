@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-28T00:16:15.284880+00:00",
+  "status": "PASS",
+  "tool": "openapi-spec-validator",
+  "toolVersion": "0.9.0",
+  "pythonVersion": "3.12.14",
+  "isolatedToolsPath": "/home/agent/iao-api-openapi-tools",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "openapi_spec_validator",
+    "--schema",
+    "3.1",
+    "--validation-errors",
+    "all",
+    "docs/iao-public-api.openapi.json"
+  ],
+  "environment": {
+    "PYTHONPATH": "/home/agent/iao-api-openapi-tools"
+  },
+  "exitCode": 0,
+  "stdout": "docs/iao-public-api.openapi.json: OK",
+  "stderr": "",
+  "specPath": "docs/iao-public-api.openapi.json",
+  "specSha256": "801e412260204d2c76b1c953f38a1180fe6e0dbc29c1ebd7af2a924276c8044c",
+  "specBytes": 40331,
+  "openapiVersion": "3.1.0",
+  "validationScope": "OpenAPI 3.1 structural validation with all validation errors enabled; no product or production execution."
+}

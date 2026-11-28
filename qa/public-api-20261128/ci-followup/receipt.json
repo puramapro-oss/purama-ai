@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-11-28T00:24:13.772629+00:00",
+  "baseCommit": "1a5cb5bda493bade5ff4bb13947f93c9ded20ca4",
+  "scope": "tests/helpers/custom-trigger-harness.mjs only; no product source or test assertion changed",
+  "beforeSha256": "dc98c18e64ce4d798aa078463ed5dfb6508813b5d011f1cf0c54642634b8e146",
+  "afterSha256": "3fadf233f518b922d2f39625bce4f63551066dd281439fd56b2196476650e810",
+  "reproduction": {
+    "command": "npm run test:distribution:unit -- src/hooks/useCreatorAgentKarta.trigger.test.tsx",
+    "exitCode": 1,
+    "passed": 36,
+    "failed": 1,
+    "failure": "Unexpected import ./public-api-routes.js from karta/src/api/server.ts",
+    "log": "trigger-before.log"
+  },
+  "checks": [
+    {
+      "command": "npm run test:distribution:unit",
+      "exitCode": 0,
+      "files": 47,
+      "passed": 918,
+      "failed": 0,
+      "log": "distribution-after.log"
+    },
+    {
+      "command": "KARTA_PUBLIC_API_ENABLED=true node --experimental-vm-modules --test tests/karta-trigger-custom.test.mjs",
+      "exitCode": 0,
+      "passed": 56,
+      "failed": 0,
+      "log": "trigger-node-after.log"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "gitnexus impact customTriggerHarness --direction upstream --repo purama-api-20261128 --include-tests --limit 30",
+      "risk": "LOW",
+      "direct": 1,
+      "processes": 0,
+      "log": "impact-harness.log"
+    },
+    {
+      "command": "gitnexus impact execute --direction upstream --repo purama-api-20261128 --file tests/helpers/custom-trigger-harness.mjs --include-tests --limit 30",
+      "risk": "LOW",
+      "direct": 1,
+      "impactedSymbols": 2,
+      "processes": 0,
+      "log": "impact-execute.log"
+    },
+    {
+      "command": "gitnexus detect-changes --scope unstaged --repo purama-api-20261128",
+      "risk": "low",
+      "changedFiles": 1,
+      "changedSymbols": 3,
+      "processes": 0,
+      "log": "detect-changes.log"
+    }
+  ],
+  "impactLimits": "The graph omits the React caller; direct source inspection identifies src/hooks/useCreatorAgentKarta.trigger.test.tsx and tests/karta-trigger-custom.test.mjs. execute has generic receiver-resolution limits. Only customTriggerHarness changed; execute and its import allowlist assertion are unchanged.",
+  "isolation": "Public API imports have inert route matching and handlers/factory that throw on use. startApiServer receives publicApiRuntime:null; no process or host environment was injected into the VM.",
+  "testAssertionFilesChanged": false,
+  "externalModelOrBusinessEffect": false,
+  "commitOrPushPerformed": false,
+  "logsSha256": {
+    "detect-changes.log": "98860df5f4d4d76bac9d5389e29eae43eac15acc5ca25cf2690854c0fb692785",
+    "distribution-after.log": "eede62d0f6788101d778e99918f4fd3824b46234fb63d3c30cee41f0802ef022",
+    "gitnexus-index.log": "198b77bce3852517c3c21ec675ec9be307513f6019c3648b5f81fecdcfc49993",
+    "impact-execute.log": "ee0fee9ce0ee735ec0fed9db4817941536e642131131b62d3ebc35189942cd12",
+    "impact-harness.log": "aef9b662f2cee89297ec1de1c340baa8c064758a16a746670cfad2303806622e",
+    "npm-ci.log": "80113807befd8b921c94c3da918d666e172d6f13afa73322904501b3c9456d6a",
+    "trigger-before.log": "ab17bd40914a78cf13d989a481fb22422fa2f0a4e38076716383265630672f00",
+    "trigger-node-after.log": "d2da16b22c746553c56dec92a6568264030d982fa809fbbe39e1cb4bcf29324c"
+  }
+}
