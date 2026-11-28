@@ -1,0 +1,38 @@
+[
+  {
+    "relative_path": "parallel-2-reception/final-gate.json",
+    "sha256": "c7514eaa5b1b01bf10d98361b72c1a060b6fe86f3cf49a7fa8b9cb986dc02afc",
+    "original_sha256": "c7514eaa5b1b01bf10d98361b72c1a060b6fe86f3cf49a7fa8b9cb986dc02afc",
+    "original_bytes": 52785
+  },
+  {
+    "relative_path": "parallel-2-reception/full-karta.json.gz",
+    "sha256": "57d83467deaa1604eb4472bba9649639041d31d7635e9b3c2a86f6b96d09bca5",
+    "original_sha256": "61254c6282975150b4e757c99ed693c14cde27c46845d217a50fd4931c5d8062",
+    "original_bytes": 2342995
+  },
+  {
+    "relative_path": "parallel-2-reception/full-karta.log.gz",
+    "sha256": "a410ddbe6e1480350606e8203413077385e5325453b0a13faae6aa62454eabaa",
+    "original_sha256": "cfd93570937661ddcba586920d67bcd4edb2366427e2110815333280d6055205",
+    "original_bytes": 97722
+  },
+  {
+    "relative_path": "sql-cohort-recheck.json",
+    "sha256": "9bcbbe5ff397b38a41869dcb1501d04002ef5b856c970139d8f9e55ad35a8d03",
+    "original_sha256": "9bcbbe5ff397b38a41869dcb1501d04002ef5b856c970139d8f9e55ad35a8d03",
+    "original_bytes": 47493
+  },
+  {
+    "relative_path": "sql-cohort-recheck.log.gz",
+    "sha256": "6d492adc5710539e33a09ba029d96f4cfe0f100bbc4e6788974c5878794f4e99",
+    "original_sha256": "141368ecd170ad27ea82e738c8a3b3fe83ccbd3151d027f0dc44116f843f19f6",
+    "original_bytes": 2278
+  },
+  {
+    "relative_path": "sql-cohort-recheck-metadata.json",
+    "sha256": "7df0effd56ea701b8695806184202a9c9fed96cdeb434e06cc7c7bdba662957d",
+    "original_sha256": "7df0effd56ea701b8695806184202a9c9fed96cdeb434e06cc7c7bdba662957d",
+    "original_bytes": 15089
+  }
+]

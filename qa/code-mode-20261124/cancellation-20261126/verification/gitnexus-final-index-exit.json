@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "analyze",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--index-only",
+    "--workers",
+    "1",
+    "--skip-fts",
+    "--name",
+    "purama-iao-cancellation-20261126-4f357a4b"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 155.525
+}

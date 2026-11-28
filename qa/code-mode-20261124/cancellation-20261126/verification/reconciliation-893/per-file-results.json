@@ -1,0 +1,3096 @@
+[
+  {
+    "name": "test/actionAgentsMock.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.006,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/agentContextContract.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.048,
+    "counts": {
+      "passed": 33,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/agentsRegistry.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.012,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apiDeliveryIdentity.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.065,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apiIaoGlobalStop.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.072,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apiIaoIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.181,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apiIaoTransportBudget.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 31.563,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apiSafety.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.059,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/apolloTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.128,
+    "counts": {
+      "passed": 34,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approval.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.631,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalContinuation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.383,
+    "counts": {
+      "passed": 42,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalOutbox.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.507,
+    "counts": {
+      "passed": 27,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalOutboxDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.064,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalOutboxRelay.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.102,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalOutboxResolver.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.029,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalOutboxStartStop.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.023,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalParams.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.068,
+    "counts": {
+      "passed": 29,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalParentGuard.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.662,
+    "counts": {
+      "passed": 48,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalTracePrivacy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.043,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/approvalTriggerContext.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.621,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/assistantPolicy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.691,
+    "counts": {
+      "passed": 63,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/autonomy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.01,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/autonomyStateRace.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.017,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/brief.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.035,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/briefClaims.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 2.341,
+    "counts": {
+      "passed": 57,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/briefDatabaseCycle.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.5,
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/briefSubmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.74,
+    "counts": {
+      "passed": 32,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/briefSubmissionClient.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.013,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/briefSubmissionFlow.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.07,
+    "counts": {
+      "passed": 12,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/calendarSchedule.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.211,
+    "counts": {
+      "passed": 41,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/calendarTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.229,
+    "counts": {
+      "passed": 61,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chatEscalation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.155,
+    "counts": {
+      "passed": 49,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chatHistoryIsolation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 30.894,
+    "counts": {
+      "passed": 39,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chatRequestScope.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.01,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBrief.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.05,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBudgetAccounting.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.048,
+    "counts": {
+      "passed": 12,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBudgetAdapter.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.018,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBudgetAdmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.051,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBudgetMigration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 10.756,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefBudgetReservations.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.803,
+    "counts": {
+      "passed": 28,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCancellation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.522,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCapabilityPersistence.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.798,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCapabilityRuntime.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.096,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCapabilitySelection.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.062,
+    "counts": {
+      "passed": 55,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCodexCliDriver.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 23.114,
+    "counts": {
+      "passed": 35,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefControlPlane.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.526,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCorrectionLoop.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 8.072,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefCostGovernor.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.013,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefDriver.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.237,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefEstimates.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.217,
+    "counts": {
+      "passed": 44,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefEvidenceAdapter.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.118,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefEvidenceFreshness.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.611,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefEvidenceGate.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.107,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefGitCancellation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.029,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefGitState.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 2.335,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefHardening.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.847,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefIndependentReview.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.201,
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefMission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.278,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefObservedVerification.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 2.61,
+    "counts": {
+      "passed": 24,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefOrganisationAcceptance.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.547,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefProcess.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.121,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefProcessQuarantine.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.423,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefProtocol.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.007,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefQuarantineAdapter.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.027,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefRuntimePolicy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.19,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefSupervisor.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.316,
+    "counts": {
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefSupervisorCancellation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.022,
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefTrustedGit.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 8.266,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefVerificationFeedback.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.098,
+    "counts": {
+      "passed": 67,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefVerificationGitIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 10.902,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefVerifier.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.23,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkerShutdown.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.158,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopAdmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 2.139,
+    "counts": {
+      "passed": 23,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopApi.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.126,
+    "counts": {
+      "passed": 22,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopArtifact.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 10.564,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopConfig.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.091,
+    "counts": {
+      "passed": 43,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopEdge.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.314,
+    "counts": {
+      "passed": 92,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopGit.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 15.633,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopRuntime.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 12.486,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/chefWorkshopService.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.11,
+    "counts": {
+      "passed": 61,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeDecisionCompleteness.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.078,
+    "counts": {
+      "passed": 43,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeExecutionProfileTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.087,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeProgrammaticTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.253,
+    "counts": {
+      "passed": 82,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudePromptCacheTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.164,
+    "counts": {
+      "passed": 27,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeTransportCost.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.139,
+    "counts": {
+      "passed": 25,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeTransportDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.1,
+    "counts": {
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/claudeUsageTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.1,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/commercePrivileges.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.87,
+    "counts": {
+      "passed": 58,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/connectPermissions.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.027,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/connectedResearch.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.166,
+    "counts": {
+      "passed": 84,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/consultationHost.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.752,
+    "counts": {
+      "passed": 30,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/consultationIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.595,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/consultationPersistenceRecovery.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.53,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/consultationProfileMatrix.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 6.507,
+    "counts": {
+      "passed": 65,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/consultationTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.58,
+    "counts": {
+      "passed": 55,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/coreSchedulerDrain.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.081,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/creatorAgentModelMigration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.413,
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAgent.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.014,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAgentModelSelection.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.026,
+    "counts": {
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAgentScanAbort.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.006,
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAgentScheduler.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.069,
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAgentSchedulerCron.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.092,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customAuthorization.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.1,
+    "counts": {
+      "passed": 46,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customRegistry.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.014,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/customSchedulerDrain.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.084,
+    "counts": {
+      "passed": 12,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/cycleAdmissionPrivacy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.038,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/delegate.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.023,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/docusealTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.351,
+    "counts": {
+      "passed": 45,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/emailDraftReconcileBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.155,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/emailDraftReconciliation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.595,
+    "counts": {
+      "passed": 40,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/emailDraftSendOnce.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.559,
+    "counts": {
+      "passed": 115,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/executionOrigin.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.021,
+    "counts": {
+      "passed": 29,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/executionOriginMigration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 3.163,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/executionProfile.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.018,
+    "counts": {
+      "passed": 27,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/generative.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.472,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmail-token-crypto.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.009,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailActionDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.176,
+    "counts": {
+      "passed": 34,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailMessage.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.085,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailPartnerGuard.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.106,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailReply.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.168,
+    "counts": {
+      "passed": 29,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailTokenRefresh.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.185,
+    "counts": {
+      "passed": 40,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/gmailTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.071,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/googleCalendarConnection.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.18,
+    "counts": {
+      "passed": 36,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iao-facade.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.097,
+    "counts": {
+      "passed": 45,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoAdmissionDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.05,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoAdmissionRevalidation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.041,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoCancellationReceiptMonotonicity.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.045,
+    "counts": {
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoCompletedImmutability.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.027,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoCompletedRetention.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.032,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoExecutionBudget.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.053,
+    "counts": {
+      "passed": 19,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoIdentityBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.079,
+    "counts": {
+      "passed": 122,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/iaoPendingRetention.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.029,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/jev-client.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.147,
+    "counts": {
+      "passed": 19,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/jev-schema.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.05,
+    "counts": {
+      "passed": 30,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/jev-tool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.158,
+    "counts": {
+      "passed": 34,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/kartaRuntimeDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.063,
+    "counts": {
+      "passed": 55,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/kartaTriggerEdge.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.281,
+    "counts": {
+      "passed": 87,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/knowledgeQuantumIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.068,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/knowledgeSearch.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.187,
+    "counts": {
+      "passed": 60,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/lmStudioQualification.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.924,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/lmStudioTransport.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.373,
+    "counts": {
+      "passed": 58,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/localComputeFabricCancellation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.726,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/localComputeFabricMemoryBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.036,
+    "counts": {
+      "passed": 40,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/localComputeFabricMemoryProjection.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.051,
+    "counts": {
+      "passed": 29,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/localComputeFabricProvider.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.275,
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/localComputeFabricResponseBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.212,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/logger.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.013,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loggerCycleFinalization.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.034,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loggerFinalization.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.494,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loop.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.038,
+    "counts": {
+      "passed": 15,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopBriefLifecycle.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.044,
+    "counts": {
+      "passed": 35,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopJevTracePrivacy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.046,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopModelAdmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.069,
+    "counts": {
+      "passed": 33,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopModelUsage.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.032,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopProgrammaticReads.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.138,
+    "counts": {
+      "passed": 79,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopTracePrivacy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.047,
+    "counts": {
+      "passed": 22,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/loopTriggerContext.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.064,
+    "counts": {
+      "passed": 37,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/migrationOrder.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.004,
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/mockClaude.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.011,
+    "counts": {
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelCatalog.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.184,
+    "counts": {
+      "passed": 12,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelConsultation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.173,
+    "counts": {
+      "passed": 57,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelConsultationStore.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.042,
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelConsultationStoreSql.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.371,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelQualityRouting.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.011,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelUsage.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.036,
+    "counts": {
+      "passed": 64,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/modelUsageMigration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.214,
+    "counts": {
+      "passed": 19,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/notifyReceipt.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.103,
+    "counts": {
+      "passed": 39,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/overageCredit.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 3.826,
+    "counts": {
+      "passed": 41,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerAffiliationAdmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 7.486,
+    "counts": {
+      "passed": 68,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerChat.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.546,
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerContract.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 3.382,
+    "counts": {
+      "passed": 38,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerContractContactGuard.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.665,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerDiscovery.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 9.449,
+    "counts": {
+      "passed": 117,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerDiscoverySql.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.357,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerMediaContract.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.249,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerMediaDraft.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.088,
+    "counts": {
+      "passed": 25,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerMediaPolicy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 6.431,
+    "counts": {
+      "passed": 55,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerOutreach.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 12.659,
+    "counts": {
+      "passed": 89,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerReply.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 3.459,
+    "counts": {
+      "passed": 54,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerReplyDraft.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 5.057,
+    "counts": {
+      "passed": 60,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerReplyDraftHandler.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.19,
+    "counts": {
+      "passed": 26,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerReplyDraftParsing.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.042,
+    "counts": {
+      "passed": 39,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerReplyParsing.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.128,
+    "counts": {
+      "passed": 31,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/partnerSchedulerWorkflow.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.008,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/pdfToolBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.131,
+    "counts": {
+      "passed": 39,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/privateToolResults.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.181,
+    "counts": {
+      "passed": 59,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/privateToolResultsExecution.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.171,
+    "counts": {
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/privateToolResultsSql.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.915,
+    "counts": {
+      "passed": 130,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticBriefCompletion.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 1.124,
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticFlowIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.133,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticInputValidation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.022,
+    "counts": {
+      "passed": 28,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticModelQualification.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.081,
+    "counts": {
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticUsage.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.022,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/programmaticUsageMigration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.296,
+    "counts": {
+      "passed": 26,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/providerCompletion.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.641,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/providerHttp.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.188,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/publicChatAdmission.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.442,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/quantumSimulator.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.092,
+    "counts": {
+      "passed": 84,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/quantumTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.021,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/queueDeliveryIdentity.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.975,
+    "counts": {
+      "passed": 27,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/readToolCancellationHttp.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.102,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/real-claude.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.005,
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/resolutionPrivateResults.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.224,
+    "counts": {
+      "passed": 38,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/resolutionQualification.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.112,
+    "counts": {
+      "passed": 44,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/resolutionQualificationIntegration.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.04,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeApiReadiness.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.051,
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeConfig.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.014,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeDeadline.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.03,
+    "counts": {
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeHardening.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.147,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeLifecycle.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 4.122,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeProbe.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.049,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/runtimeUsageReadiness.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.031,
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/socialStatusCycle.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.069,
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/socialStatusRegistry.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.011,
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/socialStatusSdk.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.03,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/socialStatusTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.09,
+    "counts": {
+      "passed": 68,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/sseConsumer.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.073,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/sseFraming.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.012,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/staticAgentScheduler.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.056,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/staticAgentSchedulerCron.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.115,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/streamCompletionAudit.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.077,
+    "counts": {
+      "passed": 23,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/streaming.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.179,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/stripeIsolation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.01,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/subscriptionRevision.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.424,
+    "counts": {
+      "passed": 25,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/subscriptionTrial.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.455,
+    "counts": {
+      "passed": 28,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/supabaseTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.01,
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/toolInputBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.013,
+    "counts": {
+      "passed": 33,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/toolResult.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.015,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/walletRpcPermissions.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.306,
+    "counts": {
+      "passed": 17,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webAccessPlanTool.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.026,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webCapabilityPlan.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.28,
+    "counts": {
+      "passed": 47,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchCleanup.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.102,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchEvidence.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.105,
+    "counts": {
+      "passed": 59,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchInputBoundary.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.082,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchPrivacy.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.057,
+    "counts": {
+      "passed": 6,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchTransportIntegrity.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.108,
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/webSearchValidation.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.112,
+    "counts": {
+      "passed": 41,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  {
+    "name": "test/zernioPublication.test.ts",
+    "status": "passed",
+    "message": "",
+    "duration_seconds": 0.054,
+    "counts": {
+      "passed": 16,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0
+    },
+    "failures": []
+  }
+]

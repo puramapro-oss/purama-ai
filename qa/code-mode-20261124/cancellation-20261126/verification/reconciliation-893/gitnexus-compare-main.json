@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "detect_changes",
+    "--repo",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--limit",
+    "500",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "origin/main"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 10.442,
+  "stdout": "LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.\n\nChanges: 3595 files, 27883 symbols\nAffected processes: 731\nRisk level: critical\n\nChanged symbols:\n  Section V\u00e9rification du livrable final \u2192 AGENTS.md\n  Section ERRORS.md \u2014 Purama AI \u2192 ERRORS.md\n  Section IAO : preuves de fiabilit\u00e9 et protocole d'\u00e9valuation \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Ce qui rendrait IAO utile et distinctive \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section R\u00e9sultats effectivement ex\u00e9cut\u00e9s \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Ce que montrent les r\u00e9f\u00e9rences actuelles \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Comparaisons \u00e0 pr\u00e9parer, encore non ex\u00e9cut\u00e9es \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Protocole commun propos\u00e9 \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Conditions avant une g\u00e9n\u00e9ralisation \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Compl\u00e9ment du 9 novembre 2026 \u2014 Jev et s\u00e9lection de moteurs \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Ajout logiciel Jev \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Catalogue court \u00e0 comparer \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Techniques \u00e0 mesurer dans les composants existants \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section R\u00e9vision du 9 novembre 2026 \u2014 traces priv\u00e9es et cl\u00f4ture fiable \u2192 IAO-EVALUATION-PROTOCOL.md\n  Section Consolidation KARTA du 10 novembre 2026 \u2192 IAO-EVALUATION-PROTOCOL.md\n... and 27868 more\n\nAffected execution flows:\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, execute, from, query, map\n  \u2022 BuildContext \u2192 From (5 steps) \u2014 changed: buildContext, execute, from, from, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, execute, from, query, map\n  \u2022 BuildContext \u2192 Query (5 steps) \u2014 changed: buildContext, execute, from, query, map\n  \u2022 BuildContext \u2192 Entries (4 steps) \u2014 changed: buildContext, execute, from, entries\n... and 721 more\n",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\n",
+  "checked_at_utc": "2026-11-26T06:12:31.284635+00:00"
+}

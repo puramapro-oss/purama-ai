@@ -1,0 +1,19 @@
+{
+  "notes": [
+    "GitNexus index covered KARTA and visible root files before complete fixture checkout; the reviewed KARTA source hashes remained identical.",
+    "First Vitest attempt interrupted after missing runtime fixture paths; compilation and complete typecheck passed on the unchanged final KARTA source.",
+    "GitNexus listings and flow exploration report truncation; no exhaustive absence claim."
+  ],
+  "first_attempt_log": {
+    "filename": "first-incomplete-checkout/full-karta.log.gz",
+    "original_sha256": "aa7a00d042862d2128789fce2d912b11b528100c0ee08c6c536ced84a2228a99",
+    "gzip_sha256": "f5f69009a4beeb44cdb3bf8179715167ba7e18b6059bbdef2a68c41eff6da212"
+  },
+  "raw_log_preservation": {
+    "original": "gitnexus-final-index.log",
+    "stored_as": "gitnexus-final-index.log.gz",
+    "original_sha256": "f5841f69db85c8451c8aff1094dd2898819b117711e846857dc8866442a1bf12",
+    "gzip_sha256": "5937a542acb203966551c977fd52d6bdef0da7f9db1f4d3732ef124d032f1f17",
+    "reason": "Preserve exact raw CLI bytes including trailing blank lines without introducing a whitespace violation in the Git patch."
+  }
+}

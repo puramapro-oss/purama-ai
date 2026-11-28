@@ -108,6 +108,7 @@ describe("programmatic admission without changing the direct route", () => {
     expect(h.execute.mock.calls[0]).toEqual([{ query: "public query" }, {
       userId: USER, agentType: AGENT, mode: "live", operationId: `${runId}:0`,
       trigger: { type: "manual", source: "programmatic-fixture" },
+      signal: expect.any(AbortSignal),
     }]);
     expect(h.persist.mock.calls[0][0]).toMatchObject({ userId: USER, operationId: `${runId}:0`, toolName: "web_search" });
     expect(h.pending).not.toHaveBeenCalled();
@@ -319,7 +320,8 @@ describe("programmatic authority, abort and replay boundaries", () => {
   it("closes unresolved reads before logging and forbids late effects on the journal", async () => {
     const entered = gate(); const release = gate<unknown>();
     let callback: Promise<string> | undefined;
-    h.execute.mockImplementation(async () => { entered.resolve(); return release.promise; });
+    let observed: AbortSignal | undefined;
+    h.execute.mockImplementation(async (_params, ctx) => { observed = ctx.signal; entered.resolve(); return release.promise; });
     h.decide.mockImplementation(async (input: ClaudeDecideInput) => {
       const controller = new AbortController();
       await input.programmaticReads!.beforeRequest(controller.signal);
@@ -328,6 +330,7 @@ describe("programmatic authority, abort and replay boundaries", () => {
       await entered.promise; controller.abort(); throw new Error(PRIVATE);
     });
     const result = await cycle();
+    expect(observed?.aborted).toBe(true);
     expect(result.status).toBe("error"); expect(result.toolsUsed[0]).toMatchObject({ outcome: "failed", success: false });
     const closed = JSON.stringify([result, h.finish.mock.calls]);
     release.resolve({ ok: true, private: PRIVATE });
@@ -338,13 +341,41 @@ describe("programmatic authority, abort and replay boundaries", () => {
 
   it("rejects a provider decision returned while a read is still in flight", async () => {
     const entered = gate(); const release = gate<unknown>(); let callback: Promise<string> | undefined;
-    h.execute.mockImplementation(async () => { entered.resolve(); return release.promise; });
+    let observed: AbortSignal | undefined;
+    h.execute.mockImplementation(async (_params, ctx) => { observed = ctx.signal; entered.resolve(); return release.promise; });
     h.decide.mockImplementation(async (input: ClaudeDecideInput) => {
       callback = input.programmaticReads!.execute(call(), new AbortController().signal);
       void callback.catch(() => undefined); await entered.promise; return completed();
     });
     const result = await cycle(); expect(result.status).toBe("error");
+    expect(observed?.aborted).toBe(true);
     release.resolve({ ok: true }); await expect(callback).rejects.toThrow(); expect(h.persist).not.toHaveBeenCalled();
+  });
+
+  it("propagates a parent interruption while the read is running without exposing its reason", async () => {
+    const entered = gate(); const release = gate<unknown>();
+    const parent = new AbortController();
+    let observed: AbortSignal | undefined;
+    let abortedDuringRead = false;
+    h.execute.mockImplementation(async (_params, ctx) => {
+      observed = ctx.signal; entered.resolve(); return release.promise;
+    });
+    h.decide.mockImplementation(async (input: ClaudeDecideInput) => {
+      await input.programmaticReads!.beforeRequest(parent.signal);
+      const reading = input.programmaticReads!.execute(call(), parent.signal);
+      void reading.catch(() => undefined);
+      await entered.promise;
+      parent.abort(new Error(PRIVATE));
+      abortedDuringRead = observed?.aborted === true;
+      release.resolve({ ok: true });
+      await expect(reading).rejects.toThrow();
+      return completed();
+    });
+    const result = await cycle();
+    expect(abortedDuringRead).toBe(true);
+    expect(result.status).toBe("error");
+    expect(h.persist).not.toHaveBeenCalled();
+    assertPrivate(result);
   });
 });
 

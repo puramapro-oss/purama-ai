@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "impact",
+    "qualifyResolution",
+    "--direction",
+    "upstream",
+    "--repo",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--file",
+    "karta/src/lib/resolution-qualification.ts",
+    "--depth",
+    "3",
+    "--limit",
+    "100"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/lib/resolution-qualification.ts:qualifyResolution\",\n    \"name\": \"qualifyResolution\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/lib/resolution-qualification.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Test\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Method:karta/src/tools/resolution-qualification.ts:resolutionQualificationTool.execute#2\",\n        \"name\": \"execute\",\n        \"filePath\": \"karta/src/tools/resolution-qualification.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+  "stderr": "\n  GitNexus Impact (1.6.12)\n"
+}

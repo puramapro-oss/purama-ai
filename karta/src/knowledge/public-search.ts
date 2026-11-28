@@ -229,21 +229,25 @@ function retryDelay(value: string | null, wallNow: number): number {
   return 30_000;
 }
 
-function cancelBody(response: Response): void {
-  try { void response.body?.cancel().catch(() => undefined); } catch { /* best effort, never expose transport errors */ }
+function cancelBody(response: Response, trackCleanup: (pending: Promise<unknown>) => void): void {
+  try {
+    const pending = response.body?.cancel();
+    if (pending) trackCleanup(pending);
+  } catch { /* best effort, never expose transport errors */ }
 }
 
 function assertActive(signal: AbortSignal, expiresAt: number, now: () => number): void {
   if (signal.aborted || now() >= expiresAt) throw new SourceFailure("timeout");
 }
 
-async function boundedJson(response: Response, signal: AbortSignal, expiresAt: number, now: () => number): Promise<unknown> {
+async function boundedJson(response: Response, signal: AbortSignal, expiresAt: number, now: () => number,
+  trackCleanup: (pending: Promise<unknown>) => void): Promise<unknown> {
   assertActive(signal, expiresAt, now);
   if (!response.body || response.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") return failResponse();
   const declaredBytes = response.headers.get("content-length");
   if (declaredBytes && /^\d+$/.test(declaredBytes) && Number(declaredBytes) > MAX_RESPONSE_BYTES) return failResponse();
   const reader = response.body.getReader();
-  const cancel = () => { try { void reader.cancel().catch(() => undefined); } catch { /* best effort */ } };
+  const cancel = () => { try { trackCleanup(reader.cancel()); } catch { /* best effort */ } };
   signal.addEventListener("abort", cancel, { once: true });
   const chunks: Uint8Array[] = [];
   let bytes = 0;
@@ -285,19 +289,31 @@ export function createPublicKnowledgeSearch(options: SearchOptions = {}) {
     crossref: { inFlight: false, nextAllowedAt: 0 }, wikidata: { inFlight: false, nextAllowedAt: 0 },
   };
 
-  async function retrieve(source: KnowledgeSource, request: KnowledgeRequest): Promise<SourceResult> {
+  async function retrieve(source: KnowledgeSource, request: KnowledgeRequest, parentSignal?: AbortSignal): Promise<SourceResult> {
     const gate = gates[source];
     const unavailable = (status: SourceStatus, retryAfterMs?: number): SourceResult => ({ results: [], outcome: {
       source, status, result_count: 0, duplicate_results_removed: 0, retrieved_at: null,
       ...(retryAfterMs === undefined ? {} : { retry_after_ms: Math.max(0, Math.ceil(retryAfterMs)) }),
     } });
+    if (parentSignal?.aborted) return unavailable("unavailable");
     if (gate.inFlight) return unavailable("busy");
     if (now() < gate.nextAllowedAt) return unavailable("rate_limited", gate.nextAllowedAt - now());
     gate.inFlight = true;
     const controller = new AbortController();
     const expiresAt = now() + timeoutMs;
+    const cleanup: Promise<unknown>[] = [];
+    const trackCleanup = (pending: Promise<unknown>) => { cleanup.push(pending.catch(() => undefined)); };
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let onAbort: (() => void) | undefined;
     const deadline = new Promise<never>((_resolve, reject) => {
+      onAbort = () => {
+        // Never forward a caller-supplied reason into provider errors or
+        // evidence. The source reservation remains owned by work.finally.
+        controller.abort();
+        reject(new SourceFailure("unavailable"));
+      };
+      if (parentSignal?.aborted) { onAbort(); return; }
+      parentSignal?.addEventListener("abort", onAbort, { once: true });
       timer = setTimeout(() => { controller.abort(); reject(new SourceFailure("timeout")); }, timeoutMs);
     });
     const work = async (): Promise<SourceResult> => {
@@ -316,7 +332,7 @@ export function createPublicKnowledgeSearch(options: SearchOptions = {}) {
           assertActive(controller.signal, expiresAt, now);
           if (retry !== undefined) throw new SourceFailure("rate_limited", retry);
           if (!response.ok || response.redirected) throw new SourceFailure("unavailable");
-          const raw = await boundedJson(response, controller.signal, expiresAt, now);
+          const raw = await boundedJson(response, controller.signal, expiresAt, now, trackCleanup);
           assertActive(controller.signal, expiresAt, now);
           if (source === "wikidata" && plainRecord(raw) && plainRecord(raw.error)
             && (raw.error.code === "maxlag" || raw.error.code === "ratelimited")) {
@@ -330,12 +346,17 @@ export function createPublicKnowledgeSearch(options: SearchOptions = {}) {
           assertActive(controller.signal, expiresAt, now);
           return { results, outcome: { source, status: results.length ? "ok" : "empty", result_count: results.length,
             duplicate_results_removed: hits.length - results.length, retrieved_at: retrievedAt } };
-        } finally { cancelBody(response); }
+        } finally { cancelBody(response, trackCleanup); }
       } finally {
-        // The reservation survives a timeout if the transport ignores abort.
-        // Releasing it in the outer Promise.race would allow concurrent calls.
-        gate.nextAllowedAt = Math.max(gate.nextAllowedAt, now() + MIN_INTERVAL_MS[source]);
-        gate.inFlight = false;
+        // Keep every cancellation promise: a repeated cancel on a closed stream
+        // may resolve before its first underlying cleanup has actually settled.
+        // The caller's result stays bounded; only source admission waits here.
+        const releaseGate = () => {
+          gate.nextAllowedAt = Math.max(gate.nextAllowedAt, now() + MIN_INTERVAL_MS[source]);
+          gate.inFlight = false;
+        };
+        if (cleanup.length) void Promise.all(cleanup).then(releaseGate).catch(() => undefined);
+        else releaseGate();
       }
     };
     try {
@@ -348,15 +369,22 @@ export function createPublicKnowledgeSearch(options: SearchOptions = {}) {
       controller.abort();
       if (error instanceof SourceFailure) return unavailable(error.status, error.retryAfterMs);
       return unavailable(now() >= expiresAt ? "timeout" : "unavailable");
-    } finally { clearTimeout(timer); }
+    } finally {
+      clearTimeout(timer);
+      if (onAbort) parentSignal?.removeEventListener("abort", onAbort);
+    }
   }
 
-  return async (params: unknown, mode: "live" | "simulation"): Promise<KnowledgeSearchResult> => {
+  return async (params: unknown, mode: "live" | "simulation", signal?: AbortSignal): Promise<KnowledgeSearchResult> => {
+    if (signal?.aborted) throw new Error("Recherche de connaissances interrompue.");
     const request = copyKnowledgeParams(params);
-    const results = mode === "live" ? await Promise.all(request.sources.map(source => retrieve(source, request)))
+    const results = mode === "live" ? await Promise.all(request.sources.map(source => retrieve(source, request, signal)))
       : request.sources.map(source => ({ results: [], outcome: {
         source, status: "not_executed" as const, result_count: 0, duplicate_results_removed: 0, retrieved_at: null,
       } }));
+    // Source completion and Promise.all adoption are separate boundaries. A
+    // cancelled caller must not receive a late complete or partial result.
+    if (signal?.aborted) throw new Error("Recherche de connaissances interrompue.");
     const hits = results.flatMap(result => result.results);
     const completed = results.filter(result => result.outcome.status === "ok" || result.outcome.status === "empty").length;
     const ok = completed === request.sources.length;

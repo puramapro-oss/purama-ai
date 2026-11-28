@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "detect_changes",
+    "--repo",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--limit",
+    "500",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "893fc5cb14e0039e40c060b51532ea0feefd1864"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 1.437,
+  "stdout": "Changes: 47 files, 63 symbols\nAffected processes: 6\nRisk level: high\n\nChanged symbols:\n  Section IAO \u2014 acc\u00e8s aux services et aux sites \u2192 karta/WEB_CAPABILITIES.md\n  Section Recherche personnalis\u00e9e et sources \u2014 lot du 10 novembre 2026 \u2192 karta/WEB_CAPABILITIES.md\n  Section Raccordement \u00e0 Mon quotidien \u2192 karta/WEB_CAPABILITIES.md\n  Function runAgentCycle \u2192 karta/src/engine/loop.ts\n  Function executeCall \u2192 karta/src/engine/loop.ts\n  Function execute \u2192 karta/src/engine/loop.ts\n  Interface ToolExecutionContext \u2192 karta/src/engine/types.ts\n  Property signal \u2192 karta/src/engine/types.ts\n  Function cancelBody \u2192 karta/src/knowledge/public-search.ts\n  Function boundedJson \u2192 karta/src/knowledge/public-search.ts\n  Function cancel \u2192 karta/src/knowledge/public-search.ts\n  Function createPublicKnowledgeSearch \u2192 karta/src/knowledge/public-search.ts\n  Function retrieve \u2192 karta/src/knowledge/public-search.ts\n  Function trackCleanup \u2192 karta/src/knowledge/public-search.ts\n  Function work \u2192 karta/src/knowledge/public-search.ts\n... and 48 more\n\nAffected execution flows:\n  \u2022 ExecuteCall \u2192 CustomAgentAuthorizationError (3 steps) \u2014 changed: executeCall\n  \u2022 ExecuteCall \u2192 Query (7 steps) \u2014 changed: executeCall\n  \u2022 ExecuteCall \u2192 From (7 steps) \u2014 changed: executeCall\n  \u2022 ExecuteCall \u2192 From (7 steps) \u2014 changed: executeCall\n  \u2022 ExecuteCall \u2192 Entries (6 steps) \u2014 changed: executeCall\n  \u2022 ExecuteCall \u2192 Entries (6 steps) \u2014 changed: executeCall\n",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\n",
+  "checked_at_utc": "2026-11-26T06:12:32.723398+00:00"
+}

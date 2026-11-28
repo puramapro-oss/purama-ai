@@ -18,6 +18,58 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+describe("web search parent cancellation", () => {
+  it("does not dispatch an already-cancelled request or disclose its reason", async () => {
+    const parent = new AbortController();
+    parent.abort(new Error("PRIVATE_PARENT_ABORT_REASON"));
+    transport.mockResolvedValue(new Response('{"results":[]}'));
+    await expect(webSearchTool.execute({ query: "public query" }, { ...ctx, signal: parent.signal }))
+      .rejects.toThrow(unavailable);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
+  it.each([true, false])("settles cancellation with a cooperative=%s header transport and rejects late results", async cooperative => {
+    vi.useFakeTimers();
+    const parent = new AbortController();
+    let release!: (response: Response) => void;
+    let providerSignal: AbortSignal | undefined;
+    transport.mockImplementation((_url, init) => new Promise<Response>((resolve, reject) => {
+      release = resolve; providerSignal = init!.signal!;
+      if (cooperative) providerSignal.addEventListener("abort", () => reject(new Error("PRIVATE_PROVIDER_ABORT")), { once: true });
+    }));
+    let outcome: unknown;
+    const pending = webSearchTool.execute({ query: "public query" }, { ...ctx, signal: parent.signal })
+      .then(value => { outcome = value; }, error => { outcome = error; });
+    try {
+      parent.abort(new Error("PRIVATE_PARENT_ABORT_REASON"));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(providerSignal?.aborted).toBe(true);
+      expect(outcome).toBeInstanceOf(Error);
+      expect((outcome as Error).message).toBe(unavailable);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      release(new Response('{"results":[]}'));
+      await pending;
+    }
+    expect((outcome as Error).message).toBe(unavailable);
+    expect(transport).toHaveBeenCalledOnce();
+  });
+
+  it("removes the parent listener after success without cancelling the completed transport", async () => {
+    const parent = new AbortController();
+    const add = vi.spyOn(parent.signal, "addEventListener");
+    const remove = vi.spyOn(parent.signal, "removeEventListener");
+    transport.mockResolvedValue(new Response('{"results":[]}'));
+    await expect(webSearchTool.execute({ query: "public query" }, { ...ctx, signal: parent.signal }))
+      .resolves.toEqual({ results: [] });
+    const listener = add.mock.calls.find(([type]) => type === "abort")?.[1];
+    expect(listener).toBeTypeOf("function");
+    expect(remove).toHaveBeenCalledWith("abort", listener);
+    parent.abort(new Error("PRIVATE_LATE_ABORT"));
+    expect(transport.mock.calls[0][1]?.signal?.aborted).toBe(false);
+  });
+});
+
 describe("web search byte integrity and terminal deadline", () => {
   it("preserves valid response bytes when the producer reuses its chunk buffer", async () => {
     const fragments = ["{\"resul", "ts\":[]}"];

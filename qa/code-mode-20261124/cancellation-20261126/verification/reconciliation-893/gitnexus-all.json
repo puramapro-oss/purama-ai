@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/matissdornier/.local/bin/gitnexus",
+    "detect_changes",
+    "--repo",
+    "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source",
+    "--limit",
+    "500",
+    "--scope",
+    "all"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 1.825,
+  "stdout": "Changes: 95 files, 590 symbols\nAffected processes: 16\nRisk level: critical\n\nChanged symbols:\n  Section R\u00e9sultats priv\u00e9s de recherche, de synth\u00e8se, de dossier et de simulation \u2192 docs/iao-private-results.md\n  Section Extension du 26 novembre 2026 : analyse priv\u00e9e d\u2019un dossier \u2192 docs/iao-private-results.md\n  Section Continuit\u00e9 Unicode \u2192 docs/iao-private-results.md\n  Section Reprise du d\u00e9clenchement manuel \u2192 docs/iao-private-results.md\n  Section R\u00e9ception et mise en service \u2192 docs/iao-private-results.md\n  Function text \u2192 karta/src/engine/resolution-result-projection.ts\n  Function resolutionInputString \u2192 karta/src/knowledge/private-result-view.ts\n  Function parseResolutionPrivatePayload \u2192 karta/src/knowledge/private-result-view.ts\n  Function qualifyResolution \u2192 karta/src/lib/resolution-qualification.ts\n  Function wellFormedText \u2192 karta/src/lib/resolution-qualification.ts\n  Const runId \u2192 karta/test/privateToolResults.native.mjs\n  Const runId \u2192 karta/test/privateToolResults.native.mjs\n  Function bounded \u2192 karta/test/privateToolResultsSql.test.ts\n  Const runId \u2192 karta/test/privateToolResultsSql.test.ts\n  Const snapshot \u2192 karta/test/privateToolResultsSql.test.ts\n... and 575 more\n\nAffected execution flows:\n  \u2022 CreatorAgentDetail \u2192 Resolve (8 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 CreatorAgentDetail \u2192 AssertCurrent (7 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 CreatorAgentDetail \u2192 CloseQueue (6 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 CreatorAgentDetail \u2192 Disconnect (6 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 CreatorAgentDetail \u2192 UseRequestScope (3 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 CreatorAgentDetail \u2192 Interrupt (8 steps) \u2014 changed: CreatorAgentDetail\n  \u2022 MutationFn \u2192 SocialConnectionError (4 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 IsOAuthSocialPlatform (4 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 IsSocialUserId (4 steps) \u2014 changed: mutationFn\n  \u2022 MutationFn \u2192 Now (4 steps) \u2014 changed: mutationFn\n... and 6 more\n",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\n",
+  "checked_at_utc": "2026-11-26T06:12:20.841144+00:00"
+}

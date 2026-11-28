@@ -1,0 +1,1834 @@
+{
+  "base": "271f40b666c11d90fe4a350a41432513a08fc72f",
+  "started_at_utc": "2026-11-26T04:58:15.058305+00:00",
+  "finished_at_utc": "2026-11-26T05:09:37.386858+00:00",
+  "runtime": {
+    "official_checksums_url": "https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt",
+    "official_archive_url": "https://nodejs.org/dist/v22.23.5/node-v22.23.5-darwin-arm64.tar.gz",
+    "filename": "node-v22.23.5-darwin-arm64.tar.gz",
+    "sha256_expected": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+    "architecture": "arm64",
+    "purpose": "Isolated Node22 runtime matching CI and Docker major; no global install or PATH mutation",
+    "sha256_verified": "e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d",
+    "archive_bytes": 50004868,
+    "node_path": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+    "runtime": {
+      "node": "v22.23.5",
+      "arch": "arm64",
+      "platform": "darwin",
+      "abortSignalAny": "function"
+    },
+    "verified_at_utc": "2026-11-26T04:37:13Z"
+  },
+  "dependency_verification": {
+    "lock_sha256": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+    "cache": "/Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules",
+    "platform": "darwin-arm64",
+    "verified": 178,
+    "platform_excluded": 54,
+    "mismatches": []
+  },
+  "complete_checkout": {
+    "files": 3880,
+    "manifest_sha256": "137dbfcfc01d4db0361d39942316b261d7d77824f29d7e08b669430825dbd50c"
+  },
+  "source_files_compared": 454,
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "full-karta",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/full-karta.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 682.133,
+      "log": "full-karta.log",
+      "log_sha256": "cfd93570937661ddcba586920d67bcd4edb2366427e2110815333280d6055205",
+      "error": null
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false",
+        "-p",
+        "tsconfig.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 28.127,
+      "log": "first-incomplete-checkout/typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error": null,
+      "source_reuse": "All KARTA compiler inputs unchanged; completed before runtime-fixture checkout expansion"
+    },
+    {
+      "name": "build",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/runtime-node22/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json",
+        "--pretty",
+        "false"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 7.962,
+      "log": "first-incomplete-checkout/build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error": null,
+      "source_reuse": "All KARTA compiler inputs unchanged; completed before runtime-fixture checkout expansion"
+    }
+  ],
+  "vitest": {
+    "success": false,
+    "numTotalTests": 5937,
+    "numPassedTests": 5860,
+    "numFailedTests": 5,
+    "numPendingTests": 72,
+    "numTodoTests": 0,
+    "numTotalTestSuites": 607,
+    "numFailedTestSuites": 8,
+    "test_file_count": 238,
+    "report_sha256": "61254c6282975150b4e757c99ed693c14cde27c46845d217a50fd4931c5d8062",
+    "files": [
+      {
+        "file": "test/actionAgentsMock.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/agentContextContract.test.ts",
+        "status": "passed",
+        "tests": 33,
+        "passed": 33,
+        "failed": 0
+      },
+      {
+        "file": "test/agentsRegistry.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/apiDeliveryIdentity.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/apiIaoGlobalStop.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/apiIaoIntegration.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/apiIaoTransportBudget.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/apiSafety.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/apolloTool.test.ts",
+        "status": "passed",
+        "tests": 34,
+        "passed": 34,
+        "failed": 0
+      },
+      {
+        "file": "test/approval.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalContinuation.test.ts",
+        "status": "passed",
+        "tests": 42,
+        "passed": 42,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalOutbox.test.ts",
+        "status": "passed",
+        "tests": 27,
+        "passed": 27,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalOutboxDeadline.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalOutboxRelay.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalOutboxResolver.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalOutboxStartStop.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalParams.test.ts",
+        "status": "passed",
+        "tests": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalParentGuard.test.ts",
+        "status": "passed",
+        "tests": 48,
+        "passed": 48,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/approvalTriggerContext.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/assistantPolicy.test.ts",
+        "status": "passed",
+        "tests": 63,
+        "passed": 63,
+        "failed": 0
+      },
+      {
+        "file": "test/autonomy.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/autonomyStateRace.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/brief.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/briefClaims.test.ts",
+        "status": "passed",
+        "tests": 57,
+        "passed": 57,
+        "failed": 0
+      },
+      {
+        "file": "test/briefDatabaseCycle.test.ts",
+        "status": "passed",
+        "tests": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "test/briefSubmission.test.ts",
+        "status": "failed",
+        "tests": 32,
+        "passed": 0,
+        "failed": 0
+      },
+      {
+        "file": "test/briefSubmissionClient.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/briefSubmissionFlow.test.ts",
+        "status": "passed",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0
+      },
+      {
+        "file": "test/calendarSchedule.test.ts",
+        "status": "passed",
+        "tests": 41,
+        "passed": 41,
+        "failed": 0
+      },
+      {
+        "file": "test/calendarTool.test.ts",
+        "status": "passed",
+        "tests": 61,
+        "passed": 61,
+        "failed": 0
+      },
+      {
+        "file": "test/chatEscalation.test.ts",
+        "status": "passed",
+        "tests": 49,
+        "passed": 49,
+        "failed": 0
+      },
+      {
+        "file": "test/chatHistoryIsolation.test.ts",
+        "status": "passed",
+        "tests": 39,
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "file": "test/chatRequestScope.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/chefBrief.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/chefBudgetAccounting.test.ts",
+        "status": "passed",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0
+      },
+      {
+        "file": "test/chefBudgetAdapter.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/chefBudgetAdmission.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/chefBudgetMigration.test.ts",
+        "status": "failed",
+        "tests": 3,
+        "passed": 1,
+        "failed": 2
+      },
+      {
+        "file": "test/chefBudgetReservations.test.ts",
+        "status": "passed",
+        "tests": 28,
+        "passed": 28,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCancellation.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCapabilityPersistence.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCapabilityRuntime.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCapabilitySelection.test.ts",
+        "status": "passed",
+        "tests": 55,
+        "passed": 55,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCodexCliDriver.test.ts",
+        "status": "passed",
+        "tests": 35,
+        "passed": 35,
+        "failed": 0
+      },
+      {
+        "file": "test/chefControlPlane.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCorrectionLoop.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/chefCostGovernor.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/chefDriver.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/chefEstimates.test.ts",
+        "status": "passed",
+        "tests": 44,
+        "passed": 44,
+        "failed": 0
+      },
+      {
+        "file": "test/chefEvidenceAdapter.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/chefEvidenceFreshness.test.ts",
+        "status": "failed",
+        "tests": 31,
+        "passed": 30,
+        "failed": 1
+      },
+      {
+        "file": "test/chefEvidenceGate.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/chefGitCancellation.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/chefGitState.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/chefHardening.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/chefIndependentReview.test.ts",
+        "status": "passed",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "file": "test/chefMission.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/chefObservedVerification.test.ts",
+        "status": "passed",
+        "tests": 24,
+        "passed": 24,
+        "failed": 0
+      },
+      {
+        "file": "test/chefOrganisationAcceptance.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/chefProcess.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/chefProcessQuarantine.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/chefProtocol.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/chefQuarantineAdapter.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/chefRuntimePolicy.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/chefSupervisor.test.ts",
+        "status": "passed",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "test/chefSupervisorCancellation.test.ts",
+        "status": "passed",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "file": "test/chefTrustedGit.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/chefVerificationFeedback.test.ts",
+        "status": "passed",
+        "tests": 67,
+        "passed": 67,
+        "failed": 0
+      },
+      {
+        "file": "test/chefVerificationGitIntegration.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/chefVerifier.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkerShutdown.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopAdmission.test.ts",
+        "status": "passed",
+        "tests": 23,
+        "passed": 23,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopApi.test.ts",
+        "status": "passed",
+        "tests": 22,
+        "passed": 22,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopArtifact.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopConfig.test.ts",
+        "status": "passed",
+        "tests": 43,
+        "passed": 43,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopEdge.test.ts",
+        "status": "passed",
+        "tests": 92,
+        "passed": 92,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopGit.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopRuntime.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/chefWorkshopService.test.ts",
+        "status": "passed",
+        "tests": 61,
+        "passed": 61,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeDecisionCompleteness.test.ts",
+        "status": "passed",
+        "tests": 43,
+        "passed": 43,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeExecutionProfileTransport.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeProgrammaticTransport.test.ts",
+        "status": "passed",
+        "tests": 82,
+        "passed": 82,
+        "failed": 0
+      },
+      {
+        "file": "test/claudePromptCacheTransport.test.ts",
+        "status": "passed",
+        "tests": 27,
+        "passed": 27,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeTransportCost.test.ts",
+        "status": "passed",
+        "tests": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeTransportDeadline.test.ts",
+        "status": "passed",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "test/claudeUsageTransport.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/commercePrivileges.test.ts",
+        "status": "passed",
+        "tests": 58,
+        "passed": 58,
+        "failed": 0
+      },
+      {
+        "file": "test/connectPermissions.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/connectedResearch.test.ts",
+        "status": "passed",
+        "tests": 84,
+        "passed": 84,
+        "failed": 0
+      },
+      {
+        "file": "test/consultationHost.test.ts",
+        "status": "passed",
+        "tests": 30,
+        "passed": 30,
+        "failed": 0
+      },
+      {
+        "file": "test/consultationIntegration.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/consultationPersistenceRecovery.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/consultationProfileMatrix.test.ts",
+        "status": "passed",
+        "tests": 65,
+        "passed": 65,
+        "failed": 0
+      },
+      {
+        "file": "test/consultationTransport.test.ts",
+        "status": "passed",
+        "tests": 55,
+        "passed": 55,
+        "failed": 0
+      },
+      {
+        "file": "test/coreSchedulerDrain.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/creatorAgentModelMigration.test.ts",
+        "status": "passed",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "file": "test/customAgent.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/customAgentModelSelection.test.ts",
+        "status": "passed",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "test/customAgentScanAbort.test.ts",
+        "status": "passed",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "file": "test/customAgentScheduler.test.ts",
+        "status": "passed",
+        "tests": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "test/customAgentSchedulerCron.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/customAuthorization.test.ts",
+        "status": "passed",
+        "tests": 46,
+        "passed": 46,
+        "failed": 0
+      },
+      {
+        "file": "test/customRegistry.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/customSchedulerDrain.test.ts",
+        "status": "passed",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0
+      },
+      {
+        "file": "test/cycleAdmissionPrivacy.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/delegate.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/docusealTool.test.ts",
+        "status": "passed",
+        "tests": 45,
+        "passed": 45,
+        "failed": 0
+      },
+      {
+        "file": "test/emailDraftReconcileBoundary.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/emailDraftReconciliation.test.ts",
+        "status": "passed",
+        "tests": 40,
+        "passed": 40,
+        "failed": 0
+      },
+      {
+        "file": "test/emailDraftSendOnce.test.ts",
+        "status": "passed",
+        "tests": 115,
+        "passed": 115,
+        "failed": 0
+      },
+      {
+        "file": "test/executionOrigin.test.ts",
+        "status": "passed",
+        "tests": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      {
+        "file": "test/executionOriginMigration.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/executionProfile.test.ts",
+        "status": "passed",
+        "tests": 27,
+        "passed": 27,
+        "failed": 0
+      },
+      {
+        "file": "test/generative.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/gmail-token-crypto.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailActionDeadline.test.ts",
+        "status": "passed",
+        "tests": 34,
+        "passed": 34,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailMessage.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailPartnerGuard.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailReply.test.ts",
+        "status": "passed",
+        "tests": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailTokenRefresh.test.ts",
+        "status": "passed",
+        "tests": 40,
+        "passed": 40,
+        "failed": 0
+      },
+      {
+        "file": "test/gmailTool.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/googleCalendarConnection.test.ts",
+        "status": "passed",
+        "tests": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      {
+        "file": "test/iao-facade.test.ts",
+        "status": "passed",
+        "tests": 45,
+        "passed": 45,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoAdmissionDeadline.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoAdmissionRevalidation.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoCancellationReceiptMonotonicity.test.ts",
+        "status": "passed",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoCompletedImmutability.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoCompletedRetention.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoExecutionBudget.test.ts",
+        "status": "passed",
+        "tests": 19,
+        "passed": 19,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoIdentityBoundary.test.ts",
+        "status": "passed",
+        "tests": 122,
+        "passed": 122,
+        "failed": 0
+      },
+      {
+        "file": "test/iaoPendingRetention.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/jev-client.test.ts",
+        "status": "passed",
+        "tests": 19,
+        "passed": 19,
+        "failed": 0
+      },
+      {
+        "file": "test/jev-schema.test.ts",
+        "status": "passed",
+        "tests": 30,
+        "passed": 30,
+        "failed": 0
+      },
+      {
+        "file": "test/jev-tool.test.ts",
+        "status": "passed",
+        "tests": 34,
+        "passed": 34,
+        "failed": 0
+      },
+      {
+        "file": "test/kartaRuntimeDeadline.test.ts",
+        "status": "passed",
+        "tests": 55,
+        "passed": 55,
+        "failed": 0
+      },
+      {
+        "file": "test/kartaTriggerEdge.test.ts",
+        "status": "passed",
+        "tests": 87,
+        "passed": 87,
+        "failed": 0
+      },
+      {
+        "file": "test/knowledgeQuantumIntegration.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/knowledgeSearch.test.ts",
+        "status": "passed",
+        "tests": 60,
+        "passed": 60,
+        "failed": 0
+      },
+      {
+        "file": "test/lmStudioQualification.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/lmStudioTransport.test.ts",
+        "status": "passed",
+        "tests": 58,
+        "passed": 58,
+        "failed": 0
+      },
+      {
+        "file": "test/localComputeFabricCancellation.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/localComputeFabricMemoryBoundary.test.ts",
+        "status": "passed",
+        "tests": 40,
+        "passed": 40,
+        "failed": 0
+      },
+      {
+        "file": "test/localComputeFabricMemoryProjection.test.ts",
+        "status": "passed",
+        "tests": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      {
+        "file": "test/localComputeFabricProvider.test.ts",
+        "status": "passed",
+        "tests": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "test/localComputeFabricResponseBoundary.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/logger.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/loggerCycleFinalization.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/loggerFinalization.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/loop.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "file": "test/loopBriefLifecycle.test.ts",
+        "status": "passed",
+        "tests": 35,
+        "passed": 35,
+        "failed": 0
+      },
+      {
+        "file": "test/loopJevTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/loopModelAdmission.test.ts",
+        "status": "passed",
+        "tests": 33,
+        "passed": 33,
+        "failed": 0
+      },
+      {
+        "file": "test/loopModelUsage.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/loopProgrammaticReads.test.ts",
+        "status": "passed",
+        "tests": 79,
+        "passed": 79,
+        "failed": 0
+      },
+      {
+        "file": "test/loopTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 22,
+        "passed": 22,
+        "failed": 0
+      },
+      {
+        "file": "test/loopTriggerContext.test.ts",
+        "status": "passed",
+        "tests": 37,
+        "passed": 37,
+        "failed": 0
+      },
+      {
+        "file": "test/migrationOrder.test.ts",
+        "status": "passed",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      {
+        "file": "test/mockClaude.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "test/modelCatalog.test.ts",
+        "status": "passed",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0
+      },
+      {
+        "file": "test/modelConsultation.test.ts",
+        "status": "passed",
+        "tests": 57,
+        "passed": 57,
+        "failed": 0
+      },
+      {
+        "file": "test/modelConsultationStore.test.ts",
+        "status": "passed",
+        "tests": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "test/modelConsultationStoreSql.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/modelQualityRouting.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/modelUsage.test.ts",
+        "status": "passed",
+        "tests": 64,
+        "passed": 64,
+        "failed": 0
+      },
+      {
+        "file": "test/modelUsageMigration.test.ts",
+        "status": "passed",
+        "tests": 19,
+        "passed": 19,
+        "failed": 0
+      },
+      {
+        "file": "test/notifyReceipt.test.ts",
+        "status": "passed",
+        "tests": 39,
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "file": "test/overageCredit.test.ts",
+        "status": "failed",
+        "tests": 41,
+        "passed": 0,
+        "failed": 1
+      },
+      {
+        "file": "test/partnerAffiliationAdmission.test.ts",
+        "status": "passed",
+        "tests": 68,
+        "passed": 68,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerChat.test.ts",
+        "status": "failed",
+        "tests": 13,
+        "passed": 12,
+        "failed": 1
+      },
+      {
+        "file": "test/partnerContract.test.ts",
+        "status": "passed",
+        "tests": 38,
+        "passed": 38,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerContractContactGuard.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerDiscovery.test.ts",
+        "status": "passed",
+        "tests": 117,
+        "passed": 117,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerDiscoverySql.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerMediaContract.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerMediaDraft.test.ts",
+        "status": "passed",
+        "tests": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerMediaPolicy.test.ts",
+        "status": "passed",
+        "tests": 55,
+        "passed": 55,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerOutreach.test.ts",
+        "status": "passed",
+        "tests": 89,
+        "passed": 89,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerReply.test.ts",
+        "status": "passed",
+        "tests": 54,
+        "passed": 54,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerReplyDraft.test.ts",
+        "status": "passed",
+        "tests": 60,
+        "passed": 60,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerReplyDraftHandler.test.ts",
+        "status": "passed",
+        "tests": 26,
+        "passed": 26,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerReplyDraftParsing.test.ts",
+        "status": "passed",
+        "tests": 39,
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerReplyParsing.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "test/partnerSchedulerWorkflow.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/pdfToolBoundary.test.ts",
+        "status": "passed",
+        "tests": 39,
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "file": "test/privateToolResults.test.ts",
+        "status": "passed",
+        "tests": 59,
+        "passed": 59,
+        "failed": 0
+      },
+      {
+        "file": "test/privateToolResultsExecution.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "file": "test/privateToolResultsSql.test.ts",
+        "status": "passed",
+        "tests": 117,
+        "passed": 117,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticBriefCompletion.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticFlowIntegration.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticInputValidation.test.ts",
+        "status": "passed",
+        "tests": 28,
+        "passed": 28,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticModelQualification.test.ts",
+        "status": "passed",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticUsage.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/programmaticUsageMigration.test.ts",
+        "status": "passed",
+        "tests": 26,
+        "passed": 26,
+        "failed": 0
+      },
+      {
+        "file": "test/providerCompletion.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/providerHttp.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/publicChatAdmission.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/quantumSimulator.test.ts",
+        "status": "passed",
+        "tests": 84,
+        "passed": 84,
+        "failed": 0
+      },
+      {
+        "file": "test/quantumTool.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/queueDeliveryIdentity.test.ts",
+        "status": "passed",
+        "tests": 27,
+        "passed": 27,
+        "failed": 0
+      },
+      {
+        "file": "test/readToolCancellationHttp.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/real-claude.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "test/resolutionPrivateResults.test.ts",
+        "status": "passed",
+        "tests": 24,
+        "passed": 24,
+        "failed": 0
+      },
+      {
+        "file": "test/resolutionQualification.test.ts",
+        "status": "passed",
+        "tests": 40,
+        "passed": 40,
+        "failed": 0
+      },
+      {
+        "file": "test/resolutionQualificationIntegration.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeApiReadiness.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeConfig.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeDeadline.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeHardening.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeLifecycle.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeProbe.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/runtimeUsageReadiness.test.ts",
+        "status": "passed",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "file": "test/socialStatusCycle.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      {
+        "file": "test/socialStatusRegistry.test.ts",
+        "status": "passed",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "file": "test/socialStatusSdk.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/socialStatusTool.test.ts",
+        "status": "passed",
+        "tests": 68,
+        "passed": 68,
+        "failed": 0
+      },
+      {
+        "file": "test/sseConsumer.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/sseFraming.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/staticAgentScheduler.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/staticAgentSchedulerCron.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/streamCompletionAudit.test.ts",
+        "status": "passed",
+        "tests": 23,
+        "passed": 23,
+        "failed": 0
+      },
+      {
+        "file": "test/streaming.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/stripeIsolation.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      {
+        "file": "test/subscriptionRevision.test.ts",
+        "status": "passed",
+        "tests": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      {
+        "file": "test/subscriptionTrial.test.ts",
+        "status": "passed",
+        "tests": 28,
+        "passed": 28,
+        "failed": 0
+      },
+      {
+        "file": "test/supabaseTool.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      {
+        "file": "test/toolInputBoundary.test.ts",
+        "status": "passed",
+        "tests": 33,
+        "passed": 33,
+        "failed": 0
+      },
+      {
+        "file": "test/toolResult.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/walletRpcPermissions.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "test/webAccessPlanTool.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/webCapabilityPlan.test.ts",
+        "status": "passed",
+        "tests": 47,
+        "passed": 47,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchCleanup.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchEvidence.test.ts",
+        "status": "passed",
+        "tests": 59,
+        "passed": 59,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchInputBoundary.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchPrivacy.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchTransportIntegrity.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "test/webSearchValidation.test.ts",
+        "status": "passed",
+        "tests": 41,
+        "passed": 41,
+        "failed": 0
+      },
+      {
+        "file": "test/zernioPublication.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      }
+    ],
+    "failed_cases": [
+      {
+        "file": "test/chefBudgetMigration.test.ts",
+        "full_name": "CHEF budget migration of existing claims refuses an unreserved historical capped claim rather than assuming a missing receipt is zero",
+        "messages": [
+          "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1859:14)\n    at /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/chefBudgetMigration.test.ts:7:3\n    at file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:22)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2768:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+        ]
+      },
+      {
+        "file": "test/chefBudgetMigration.test.ts",
+        "full_name": "CHEF budget migration of existing claims preserves charged historical totals, treats old synthetic zero costs as unknown and is replayable",
+        "messages": [
+          "Error: Test timed out in 30000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1859:14)\n    at /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/chefBudgetMigration.test.ts:38:3\n    at file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:22)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2768:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+        ]
+      },
+      {
+        "file": "test/chefEvidenceFreshness.test.ts",
+        "full_name": "CHEF evidence generation preserves pre-migration rows without certifying them as current evidence",
+        "messages": [
+          "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1859:14)\n    at /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/chefEvidenceFreshness.test.ts:231:3\n    at file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:52\n    at runWithSuite (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3250:8)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2763:22)\n    at Object.collect (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2768:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+        ]
+      },
+      {
+        "file": "test/overageCredit.test.ts",
+        "full_name": "stops the migration on historical duplicate sessions without deleting or rewriting a credit",
+        "messages": [
+          "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1859:14)\n    at /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/overageCredit.test.ts:410:1\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async VitestModuleEvaluator._runInlinedModule (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1262:59)\n    at async VitestModuleRunner.cachedRequest (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1169:73)\n    at async VitestModuleRunner.import (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1124:10)"
+        ]
+      },
+      {
+        "file": "test/partnerChat.test.ts",
+        "full_name": "executes the additive history migration and rejects cross-account dossier inserts through existing RLS",
+        "messages": [
+          "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2681:43)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2698:16)\n    at Object.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2471:28)\n    at chain (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1859:14)\n    at /Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/partnerChat.test.ts:167:1\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async VitestModuleEvaluator._runInlinedModule (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vitest/dist/module-evaluator.js:261:4)\n    at async VitestModuleRunner.directRequest (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1262:59)\n    at async VitestModuleRunner.cachedRequest (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1169:73)\n    at async VitestModuleRunner.import (file:///Users/matissdornier/purama-worktrees/unlazy-verification-tests-20261124/karta/node_modules/vite/dist/node/module-runner.js:1124:10)"
+        ]
+      }
+    ],
+    "failed_files": [
+      {
+        "name": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/briefSubmission.test.ts",
+        "message": "Hook timed out in 30000ms.\nIf this is a long-running hook, pass a timeout value as the last argument or configure it globally with \"hookTimeout\"."
+      },
+      {
+        "name": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/chefBudgetMigration.test.ts",
+        "message": ""
+      },
+      {
+        "name": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/chefEvidenceFreshness.test.ts",
+        "message": ""
+      },
+      {
+        "name": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/overageCredit.test.ts",
+        "message": ""
+      },
+      {
+        "name": "/Users/matissdornier/purama-patches/iao-tool-cancellation-20261126-4f357a4b/source/karta/test/partnerChat.test.ts",
+        "message": ""
+      }
+    ]
+  },
+  "status": "PARTIEL",
+  "earlier_incomplete_attempt": "first-incomplete-checkout/full-gate-first-attempt-diagnostic.json"
+}

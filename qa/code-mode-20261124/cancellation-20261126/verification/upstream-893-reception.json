@@ -1,0 +1,720 @@
+{
+  "schema_version": 1,
+  "subject": "Réception bornée des CI amont sur 893fc5c ; distincte de la qualification du candidat combiné",
+  "repository": "puramapro-oss/purama-ai",
+  "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+  "scope": {
+    "head_pinned": true,
+    "current_heads_not_followed": true,
+    "workflow_status_reads_this_reception": 1,
+    "ci_dispatched_or_retried": false,
+    "polling_loop": false,
+    "product_or_canonical_sources_modified": false,
+    "historical_android_receipt_modified": false,
+    "local_head_observed": "9a2e4b59801974b4d61dcd9a6aa5d17512f5de6a",
+    "local_combination_tested_by_this_receipt": false,
+    "repository_file_written": "qa/code-mode-20261124/cancellation-20261126/verification/upstream-893-reception.json"
+  },
+  "observation": {
+    "started_at": "2026-11-26T05:47:48.320Z",
+    "finished_at": "2026-11-26T05:47:49.042Z",
+    "previous_initial_state_observed_at": "2026-11-26T05:38:40.990Z",
+    "status": "PARTIEL",
+    "completed_success_workflows": 7,
+    "in_progress_workflows": 1,
+    "completed_failed_workflows": 0,
+    "limitation": "Instantané des CI de cette tête exacte. Les états encore actifs ne sont pas des réussites."
+  },
+  "provenance": {
+    "workflow_runs": {
+      "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs?head_sha=893fc5cb14e0039e40c060b51532ea0feefd1864&per_page=30",
+      "read_started_at": "2026-11-26T05:47:48.320Z",
+      "read_finished_at": "2026-11-26T05:47:48.938Z"
+    },
+    "native_jobs": {
+      "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185882/jobs?per_page=30",
+      "read_started_at": "2026-11-26T05:47:48.320Z",
+      "read_finished_at": "2026-11-26T05:47:49.042Z"
+    },
+    "chef_jobs": {
+      "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185898/jobs?per_page=30",
+      "read_started_at": "2026-11-26T05:47:48.320Z",
+      "read_finished_at": "2026-11-26T05:47:48.978Z"
+    },
+    "initial_artifact_metadata_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185882/artifacts?per_page=30",
+    "head_compare_url": "https://github.com/puramapro-oss/purama-ai/compare/271f40b666c11d90fe4a350a41432513a08fc72f...893fc5cb14e0039e40c060b51532ea0feefd1864"
+  },
+  "workflows": [
+    {
+      "id": 45762185981,
+      "name": "Mobile SDK quality",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:33:52Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185981"
+    },
+    {
+      "id": 45762185882,
+      "name": "Native accessibility watch verification",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:34:36Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882"
+    },
+    {
+      "id": 45762185945,
+      "name": "Wealth engine continuity",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:34:52Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185945"
+    },
+    {
+      "id": 45762185899,
+      "name": "KARTA IAO identity",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:35:17Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185899"
+    },
+    {
+      "id": 45762185943,
+      "name": "Connect provisioning recovery",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:32:10Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185943"
+    },
+    {
+      "id": 45762185938,
+      "name": "Entraide PostgreSQL protocol",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:32:14Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185938"
+    },
+    {
+      "id": 45762185937,
+      "name": "SMARANA account continuity",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:32:24Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185937"
+    },
+    {
+      "id": 45762185898,
+      "name": "PURAMA CHEF hardening",
+      "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "created_at": "2026-11-26T05:31:43Z",
+      "updated_at": "2026-11-26T05:46:56Z",
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898"
+    }
+  ],
+  "karta": {
+    "status": "PASS",
+    "run_id": 45762185899,
+    "job_id": 139714520516,
+    "job_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185899/job/139714520516",
+    "log_api_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/jobs/139714520516/logs",
+    "log_received_during_initial_reception": true,
+    "log_refetched_during_final_reception": false,
+    "node_version": "22.23.5",
+    "test_files": {
+      "passed": 237,
+      "total": 237
+    },
+    "tests": {
+      "passed": 5948,
+      "total": 5948
+    },
+    "vitest_duration_seconds": 187.63,
+    "test_step_started_at": "2026-11-26T05:32:06Z",
+    "test_step_completed_at": "2026-11-26T05:35:14Z",
+    "test_step_wall_seconds": 188,
+    "job_started_at": "2026-11-26T05:31:46Z",
+    "job_completed_at": "2026-11-26T05:35:16Z",
+    "scope": "Tête amont seule ; ne qualifie pas le correctif local combiné."
+  },
+  "chef": {
+    "status": "PASS",
+    "run_id": 45762185898,
+    "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898",
+    "jobs": [
+      {
+        "id": 139714521000,
+        "name": "subscription-concurrency",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-26T05:31:46Z",
+        "completed_at": "2026-11-26T05:32:22Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898/job/139714521000"
+      },
+      {
+        "id": 139714521123,
+        "name": "site",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-26T05:31:46Z",
+        "completed_at": "2026-11-26T05:46:55Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898/job/139714521123"
+      },
+      {
+        "id": 139714521196,
+        "name": "karta",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-26T05:31:46Z",
+        "completed_at": "2026-11-26T05:34:59Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898/job/139714521196"
+      },
+      {
+        "id": 139714521309,
+        "name": "device-compatibility",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-26T05:31:46Z",
+        "completed_at": "2026-11-26T05:36:54Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185898/job/139714521309"
+      }
+    ],
+    "limitation": "Conclusions des quatre jobs reçues ; aucun nouveau comptage de tests extrait ici."
+  },
+  "native": {
+    "status": "PARTIEL",
+    "run_id": 45762185882,
+    "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882",
+    "jobs": [
+      {
+        "id": 139714680249,
+        "name": "apple",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-26T05:32:14Z",
+        "completed_at": null,
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139714680249",
+        "completed_step_count": 6,
+        "active_and_pending_steps": [
+          {
+            "name": "Compile watchOS and existing iOS app for simulators without signing",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-26T05:34:51Z",
+            "completed_at": null
+          },
+          {
+            "name": "Preserve qualification receipts",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          }
+        ]
+      },
+      {
+        "id": 139714680548,
+        "name": "android-network",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-26T05:32:14Z",
+        "completed_at": "2026-11-26T05:34:33Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139714680548",
+        "completed_step_count": 10,
+        "active_and_pending_steps": []
+      },
+      {
+        "id": 139715506461,
+        "name": "android",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-26T05:34:36Z",
+        "completed_at": null,
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139715506461",
+        "completed_step_count": 7,
+        "active_and_pending_steps": [
+          {
+            "name": "Compile phone module and Wear companion and run Kotlin protocol tests",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-26T05:35:47Z",
+            "completed_at": null
+          },
+          {
+            "name": "Diagnose Android dependency resolution failure",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Prepare debug APKs for physical qualification",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Preserve debug phone and Wear APKs with SHA-256 manifest",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Bundle the offline qualification APK for the disposable x86_64 emulator",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Enable the hosted runner emulator accelerator",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Qualify real local inference and encrypted memory after an offline process restart",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Preserve native offline inference, SQLCipher and restart evidence",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Preserve qualification receipts",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/setup-java@v4",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "pending",
+            "conclusion": null,
+            "started_at": null,
+            "completed_at": null
+          }
+        ]
+      }
+    ],
+    "pending_reception": [
+      {
+        "job": "apple",
+        "status": "in_progress",
+        "active_step": "Compile watchOS and existing iOS app for simulators without signing"
+      },
+      {
+        "job": "android",
+        "status": "in_progress",
+        "active_step": "Compile phone module and Wear companion and run Kotlin protocol tests",
+        "later_offline_inference_and_encrypted_memory_qualification": "pending"
+      }
+    ],
+    "android_network": {
+      "status": "PASS",
+      "job_id": 139714680548,
+      "job_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139714680548",
+      "log_api_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/jobs/139714680548/logs",
+      "started_at": "2026-11-26T05:32:14Z",
+      "completed_at": "2026-11-26T05:34:33Z",
+      "artifact": {
+        "id": 15090277772,
+        "name": "android-network-preflight-6d6679ea22e8e70f1ccc89cbf6af0a2f1535e645",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/artifacts/15090277772",
+        "api_download_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/artifacts/15090277772/zip",
+        "created_at": "2026-11-26T05:34:29Z",
+        "size_bytes": 73677,
+        "sha256": "bf435bc825bbc02f812388e0273e1d70414ea4e3076a6a1a810997413918852a",
+        "downloaded_sha256_matches_api_digest": true,
+        "zip_entries_crc_valid": true,
+        "download_count": 1,
+        "received_during_initial_reception": true,
+        "downloaded_again_for_this_reception": false,
+        "evidence_device_id": "5b532c75-ad8a-421c-8e01-5b2e96c3cecf",
+        "isolated_mac_archive_path": "/tmp/purama-native-diagnostic-893-20261126-704geeb4/artifact-15090277772.zip",
+        "entries": {
+          "preparation": {
+            "path": "network-preparation/receipt.json",
+            "sha256": "2b1c56b2da2caa1f534d33b0d0202e51eb2ca131ee6f19ebea483de2c5b77da9"
+          },
+          "independent_network_observer": {
+            "path": "network-before-restart/receipt.json",
+            "sha256": "679ca5f400b7cd805e0a570a1147003ea128ad52a6df0aece120a0f884e396a6"
+          },
+          "final_read_only_inspection": {
+            "path": "final-state/network-preparation/receipt.json",
+            "sha256": "fb3a75694998970568ff066d7a2619ae0d27a226f431b443c0756963257eb2d0"
+          }
+        }
+      },
+      "checkout": {
+        "commit": "6d6679ea22e8e70f1ccc89cbf6af0a2f1535e645",
+        "tree": "6c03c144ef57d314592f3eb7c90c28a1d727d58e",
+        "head_tree": "6c03c144ef57d314592f3eb7c90c28a1d727d58e",
+        "tree_matches_requested_head": true,
+        "source_entry": "checkout.txt"
+      },
+      "emulator": {
+        "api": 35,
+        "image_tag": "google_apis",
+        "abi": "x86_64",
+        "image_revision": 9,
+        "extension_level": 13,
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:15/AE3A.240806.043/12960925:userdebug/dev-keys",
+        "same_image_identity_as_historical_failure": true
+      },
+      "receipt_run_id": "774cf3bb-3f7f-46ff-9923-b29157a2991a",
+      "preparation": {
+        "status": "COMMANDS_COMPLETED",
+        "mode": "prepare",
+        "started_at": "2026-11-26T05:34:13.687102+00:00",
+        "finished_at": "2026-11-26T05:34:23.141108+00:00",
+        "elapsed_seconds": 9.454036,
+        "networkVerified": false,
+        "emulatorVerified": true,
+        "mutationAttempted": true,
+        "mutations_scope": "Commandes d'isolation du harnais CI sur son émulateur jetable, après DATA READY ; aucune action de l'agent sur un appareil personnel.",
+        "failure_count": 0,
+        "dataReadiness": {
+          "status": "READY",
+          "timeout_seconds": 30,
+          "started_at": "2026-11-26T05:34:14.733246+00:00",
+          "finished_at": "2026-11-26T05:34:21.486062+00:00",
+          "wait_elapsed_seconds": 6.752819,
+          "total_observations": 7,
+          "observations_1_through_6": {
+            "defaultDataSubId": -1,
+            "status": "WAITING",
+            "reason": "default_data_not_selected"
+          },
+          "observation_7": {
+            "observed_at": "2026-11-26T05:34:21.350213+00:00",
+            "defaultDataSubId": 1,
+            "activeModemCount": 1,
+            "activeSubscriptionMapping": {
+              "0": 1
+            },
+            "status": "READY",
+            "reason": "mapped_default_data_subscription"
+          }
+        }
+      },
+      "independent_offline_observer": {
+        "status": "PASS",
+        "phase": "before-restart",
+        "reason": "stable_offline_state",
+        "started_at": "2026-11-26T05:34:23.188489+00:00",
+        "finished_at": "2026-11-26T05:34:25.619705+00:00",
+        "elapsed_seconds": 2.431227,
+        "required_stable_observations": 3,
+        "stable_observations": 3,
+        "each_observation": {
+          "offline": true,
+          "airplane_mode": "1",
+          "wifi_on": "0",
+          "mobile_data": "0",
+          "connectivity_recognized": true,
+          "active_default_network": null,
+          "current_networks_empty": true
+        },
+        "observation_timestamps": [
+          "2026-11-26T05:34:23.371094+00:00",
+          "2026-11-26T05:34:24.530042+00:00",
+          "2026-11-26T05:34:25.619686+00:00"
+        ]
+      },
+      "settings_diagnostic": {
+        "status": "NON TESTÉ",
+        "executed_on_emulator_in_this_run": false,
+        "runtime_ui_route_qualified": false,
+        "settings_artifact_entries": [],
+        "reason": "La préparation réseau initiale a réussi ; la branche Settings conditionnée par un échec n'a pas été prise.",
+        "simulated_diagnostic_tests_are_not_runtime_ui_evidence": true,
+        "post_failure_diagnostic_does_not_change_original_network_exit_code": true
+      },
+      "scope_limit": "Cette réussite qualifie uniquement la préparation et l'observation réseau de cette exécution. Elle ne vaut pas qualification Android complète ni preuve du parcours Settings."
+    },
+    "historical_android_failure": {
+      "run_id": 45733255220,
+      "job_id": 139620222818,
+      "artifact_id": 15077034379,
+      "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220",
+      "artifact_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45733255220/artifacts/15077034379",
+      "artifact_sha256": "bdb21c2699f25eb6467c2645ee563061d47c4325e048ab6c20dad536be99165f",
+      "status": "FAIL",
+      "reason": "data_subscription_not_ready",
+      "defaultDataSubId": -1,
+      "observations": 28,
+      "receipt_path": "qa/code-mode-20261124/cancellation-20261126/android-diagnostic.json",
+      "preserved_separately": true,
+      "interpretation": "L'ancienne attente a expiré avec DATA -1 ; la nouvelle atteint DATA 1 sur la même identité d'image. Cela ne prouve ni une correction permanente de l'initialisation ni une réparation par Settings."
+    }
+  },
+  "remaining": [
+    "Recevoir les conclusions Apple et Android complet si un contrôle ultérieur est demandé ; aucun polling automatique n'est lancé.",
+    "Le parent qualifie séparément l'arbre combiné du correctif local et de cette tête amont.",
+    "Le parcours Settings réel reste non qualifié par cette exécution, puisqu'il n'a pas été emprunté."
+  ],
+  "follow_up_observations": [
+    {
+      "kind": "requested_native_final_reception",
+      "requested_scope": "Run natif 45762185882 sur 893fc5c uniquement ; aucun suivi de tête plus récente.",
+      "started_at": "2026-11-26T06:05:10.814Z",
+      "finished_at": "2026-11-26T06:05:11.470Z",
+      "status": "PARTIEL",
+      "previous_receipt_sha256": "69fd2026cb08a719405e656e5a8b41fbc392039450c48d4ad5f046ee7afa6e1c",
+      "original_0547_reception_preserved": true,
+      "run": {
+        "id": 45762185882,
+        "head_sha": "893fc5cb14e0039e40c060b51532ea0feefd1864",
+        "status": "in_progress",
+        "conclusion": null,
+        "updated_at": "2026-11-26T05:34:36Z",
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882"
+      },
+      "provenance": [
+        {
+          "kind": "run",
+          "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185882",
+          "read_started_at": "2026-11-26T06:05:10.814Z",
+          "read_finished_at": "2026-11-26T06:05:11.337Z"
+        },
+        {
+          "kind": "jobs",
+          "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185882/jobs?per_page=30",
+          "read_started_at": "2026-11-26T06:05:10.815Z",
+          "read_finished_at": "2026-11-26T06:05:11.470Z"
+        },
+        {
+          "kind": "artifacts",
+          "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/45762185882/artifacts?per_page=30",
+          "read_started_at": "2026-11-26T06:05:10.815Z",
+          "read_finished_at": "2026-11-26T06:05:11.392Z"
+        }
+      ],
+      "jobs": [
+        {
+          "id": 139714680249,
+          "name": "apple",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-26T05:32:14Z",
+          "completed_at": null,
+          "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139714680249",
+          "relevant_steps": [
+            {
+              "number": 7,
+              "name": "Compile watchOS and existing iOS app for simulators without signing",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-26T05:34:51Z",
+              "completed_at": null
+            }
+          ]
+        },
+        {
+          "id": 139714680548,
+          "name": "android-network",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-26T05:32:14Z",
+          "completed_at": "2026-11-26T05:34:33Z",
+          "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139714680548",
+          "relevant_steps": [
+            {
+              "number": 4,
+              "name": "Test the preparation boundary and unchanged offline observer",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-26T05:32:29Z",
+              "completed_at": "2026-11-26T05:32:49Z"
+            },
+            {
+              "number": 6,
+              "name": "Verify network preparation before compiling the application",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-26T05:32:49Z",
+              "completed_at": "2026-11-26T05:34:28Z"
+            },
+            {
+              "number": 7,
+              "name": "Preserve the network-only receipt and Android state",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-26T05:34:28Z",
+              "completed_at": "2026-11-26T05:34:30Z"
+            }
+          ]
+        },
+        {
+          "id": 139715506461,
+          "name": "android",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-26T05:34:36Z",
+          "completed_at": null,
+          "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/job/139715506461",
+          "relevant_steps": [
+            {
+              "number": 8,
+              "name": "Compile phone module and Wear companion and run Kotlin protocol tests",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-11-26T05:35:47Z",
+              "completed_at": "2026-11-26T05:59:16Z"
+            },
+            {
+              "number": 12,
+              "name": "Bundle the offline qualification APK for the disposable x86_64 emulator",
+              "status": "in_progress",
+              "conclusion": null,
+              "started_at": "2026-11-26T05:59:19Z",
+              "completed_at": null
+            },
+            {
+              "number": 14,
+              "name": "Qualify real local inference and encrypted memory after an offline process restart",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "number": 15,
+              "name": "Preserve native offline inference, SQLCipher and restart evidence",
+              "status": "pending",
+              "conclusion": null,
+              "started_at": null,
+              "completed_at": null
+            }
+          ]
+        }
+      ],
+      "artifact_metadata": [
+        {
+          "id": 15091522192,
+          "name": "native-watch-debug-apks-6d6679ea22e8e70f1ccc89cbf6af0a2f1535e645",
+          "size_bytes": 322438120,
+          "github_digest": "sha256:48ec9deb28c41f04288f79999e050e5e24e3f7cf70dea2c1654493493e08994e",
+          "expired": false,
+          "created_at": "2026-11-26T05:59:19Z",
+          "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/artifacts/15091522192",
+          "downloaded_in_this_reception": false,
+          "previously_received_and_verified": false,
+          "verification_status": "METADATA_ONLY_NOT_DOWNLOADED",
+          "interpretation": "APK de compilation disponible ; ce fichier ne constitue pas un reçu de qualification d'inférence et de mémoire chiffrée après redémarrage."
+        },
+        {
+          "id": 15090277772,
+          "name": "android-network-preflight-6d6679ea22e8e70f1ccc89cbf6af0a2f1535e645",
+          "size_bytes": 73677,
+          "github_digest": "sha256:bf435bc825bbc02f812388e0273e1d70414ea4e3076a6a1a810997413918852a",
+          "expired": false,
+          "created_at": "2026-11-26T05:34:29Z",
+          "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45762185882/artifacts/15090277772",
+          "downloaded_in_this_reception": false,
+          "previously_received_and_verified": true,
+          "verification_status": "SHA256_AND_ZIP_CRC_VERIFIED_DURING_INITIAL_RECEPTION",
+          "interpretation": "Preuve réseau déjà reçue ; aucune nouvelle extraction."
+        }
+      ],
+      "distinct_claims": {
+        "android_network": {
+          "status": "PASS",
+          "source": "Réception initiale et job réseau toujours success ; voir native.android_network pour les reçus et empreintes exactes."
+        },
+        "settings_real_ui": {
+          "status": "NON TESTÉ",
+          "executed_in_network_preparation": false,
+          "reason": "La branche de diagnostic Settings après échec n'a pas été prise dans le job réseau réussi."
+        },
+        "android_full_application": {
+          "status": "PARTIEL",
+          "compilation_phone_wear_and_kotlin_protocol_tests": "PASS",
+          "compilation_completed_at": "2026-11-26T05:59:16Z",
+          "offline_qualification_apk": "in_progress",
+          "real_local_inference_and_encrypted_memory_after_offline_restart": "pending",
+          "final_runtime_qualification_received": false
+        },
+        "apple": {
+          "status": "PARTIEL",
+          "simulator_compilation": "in_progress",
+          "final_job_conclusion_received": false
+        },
+        "reproducible_failure": {
+          "status": "NON ÉTABLI",
+          "reason": "Aucune étape en échec dans cette lecture ; les jobs incomplets ne permettent pas une conclusion finale."
+        }
+      },
+      "actions": {
+        "point_in_time_read": true,
+        "polling_loop": false,
+        "dispatched_or_retried_ci": false,
+        "new_artifacts_downloaded": 0,
+        "services_or_local_tests_affected": false,
+        "other_files_modified": false
+      },
+      "remaining": "La qualification complète Apple/Android reste à recevoir. Aucun contrôle ultérieur automatique n'est lancé par ce reçu."
+    }
+  ]
+}
