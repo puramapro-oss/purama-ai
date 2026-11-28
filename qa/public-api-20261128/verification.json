@@ -1,0 +1,84 @@
+{
+  "baseCommit": "272074017383c9a8f8c817d3bdea945cf692b3bc",
+  "branch": "feat/iao-public-api-access-20261128",
+  "date": "2026-11-28",
+  "publicTests": {
+    "passed": 88,
+    "total": 88,
+    "files": 3
+  },
+  "nativeConcurrency": {
+    "passed": 7,
+    "total": 7,
+    "receipt": "native/receipt.json"
+  },
+  "fullSuite": {
+    "exitCode": 1,
+    "passed": 6167,
+    "failed": 35,
+    "total": 6202,
+    "skipped": 0,
+    "fileCount": 245,
+    "allFailuresUnixSocketEperm": true,
+    "failedFiles": [
+      "test/localComputeFabricCancellation.test.ts",
+      "test/localComputeFabricProvider.test.ts",
+      "test/localComputeFabricResponseBoundary.test.ts"
+    ]
+  },
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck",
+        "--prefix",
+        "karta"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 9.1
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--prefix",
+        "karta"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 4.1
+    }
+  ],
+  "production": {
+    "deployed": false,
+    "realProviderCalls": false,
+    "payments": false
+  },
+  "sourceSha256": {
+    "karta/src/api/server.ts": "7047e3b58cf37217d211cff90e036e2a914388fd7a26dc08e36628af4ca305ee",
+    "karta/src/api/public-api-runtime.ts": "1a51d105eef4c86b305e43412e51c26fa13dbb5df88130447ec303ba5e1d2795",
+    "karta/src/api/public-api-routes.ts": "4af9b4e99fc42cfd1d9197cdecaabf7408f0be4ac0d0b1778f59af6ffa506be8",
+    "karta/migrations/039_iao_public_api.sql": "a812c68df93d44a8e19bed19aee21d8039da2401dca6e72f6c260aad3c8536c2",
+    "karta/test/publicApiIntegration.test.ts": "09cfa46c9244d8c2f8a81bd59557c7437fb75e52c40030295e86c364aafa5ad3",
+    "karta/test/publicApiTransport.test.ts": "dcbf9d9b464f58ddee3eb950ebfd5237809662005792a0ea4ac6738a425cfbd4",
+    "karta/test/publicApiSql.test.ts": "3dfae2ca4e511f72af74a10a90f25f0c17d23e2ee6d52823de5ec613b6b3fa98",
+    "karta/test/publicApi.native.mjs": "b0026d0199dca0ade2b331bbdb84cb19ac377a6bf0e02d632f6ee858d12fcbaf",
+    "docs/iao-public-api.openapi.json": "801e412260204d2c76b1c953f38a1180fe6e0dbc29c1ebd7af2a924276c8044c"
+  },
+  "openapiValidation": "openapi-validation.json",
+  "independentReview": {
+    "status": "PASS",
+    "resolvedFindings": [
+      "cancel-only keys cannot read results",
+      "shutdown drains in-flight settlement"
+    ],
+    "limits": [
+      "No real paid provider calls",
+      "No production deployment",
+      "No commercial payment activation"
+    ]
+  }
+}

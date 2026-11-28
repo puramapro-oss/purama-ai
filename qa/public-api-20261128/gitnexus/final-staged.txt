@@ -1,0 +1,34 @@
+Changes: 35 files, 322 symbols
+Affected processes: 13
+Risk level: high
+
+Changed symbols:
+  Section API développeur IAO — accès par projet → docs/iao-public-api.md
+  Section État et continuité → docs/iao-public-api.md
+  Section Contrat HTTP → docs/iao-public-api.md
+  Section Autorité des clés et des projets → docs/iao-public-api.md
+  Section Budget, reçus et revenu → docs/iao-public-api.md
+  Section Activation et exploitation → docs/iao-public-api.md
+  Section Preuves et limites → docs/iao-public-api.md
+  Const PREFIX → karta/src/api/public-api-routes.ts
+  Const MAX_BODY_BYTES → karta/src/api/public-api-routes.ts
+  Const MAX_RESPONSE_BYTES → karta/src/api/public-api-routes.ts
+  Const ADMISSION_TIMEOUT_MS → karta/src/api/public-api-routes.ts
+  Const CONSULTATION_TIMEOUT_MS → karta/src/api/public-api-routes.ts
+  Const UUID → karta/src/api/public-api-routes.ts
+  Const ERRORS → karta/src/api/public-api-routes.ts
+  Property IAO_API_INVALID → karta/src/api/public-api-routes.ts
+... and 307 more
+
+Affected execution flows:
+  • AbortSignal → PublicApiError (4 steps) — changed: abortSignal, PublicApiError, sqlError, invalid
+  • HandleRequest → PublicTransportError (3 steps) — changed: PublicTransportError, handleRequest, handlePublicApiRequest
+  • HandleRequest → Authenticate (3 steps) — changed: authenticate, handleRequest, handlePublicApiRequest
+  • HandleRequest → Catalog (3 steps) — changed: catalog, handleRequest, handlePublicApiRequest
+  • HandleRequest → Operation (3 steps) — changed: operation, handleRequest, handlePublicApiRequest
+  • Operation → Record (3 steps) — changed: operation, projectGrant, record
+  • Operation → PublicApiError (3 steps) — changed: operation, PublicApiError, digestKey
+  • AbortSignal → Advance (3 steps) — changed: abortSignal
+  • Operation → From (6 steps) — changed: operation, digestKey
+  • Operation → From (6 steps) — changed: operation, digestKey
+... and 3 more

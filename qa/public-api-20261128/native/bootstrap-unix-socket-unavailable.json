@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-11-28T00:10:02.785Z",
+  "finishedAt": "2026-11-28T00:10:03.419Z",
+  "command": "node --test --test-reporter=tap test/publicApi.native.mjs",
+  "bootstrapPackage": "embedded-postgres@18.7.0-beta.19",
+  "source": "https://github.com/leinelissen/embedded-postgres",
+  "exitCode": 1,
+  "sourceSha256": {
+    "karta/migrations/039_iao_public_api.sql": "a812c68df93d44a8e19bed19aee21d8039da2401dca6e72f6c260aad3c8536c2",
+    "karta/test/publicApi.native.mjs": "b0026d0199dca0ade2b331bbdb84cb19ac377a6bf0e02d632f6ee858d12fcbaf"
+  },
+  "nodeVersion": "v24.22.3",
+  "database": "PostgreSQL 18.7 binary started, but socket creation failed before tests could run",
+  "externalService": false,
+  "scope": "SQL authority and real lock contention; no model provider calls or production deployment",
+  "clusterStopped": false,
+  "credentialsPersisted": false,
+  "qualificationStatus": "BLOCKED_BOOTSTRAP",
+  "correction": "The first bootstrap used a Unix socket unavailable on this filesystem. The successful run uses TCP loopback only; original failure log is retained."
+}

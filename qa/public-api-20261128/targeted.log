@@ -1,0 +1,13 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 test
+> vitest run test/publicApiIntegration.test.ts test/publicApiSql.test.ts test/publicApiTransport.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/2f20c0e02406/purama-ai/karta
+
+
+ Test Files  3 passed (3)
+      Tests  88 passed (88)
+   Start at  01:11:08
+   Duration  5.07s (tests 92%, transform 5%, import 2%)

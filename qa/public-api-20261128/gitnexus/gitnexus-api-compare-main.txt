@@ -1,0 +1,36 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 3585 files, 28331 symbols
+Affected processes: 738
+Risk level: critical
+
+Changed symbols:
+  Section Vérification du livrable final → AGENTS.md
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 28316 more
+
+Affected execution flows:
+  • AbortSignal → PublicApiError (4 steps) — changed: sqlError, invalid, abortSignal, PublicApiError
+  • HandleRequest → PublicTransportError (3 steps) — changed: handleRequest, handlePublicApiRequest, PublicTransportError
+  • HandleRequest → Authenticate (3 steps) — changed: handleRequest, handlePublicApiRequest, authenticate
+  • HandleRequest → Catalog (3 steps) — changed: handleRequest, handlePublicApiRequest, catalog
+  • HandleRequest → Operation (3 steps) — changed: handleRequest, handlePublicApiRequest, operation
+  • Operation → Record (3 steps) — changed: projectGrant, record, operation
+  • Operation → PublicApiError (3 steps) — changed: digestKey, operation, PublicApiError
+  • AbortSignal → Advance (3 steps) — changed: abortSignal, rpc, advance
+  • Operation → From (6 steps) — changed: digestKey, operation, execute, from, from, map
+  • Operation → From (6 steps) — changed: digestKey, operation, from, execute, from, map
+... and 728 more
