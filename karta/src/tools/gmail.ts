@@ -1,7 +1,7 @@
 import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
-import type { ToolDefinition } from "../engine/types.js";
+import type { GmailInboxBinding, ToolDefinition } from "../engine/types.js";
 import { assertToolResult } from "../engine/tool-result.js";
 import { extractGmailPlainText, gmailHeader, readBoundedGmailJson, type GmailBodyContent } from "./gmail-message.js";
 import { createProviderDeadline, requestProviderJson, type ProviderDeadline } from "./provider-http.js";
@@ -184,153 +184,193 @@ export interface GmailMessageSummary extends GmailBodyContent {
   replyToMessageId: string;
 }
 
-/**
- * Liste les messages arrivés depuis la dernière synchronisation.
- * Gmail "after:" attend une date/timestamp, jamais un message id. Un léger chevauchement
- * évite de perdre un message situé exactement à la frontière temporelle.
- */
-async function collectInboxMessages(accessToken: string, lastSyncAt: string | null, excludedEmails: Set<string>, excludedDomains: Set<string>): Promise<GmailMessageSummary[]> {
+export interface GmailInboxRef { id: string; threadId: string }
+
+export class GmailInboxPageExpired extends Error {}
+
+/** A stored page token must be used with the same date window and query. */
+export async function gmailInboxPage(accessToken: string, lastSyncAt: string | null, pageToken: string | null, scanStartedAt?: string) {
   let query = "is:unread";
   if (lastSyncAt) {
-    const millis = new Date(lastSyncAt).getTime();
-    if (Number.isFinite(millis)) {
-      query = `after:${Math.max(0, Math.floor((millis - SYNC_OVERLAP_MS) / 1000))}`;
-    }
+    const millis = Date.parse(lastSyncAt);
+    if (!Number.isFinite(millis)) throw new Error("Curseur Gmail invalide");
+    query = `after:${Math.max(0, Math.floor((millis - SYNC_OVERLAP_MS) / 1000))}`;
   }
-
+  if (scanStartedAt) {
+    const until = Date.parse(scanStartedAt);
+    if (!Number.isFinite(until)) throw new Error("Fenêtre Gmail invalide");
+    // Keep self-addressed inbox messages, exclude outgoing messages from our own agent.
+    query += ` before:${Math.ceil(until / 1000)} {-in:sent in:inbox} -in:drafts -in:chats`;
+  }
+  const search = new URLSearchParams({ maxResults: String(GMAIL_LIST_LIMIT), q: query });
+  if (pageToken) search.set("pageToken", pageToken);
+  const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?${search}`, {
+    headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000),
+  });
+  if (pageToken && response.status === 400) throw new GmailInboxPageExpired("Page Gmail périmée");
+  if (!response.ok) throw new Error(`Gmail list échoué (${response.status})`);
+  const list = await readBoundedGmailJson(response) as { messages?: GmailInboxRef[]; nextPageToken?: unknown };
+  if (!list || typeof list !== "object" || Array.isArray(list)) throw new Error("Réponse Gmail list invalide");
+  const raw = list.messages === undefined ? [] : list.messages;
+  if (!Array.isArray(raw) || raw.length > GMAIL_LIST_LIMIT) throw new Error("Réponse Gmail list invalide");
   const seen = new Map<string, string>();
-  const seenPages = new Set<string>();
-  const messages: Array<{ id: string; threadId: string }> = [];
-  let pageToken: string | undefined;
-  for (let page = 0; page < GMAIL_MAX_LIST_PAGES; page++) {
-    const pageParam = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
-    const listResponse = await fetch(
-      `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${GMAIL_LIST_LIMIT}&q=${encodeURIComponent(query)}${pageParam}`,
-      { headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000) }
-    );
-    if (!listResponse.ok) throw new Error(`Gmail list échoué (${listResponse.status})`);
-    const list = (await readBoundedGmailJson(listResponse)) as { messages?: Array<{ id?: unknown; threadId?: unknown }>; nextPageToken?: unknown };
-    if (!list || typeof list !== "object" || Array.isArray(list)) throw new Error("Réponse Gmail list invalide");
-    const rawMessages = list.messages === undefined ? [] : list.messages;
-    if (!Array.isArray(rawMessages) || rawMessages.length > GMAIL_LIST_LIMIT) throw new Error("Réponse Gmail list invalide");
-    for (const m of rawMessages) {
-      assertGmailId(m?.id);
-      assertGmailId(m.threadId);
-      const previousThread = seen.get(m.id);
-      if (previousThread && previousThread !== m.threadId) throw new Error("Fil Gmail incohérent entre les pages");
-      if (!previousThread) {
-        seen.set(m.id, m.threadId);
-        messages.push({ id: m.id, threadId: m.threadId });
-      }
-    }
-    if (list.nextPageToken === undefined || list.nextPageToken === "") break;
-    if (typeof list.nextPageToken !== "string" || list.nextPageToken.length > 4096 || seenPages.has(list.nextPageToken)) throw new Error("Pagination Gmail invalide ou répétée : synchronisation non avancée");
-    if (page === GMAIL_MAX_LIST_PAGES - 1) throw new Error("Pagination Gmail incomplète après cinq pages : synchronisation non avancée");
-    seenPages.add(list.nextPageToken);
-    pageToken = list.nextPageToken;
+  for (const m of raw) {
+    assertGmailId(m?.id);
+    assertGmailId(m.threadId);
+    if (seen.has(m.id) && seen.get(m.id) !== m.threadId) throw new Error("Fil Gmail incohérent entre les pages");
+    seen.set(m.id, m.threadId);
   }
-
-  const hasExclusions = excludedEmails.size > 0 || excludedDomains.size > 0;
-  const summaries: GmailMessageSummary[] = [];
-  let contextBytes = 0;
-  for (const m of messages) {
-    const baseUrl = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}`;
-    const getMessage = async (query: string) => {
-      const response = await fetch(`${baseUrl}?${query}`, {
-        headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000),
-      });
-      if (!response.ok) throw new Error(`Lecture Gmail indisponible (${response.status})`);
-      const detail = await readBoundedGmailJson(response) as { id?: unknown; threadId?: unknown; payload?: unknown; snippet?: unknown };
-      if (detail?.id !== m.id || detail.threadId !== m.threadId) throw new Error("Identité du message Gmail incohérente");
-      return detail;
-    };
-    let authorizedSender: string | undefined;
-    if (hasExclusions) {
-      // The fields projection deliberately excludes the body, subject and snippet.
-      const metadata = await getMessage("format=metadata&metadataHeaders=From&fields=id,threadId,payload(headers)");
-      try { authorizedSender = singleMailbox(gmailHeader(metadata.payload, "From") ?? ""); }
-      catch { continue; } // Ambiguous sender: keep the message private.
-      if (excludedEmails.has(authorizedSender) || excludedDomains.has(authorizedSender.split("@")[1])) continue;
-    }
-    const detail = await getMessage("format=full");
-    const from = gmailHeader(detail.payload, "From");
-    if (hasExclusions && singleMailbox(from ?? "") !== authorizedSender) throw new Error("Expéditeur Gmail modifié pendant la collecte");
-    const content = extractGmailPlainText(detail.payload);
-    const summary = {
-      id: m.id,
-      threadId: m.threadId,
-      from: from ?? "inconnu",
-      subject: gmailHeader(detail.payload, "Subject") ?? "(sans sujet)",
-      snippet: typeof detail.snippet === "string" ? detail.snippet : "",
-      replyToMessageId: m.id,
-      ...content,
-    };
-    // Include headers and previews as well as the inline body in the model budget.
-    contextBytes += Buffer.byteLength(JSON.stringify(summary), "utf8");
-    if (contextBytes > 256 * 1024) throw new Error("Lot Gmail trop volumineux : synchronisation non avancée");
-    summaries.push(summary);
+  let next: string | null = null;
+  if (list.nextPageToken !== undefined && list.nextPageToken !== "") {
+    if (typeof list.nextPageToken !== "string" || list.nextPageToken.length > 4096 || list.nextPageToken === pageToken) throw new Error("Pagination Gmail invalide ou répétée");
+    next = list.nextPageToken;
   }
+  return { messages: Array.from(seen, ([id, threadId]) => ({ id, threadId })), next };
+}
 
-  return summaries;
+class GmailMessageGone extends Error {}
+
+async function getInboxMessage(accessToken: string, ref: GmailInboxRef, query: string) {
+  const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(ref.id)}?${query}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` }, redirect: "error", credentials: "omit", signal: AbortSignal.timeout(20_000),
+  });
+  if (response.status === 404) throw new GmailMessageGone();
+  if (!response.ok) throw new Error(`Lecture Gmail indisponible (${response.status})`);
+  const detail = await readBoundedGmailJson(response) as { id?: unknown; threadId?: unknown; payload?: unknown; snippet?: unknown };
+  if (detail?.id !== ref.id || detail.threadId !== ref.threadId) throw new Error("Identité du message Gmail incohérente");
+  return detail;
 }
 
 async function readInboxConfig(userId: string) {
   const { data, error } = await supabase.from("email_agent_config")
-    .select("id,updated_at,is_active,gmail_email,gmail_access_token,last_sync_at,tone,signature,excluded_emails,excluded_domains")
+    .select("id,updated_at,is_active,gmail_email,gmail_access_token,last_sync_at,tone,signature,excluded_emails,excluded_domains,gmail_inbox_policy_version,gmail_inbox_page_token,gmail_inbox_scan_started_at")
     .eq("user_id", userId).maybeSingle();
   if (error) throw new Error("Configuration Gmail illisible");
   return data;
 }
 
 function exclusionSet(value: unknown): Set<string> {
-  if (value == null) return new Set(); // Historical nullable columns.
+  if (value == null) return new Set();
   if (!Array.isArray(value) || value.some(entry => typeof entry !== "string")) throw new Error("Configuration des exclusions Gmail invalide");
   return new Set(value.map((entry: string) => entry.trim().toLowerCase()).filter(Boolean));
 }
 
-async function readInbox(userId: string, lastSyncAt?: string | null) {
+export async function getGmailInboxConnection(userId: string) {
   let config = await readInboxConfig(userId);
-  if (!config?.is_active) return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
+  if (!config?.is_active) return null;
   const accessToken = await getGmailAccessToken(userId);
   if (!accessToken) throw new Error("Gmail OAuth absent : collecte impossible, synchronisation non avancée");
-
-  // Refresh may legitimately update this row. Rebind the refreshed token and
-  // user policy to the same active account before inspecting any message.
   if (!config.gmail_access_token || decryptGmailToken(config.gmail_access_token) !== accessToken) {
     const fresh = await readInboxConfig(userId);
     if (!fresh?.is_active || fresh.id !== config.id || fresh.gmail_email !== config.gmail_email
-      || !fresh.gmail_access_token || decryptGmailToken(fresh.gmail_access_token) !== accessToken) {
-      throw new Error("Connexion Gmail modifiée avant la collecte");
-    }
+      || !fresh.gmail_access_token || decryptGmailToken(fresh.gmail_access_token) !== accessToken) throw new Error("Connexion Gmail modifiée avant la collecte");
     config = fresh;
   }
   if (!config.id || !config.updated_at) throw new Error("Version de la configuration Gmail indisponible");
-  const syncStartedAt = new Date().toISOString();
-  const newEmails = await collectInboxMessages(accessToken, lastSyncAt === undefined ? config.last_sync_at : lastSyncAt,
-    exclusionSet(config.excluded_emails), exclusionSet(config.excluded_domains));
-
-  const configTable = supabase.from("email_agent_config");
-  const query = lastSyncAt === undefined
-    ? configTable.update({ last_sync_at: syncStartedAt, ...(newEmails.length ? { last_email_id: newEmails[0].id } : {}) }).select("id")
-    : configTable.select("id");
-  const sameConfig = query.eq("user_id", userId).eq("id", config.id)
-    .eq("is_active", true).eq("updated_at", config.updated_at);
-  const sameCursor = config.last_sync_at == null
-    ? sameConfig.is("last_sync_at", null)
-    : sameConfig.eq("last_sync_at", config.last_sync_at);
-  const { data: matched, error } = await sameCursor.maybeSingle();
-  if (error || matched?.id !== config.id) throw new Error("Configuration ou curseur Gmail modifié : collecte écartée");
-  return { tone: config.tone, signature: config.signature, newEmails };
+  return {
+    id: config.id as string, updatedAt: config.updated_at as string, mailbox: config.gmail_email as string,
+    policyVersion: config.gmail_inbox_policy_version as string, lastSyncAt: config.last_sync_at as string | null,
+    pageToken: config.gmail_inbox_page_token as string | null, scanStartedAt: config.gmail_inbox_scan_started_at as string | null,
+    tone: config.tone, signature: config.signature, accessToken,
+    excludedEmails: exclusionSet(config.excluded_emails), excludedDomains: exclusionSet(config.excluded_domains),
+  };
 }
 
-/** Explicit list reads enforce the same mailbox policy without advancing the scheduler cursor. */
+type InboxConnection = NonNullable<Awaited<ReturnType<typeof getGmailInboxConnection>>>;
+
+/** Only the sender field may be read before applying active exclusions. */
+export async function readGmailInboxMessage(conn: InboxConnection, ref: GmailInboxRef): Promise<GmailMessageSummary | null> {
+  try {
+    let authorizedSender: string | undefined;
+    if (conn.excludedEmails.size || conn.excludedDomains.size) {
+      const metadata = await getInboxMessage(conn.accessToken, ref, "format=metadata&metadataHeaders=From&fields=id,threadId,payload(headers)");
+      try { authorizedSender = singleMailbox(gmailHeader(metadata.payload, "From") ?? ""); }
+      catch { return null; }
+      if (conn.excludedEmails.has(authorizedSender) || conn.excludedDomains.has(authorizedSender.split("@")[1])) return null;
+    }
+    const detail = await getInboxMessage(conn.accessToken, ref, "format=full");
+    const from = gmailHeader(detail.payload, "From");
+    if (authorizedSender !== undefined && singleMailbox(from ?? "") !== authorizedSender) throw new Error("Expéditeur Gmail modifié pendant la collecte");
+    const summary = {
+      ...ref, from: from ?? "inconnu", subject: gmailHeader(detail.payload, "Subject") ?? "(sans sujet)",
+      snippet: typeof detail.snippet === "string" ? detail.snippet : "", replyToMessageId: ref.id, ...extractGmailPlainText(detail.payload),
+    };
+    if (Buffer.byteLength(JSON.stringify(summary), "utf8") > 256 * 1024) throw new Error("Lot Gmail trop volumineux");
+    return summary;
+  } catch (error) {
+    if (error instanceof GmailMessageGone) return null;
+    throw error;
+  }
+}
+
+export async function assertGmailInboxPolicy(userId: string, mailbox: string, policy: string) {
+  const { data, error } = await supabase.from("email_agent_config").select("id")
+    .eq("user_id", userId).eq("gmail_email", mailbox).eq("gmail_inbox_policy_version", policy).eq("is_active", true).maybeSingle();
+  if (error || !data?.id) throw new Error("Configuration Gmail modifiée : collecte écartée");
+}
+
+// This compatibility entry point is preview-only. Only the capture RPC advances a scheduler cursor.
+async function readInbox(userId: string, lastSyncAt?: string | null) {
+  const conn = await getGmailInboxConnection(userId);
+  if (!conn) return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
+  const seen = new Map<string, string>();
+  const seenPages = new Set<string>();
+  let pageToken: string | null = null;
+  for (let i = 0; i < GMAIL_MAX_LIST_PAGES; i++) {
+    const page = await gmailInboxPage(conn.accessToken, lastSyncAt === undefined ? conn.lastSyncAt : lastSyncAt, pageToken);
+    for (const { id, threadId } of page.messages) {
+      if (seen.has(id) && seen.get(id) !== threadId) throw new Error("Fil Gmail incohérent entre les pages");
+      seen.set(id, threadId);
+    }
+    if (page.next === null) break;
+    if (seenPages.has(page.next) || i === GMAIL_MAX_LIST_PAGES - 1) throw new Error("Pagination Gmail incomplète ou répétée");
+    seenPages.add(page.next);
+    pageToken = page.next;
+  }
+  const newEmails: GmailMessageSummary[] = [];
+  let bytes = 0;
+  for (const [id, threadId] of seen) {
+    const message = await readGmailInboxMessage(conn, { id, threadId });
+    if (!message) continue;
+    bytes += Buffer.byteLength(JSON.stringify(message), "utf8");
+    if (bytes > 256 * 1024) throw new Error("Lot Gmail trop volumineux : synchronisation non avancée");
+    newEmails.push(message);
+  }
+  let current = supabase.from("email_agent_config").select("id").eq("user_id", userId).eq("id", conn.id)
+    .eq("is_active", true).eq("updated_at", conn.updatedAt);
+  current = conn.lastSyncAt == null ? current.is("last_sync_at", null) : current.eq("last_sync_at", conn.lastSyncAt);
+  const { data, error } = await current.maybeSingle();
+  if (error || data?.id !== conn.id) throw new Error("Configuration ou curseur Gmail modifié : collecte écartée");
+  return { tone: conn.tone, signature: conn.signature, newEmails };
+}
+
 export async function listNewGmailMessages(userId: string, lastSyncAt: string | null): Promise<GmailMessageSummary[]> {
   return (await readInbox(userId, lastSyncAt)).newEmails;
 }
 
-/** Shared by Email and Répondeur Intelligent. Only authorized messages enter the model context. */
 export async function buildGmailInboxContext(userId: string): Promise<Record<string, unknown>> {
   return readInbox(userId);
+}
+
+async function checkBoundGmailAction(
+  binding: GmailInboxBinding | undefined, userId: string, accessToken: string,
+  params: GmailReplyInput & { to: string }, deadline: ProviderDeadline,
+) {
+  if (!binding) return;
+  if (params.threadId !== binding.threadId || params.replyToMessageId !== binding.messageId) {
+    throw new Error("Réponse hors du message Gmail autorisé");
+  }
+  const { data, error } = await deadline.wait(() => supabase.from("email_agent_config")
+    .select("gmail_email,gmail_access_token,excluded_emails,excluded_domains")
+    .eq("user_id", userId).eq("is_active", true)
+    .eq("gmail_inbox_policy_version", binding.policyVersion).abortSignal(deadline.signal).maybeSingle());
+  const recipient = singleMailbox(params.to);
+  if (error || typeof data?.gmail_email !== "string" || data.gmail_email.trim().toLowerCase() !== binding.mailbox
+    || !data.gmail_access_token || decryptGmailToken(data.gmail_access_token) !== accessToken
+    || exclusionSet(data.excluded_emails).has(recipient) || exclusionSet(data.excluded_domains).has(recipient.split("@")[1])) {
+    throw new Error("Connexion ou autorisation Gmail modifiée");
+  }
 }
 
 export const gmailCreateDraftTool: ToolDefinition<
@@ -361,9 +401,11 @@ export const gmailCreateDraftTool: ToolDefinition<
     try {
       const accessToken = await getGmailAccessToken(ctx.userId, deadline);
       if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
+      await checkBoundGmailAction(ctx.gmailInboxBinding, ctx.userId, accessToken, params, deadline);
       const reply = await gmailReplyHeaders(params, accessToken, deadline);
       const raw = buildRawEmail(params.to, params.subject, params.body, reply);
       const body = JSON.stringify({ message: { threadId: params.threadId, raw } });
+      await checkBoundGmailAction(ctx.gmailInboxBinding, ctx.userId, accessToken, params, deadline);
       deadline.check();
       postStarted = true;
       const created = await requestProviderJson("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
@@ -405,7 +447,7 @@ function assertReplyInput(params: GmailReplyInput, replyRequired = false): void 
   }
 }
 
-function singleMailbox(value: string): string {
+export function singleMailbox(value: string): string {
   const match = /^(?:[^<>]*<([^<>]+)>|([^<>]+))$/.exec(value);
   if (match?.[1] && value.slice(0, value.indexOf("<")).includes("@")) throw new Error("Destinataire parent Gmail ambigu");
   const address = (match?.[1] ?? match?.[2] ?? "").trim();
@@ -503,6 +545,7 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     try {
       const accessToken = await getGmailAccessToken(ctx.userId, deadline);
       if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
+      await checkBoundGmailAction(ctx.gmailInboxBinding, ctx.userId, accessToken, params, deadline);
       const reply = await gmailReplyHeaders(params, accessToken, deadline);
       await assertDirectGmailSendAllowed(ctx.userId, params, deadline);
       // Keep a possibly consumed reservation after an uncertain result. Refunding
@@ -513,6 +556,7 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
       // Classification may change while reserving the quota. A general KARTA
       // approval cannot authorize a newly discovered partner conversation.
       await assertDirectGmailSendAllowed(ctx.userId, params, deadline);
+      await checkBoundGmailAction(ctx.gmailInboxBinding, ctx.userId, accessToken, params, deadline);
       deadline.check();
       postStarted = true;
       const sent = await requestProviderJson("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {

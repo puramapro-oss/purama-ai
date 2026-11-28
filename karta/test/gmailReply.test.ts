@@ -154,7 +154,7 @@ describe("Gmail complete input and anchored replies", () => {
     expect(gmailSendTool.sensitive).toBe(true);
     expect(gmailCreateDraftTool.sensitive).toBe(false);
   });
-  it("collects two pages, deduplicates IDs and uses the polling start as cursor", async () => {
+  it("previews two pages and deduplicates IDs without updating the durable cursor", async () => {
     vi.useFakeTimers();
     const start = new Date("2026-11-22T00:00:00.000Z"); vi.setSystemTime(start);
     fetchMock.mockImplementation(async (url: string) => {
@@ -169,7 +169,7 @@ describe("Gmail complete input and anchored replies", () => {
     const result = await buildGmailInboxContext("fixture-user");
     expect((result.newEmails as Array<{ id: string }>).map(x => x.id)).toEqual(["parent1", "parent2"]);
     expect(fetchMock).toHaveBeenCalledTimes(4);
-    expect(configUpdates).toEqual([{ last_sync_at: start.toISOString(), last_email_id: "parent1" }]);
+    expect(configUpdates).toEqual([]);
   });
   it.each(["repeated", "limit"] as const)("does not advance the cursor on %s pagination", async mode => {
     let page = 0;
@@ -243,7 +243,7 @@ describe("Gmail complete input and anchored replies", () => {
     mailbox.refreshedToken = "fixture-renewed";
     const context = await buildGmailInboxContext("fixture-user");
     expect(context.newEmails).toHaveLength(1);
-    expect(configUpdates).toHaveLength(1);
+    expect(configUpdates).toHaveLength(0);
     expect(fetchMock.mock.calls.every(([, options]) => options.headers.Authorization === "Bearer fixture-renewed")).toBe(true);
   });
   it("refuses the same provider message ID assigned to different threads across pages", async () => {

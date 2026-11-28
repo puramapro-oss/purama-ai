@@ -104,7 +104,26 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
  */
 export type AnyToolDefinition = ToolDefinition<unknown, unknown>;
 
+export interface GmailInboxBinding {
+  mailbox: string;
+  policyVersion: string;
+  messageId: string;
+  threadId: string;
+}
+
+export interface GmailInboxCycle {
+  context: Record<string, unknown>;
+  hasMessage: boolean;
+  binding?: GmailInboxBinding;
+  beforeInference(): Promise<void>;
+  isCandidate(tool: string, params: Record<string, unknown>): boolean;
+  beforeEffect(tool: string, params: Record<string, unknown>, kind: "execute" | "approval", followups?: string[]): Promise<void>;
+  finish(state: "done" | "release" | "review", receipt?: string): Promise<void>;
+}
+
 export interface ToolExecutionContext {
+  /** Server-owned authorization for the one source message in this cycle. */
+  gmailInboxBinding?: GmailInboxBinding;
   userId: string;
   agentType: AgentType;
   mode: "simulation" | "live";
@@ -118,6 +137,8 @@ export interface ToolCallRecord {
   tool: string;
   /** Durable server-owned marker; approval resolution must not weaken it. */
   tracePolicy?: "metadata_only";
+  /** A still outstanding inbox action class; its parameters must never enter the run journal. */
+  inboxFollowup?: true;
   paramsSummary: string;
   resultSummary: string;
   success: boolean;
@@ -158,6 +179,7 @@ export interface AgentDefinition {
    * A cycle with no pending brief skips inference; simulation only previews.
    */
   pendingBriefKey?: string;
+  prepareInboxCycle?: (userId: string, agentType: "email" | "repondeur-intelligent", runId: string, mode: "simulation" | "live") => Promise<GmailInboxCycle>;
   /** Construit le contexte (mémoire + données réelles) à passer au cerveau Claude. */
   buildContext: (userId: string, trigger: AgentTrigger, prepared?: AgentContextInput) => Promise<Record<string, unknown>>;
   /** Prompt système spécifique à l'agent. */

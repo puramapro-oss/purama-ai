@@ -67,11 +67,14 @@ export function minimizeRunTrace(
   const safeRecords = records.map((record): ToolCallRecord => {
     const known = tools.find(tool => tool.name === record?.tool);
     const outcome = outcomes.includes(record?.outcome) ? record.outcome : undefined;
+    const followup = record.inboxFollowup === true && outcome === "skipped" && record.success === false
+      && !!known && ["gmail_send", "gmail_create_draft", "send_notification"].includes(known.name);
     return {
+      ...(followup ? { inboxFollowup: true as const } : {}),
       tool: known?.name ?? PRIVATE_TRACE.unknownTool,
       tracePolicy: "metadata_only",
       paramsSummary: PRIVATE_TRACE.params,
-      resultSummary: metadataResultSummary(outcome),
+      resultSummary: followup ? "Suite à vérifier" : metadataResultSummary(outcome),
       success: record?.success === true,
       ...(outcome ? { outcome } : {}),
       ...(typeof record?.pendingActionId === "string" ? { pendingActionId: record.pendingActionId } : {}),
@@ -83,11 +86,13 @@ export function minimizeRunTrace(
     record.outcome === outcome || (!record.outcome && !record.pendingActionId &&
       ((outcome === "executed" && record.success) || (outcome === "failed" && !record.success)))
   ).length;
+  const followupCount = safeRecords.filter(record => record.inboxFollowup).length;
   return {
     status: result.status,
     decision: PRIVATE_TRACE.decision,
     toolsUsed: safeRecords,
-    resultSummary: `${count("executed")}/${safeRecords.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)`,
+    resultSummary: `${count("executed")}/${safeRecords.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped") - followupCount} ignorée(s)` +
+      (followupCount ? `, ${followupCount} suite(s) à vérifier` : ""),
     ...(result.errorMessage !== undefined ? { errorMessage: PRIVATE_TRACE.error } : {}),
     mock: result.mock === true,
     ...(typeof result.retryable === "boolean" ? { retryable: result.retryable } : {}),

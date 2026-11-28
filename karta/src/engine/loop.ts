@@ -18,7 +18,7 @@ import { persistPrivateToolResult } from "./private-tool-results.js";
 import { validateProgrammaticToolParams, validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
 import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeToolError, summarizeToolParams, summarizeToolResult } from "./tool-trace.js";
-import type { AgentDecision, AgentDefinition, AgentRunResult, AgentState, AgentTrigger, AnyToolDefinition, ToolCallRecord } from "./types.js";
+import type { GmailInboxCycle, AgentDecision, AgentDefinition, AgentRunResult, AgentState, AgentTrigger, AnyToolDefinition, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
   userId: string, definition: AgentDefinition, trigger: AgentTrigger,
@@ -46,12 +46,34 @@ export async function runAgentCycle(
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = trigger.type === "delegation" || trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = Boolean(definition.prepareInboxCycle) || trigger.type === "delegation" || trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
   let mock = false;
   let effectStarted = false;
+  let inbox: GmailInboxCycle | undefined;
+  let inboxArmed = false;
+  let inboxFollowups: string[] = [];
+  const recordInboxFollowups = () => {
+    if (inboxArmed) for (const tool of inboxFollowups) {
+      toolsUsed.push({ tool, inboxFollowup: true, tracePolicy: "metadata_only", success: false, outcome: "skipped",
+        paramsSummary: PRIVATE_TRACE.params, resultSummary: "Suite à vérifier" });
+    }
+    inboxFollowups = [];
+  };
+  let inboxReceipt: string | undefined;
+  let inboxCloseAttempted = false;
+  const settleInbox = async (status: AgentRunResult["status"]) => {
+    if (!inbox?.hasMessage || inboxCloseAttempted) return;
+    inboxCloseAttempted = true;
+    if (status === "success" || status === "partial" || status === "awaiting_approval") {
+      if (!inboxArmed || inboxReceipt) { await inbox.finish("done", inboxReceipt); return; }
+      await inbox.finish("review");
+      throw new Error("Reçu de traitement du courrier absent");
+    }
+    await inbox.finish(inboxArmed ? "review" : "release");
+  };
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
   let briefArmed = false;
@@ -63,6 +85,7 @@ export async function runAgentCycle(
   let closeProgrammaticReads = () => {};
   const finishOutcome = async (outcome: AgentRunResult): Promise<AgentRunResult> => {
     closeProgrammaticReads();
+    await settleInbox(outcome.status);
     completionAttempted = true;
     const storedOutcome = modelUsage ? { ...outcome, modelUsage } : outcome;
     try {
@@ -104,7 +127,18 @@ export async function runAgentCycle(
     )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey,
       ...(expectedBriefId ? { expectedBriefId } : {}) });
     const noBrief = definition.pendingBriefKey !== undefined && brief === null;
-    const baseContext = noBrief ? {} : brief
+    if (definition.prepareInboxCycle) {
+      if (definition.type !== "email" && definition.type !== "repondeur-intelligent") throw new Error("Agent de courrier invalide");
+      // The original one-message cycle allowed at most one effect. Its resolved
+      // approval can have no remaining action, and cannot claim a second mail.
+      if (!continuation) inbox = await definition.prepareInboxCycle(userId, definition.type, run.runId,
+        mode === "simulation" || config.mockClaude !== false ? "simulation" : "live");
+      if (!inbox?.hasMessage) return await finishOutcome(minimizeRunTrace({
+        status: "skipped", decision: "Aucun courrier à traiter", toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false, retryable: false,
+      }, definition.tools, true));
+      if (!inbox.binding) throw new Error("Liaison au courrier absente");
+    }
+    const baseContext = inbox ? inbox.context : noBrief ? {} : brief
       ? await definition.buildContext(userId, trigger, {
         pendingBrief: brief.brief,
         // Use the server's selection setting without instantiating a model
@@ -348,6 +382,18 @@ export async function runAgentCycle(
         }
       }
       const needsApproval = tool.requiresExplicitApproval || options.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+      if (inbox) {
+        // The service validates the recipient and parent, then arms the unique
+        // claim durably. Losing this response can never authorize a replay.
+        await inbox.beforeEffect(tool.name, call.params, needsApproval ? "approval" : "execute", inboxFollowups);
+        inboxArmed = true;
+        effectStarted = true;
+        const current = await loadAgentState(userId, definition.type);
+        if (await isGlobalKillSwitchActive(true) || !isRunnable(current).ok || current.simulationMode
+          || (!needsApproval && requiresHumanApproval(current, tool.sensitive))) {
+          return { kind: "cancelled", reason: "Action annulée après réservation du courrier", includeCurrent: true };
+        }
+      }
       if (needsApproval) {
         if (options.read) throw readError();
         // Native PTC returns no deferred direct calls. Keep alternate clients
@@ -360,6 +406,7 @@ export async function runAgentCycle(
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
           trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
+        if (inbox) inboxReceipt = inboxEffectReceipt("approval", pendingActionId);
         record("En attente de validation humaine", "pending", pendingActionId);
         return { kind: "pending", reason: "Différée : le cycle sera recalculé après résolution de l'approbation" };
       }
@@ -376,6 +423,7 @@ export async function runAgentCycle(
         effectStarted = true;
         if (options.read) options.read.invocation.started = true;
         const result = await handler.call(tool, call.params, {
+          ...(inbox?.binding ? { gmailInboxBinding: inbox.binding } : {}),
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${ordinal}`,
           trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
@@ -388,6 +436,13 @@ export async function runAgentCycle(
         active();
         if (delivery.status === "unavailable") throw new Error("Résultat privé indisponible après exécution de l’outil");
         assertToolResult(result);
+        if (inbox) {
+          const data = result as Record<string, unknown> | null;
+          if (tool.name === "gmail_send") inboxReceipt = inboxEffectReceipt("message", data?.messageId);
+          else if (tool.name === "gmail_create_draft") inboxReceipt = inboxEffectReceipt("draft", data?.draftId);
+          else if (tool.name === "send_notification") inboxReceipt = inboxEffectReceipt("notification", data?.notificationId);
+          else throw new Error("Action hors du périmètre courrier");
+        }
         if (options.read) {
           await beforeReadRequest(options.read.signal);
           active();
@@ -445,6 +500,7 @@ export async function runAgentCycle(
     } : undefined;
     let decision: AgentDecision;
     try {
+      if (inbox) await inbox.beforeInference();
       decision = noBrief ? {
         summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
       } : await client!.decide({
@@ -528,6 +584,27 @@ export async function runAgentCycle(
     decisionText = privateTrace ? PRIVATE_TRACE.decision : decision.summary;
     mock = decision.mock;
     const simulation = mode === "simulation" || mock;
+    if (inbox) {
+      if (!decision.summary?.trim()) throw new Error("Décision courrier absente");
+      // Preserve the model's priority order without allowing a wrong parent
+      // or a malformed first proposal to starve the next authorized action.
+      const admissible: Call[] = [];
+      for (const call of decision.toolCalls) {
+        const tool = readTools.get(call.tool);
+        let allowed = false;
+        if (tool) {
+          try {
+            validateToolParams(tool, call.params);
+            allowed = inbox.isCandidate(call.tool, call.params);
+          } catch { /* Invalid parameters never enter the follow-up list. */ }
+        }
+        if (allowed) admissible.push(call);
+        else toolsUsed.push(traceRecord(call, "Proposition hors du courrier autorisé", "skipped"));
+      }
+      if (decision.toolCalls.length && !admissible.length) throw new Error("Aucune action autorisée pour ce courrier");
+      inboxFollowups = [...new Set(admissible.slice(1).map(call => call.tool))];
+      decision = { ...decision, toolCalls: structuredClone(admissible.slice(0, 1)) };
+    }
     let cancelled = false;
     let failed = false;
     for (let index = 0; index < decision.toolCalls.length; index++) {
@@ -542,11 +619,13 @@ export async function runAgentCycle(
       }
       break;
     }
+    const hasInboxFollowups = inboxArmed && inboxFollowups.length > 0;
+    recordInboxFollowups();
     const pending = toolsUsed.some(t => t.outcome === "pending");
     // A live brief with no proposed action is still waiting for treatment.
     // Do not label the user's mission successful merely because inference ran.
     const unhandledBrief = Boolean(brief) && !simulation && decision.toolCalls.length === 0 && successfulReads === 0 && !programmaticReportStored;
-    const status: AgentRunResult["status"] = noBrief || unhandledBrief ? "skipped" : failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
+    const status: AgentRunResult["status"] = noBrief || unhandledBrief ? "skipped" : failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : hasInboxFollowups ? "partial" : "success";
     const outcome: AgentRunResult = minimizeRunTrace({
       status, decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed), mock,
       retryable: false,
@@ -561,6 +640,7 @@ export async function runAgentCycle(
       console.error("[loop] suivi secondaire indisponible ; résultat final conservé");
       return finalizedOutcome;
     }
+    recordInboxFollowups();
     let outcome: AgentRunResult = minimizeRunTrace({
       status: "error", decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed),
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
@@ -572,6 +652,10 @@ export async function runAgentCycle(
     }, definition.tools, privateTrace);
     // This fixed server-owned explanation is safe even for private continuations.
     if (error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) outcome = { ...outcome, errorMessage: error.message };
+    if (inbox?.hasMessage) {
+      outcome.retryable = false;
+      await settleInbox("error").catch(() => { /* A lease recovers unarmed work; armed work requires review. */ });
+    }
     if (!completionAttempted) {
       await run.finish(modelUsage ? { ...outcome, modelUsage } : outcome).catch(() => {
         // A durable brief can only become available in the confirmed closing
@@ -585,6 +669,11 @@ export async function runAgentCycle(
     await recordRunOutcome(userId, definition.type, "error", cycleStartedAt).catch(() => undefined);
     return outcome;
   }
+}
+
+function inboxEffectReceipt(kind: "approval" | "notification" | "message" | "draft", id: unknown): string {
+  if (typeof id !== "string" || !/^[A-Za-z0-9_-]{1,256}$(?![\s\S])/.test(id)) throw new Error("Reçu du courrier absent ou invalide");
+  return `${kind}:${id}`;
 }
 
 function requestedBriefId(trigger: AgentTrigger): string | undefined {
