@@ -336,7 +336,7 @@ test('retains the primary command failure when the final evidence write also fai
 
 // Exercise main's real try/finally ordering with an entirely synthetic filesystem
 // and process boundary. No simulator, package installation or native code is run.
-function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, helpOnStderr = false } = {}) {
+function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, helpOnStderr = false, launchSucceeds = false, runtimeReceipt = receipt() } = {}) {
   const script = path.resolve(__dirname, '../../scripts/qualify-digest-ios.cjs');
   const mobile = path.resolve(path.dirname(script), '..');
   const evidence = path.join(mobile, 'qa/watch-native/ios-digest');
@@ -347,26 +347,30 @@ function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, h
   const bundle = Buffer.concat([Buffer.from('c61fbc03c103191f', 'hex'), Buffer.from('synthetic bytecode')]);
   const container = '/Users/runner/Library/Developer/CoreSimulator/Devices/' + runId + '/data/Containers';
   let deleted = false;
+  let launched = false;
   let fd = 10;
   const syntheticFs = {
     ...fs,
     mkdirSync() {},
     realpathSync: filename => filename === evidence ? diagnosticDirectory : filename,
-    readFileSync: filename => filename.endsWith('app.json')
-      ? JSON.stringify({ expo: { ios: { bundleIdentifier: 'dev.purama.purama-ai' }, scheme: 'purama-ai' } }) : delegate,
+    readFileSync: filename => typeof filename === 'number' ? handles.get(filename).bytes
+      : filename.endsWith('app.json')
+        ? JSON.stringify({ expo: { ios: { bundleIdentifier: 'dev.purama.purama-ai' }, scheme: 'purama-ai' } }) : delegate,
     writeFileSync(filename, value) {
       if (sourceWriteFails && filename.endsWith('generated-AppDelegate.swift.txt')) throw undefined;
       writes.set(filename, value);
     },
     readdirSync: directory => [{ name: directory.endsWith('/ios') ? 'PuramaAI' : 'PuramaAI.app', isDirectory: () => true }],
-    existsSync: filename => filename.endsWith('AppDelegate.swift'),
+    existsSync: filename => filename.endsWith('AppDelegate.swift') || (launched && filename.endsWith(contract.receiptFile)),
+    lstatSync: () => ({ isFile: () => true }),
     statSync: () => ({ isFile: () => true, size: bundle.length }),
     openSync(filename) {
-      handles.set(++fd, { bytes: filename.endsWith('main.jsbundle') ? bundle
+      handles.set(++fd, { bytes: filename.endsWith(contract.receiptFile) ? Buffer.from(JSON.stringify(runtimeReceipt))
+        : filename.endsWith('main.jsbundle') ? bundle
         : Buffer.from(filename.endsWith('AppDelegate.swift') ? delegate : 'synthetic executable'), position: 0 });
       return fd;
     },
-    fstatSync: () => ({ isFile: () => true }),
+    fstatSync: handle => ({ isFile: () => true, size: handles.get(handle).bytes.length }),
     readSync(handle, target, offset, length, position) {
       const file = handles.get(handle);
       const start = position ?? file.position;
@@ -395,8 +399,12 @@ function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, h
     }
     if (args[1] === 'create') return ok(runId);
     if (args[1] === 'get_app_container') return ok(container + (args[4] === 'app' ? '/Bundle/PuramaAI.app' : '/Data/owned'));
-    if (args[1] === 'launch') return ok('dev.purama.purama-ai: 12345');
-    if (args[1] === 'openurl') return { status: 1, stdout: '', stderr: 'synthetic primary failure' };
+    if (args[1] === 'launch') {
+      if (!launchSucceeds) return { status: 1, stdout: '', stderr: 'synthetic primary failure' };
+      launched = true;
+      return ok('dev.purama.purama-ai: 12345');
+    }
+    if (args[1] === 'openurl') throw new Error('External URL confirmation must not participate in digest qualification');
     if (args[1] === 'io') throw undefined;
     if (args[1] === 'spawn') return { status: null, stdout: '', stderr: '', error: { code: 'ETIMEDOUT' }, signal: 'SIGTERM' };
     if (args[1] === 'delete') deleted = true;
@@ -408,6 +416,7 @@ function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, h
     require(name) {
       if (name === '../lib/iao-digest-qualification-contract.json') return contract;
       if (name === 'node:fs') return syntheticFs;
+      if (name === 'node:crypto') return { ...crypto, randomUUID: () => runId };
       if (name === 'node:child_process') return { spawnSync };
       if (name === 'node:http') return { get: () => ({ on(event, handler) { if (event === 'error') handler({ code: 'ECONNREFUSED' }); } }) };
       return require(name);
@@ -419,9 +428,9 @@ function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, h
 
 test('main preserves the launch-path failure and cleans up after both diagnostic collectors fail', async () => {
   const scenario = diagnosticMainScenario();
-  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  await assert.rejects(scenario.run(), { code: 'command-failed-simulator-launch' });
   const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
-  assert.equal(report.errorCode, 'command-failed-qualification-deeplink');
+  assert.equal(report.errorCode, 'command-failed-simulator-launch');
   assert.equal(report.failureDiagnostics.status, 'FAIL');
   assert.deepEqual(report.failureDiagnostics.errors, ['failure-screenshot-unavailable', 'failure-app-log-unavailable']);
   assert.equal(report.cleanup.status, 'PASS');
@@ -449,7 +458,7 @@ test('unsupported launch redirection is refused before creating or launching a s
 
 test('main accepts launch help written to stderr by simctl', async () => {
   const scenario = diagnosticMainScenario({ helpOnStderr: true });
-  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  await assert.rejects(scenario.run(), { code: 'command-failed-simulator-launch' });
   const launches = scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'launch');
   assert.equal(launches.length, 1);
   assert.deepEqual(Array.from(launches[0].args), ['simctl', 'launch',
@@ -458,10 +467,39 @@ test('main accepts launch help written to stderr by simctl', async () => {
 
 test('an AppDelegate diagnostic write failure does not replace the later primary failure or skip cleanup', async () => {
   const scenario = diagnosticMainScenario({ sourceWriteFails: true });
-  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  await assert.rejects(scenario.run(), { code: 'command-failed-simulator-launch' });
   const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
   assert.equal(report.appDelegate.sourceArtifactStatus, 'FAIL');
   assert.equal(report.appDelegate.sourceArtifactErrorCode, 'app-delegate-source-write-failed');
-  assert.equal(report.errorCode, 'command-failed-qualification-deeplink');
+  assert.equal(report.errorCode, 'command-failed-simulator-launch');
   assert.equal(report.cleanup.status, 'PASS');
+});
+
+test('main reaches its strict receipt after one launch without opening an external URL', async () => {
+  const scenario = diagnosticMainScenario({ launchSucceeds: true, helpOnStderr: true });
+  const report = await scenario.run();
+  assert.equal(report.status, 'PASS');
+  assert.equal(report.qualificationPassed, true);
+  assert.equal(report.runtime.runId, runId);
+  assert.equal(report.runtime.commit, commit);
+  assert.equal(report.cleanup.status, 'PASS');
+  assert.equal(report.cleanup.absent, true);
+  assert.equal(scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'launch').length, 1);
+  assert.equal(scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'openurl').length, 0);
+  assert.ok(scenario.writes.has(path.join(scenario.evidence, 'runtime-receipt.json')));
+});
+
+test('main rejects an incomplete received check and cleans up instead of publishing qualification success', async () => {
+  const invalid = receipt();
+  invalid.checks.offsetViewVector = false;
+  const scenario = diagnosticMainScenario({ launchSucceeds: true, runtimeReceipt: invalid });
+  await assert.rejects(scenario.run(), { code: 'native-checks-incomplete' });
+  const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
+  assert.equal(report.status, 'FAIL');
+  assert.equal(report.errorCode, 'native-checks-incomplete');
+  assert.equal(report.qualificationPassed, undefined);
+  assert.equal(report.cleanup.status, 'PASS');
+  assert.equal(report.cleanup.absent, true);
+  assert.equal(scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'launch').length, 1);
+  assert.equal(scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'openurl').length, 0);
 });

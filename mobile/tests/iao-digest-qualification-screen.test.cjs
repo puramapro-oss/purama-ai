@@ -10,12 +10,16 @@ const Renderer = require('react-test-renderer');
 
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
-function loadScreen(env, failDigest = false, loggerThrows = false) {
+function loadScreen(env, failDigest = false, loggerThrows = false, entryPlatform) {
   const imports = [], calls = [], diagnostics = [];
   const externals = {
     react: React,
     'react/jsx-runtime': require('react/jsx-runtime'),
-    'react-native': { ScrollView: 'ScrollView', Text: 'Text', View: 'View' },
+    'react-native': { ScrollView: 'ScrollView', Text: 'Text', View: 'View', Platform: { OS: entryPlatform ?? 'ios' } },
+    'react-native-safe-area-context': { SafeAreaView: 'SafeAreaView' },
+    'expo-router': { Redirect: 'Redirect', router: { push() { throw new Error('Unexpected automatic navigation'); } } },
+    '@/components/ui/Button': { Button: 'Button' },
+    '@/lib/constants': { COLORS: { background: '#000', text: '#fff', textSecondary: '#ccc' } },
     '../lib/iao-native-qualification': { runIaoNativeQualification: async onStatus => {
       calls.push('offline'); onStatus('synthetic offline status');
       return { schema: 1, status: 'PASS', phase: 'prepared', synthetic: true };
@@ -26,7 +30,7 @@ function loadScreen(env, failDigest = false, loggerThrows = false) {
       return { schema: 1, status: 'PASS', synthetic: true };
     } },
   };
-  const file = path.resolve(__dirname, '../app/iao-qualification.tsx');
+  const file = path.resolve(__dirname, entryPlatform ? '../app/index.tsx' : '../app/iao-qualification.tsx');
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true,
   } }).outputText;
@@ -71,6 +75,36 @@ test('the original offline build selects only the existing Android fixture', asy
   assert.deepEqual(loaded.calls, ['offline']);
   assert.deepEqual(loaded.diagnostics, []);
   assert.ok(!loaded.imports.includes('../lib/iao-digest-qualification'));
+});
+
+for (const offlineFlag of [undefined, '0']) test(`qualification build enters its existing route internally with offline flag ${String(offlineFlag)}`, async () => {
+  const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1',
+    EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: offlineFlag }, false, false, 'ios');
+  await renderScreen(loaded, text => {
+    const output = JSON.parse(text);
+    assert.equal(output.type, 'Redirect');
+    assert.equal(output.props.href, '/iao-qualification');
+  });
+  assert.deepEqual(loaded.calls, []);
+  assert.ok(loaded.imports.every(name => !name.includes('qualification') && !name.includes('local-digest')));
+});
+
+for (const [label, platform, flags] of [
+  ...[undefined, '', '0', 'true', '01'].map(flag => [String(flag), 'ios', { EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: flag }]),
+  ['offline only', 'ios', { EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1' }],
+  ['conflicting flags', 'ios', { EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1', EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1' }],
+  ['Android', 'android', { EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' }],
+  ['web', 'web', { EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' }],
+]) test(`public entry remains available without qualification redirection: ${label}`, async () => {
+  const loaded = loadScreen(flags, false, false, platform);
+  await renderScreen(loaded, text => {
+    assert.equal(JSON.parse(text).type, 'SafeAreaView');
+    assert.ok(text.includes('Bienvenue sur Purama'));
+    for (const id of ['entry-purama', 'entry-communication', 'entry-accessible-one', 'entry-account']) assert.ok(text.includes(id));
+    assert.ok(!text.includes('Redirect'));
+  });
+  assert.deepEqual(loaded.calls, []);
+  assert.ok(loaded.imports.every(name => !name.includes('qualification') && !name.includes('local-digest')));
 });
 
 test('the digest build selects only the digest fixture in the existing route', async () => {

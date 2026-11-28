@@ -91,6 +91,14 @@ de compilation, un reçu ancien, une exécution Metro ou un résultat
 partiel ne valent pas qualification native. Les tests Node du harnais simulent les
 frontières natives et de fichiers ; leurs résultats restent distincts du reçu réel iOS.
 
+Le build de qualification iOS entre dans la route existante par une redirection
+interne depuis l'accueil, réservée au flag digest exact et refusée si le mode hors
+ligne est actif. L'accueil ordinaire, Android et le web gardent leur parcours.
+Le harnais lance l'application une fois, sans ouvrir d'URL externe : la confirmation
+iOS d'un lien ne doit pas retenir une qualification du module SHA-256. Ce parcours
+ne constitue pas un test des liens externes et conserve les contrôles d'identité de
+la fixture, le reçu strict et le délai de 120 secondes.
+
 Le lancement conserve les sorties de l'application. En cas d'échec, le harnais recueille
 avant nettoyage une capture et un journal borné au simulateur possédé et au processus
 de l'application. Ces diagnostics ne remplacent jamais la première erreur ni le reçu

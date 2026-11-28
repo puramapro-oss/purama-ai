@@ -231,9 +231,7 @@ async function main() {
     report.commit = commit; report.tree = tree;
     const appConfig = JSON.parse(fs.readFileSync(path.join(mobile, 'app.json'), 'utf8')).expo;
     const bundleId = appConfig?.ios?.bundleIdentifier;
-    const scheme = appConfig?.scheme;
-    requireCondition(typeof bundleId === 'string' && /^[A-Za-z0-9.-]+$/.test(bundleId)
-      && typeof scheme === 'string' && /^[a-z][a-z0-9+.-]+$/.test(scheme), 'invalid-app-identity');
+    requireCondition(typeof bundleId === 'string' && /^[A-Za-z0-9.-]+$/.test(bundleId), 'invalid-app-identity');
     const products = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'purama-watch-ios-derived/Build/Products/Debug-iphonesimulator');
     const apps = [];
     for (const item of fs.readdirSync(products, { withFileTypes: true })) {
@@ -324,8 +322,8 @@ async function main() {
     const receiptPath = path.join(data, 'Documents', contract.receiptFile);
     requireCondition(!fs.existsSync(receiptPath), 'receipt-existed-before-launch');
     await assertNoMetro();
+    report.entryStrategy = { kind: 'qualification-build-internal-redirect', route: '/iao-qualification' };
     run('simulator-launch', 'xcrun', ['simctl', 'launch', ...outputArguments, udid, bundleId]);
-    run('qualification-deeplink', 'xcrun', ['simctl', 'openurl', udid, scheme + '://iao-qualification']);
     const deadline = performance.now() + RECEIPT_WAIT_MS;
     while (!fs.existsSync(receiptPath) && performance.now() < deadline) await wait(1000);
     requireCondition(fs.existsSync(receiptPath), 'native-receipt-timeout');

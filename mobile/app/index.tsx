@@ -1,10 +1,17 @@
-import { ScrollView, Text, View } from "react-native";
+import { Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { COLORS } from "@/lib/constants";
 
 export default function Index() {
+  // A qualification build reaches its existing local route without an external
+  // URL confirmation. Identity and native checks remain owned by that fixture.
+  if (Platform.OS === "ios"
+    && process.env.EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION === "1"
+    && process.env.EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION !== "1") {
+    return <Redirect href="/iao-qualification" />;
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 24, gap: 24 }}>
