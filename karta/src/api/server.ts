@@ -17,6 +17,7 @@ import type { ConsultationHost } from "./consultation-contract.js";
 import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
+const CUSTOM_TRIGGER_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -251,12 +252,23 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     return;
   }
 
-  const triggerCustomMatch = url.pathname.match(/^\/trigger-custom\/([0-9a-f-]+)$/);
+  // The Edge binds the authenticated owner in this route. The unsuffixed
+  // administrative route remains compatible with existing internal callers.
+  const triggerCustomMatch = url.pathname.match(/^\/trigger-custom\/([0-9a-f-]+)(?:\/owner\/([0-9a-f-]+))?$/);
   if (req.method === "POST" && triggerCustomMatch) {
-    const [, agentId] = triggerCustomMatch;
+    const [, agentId, expectedOwnerId] = triggerCustomMatch;
+    if (expectedOwnerId !== undefined && (!CUSTOM_TRIGGER_UUID.test(agentId)
+      || !CUSTOM_TRIGGER_UUID.test(expectedOwnerId) || url.search !== "")) {
+      json(res, 400, { error: "Contrat de déclenchement invalide" });
+      return;
+    }
     const row = await loadCustomAgent(agentId);
     if (!row) {
       json(res, 404, { error: "Agent introuvable" });
+      return;
+    }
+    if (expectedOwnerId !== undefined && row.user_id !== expectedOwnerId) {
+      json(res, 403, { error: "Accès refusé" });
       return;
     }
     if (!row.karta_enabled) {

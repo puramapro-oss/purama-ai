@@ -103,7 +103,7 @@ test('the verified token, schema, row and configured server URL bind the dispatc
   assert.equal(h.state.clients[0].global.headers.Authorization, `Bearer ${TOKEN}`);
   assert.equal(h.state.queries[0].id, AGENT);
   assert.deepEqual(rateCalls, [[`karta-trigger-custom:${OWNER}`, 10, 3_600_000]]);
-  assert.equal(h.state.internal[0].url, `https://karta.example.invalid/trigger-custom/${AGENT}`);
+  assert.equal(h.state.internal[0].url, `https://karta.example.invalid/trigger-custom/${AGENT}/owner/${OWNER}`);
   assert.equal(h.state.internal[0].headers.Authorization, `Bearer ${ADMIN}`);
   assert.equal(h.state.internal[0].redirect, 'error');
   assert.equal(h.state.internal[0].signal.aborted, true, 'The lifetime closes after receipt delivery');

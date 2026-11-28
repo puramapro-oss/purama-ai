@@ -88,7 +88,9 @@ Deno.serve(async (req) => {
       if (!kartaUrl || !kartaToken) throw new Error();
       target = new URL(kartaUrl);
       if (!["http:", "https:"].includes(target.protocol) || target.username || target.password || target.search || target.hash) throw new Error();
-      target.pathname = `${target.pathname.replace(/\/+$/, "")}/trigger-custom/${agentId}`;
+      // An older API cannot match this owner-bound route. Never fall back to
+      // its administrative route when the required contract is unavailable.
+      target.pathname = `${target.pathname.replace(/\/+$/, "")}/trigger-custom/${agentId}/owner/${userId}`;
     } catch {
       console.error("karta-trigger-custom: internal configuration unavailable or invalid");
       return json({ error: "Service temporairement indisponible" }, 503);
