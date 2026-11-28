@@ -2,7 +2,7 @@ import { once } from "node:events";
 import { request, type Server } from "node:http";
 import { afterEach, expect, it, vi } from "vitest";
 import { startApiServer } from "../src/api/server.js";
-import type { IaoRouteRuntime } from "../src/api/iaoRoutes.js";
+import { IaoAuthenticationError, type IaoRouteRuntime } from "../src/api/iaoRoutes.js";
 import { IaoFacade, type IaoServerIdentity, type KartaIaoResult } from "../src/iao/iaoFacade.js";
 import { createRuntime, type RuntimeReadiness } from "../src/runtime/lifecycle.js";
 
@@ -326,5 +326,79 @@ it("never admits new IAO work after its client disconnects during the final read
   release({ ready: true, phase: "ready", globalKillSwitch: false });
   await server.drainRequests();
   expect(prepare).not.toHaveBeenCalled();
+  expect(() => facade.get("tenant", "actor", id)).toThrow("IAO request not found");
+});
+
+it.each(["/iao/requests", "/pura/requests"])("preserves the UTF-8 body boundary and HTTP 413 on %s", async path => {
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "within the body limit" }));
+  const authenticate = vi.fn(async () => identity());
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ facade, authenticator: { authenticate } });
+  const available = 65_536 - Buffer.byteLength(JSON.stringify({ ...body, prompt: "" }), "utf8");
+  const prompt = "字".repeat(Math.floor(available / 3)) + "a".repeat(available % 3);
+  const boundary = { ...body, prompt };
+  expect(Buffer.byteLength(JSON.stringify(boundary), "utf8")).toBe(65_536);
+  expect(prompt.length).toBeLessThan(32_000);
+  expect(await call(server, path, "POST", boundary)).toMatchObject({ status: 202, cache: "no-store" });
+  expect(prepare).toHaveBeenCalledOnce();
+
+  const oversized = { ...boundary, prompt: prompt + "a" };
+  expect(Buffer.byteLength(JSON.stringify(oversized), "utf8")).toBe(65_537);
+  expect(await call(server, path, "POST", oversized)).toMatchObject({ status: 413, cache: "no-store" });
+  expect(prepare).toHaveBeenCalledOnce();
+  expect(authenticate).toHaveBeenCalledTimes(3);
+  expect(facade.get("tenant", "actor", id).preview).toBe("within the body limit");
+});
+
+describeAuthenticationFailure();
+
+function describeAuthenticationFailure(): void {
+  const endpoints = [
+    ["POST", "/iao/requests"], ["POST", "/pura/requests"],
+    ["GET", `/iao/requests/${id}`], ["POST", `/iao/requests/${id}/cancel`],
+  ] as const;
+  for (const [method, path] of endpoints) {
+    it.each(["throw", "reject", "foreign-status", "typed"] as const)(
+      `keeps an authority %s failure private and returns 401 for ${method} ${path}`, async mode => {
+        const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "retained private result" }));
+        const facade = new IaoFacade({ prepare });
+        const claims = identity();
+        await facade.submit({ ...body, type: "conversation", tenantId: claims.tenantId, actorId: claims.actorId, identity: claims });
+        const before = facade.get("tenant", "actor", id);
+        const submit = vi.spyOn(facade, "submit"), get = vi.spyOn(facade, "get"), cancel = vi.spyOn(facade, "cancel");
+        const failure = mode === "typed" ? new IaoAuthenticationError()
+          : mode === "foreign-status" ? Object.assign(new Error("PRIVATE_AUTHORITY_DETAILS"), { status: 413 })
+          : new Error("PRIVATE_AUTHORITY_DETAILS");
+        const authenticate = vi.fn((): Promise<IaoServerIdentity> => {
+          if (mode === "throw") throw failure;
+          return Promise.reject(failure);
+        });
+        const server = await listen({ facade, authenticator: { authenticate } });
+        const result = await call(server, path, method, method === "POST" ? body : undefined);
+        expect(result).toEqual({ status: 401, cache: "no-store", body: { error: "IAO authentication required" } });
+        expect(JSON.stringify(result)).not.toContain("PRIVATE_AUTHORITY_DETAILS");
+        expect(submit).not.toHaveBeenCalled();
+        expect(get).not.toHaveBeenCalled();
+        expect(cancel).not.toHaveBeenCalled();
+        expect(prepare).toHaveBeenCalledOnce();
+        expect(authenticate).toHaveBeenCalledOnce();
+        expect(facade.get("tenant", "actor", id)).toEqual(before);
+      },
+    );
+  }
+}
+
+it.each(["/iao/requests", "/pura/requests"])("rejects a final authority failure before admission on %s", async path => {
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not execute" }));
+  const facade = new IaoFacade({ prepare });
+  const authenticate = vi.fn<() => Promise<IaoServerIdentity>>()
+    .mockResolvedValueOnce(identity())
+    .mockRejectedValueOnce(new Error("PRIVATE_RECHECK_DETAILS"));
+  const server = await listen({ facade, authenticator: { authenticate } });
+  const result = await call(server, path, "POST", body);
+  expect(result).toEqual({ status: 401, cache: "no-store", body: { error: "IAO authentication required" } });
+  expect(JSON.stringify(result)).not.toContain("PRIVATE_RECHECK_DETAILS");
+  expect(prepare).not.toHaveBeenCalled();
+  expect(authenticate).toHaveBeenCalledTimes(2);
   expect(() => facade.get("tenant", "actor", id)).toThrow("IAO request not found");
 });

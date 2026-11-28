@@ -31,6 +31,12 @@ export interface ConsultationRpcClient {
     abortSignal(signal: AbortSignal): PromiseLike<{ data: unknown; error: { code?: string } | null }>;
   };
 }
+/** Private service-role read used only to recover an unchanged historical
+ * request. The original hash and request never enter the public response. */
+export type ConsultationIdentityReader = (userId: string, operationId: string, signal: AbortSignal) => PromiseLike<{
+  data: unknown;
+  error: { code?: string } | null;
+}>;
 export class ConsultationStoreError extends Error {
   constructor(readonly code: "conflict" | "budget_unavailable" | "unavailable" | "invalid") {
     super(code === "conflict" ? "Cette demande existe avec un contenu différent."
@@ -105,8 +111,15 @@ function operation(value: unknown, expectedId: string): ConsultationOperation | 
 
 /** Server-only adapter. A lost acknowledgement is never retried into execution.
  * SQL owns allocation and call uniqueness; the host owns provider qualification. */
-export function createConsultationStore(options: { client?: ConsultationRpcClient; timeoutMs?: number } = {}) {
+export function createConsultationStore(options: {
+  client?: ConsultationRpcClient; timeoutMs?: number; readIdentity?: ConsultationIdentityReader;
+} = {}) {
   const client = options.client ?? supabase as unknown as ConsultationRpcClient;
+  // A custom client without this port must fail closed; it must never fall
+  // through to an unrelated production database during a test or migration.
+  const readIdentity = options.readIdentity ?? (options.client ? undefined : ((userId, operationId, signal) =>
+    supabase.from("model_consultations").select("user_id,operation_id,request_hash,request")
+      .eq("user_id", userId).eq("operation_id", operationId).abortSignal(signal).maybeSingle()) as ConsultationIdentityReader);
   const timeout = options.timeoutMs ?? 5000;
   if (!Number.isSafeInteger(timeout) || timeout < 100 || timeout > 30_000) return invalid();
   async function rpc(name: string, args: Record<string, unknown>, signal?: AbortSignal): Promise<unknown> {
@@ -129,6 +142,31 @@ export function createConsultationStore(options: { client?: ConsultationRpcClien
     if (request.userId !== userId) return invalid();
     return { request, requestHash: hash(request) };
   }
+  async function resumeHistorical(userId: string, request: Required<ConsultationRequest>, conflict: unknown, signal?: AbortSignal) {
+    if (!(conflict instanceof ConsultationStoreError) || conflict.code !== "conflict" || !readIdentity) throw conflict;
+    try {
+      const response = snapshot(await bounded(current => Promise.resolve(readIdentity(userId, request.operationId, current)), timeout, signal));
+      if (!response || response.error) throw new ConsultationStoreError("unavailable");
+      const row = response.data as Record<string, unknown> | null;
+      if (!row || Array.isArray(row) || Object.keys(row).length !== 4
+        || row.user_id !== userId || row.operation_id !== request.operationId
+        || typeof row.request_hash !== "string" || !/^[0-9a-f]{64}$(?![\s\S])/.test(row.request_hash)) {
+        throw new ConsultationStoreError("unavailable");
+      }
+      // The SQL trigger makes this snapshot immutable. Compare all normalized
+      // fields, preserving array order and refusing any changed provider input.
+      const original = normalizeConsultationRequest(row.request as ConsultationRequest);
+      if (JSON.stringify(original) !== JSON.stringify(request)) throw new ConsultationStoreError("conflict");
+      const recovered = operation(await rpc("model_consultation_resume", {
+        ...identity(userId, request.operationId), p_request_hash: row.request_hash, p_request: row.request,
+      }, signal), request.operationId);
+      if (!recovered) throw new ConsultationStoreError("unavailable");
+      return recovered;
+    } catch (error) {
+      if (error instanceof ConsultationStoreError) throw error;
+      throw new ConsultationStoreError("unavailable");
+    }
+  }
   return {
     async availability(userId: string, signal?: AbortSignal): Promise<boolean> {
       identity(userId, "availability");
@@ -141,8 +179,10 @@ export function createConsultationStore(options: { client?: ConsultationRpcClien
     },
     async resume(userId: string, raw: ConsultationRequest, signal?: AbortSignal): Promise<ConsultationOperation | null> {
       const { request, requestHash } = requestSnapshot(userId, raw);
-      return operation(await rpc("model_consultation_resume", { ...identity(userId, request.operationId),
-        p_request_hash: requestHash, p_request: request }, signal), request.operationId);
+      try {
+        return operation(await rpc("model_consultation_resume", { ...identity(userId, request.operationId),
+          p_request_hash: requestHash, p_request: request }, signal), request.operationId);
+      } catch (error) { return resumeHistorical(userId, request, error, signal); }
     },
     async cancel(userId: string, operationId: string, signal?: AbortSignal): Promise<ConsultationOperation | null> {
       return operation(await rpc("model_consultation_cancel", identity(userId, operationId), signal), operationId);
@@ -154,8 +194,16 @@ export function createConsultationStore(options: { client?: ConsultationRpcClien
       const plan = snapshot(rawPlan, 16_384);
       const estimates = snapshot(rawEstimates, 32_768);
       const args = identity(userId, request.operationId);
-      const response = snapshot(await rpc("model_consultation_create", { ...args, p_request_hash: requestHash,
-        p_request: request, p_plan: plan, p_estimates: estimates }, signal)) as Record<string, unknown>;
+      let created: unknown;
+      try {
+        created = await rpc("model_consultation_create", { ...args, p_request_hash: requestHash,
+          p_request: request, p_plan: plan, p_estimates: estimates }, signal);
+      } catch (error) {
+        // A historical operation may win the admission race. Recover its state
+        // through the read-only RPC; never retry creation or reopen execution.
+        return { created: false, operation: await resumeHistorical(userId, request, error, signal) };
+      }
+      const response = snapshot(created) as Record<string, unknown>;
       if (!response || typeof response.created !== "boolean") throw new ConsultationStoreError("unavailable");
       const status = operation(response.operation, request.operationId);
       if (!status) throw new ConsultationStoreError("unavailable");

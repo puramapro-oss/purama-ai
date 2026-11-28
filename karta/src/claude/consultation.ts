@@ -147,7 +147,9 @@ function requestSnapshot(input: ConsultationRequest): Required<ConsultationReque
     || research.queries.some(query => typeof query !== "string" || !query.trim() || query.length > 4000)
     || research.urls.some(url => typeof url !== "string" || url.length > 8192)) return invalid();
   // Exact duplicates should never turn into duplicate paid requests.
-  return { ...value, preferences, reviewerModels, research: {
+  // Object insertion order is not part of a consultation's identity. Keep the
+  // same serialized shape for omitted defaults and explicitly empty options.
+  return { operationId: value.operationId, userId: value.userId, question: value.question, preferences, reviewerModels, research: {
     queries: [...new Set(research.queries)], urls: [...new Set(research.urls)],
   } };
 }

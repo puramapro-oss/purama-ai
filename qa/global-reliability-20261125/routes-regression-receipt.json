@@ -1,0 +1,18 @@
+{
+  "phase": "regression",
+  "dateUtc": "2026-11-25T18:35:51.649001+00:00",
+  "baseline": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "command": "npm test -- test/apiIaoIntegration.test.ts test/iaoIdentityBoundary.test.ts test/iaoAdmissionRevalidation.test.ts test/iaoAdmissionDeadline.test.ts test/apiIaoGlobalStop.test.ts test/apiIaoTransportBudget.test.ts test/iao-facade.test.ts test/runtimeApiReadiness.test.ts test/runtimeUsageReadiness.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../qa/global-reliability-20261125/routes-regression.json",
+  "cwd": "karta",
+  "exitCode": 0,
+  "sha256": {
+    "karta/src/api/iaoRoutes.ts": "4336f6c1af6dfc11fd38a8acdcfdfd5938f6d3ae8cbcf4ece4a9a2c90457abfa",
+    "karta/test/apiIaoIntegration.test.ts": "4c3564c661b3226de4a880f499b9d024cf327609fb9cbf661b687e8dbdd13472"
+  },
+  "testFiles": 9,
+  "total": 265,
+  "passed": 265,
+  "failed": 0,
+  "skipped": 0,
+  "scope": "Real local HTTP tests, identity/admission/deadlines/readiness/facade regression; authority and service dependencies use explicit doubles. No external account/model or deployment qualified."
+}

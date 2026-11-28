@@ -1,0 +1,26 @@
+{
+  "testReport": "karta-full.json",
+  "sha256": "48082d77de14c8416c06a0ca4243de5b2630c0387b21fa55214bd2ed1a26a226",
+  "passed": 5389,
+  "failed": 35,
+  "pending": 0,
+  "status": "PARTIEL",
+  "failedFiles": [
+    {
+      "path": "karta/test/localComputeFabricCancellation.test.ts",
+      "failed": 14,
+      "allListenEperm": true
+    },
+    {
+      "path": "karta/test/localComputeFabricProvider.test.ts",
+      "failed": 10,
+      "allListenEperm": true
+    },
+    {
+      "path": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "failed": 11,
+      "allListenEperm": true
+    }
+  ],
+  "interpretation": "35 Unix-socket setup failures (listen EPERM), no change to these tests or implementation. The full local run is not PASS. Requalify the exact candidate using the normal hosted CI."
+}

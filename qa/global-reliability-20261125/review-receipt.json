@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "report": "Independent targeted review of global reliability fixes",
+  "reviewer": "infra_mac",
+  "independent_of_product_authors": true,
+  "reviewed_at": "2026-11-25T19:40:03+01:00",
+  "timezone": "Europe/Paris",
+  "repository_base_commit": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "review_method": "Read-only source/diff/contract review after product authors marked source changes ready; no product edits by reviewer.",
+  "reviewed_sources": [
+    {
+      "path": "karta/src/api/iaoRoutes.ts",
+      "sha256": "4336f6c1af6dfc11fd38a8acdcfdfd5938f6d3ae8cbcf4ece4a9a2c90457abfa"
+    },
+    {
+      "path": "karta/src/claude/consultation.ts",
+      "sha256": "e3504dcb29f76870e3e1b98f415e8b4862ca7d5fd6c07b13da15dfb2d7b6d0f1"
+    },
+    {
+      "path": "karta/src/claude/consultation-store.ts",
+      "sha256": "c2b456ba6f893b529a3d20381ffa1b27b20063a3ba82f1ff342097b02f8a700c"
+    }
+  ],
+  "reviewed_tests": [
+    {
+      "path": "karta/test/apiIaoIntegration.test.ts",
+      "sha256": "4c3564c661b3226de4a880f499b9d024cf327609fb9cbf661b687e8dbdd13472"
+    },
+    {
+      "path": "karta/test/consultationIdentityCompatibility.test.ts",
+      "sha256": "9ea823c2fb3aae276fa0bb1b8193bd094f4a5623e3f8c002909a80aa70fd0e40"
+    }
+  ],
+  "verdict": {
+    "status": "PASS",
+    "scope": "Targeted independent review of the three stated changes",
+    "blocking_findings": [],
+    "meaning": "No provable blocking defect found in the reviewed changes; this is not a certification of the full deployment."
+  },
+  "findings": [
+    {
+      "criterion": "Authentication failures remain private and closed",
+      "assessment": "No blocking defect found",
+      "basis": "authenticateIdentity converts authority throws/rejections and invalid identity to the typed generic authentication refusal; the admission deadline remains outside that conversion. Submit/read/cancel do not enter the facade after authority failure."
+    },
+    {
+      "criterion": "Trusted HTTP 413 mapping",
+      "assessment": "No blocking defect found",
+      "basis": "Only readBody errors with an own data property status=413 are converted into the private IaoBodyTooLargeError. Authority/execution errors with arbitrary status do not select 413. Existing readiness, terminal responses and no-store handling remain in their original branches."
+    },
+    {
+      "criterion": "Canonical consultation identity",
+      "assessment": "No blocking defect found",
+      "basis": "The normalized request returns an explicit stable property order. Question, normalized preferences and ordered reviewer/query/URL arrays are preserved; exact existing deduplication behavior remains unchanged."
+    },
+    {
+      "criterion": "Historical identity recovery and ownership",
+      "assessment": "No blocking defect found",
+      "basis": "Fallback is entered only on a typed conflict. The default service-role read filters by both owner and operation, selects only identity fields and validates returned owner/operation/hash/shape. The entire normalized historical request must equal the new normalized request."
+    },
+    {
+      "criterion": "No duplicate admission/provider cost from recovery",
+      "assessment": "No blocking defect found",
+      "basis": "Historical fallback uses model_consultation_resume with the stored immutable request/hash, returns created=false without an admission port and does not retry create, reopen execution or construct a provider. Timeout/lost acknowledgement without a conflict is propagated, not reinterpreted as safe retry."
+    },
+    {
+      "criterion": "Cancellation and late response races",
+      "assessment": "No blocking defect found",
+      "basis": "Identity read and re-read are bounded and follow caller cancellation. SQL identity immutability was checked in migration 032. A cancellation concurrent with identity recovery is reflected by the final resume; absence fails closed. Existing durable cancellation tombstones and UI UUID retention remain unchanged."
+    },
+    {
+      "criterion": "Custom-client isolation",
+      "assessment": "No blocking defect found",
+      "basis": "A supplied client without an explicit identity-reader port cannot fall through to the production Supabase client."
+    }
+  ],
+  "checks": [
+    {
+      "command": "git diff --check -- karta/src/api/iaoRoutes.ts karta/src/claude/consultation.ts karta/src/claude/consultation-store.ts karta/test/apiIaoIntegration.test.ts karta/test/consultationIdentityCompatibility.test.ts",
+      "exit_code": 0,
+      "output": "No whitespace errors."
+    },
+    {
+      "name": "Chunked body boundary probe",
+      "working_directory": "/workspace/scratch/3062ca2cddff/purama-ai",
+      "source": {
+        "path": "karta/src/api/server.ts",
+        "sha256": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0"
+      },
+      "command": "node --input-type=module - <<'JS'\nimport fs from 'node:fs';\nimport { stripTypeScriptTypes } from 'node:module';\nimport { createServer, request } from 'node:http';\nimport { once } from 'node:events';\nconst source=fs.readFileSync('karta/src/api/server.ts','utf8');\nconst start=source.indexOf('async function readBody(');\nconst end=source.indexOf('\\nfunction readActive(',start);\nconst bodySource=stripTypeScriptTypes(source.slice(start,end),{mode:'transform'});\nconst readBody=new Function(bodySource+'\\nreturn readBody;')();\nconst observed=[];\nconst server=createServer(async(req,res)=>{\n try { await readBody(req);res.end('ok'); }\n catch(error) { observed.push({stage:'reader-error',status:error.status,destroyed:req.destroyed,responseDestroyed:res.destroyed});res.writeHead(error.status??500,{'Content-Type':'application/json'});res.end('{}'); }\n});\nserver.listen(0,'127.0.0.1');await once(server,'listening');\nconst port=server.address().port;\nawait new Promise(resolve=>{\n const req=request({host:'127.0.0.1',port,method:'POST',path:'/iao/requests',headers:{'content-type':'application/json'}},res=>{\n  observed.push({stage:'client-response',status:res.statusCode});res.resume();res.on('end',resolve);\n });\n req.on('error',err=>{observed.push({stage:'client-error',code:err.code});resolve();});\n req.write('a'.repeat(32768));\n setTimeout(()=>req.write('a'.repeat(32768)),10);\n setTimeout(()=>req.write('a'.repeat(1024)),20);\n setTimeout(()=>req.end('tail'),70);\n});\nconsole.log(JSON.stringify({scope:'Exact readBody function extracted from current source, real chunked HTTP client, isolated loopback server',observed}));\nawait new Promise(resolve=>server.close(resolve));\nJS",
+      "exit_code": 0,
+      "observed_output": {
+        "scope": "Exact readBody function extracted from current source, real chunked HTTP client, isolated loopback server",
+        "observed": [
+          {
+            "stage": "reader-error",
+            "status": 413,
+            "destroyed": true,
+            "responseDestroyed": false
+          },
+          {
+            "stage": "client-response",
+            "status": 413
+          }
+        ]
+      },
+      "preparatory_attempt": {
+        "mode": "strip",
+        "exit_code": 1,
+        "reason": "Node strip-only transpilation does not support the existing TypeScript constructor parameter property; rerun used transform mode without modifying source."
+      },
+      "limit": "Exact body reader in an isolated loopback harness; this is not a full real-account API or provider test. No generated script was persisted."
+    }
+  ],
+  "existing_receipts_read": [
+    {
+      "path": "qa/global-reliability-20261125/routes-green.json",
+      "reported_success": true,
+      "reported_tests_passed": 40,
+      "reported_tests_failed": 0,
+      "executed_by_this_reviewer": false
+    },
+    {
+      "path": "qa/global-reliability-20261125/routes-regression.json",
+      "reported_success": true,
+      "reported_tests_passed": 265,
+      "reported_tests_failed": 0,
+      "executed_by_this_reviewer": false
+    },
+    {
+      "path": "qa/global-reliability-20261125/ui-recovery-receipt.json",
+      "executed_by_this_reviewer": true
+    }
+  ],
+  "limitations": [
+    "No duplicate typecheck/build/full-suite run performed; those gates remain with the parent.",
+    "No live remote service or provider retest performed during this review.",
+    "No new product, SQL or test code was written by the reviewer.",
+    "Review validity is tied to the exact source hashes above; subsequent changes require affected-scope review."
+  ]
+}
