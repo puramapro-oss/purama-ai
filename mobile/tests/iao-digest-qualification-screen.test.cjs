@@ -10,8 +10,8 @@ const Renderer = require('react-test-renderer');
 
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
-function loadScreen(env, failDigest = false) {
-  const imports = [], calls = [];
+function loadScreen(env, failDigest = false, loggerThrows = false) {
+  const imports = [], calls = [], diagnostics = [];
   const externals = {
     react: React,
     'react/jsx-runtime': require('react/jsx-runtime'),
@@ -22,7 +22,7 @@ function loadScreen(env, failDigest = false) {
     } },
     '../lib/iao-digest-qualification': { runIaoDigestQualification: async onStatus => {
       calls.push('digest'); onStatus('synthetic digest status');
-      if (failDigest) throw new Error('synthetic fixture rejection');
+      if (failDigest) throw failDigest === true ? new Error('synthetic fixture rejection') : failDigest;
       return { schema: 1, status: 'PASS', synthetic: true };
     } },
   };
@@ -36,9 +36,13 @@ function loadScreen(env, failDigest = false) {
     if (Object.hasOwn(externals, name)) return externals[name];
     throw new Error(`Unexpected screen import: ${name}`);
   };
-  vm.runInThisContext(`(function(require,module,exports,process){${code}\n})`, { filename: file })(
-    requireLocal, module, module.exports, { env });
-  return { component: module.exports.default, imports, calls };
+  const console = { info(...values) {
+    if (loggerThrows) throw new Error('synthetic unavailable logger');
+    diagnostics.push(values);
+  } };
+  vm.runInThisContext(`(function(require,module,exports,process,console){${code}\n})`, { filename: file })(
+    requireLocal, module, module.exports, { env }, console);
+  return { component: module.exports.default, imports, calls, diagnostics };
 }
 
 async function renderScreen(loaded, assertions) {
@@ -56,6 +60,7 @@ for (const flag of [undefined, '', '0', 'true', '01']) {
     const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: flag });
     await renderScreen(loaded, text => assert.ok(text.includes('n’est pas disponible')));
     assert.deepEqual(loaded.calls, []);
+    assert.deepEqual(loaded.diagnostics, []);
     assert.deepEqual(loaded.imports.sort(), ['react', 'react/jsx-runtime', 'react-native'].sort());
   });
 }
@@ -64,6 +69,7 @@ test('the original offline build selects only the existing Android fixture', asy
   const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1' });
   await renderScreen(loaded, text => assert.ok(text.includes('synthetic offline status')));
   assert.deepEqual(loaded.calls, ['offline']);
+  assert.deepEqual(loaded.diagnostics, []);
   assert.ok(!loaded.imports.includes('../lib/iao-digest-qualification'));
 });
 
@@ -71,6 +77,11 @@ test('the digest build selects only the digest fixture in the existing route', a
   const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' });
   await renderScreen(loaded, text => assert.ok(text.includes('synthetic digest status')));
   assert.deepEqual(loaded.calls, ['digest']);
+  assert.deepEqual(loaded.diagnostics, [
+    ['PURAMA_DIGEST_QUALIFICATION', 'route', 'mounted'],
+    ['PURAMA_DIGEST_QUALIFICATION', 'status', 'synthetic digest status'],
+    ['PURAMA_DIGEST_QUALIFICATION', 'receipt', 'PASS'],
+  ]);
   assert.ok(!loaded.imports.includes('../lib/iao-native-qualification'));
 });
 
@@ -78,6 +89,7 @@ test('simultaneous exact flags refuse both fixtures before any import', async ()
   const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1', EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1' });
   await renderScreen(loaded, text => assert.ok(text.includes('configuration') || text.includes('Configuration')));
   assert.deepEqual(loaded.calls, []);
+  assert.deepEqual(loaded.diagnostics, []);
   assert.deepEqual(loaded.imports.sort(), ['react', 'react/jsx-runtime', 'react-native'].sort());
 });
 
@@ -99,4 +111,32 @@ test('a digest fixture rejection stays unavailable without trying the Android fi
   await renderScreen(loaded, text => assert.ok(text.includes('Qualification native indisponible.')));
   assert.deepEqual(loaded.calls, ['digest']);
   assert.ok(!loaded.imports.includes('../lib/iao-native-qualification'));
+  assert.deepEqual(loaded.diagnostics.at(-1), ['PURAMA_DIGEST_QUALIFICATION', 'rejected', 'Error']);
+});
+
+test('early or receipt-write rejection records its bounded code without the error message', async () => {
+  const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' },
+    { code: 'ERR_FILE_WRITE', name: 'Error', message: 'sensitive synthetic contents must not be logged' });
+  await renderScreen(loaded, text => assert.ok(text.includes('Qualification native indisponible.')));
+  assert.deepEqual(loaded.diagnostics.at(-1), ['PURAMA_DIGEST_QUALIFICATION', 'rejected', 'ERR_FILE_WRITE']);
+  assert.ok(!JSON.stringify(loaded.diagnostics).includes('sensitive'));
+});
+
+test('unbounded, control-character and exceptional diagnostic codes remain unclassified', async () => {
+  for (const failure of [{ code: 'x'.repeat(81) }, { code: 'bad\ncode' },
+    { get code() { throw new Error('synthetic getter'); } }]) {
+    const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' }, failure);
+    await renderScreen(loaded, text => assert.ok(text.includes('Qualification native indisponible.')));
+    assert.deepEqual(loaded.diagnostics.at(-1), ['PURAMA_DIGEST_QUALIFICATION', 'rejected', 'unclassified']);
+  }
+});
+
+test('diagnostic logger failures change neither successful nor rejected qualification behavior', async () => {
+  for (const failure of [false, true]) {
+    const loaded = loadScreen({ EXPO_PUBLIC_PURAMA_DIGEST_QUALIFICATION: '1' }, failure, true);
+    await renderScreen(loaded, text => assert.ok(text.includes(failure
+      ? 'Qualification native indisponible.' : 'synthetic digest status')));
+    assert.deepEqual(loaded.calls, ['digest']);
+    assert.ok(!loaded.imports.includes('../lib/iao-native-qualification'));
+  }
 });

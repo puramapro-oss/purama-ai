@@ -122,6 +122,38 @@ function cleanupOwnedSimulator(run, udid) {
   return { status: errors.length ? 'FAIL' : 'PASS', udid, absent, errors };
 }
 
+function launchOutputArguments(help, directory) {
+  requireCondition(typeof help === 'string' && /--stdout=/.test(help) && /--stderr=/.test(help),
+    'launch-output-redirection-unavailable');
+  requireCondition(typeof directory === 'string' && path.isAbsolute(directory), 'invalid-diagnostic-directory');
+  return ['--stdout=' + path.join(directory, 'application.stdout.log'),
+    '--stderr=' + path.join(directory, 'application.stderr.log')];
+}
+
+function captureFailureDiagnostics(run, udid, executable, directory) {
+  requireCondition(UUID.test(udid), 'invalid-owned-simulator');
+  requireCondition(typeof directory === 'string' && path.isAbsolute(directory), 'invalid-diagnostic-directory');
+  const errors = [];
+  const result = { status: 'FAIL', udid, process: executable, lookbackSeconds: 300,
+    timeoutPerCommandMs: 15_000, logMaxBufferBytes: 1024 * 1024, errors };
+  try {
+    run('failure-screenshot', 'xcrun', ['simctl', 'io', udid, 'screenshot', path.join(directory, 'failure-screenshot.png')],
+      { timeout: 15_000, maxBuffer: 65_536 });
+  } catch { errors.push('failure-screenshot-unavailable'); }
+  // A strict process name prevents broad or injected predicates. The simulator
+  // UUID remains explicit even if the application has already terminated.
+  if (typeof executable !== 'string' || !/^[A-Za-z0-9_.-]+$/.test(executable)) {
+    errors.push('failure-log-process-unavailable');
+  } else {
+    try {
+      run('failure-app-log', 'xcrun', ['simctl', 'spawn', udid, 'log', 'show', '--last', '5m', '--style', 'compact', '--info', '--debug',
+        '--predicate', 'process == "' + executable + '"'], { timeout: 15_000, maxBuffer: 1024 * 1024 });
+    } catch { errors.push('failure-app-log-unavailable'); }
+  }
+  result.status = errors.length ? 'FAIL' : 'PASS';
+  return result;
+}
+
 function fileHash(filename) {
   const hash = crypto.createHash('sha256');
   const fd = fs.openSync(filename, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
@@ -175,13 +207,15 @@ async function main() {
     scope: 'Native SHA-256 in Hermes on an iOS simulator; no inference, memory, physical-device or GC qualification.',
     commands: [], cleanup: { status: 'NOT_CREATED' } };
   let udid;
+  let diagnosticExecutable;
+  let diagnosticDirectory;
   let failed = false;
   let failure;
   const run = (label, executable, args, options = {}) => {
     requireCondition(/^[a-z0-9-]+$/.test(label), 'invalid-command-label');
     const began = performance.now();
     const result = spawnSync(executable, args, { cwd: mobile, encoding: 'utf8', timeout: options.timeout || 30_000,
-      maxBuffer: 16 * 1024 * 1024, env: options.env || process.env, shell: false });
+      maxBuffer: options.maxBuffer || 16 * 1024 * 1024, env: options.env || process.env, shell: false });
     fs.writeFileSync(path.join(evidence, label + '.stdout.log'), result.stdout || '');
     fs.writeFileSync(path.join(evidence, label + '.stderr.log'), result.stderr || '');
     report.commands.push({ label, executable, args, exit: result.status, signal: result.signal,
@@ -212,6 +246,7 @@ async function main() {
     const { app, info } = apps[0];
     requireCondition(typeof info.CFBundleExecutable === 'string' && path.basename(info.CFBundleExecutable) === info.CFBundleExecutable,
       'invalid-app-executable');
+    diagnosticExecutable = info.CFBundleExecutable;
     report.bundleId = bundleId;
     report.compiledSdk = { platform: info.DTPlatformName, version: info.DTPlatformVersion, name: info.DTSDKName,
       runtimeSelection: 'exact-compiled-sdk-version' };
@@ -225,7 +260,12 @@ async function main() {
     requireCondition(delegate.includes('#if DEBUG') && delegate.includes('RCTBundleURLProvider.sharedSettings().jsBundleURL')
       && delegate.includes('.expo/.virtual-metro-entry') && /Bundle\.main\.url\(forResource:\s*"main",\s*withExtension:\s*"jsbundle"\)/.test(delegate),
     'generated-bundle-fallback-unverified');
-    report.appDelegate = { path: path.relative(mobile, delegates[0]), sha256: fileHash(delegates[0]), debugFallbackVerified: true };
+    report.appDelegate = { path: path.relative(mobile, delegates[0]), sha256: fileHash(delegates[0]), sourceTemplatePatternMatched: true,
+      sourceArtifact: 'generated-AppDelegate.swift.txt', sourceArtifactStatus: 'FAIL' };
+    try {
+      fs.writeFileSync(path.join(evidence, report.appDelegate.sourceArtifact), delegate);
+      report.appDelegate.sourceArtifactStatus = 'PASS';
+    } catch { report.appDelegate.sourceArtifactErrorCode = 'app-delegate-source-write-failed'; }
     const signature = run('signature-before', '/usr/bin/codesign', ['-d', '--verbose=4', app], { allowFailure: true, result: true });
     const wasSigned = signature.status === 0;
     requireCondition(wasSigned || /code object is not signed at all/.test(signature.stderr || ''), 'signature-state-unavailable');
@@ -263,6 +303,10 @@ async function main() {
     const selected = selectSimulator(runtimes, types, info);
     report.simulator = selected;
     run('container-command-help', 'xcrun', ['simctl', 'help', 'get_app_container']);
+    const launchHelp = run('launch-command-help', 'xcrun', ['simctl', 'help', 'launch']);
+    diagnosticDirectory = fs.realpathSync(evidence);
+    const outputArguments = launchOutputArguments(launchHelp, diagnosticDirectory);
+    report.applicationOutput = { directory: diagnosticDirectory, stdout: 'application.stdout.log', stderr: 'application.stderr.log' };
     udid = run('simulator-create', 'xcrun', ['simctl', 'create', 'PURAMA Digest ' + runId,
       selected.deviceType.identifier, selected.runtime.identifier]);
     requireCondition(UUID.test(udid), 'invalid-created-simulator');
@@ -280,7 +324,7 @@ async function main() {
     const receiptPath = path.join(data, 'Documents', contract.receiptFile);
     requireCondition(!fs.existsSync(receiptPath), 'receipt-existed-before-launch');
     await assertNoMetro();
-    run('simulator-launch', 'xcrun', ['simctl', 'launch', udid, bundleId]);
+    run('simulator-launch', 'xcrun', ['simctl', 'launch', ...outputArguments, udid, bundleId]);
     run('qualification-deeplink', 'xcrun', ['simctl', 'openurl', udid, scheme + '://iao-qualification']);
     const deadline = performance.now() + RECEIPT_WAIT_MS;
     while (!fs.existsSync(receiptPath) && performance.now() < deadline) await wait(1000);
@@ -293,6 +337,10 @@ async function main() {
     report.qualificationPassed = true;
   } catch (error) { failed = true; failure = error; }
   finally {
+    if (failed && udid) {
+      try { report.failureDiagnostics = captureFailureDiagnostics(run, udid, diagnosticExecutable, diagnosticDirectory); }
+      catch { report.failureDiagnostics = { status: 'FAIL', errorCode: 'failure-diagnostics-unavailable' }; }
+    }
     try { report.cleanup = cleanupOwnedSimulator(run, udid); }
     catch { report.cleanup = { status: 'FAIL', errorCode: 'cleanup-exception' }; }
     if (!failed && report.cleanup.status !== 'PASS') {
@@ -317,7 +365,7 @@ async function main() {
 }
 
 module.exports = { validateReceipt, selectSimulator, findDevice, cleanupOwnedSimulator, readReceipt, fileHash,
-  assertOwnedContainer, hasExactKeys, versionNumber, assertNoMetro, main };
+  assertOwnedContainer, hasExactKeys, versionNumber, assertNoMetro, launchOutputArguments, captureFailureDiagnostics, main };
 if (require.main === module) main().catch(error => {
   console.error('iOS digest qualification failed:', typeof error?.code === 'string' ? error.code : 'unavailable');
   process.exitCode = 1;

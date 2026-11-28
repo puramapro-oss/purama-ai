@@ -222,6 +222,72 @@ test('detects ambiguous owned-device identities', () => {
     { code: 'ambiguous-owned-simulator' });
 });
 
+const launchHelp = 'Usage: simctl launch [--stdout=<path>] [--stderr=<path>] <device> <app bundle identifier>';
+const diagnosticDirectory = '/Users/runner/qualification evidence/ios-digest';
+
+test('redirects application output only through options advertised by launch help', () => {
+  assert.deepEqual(host.launchOutputArguments(launchHelp, diagnosticDirectory), [
+    '--stdout=/Users/runner/qualification evidence/ios-digest/application.stdout.log',
+    '--stderr=/Users/runner/qualification evidence/ios-digest/application.stderr.log',
+  ]);
+});
+
+test('refuses absent, partial or differently named output options and relative diagnostic paths', () => {
+  for (const help of [undefined, '', '--stdout=<path>', '--stderr=<path>',
+    '--stdout-file=<path> --stderr-file=<path>', '--stdout --stderr']) {
+    assert.throws(() => host.launchOutputArguments(help, diagnosticDirectory), { code: 'launch-output-redirection-unavailable' });
+  }
+  for (const directory of [undefined, '', 'relative/evidence']) {
+    assert.throws(() => host.launchOutputArguments(launchHelp, directory), { code: 'invalid-diagnostic-directory' });
+  }
+});
+
+test('failure diagnostics are bounded and target only the owned simulator and exact application process', () => {
+  const calls = [];
+  const result = host.captureFailureDiagnostics((label, executable, args, options) => {
+    calls.push({ label, executable, args, options });
+    return '';
+  }, runId, 'PuramaAI', diagnosticDirectory);
+  assert.equal(result.status, 'PASS');
+  assert.deepEqual(calls.map(call => call.args), [
+    ['simctl', 'io', runId, 'screenshot', diagnosticDirectory + '/failure-screenshot.png'],
+    ['simctl', 'spawn', runId, 'log', 'show', '--last', '5m', '--style', 'compact', '--info', '--debug', '--predicate', 'process == "PuramaAI"'],
+  ]);
+  assert.ok(calls.every(call => call.executable === 'xcrun' && call.options.timeout === 15_000));
+  assert.equal(calls[0].options.maxBuffer, 65_536);
+  assert.equal(calls[1].options.maxBuffer, 1024 * 1024);
+  assert.ok(calls.every(call => !call.args.includes('booted') && !call.args.includes('all') && !call.args.includes(otherId)));
+});
+
+test('diagnostic errors including undefined do not prevent the next collection attempt', () => {
+  const calls = [];
+  const result = host.captureFailureDiagnostics(label => {
+    calls.push(label);
+    if (label === 'failure-screenshot') throw undefined;
+    throw new Error('synthetic log failure');
+  }, runId, 'PuramaAI', diagnosticDirectory);
+  assert.equal(result.status, 'FAIL');
+  assert.deepEqual(calls, ['failure-screenshot', 'failure-app-log']);
+  assert.deepEqual(result.errors, ['failure-screenshot-unavailable', 'failure-app-log-unavailable']);
+});
+
+test('failure diagnostics reject unowned selectors before executing any command', () => {
+  for (const udid of [undefined, 'booted', 'all', '../devices']) {
+    assert.throws(() => host.captureFailureDiagnostics(() => assert.fail('must not execute'), udid, 'PuramaAI', diagnosticDirectory),
+      { code: 'invalid-owned-simulator' });
+  }
+});
+
+test('an unsafe or missing process name cannot broaden the unified-log predicate', () => {
+  for (const executable of [undefined, '', 'PuramaAI" OR TRUEPREDICATE', '*']) {
+    const calls = [];
+    const result = host.captureFailureDiagnostics(label => { calls.push(label); }, runId, executable, diagnosticDirectory);
+    assert.deepEqual(calls, ['failure-screenshot']);
+    assert.deepEqual(result.errors, ['failure-log-process-unavailable']);
+    assert.equal(result.status, 'FAIL');
+  }
+});
+
 test('reads bounded regular receipts, hashes their bytes, and refuses links, directories and oversized content', t => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'iao-ios-digest-host-test-'));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
@@ -266,4 +332,125 @@ test('retains the primary command failure when the final evidence write also fai
   const summary = JSON.parse(messages.at(-1));
   assert.equal(summary.status, 'FAIL');
   assert.equal(summary.errorCode, 'command-failed-checkout-commit');
+});
+
+// Exercise main's real try/finally ordering with an entirely synthetic filesystem
+// and process boundary. No simulator, package installation or native code is run.
+function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false } = {}) {
+  const script = path.resolve(__dirname, '../../scripts/qualify-digest-ios.cjs');
+  const mobile = path.resolve(path.dirname(script), '..');
+  const evidence = path.join(mobile, 'qa/watch-native/ios-digest');
+  const calls = [];
+  const writes = new Map();
+  const handles = new Map();
+  const delegate = '#if DEBUG\nRCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")\n#else\nBundle.main.url(forResource: "main", withExtension: "jsbundle")\n#endif\n';
+  const bundle = Buffer.concat([Buffer.from('c61fbc03c103191f', 'hex'), Buffer.from('synthetic bytecode')]);
+  const container = '/Users/runner/Library/Developer/CoreSimulator/Devices/' + runId + '/data/Containers';
+  let deleted = false;
+  let fd = 10;
+  const syntheticFs = {
+    ...fs,
+    mkdirSync() {},
+    realpathSync: filename => filename === evidence ? diagnosticDirectory : filename,
+    readFileSync: filename => filename.endsWith('app.json')
+      ? JSON.stringify({ expo: { ios: { bundleIdentifier: 'dev.purama.purama-ai' }, scheme: 'purama-ai' } }) : delegate,
+    writeFileSync(filename, value) {
+      if (sourceWriteFails && filename.endsWith('generated-AppDelegate.swift.txt')) throw undefined;
+      writes.set(filename, value);
+    },
+    readdirSync: directory => [{ name: directory.endsWith('/ios') ? 'PuramaAI' : 'PuramaAI.app', isDirectory: () => true }],
+    existsSync: filename => filename.endsWith('AppDelegate.swift'),
+    statSync: () => ({ isFile: () => true, size: bundle.length }),
+    openSync(filename) {
+      handles.set(++fd, { bytes: filename.endsWith('main.jsbundle') ? bundle
+        : Buffer.from(filename.endsWith('AppDelegate.swift') ? delegate : 'synthetic executable'), position: 0 });
+      return fd;
+    },
+    fstatSync: () => ({ isFile: () => true }),
+    readSync(handle, target, offset, length, position) {
+      const file = handles.get(handle);
+      const start = position ?? file.position;
+      const count = file.bytes.copy(target, offset, start, Math.min(file.bytes.length, start + length));
+      if (position === undefined || position === null) file.position += count;
+      return count;
+    },
+    closeSync: handle => handles.delete(handle),
+  };
+  const spawnSync = (program, args, options) => {
+    calls.push({ program, args, options });
+    const ok = stdout => ({ status: 0, stdout, stderr: '' });
+    if (program === 'git') return ok(commit);
+    if (program === '/usr/bin/plutil') return ok(JSON.stringify({ ...compiledSdk,
+      CFBundleIdentifier: 'dev.purama.purama-ai', CFBundleExecutable: 'PuramaAI' }));
+    if (program === '/usr/bin/codesign') return ok('');
+    if (program === process.execPath) return ok(args[0] === '-e' ? '/Users/runner/source/mobile/entry.js' : '');
+    assert.equal(program, 'xcrun');
+    if (args[1] === 'help') return ok(args[2] === 'launch' ? help : 'get_app_container help');
+    if (args[1] === 'list') {
+      const fixtures = simulatorInventory();
+      return ok(JSON.stringify(args[2] === 'runtimes' ? fixtures.runtimes
+        : args[2] === 'devicetypes' ? fixtures.devices : inventory(deleted ? [] : [{ udid: runId, state: 'Booted' }])));
+    }
+    if (args[1] === 'create') return ok(runId);
+    if (args[1] === 'get_app_container') return ok(container + (args[4] === 'app' ? '/Bundle/PuramaAI.app' : '/Data/owned'));
+    if (args[1] === 'launch') return ok('dev.purama.purama-ai: 12345');
+    if (args[1] === 'openurl') return { status: 1, stdout: '', stderr: 'synthetic primary failure' };
+    if (args[1] === 'io') throw undefined;
+    if (args[1] === 'spawn') return { status: null, stdout: '', stderr: '', error: { code: 'ETIMEDOUT' }, signal: 'SIGTERM' };
+    if (args[1] === 'delete') deleted = true;
+    return ok('');
+  };
+  const sandbox = {
+    __dirname: path.dirname(script), module: { exports: {} }, performance, Buffer,
+    process: { platform: 'darwin', env: {}, execPath: process.execPath }, console: { log() {}, error() {} },
+    require(name) {
+      if (name === '../lib/iao-digest-qualification-contract.json') return contract;
+      if (name === 'node:fs') return syntheticFs;
+      if (name === 'node:child_process') return { spawnSync };
+      if (name === 'node:http') return { get: () => ({ on(event, handler) { if (event === 'error') handler({ code: 'ECONNREFUSED' }); } }) };
+      return require(name);
+    },
+  };
+  vm.runInNewContext(fs.readFileSync(script, 'utf8'), sandbox, { filename: script });
+  return { run: sandbox.module.exports.main, calls, writes, evidence, delegate };
+}
+
+test('main preserves the launch-path failure and cleans up after both diagnostic collectors fail', async () => {
+  const scenario = diagnosticMainScenario();
+  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
+  assert.equal(report.errorCode, 'command-failed-qualification-deeplink');
+  assert.equal(report.failureDiagnostics.status, 'FAIL');
+  assert.deepEqual(report.failureDiagnostics.errors, ['failure-screenshot-unavailable', 'failure-app-log-unavailable']);
+  assert.equal(report.cleanup.status, 'PASS');
+  assert.equal(report.cleanup.absent, true);
+  const actions = scenario.calls.filter(call => call.program === 'xcrun').map(call => call.args[1]);
+  assert.deepEqual(actions.slice(-6), ['io', 'spawn', 'list', 'shutdown', 'delete', 'list']);
+  const launches = scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'launch');
+  assert.equal(launches.length, 1);
+  assert.deepEqual(Array.from(launches[0].args), ['simctl', 'launch', ...host.launchOutputArguments(launchHelp, diagnosticDirectory), runId, 'dev.purama.purama-ai']);
+  const log = scenario.calls.find(call => call.args[1] === 'spawn');
+  assert.equal(log.options.timeout, 15_000); assert.equal(log.options.maxBuffer, 1024 * 1024);
+  assert.equal(report.appDelegate.sourceTemplatePatternMatched, true);
+  assert.equal(Object.hasOwn(report.appDelegate, 'debugFallbackVerified'), false);
+  assert.equal(report.appDelegate.sourceArtifactStatus, 'PASS');
+  assert.equal(scenario.writes.get(path.join(scenario.evidence, report.appDelegate.sourceArtifact)), scenario.delegate);
+});
+
+test('unsupported launch redirection is refused before creating or launching a simulator', async () => {
+  const scenario = diagnosticMainScenario({ help: 'Usage: simctl launch <device> <app bundle identifier>' });
+  await assert.rejects(scenario.run(), { code: 'launch-output-redirection-unavailable' });
+  assert.ok(scenario.calls.every(call => call.program !== 'xcrun' || !['create', 'launch', 'openurl'].includes(call.args[1])));
+  const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
+  assert.equal(report.cleanup.status, 'NOT_CREATED');
+});
+
+test('an AppDelegate diagnostic write failure does not replace the later primary failure or skip cleanup', async () => {
+  const scenario = diagnosticMainScenario({ sourceWriteFails: true });
+  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
+  assert.equal(report.appDelegate.sourceArtifactStatus, 'FAIL');
+  assert.equal(report.appDelegate.sourceArtifactErrorCode, 'app-delegate-source-write-failed');
+  assert.equal(report.errorCode, 'command-failed-qualification-deeplink');
+  assert.equal(report.cleanup.status, 'PASS');
 });

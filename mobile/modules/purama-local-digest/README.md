@@ -91,6 +91,14 @@ de compilation, un reçu ancien, une exécution Metro ou un résultat
 partiel ne valent pas qualification native. Les tests Node du harnais simulent les
 frontières natives et de fichiers ; leurs résultats restent distincts du reçu réel iOS.
 
+Le lancement conserve les sorties de l'application. En cas d'échec, le harnais recueille
+avant nettoyage une capture et un journal borné au simulateur possédé et au processus
+de l'application. Ces diagnostics ne remplacent jamais la première erreur ni le reçu
+strict. La route de qualification iOS signale son montage, ses étapes et les codes de
+rejet bornés ; les messages d'erreur complets et leur contenu ne sont pas journalisés.
+Un motif reconnu dans l'AppDelegate généré reste un contrôle statique : seul le reçu
+runtime peut prouver le chargement du bundle embarqué dans Hermes.
+
 Cette qualification porte sur le module digest et son adaptateur dans le simulateur.
 Elle n'exécute ni le modèle, ni SMARANA, ni l'appairage watchOS, et ne mesure pas les
 performances d'un appareil physique. La libération explicite est exercée, sans appel
