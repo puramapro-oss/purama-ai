@@ -336,7 +336,7 @@ test('retains the primary command failure when the final evidence write also fai
 
 // Exercise main's real try/finally ordering with an entirely synthetic filesystem
 // and process boundary. No simulator, package installation or native code is run.
-function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false } = {}) {
+function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false, helpOnStderr = false } = {}) {
   const script = path.resolve(__dirname, '../../scripts/qualify-digest-ios.cjs');
   const mobile = path.resolve(path.dirname(script), '..');
   const evidence = path.join(mobile, 'qa/watch-native/ios-digest');
@@ -385,7 +385,9 @@ function diagnosticMainScenario({ help = launchHelp, sourceWriteFails = false } 
     if (program === '/usr/bin/codesign') return ok('');
     if (program === process.execPath) return ok(args[0] === '-e' ? '/Users/runner/source/mobile/entry.js' : '');
     assert.equal(program, 'xcrun');
-    if (args[1] === 'help') return ok(args[2] === 'launch' ? help : 'get_app_container help');
+    if (args[1] === 'help') return args[2] === 'launch' && helpOnStderr
+      ? { status: 0, stdout: '', stderr: help }
+      : ok(args[2] === 'launch' ? help : 'get_app_container help');
     if (args[1] === 'list') {
       const fixtures = simulatorInventory();
       return ok(JSON.stringify(args[2] === 'runtimes' ? fixtures.runtimes
@@ -443,6 +445,15 @@ test('unsupported launch redirection is refused before creating or launching a s
   assert.ok(scenario.calls.every(call => call.program !== 'xcrun' || !['create', 'launch', 'openurl'].includes(call.args[1])));
   const report = JSON.parse(scenario.writes.get(path.join(scenario.evidence, 'host-receipt.json')));
   assert.equal(report.cleanup.status, 'NOT_CREATED');
+});
+
+test('main accepts launch help written to stderr by simctl', async () => {
+  const scenario = diagnosticMainScenario({ helpOnStderr: true });
+  await assert.rejects(scenario.run(), { code: 'command-failed-qualification-deeplink' });
+  const launches = scenario.calls.filter(call => call.program === 'xcrun' && call.args[1] === 'launch');
+  assert.equal(launches.length, 1);
+  assert.deepEqual(Array.from(launches[0].args), ['simctl', 'launch',
+    ...host.launchOutputArguments(launchHelp, diagnosticDirectory), runId, 'dev.purama.purama-ai']);
 });
 
 test('an AppDelegate diagnostic write failure does not replace the later primary failure or skip cleanup', async () => {

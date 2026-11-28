@@ -303,9 +303,9 @@ async function main() {
     const selected = selectSimulator(runtimes, types, info);
     report.simulator = selected;
     run('container-command-help', 'xcrun', ['simctl', 'help', 'get_app_container']);
-    const launchHelp = run('launch-command-help', 'xcrun', ['simctl', 'help', 'launch']);
+    const launchHelp = run('launch-command-help', 'xcrun', ['simctl', 'help', 'launch'], { result: true });
     diagnosticDirectory = fs.realpathSync(evidence);
-    const outputArguments = launchOutputArguments(launchHelp, diagnosticDirectory);
+    const outputArguments = launchOutputArguments((launchHelp.stdout || '') + '\n' + (launchHelp.stderr || ''), diagnosticDirectory);
     report.applicationOutput = { directory: diagnosticDirectory, stdout: 'application.stdout.log', stderr: 'application.stderr.log' };
     udid = run('simulator-create', 'xcrun', ['simctl', 'create', 'PURAMA Digest ' + runId,
       selected.deviceType.identifier, selected.runtime.identifier]);
